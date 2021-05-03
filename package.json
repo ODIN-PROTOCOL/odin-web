@@ -8,11 +8,21 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@bandprotocol/obi.js": "^1.0.7",
+    "@cosmjs/crypto": "^0.24.1",
+    "@cosmjs/encoding": "^0.24.1",
+    "@cosmjs/launchpad": "^0.24.1",
+    "@cosmjs/proto-signing": "^0.24.1",
+    "@cosmjs/stargate": "^0.24.1",
+    "@cosmjs/tendermint-rpc": "^0.24.1",
     "core-js": "^3.6.5",
+    "long": "^4.0.0",
+    "protobufjs": "^6.10.2",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0"
   },
   "devDependencies": {
+    "@types/long": "^4.0.1",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
     "@typescript-eslint/parser": "^4.18.0",
     "@vue/cli-plugin-babel": "~4.5.0",
