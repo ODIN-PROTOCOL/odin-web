@@ -2,6 +2,7 @@
   <div class="home">
     <img alt="Vue logo" src="../assets/logo.png" />
     <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+    <button type="button" @click="openDialog()">OPEN DIALOG</button>
   </div>
 </template>
 
@@ -20,6 +21,7 @@ import {
   setupIbcExtension,
   setupStakingExtension,
 } from '@cosmjs/stargate'
+import { showTestDialog } from '@/components/modals/TestModal.vue'
 
 export default defineComponent({
   name: 'Home',
@@ -56,6 +58,13 @@ export default defineComponent({
     }
 
     test()
+
+    return {
+      openDialog: async () => {
+        const res = await showTestDialog('Boy')
+        console.log('RESULT:', res)
+      },
+    }
   },
 })
 </script>
