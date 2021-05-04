@@ -1,27 +1,48 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </div>
-  <router-view />
+  <template v-if="isAppReady">
+    <Nav></Nav>
+    <router-view />
+  </template>
   <div class="dialogs-container" ref="dialogsContainerRef"></div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue'
-import { initDialogs } from '@/helpers/dialog-helpers'
+import { computed, defineComponent, onMounted, ref } from 'vue'
+import { initDialogs } from '@/helpers/dialogs'
+import { useAuthorization } from '@/composables/useAuthorization'
+import router from '@/router'
+import Nav from './components/Nav.vue'
 
 export default defineComponent({
+  components: { Nav },
   setup() {
-    const dialogsContainerRef = ref<HTMLElement>()
+    const _readyStates = ref({
+      dialogs: false,
+      session: false,
+    })
+    const isAppReady = computed(() => {
+      return Object.values(_readyStates.value).every((v) => v === true)
+    })
 
+    // Dialogs
+    const dialogsContainerRef = ref<HTMLElement>()
     onMounted(() => {
       if (dialogsContainerRef.value instanceof HTMLElement) {
         initDialogs(dialogsContainerRef.value)
+        _readyStates.value.dialogs = true
       }
     })
 
-    return { dialogsContainerRef }
+    // Session
+    const { tryRestoreSession, isLoggedIn } = useAuthorization()
+    tryRestoreSession().then((wallet) => {
+      _readyStates.value.session = true
+      if (wallet) {
+        router.push({ name: 'Home' })
+      }
+    })
+
+    return { isAppReady, dialogsContainerRef, isLoggedIn }
   },
 })
 </script>
@@ -31,20 +52,8 @@ export default defineComponent({
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+  max-width: 550px;
+  margin: auto;
 }
 </style>

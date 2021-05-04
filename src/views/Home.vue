@@ -9,10 +9,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import HelloWorld from '@/components/HelloWorld.vue' // @ is an alias to /src
-import { API_CONFIG } from '@/api/api-config'
-import { initTendermintClient } from '@/api/client/tendermintClient'
-import { initWallet } from '@/api/client/wallet'
-import { initSigningStargateClient } from '@/api/client/signingStargateClient'
+import { getTendermintClient } from '@/api/client/tendermintClient'
 import {
   QueryClient,
   setupAuthExtension,
@@ -30,12 +27,8 @@ export default defineComponent({
   },
   setup() {
     const test = async () => {
-      const tendermint = await initTendermintClient()
-      const [wallet] = await initWallet(API_CONFIG.mnemonic)
-      const signingStargate = await initSigningStargateClient(wallet)
-
       const client = QueryClient.withExtensions(
-        tendermint,
+        getTendermintClient(),
         setupAuthExtension,
         setupBankExtension,
         setupDistributionExtension,

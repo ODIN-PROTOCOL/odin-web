@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { DialogEventHandler, makeDialog } from '@/helpers/dialog-helpers'
+import { DialogEventHandler, makeDialog } from '@/helpers/dialogs'
 import { defineComponent, inject } from 'vue'
 import ModalBase from './ModalBase.vue'
 

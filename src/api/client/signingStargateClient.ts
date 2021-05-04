@@ -2,11 +2,14 @@ import { API_CONFIG } from '@/api/api-config'
 import { OfflineSigner, Registry } from '@cosmjs/proto-signing'
 import { SigningStargateClient, defaultRegistryTypes } from '@cosmjs/stargate'
 
-let _signingStargateClient: SigningStargateClient
+let _signingStargateClient: SigningStargateClient | null
 
 export async function initSigningStargateClient(
   signer: OfflineSigner
 ): Promise<SigningStargateClient> {
+  if (_signingStargateClient) {
+    throw new ReferenceError('Signing Stargate client is already initialized!')
+  }
   _signingStargateClient = await createSigningStargateClient(signer)
   return _signingStargateClient
 }
@@ -24,6 +27,13 @@ export function getSigningStargateClient(): SigningStargateClient {
     throw new ReferenceError('Signing Stargate client not initialized!')
   }
   return _signingStargateClient
+}
+
+export function clearSigningStargateClient(): void {
+  if (_signingStargateClient) {
+    _signingStargateClient.disconnect()
+  }
+  _signingStargateClient = null
 }
 
 function _genRegistry() {
