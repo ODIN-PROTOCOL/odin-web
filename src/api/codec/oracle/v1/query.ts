@@ -4,10 +4,16 @@ import _m0 from "protobufjs/minimal";
 import {
   DataSource,
   OracleScript,
+  RequestResult,
+  ValidatorStatus,
   OracleRequestPacketData,
   OracleResponsePacketData,
-  ValidatorStatus,
+  Report,
 } from "../../oracle/v1/oracle";
+import {
+  PageRequest,
+  PageResponse,
+} from "../../cosmos/base/query/v1beta1/pagination";
 import { Params } from "../../oracle/v1/params";
 import { DecCoin } from "../../cosmos/base/v1beta1/coin";
 
@@ -43,6 +49,20 @@ export interface QueryDataSourceResponse {
   dataSource?: DataSource;
 }
 
+/** QueryDataSourcesRequest is request type for the Query/DataSources RPC method. */
+export interface QueryDataSourcesRequest {
+  pagination?: PageRequest;
+}
+
+/**
+ * QueryDataSourcesResponse is response type for the Query/DataSources RPC
+ * method.
+ */
+export interface QueryDataSourcesResponse {
+  dataSources: DataSource[];
+  pagination?: PageResponse;
+}
+
 /**
  * QueryOracleScriptRequest is request type for the Query/OracleScript RPC
  * method.
@@ -59,6 +79,41 @@ export interface QueryOracleScriptResponse {
   oracleScript?: OracleScript;
 }
 
+/**
+ * QueryOracleScriptsRequest is request type for the Query/OracleScripts RPC
+ * method.
+ */
+export interface QueryOracleScriptsRequest {
+  pagination?: PageRequest;
+}
+
+/**
+ * QueryOracleScriptsResponse is response type for the Query/OracleScripts RPC
+ * method.
+ */
+export interface QueryOracleScriptsResponse {
+  oracleScripts: OracleScript[];
+  pagination?: PageResponse;
+}
+
+/**
+ * QueryRequestReportsRequest is request type for the Query/RequestReports RPC
+ * method.
+ */
+export interface QueryRequestReportsRequest {
+  requestId: Long;
+  pagination?: PageRequest;
+}
+
+/**
+ * QueryRequestReportsResponse is response type for the Query/RequestReports RPC
+ * method.
+ */
+export interface QueryRequestReportsResponse {
+  reports: Report[];
+  pagination?: PageResponse;
+}
+
 /** QueryRequestRequest is request type for the Query/Request RPC method. */
 export interface QueryRequestRequest {
   requestId: Long;
@@ -66,8 +121,18 @@ export interface QueryRequestRequest {
 
 /** QueryRequestResponse is response type for the Query/Request RPC method. */
 export interface QueryRequestResponse {
-  requestPacketData?: OracleRequestPacketData;
-  responsePacketData?: OracleResponsePacketData;
+  request?: RequestResult;
+}
+
+/** QueryRequestsRequest is request type for the Query/Requests RPC method. */
+export interface QueryRequestsRequest {
+  pagination?: PageRequest;
+}
+
+/** QueryRequestsResponse is response type for the Query/Requests RPC method. */
+export interface QueryRequestsResponse {
+  requests: RequestResult[];
+  pagination?: PageResponse;
 }
 
 /** QueryParamsRequest is request type for the Query/Params RPC method. */
@@ -577,6 +642,179 @@ export const QueryDataSourceResponse = {
   },
 };
 
+const baseQueryDataSourcesRequest: object = {};
+
+export const QueryDataSourcesRequest = {
+  encode(
+    message: QueryDataSourcesRequest,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: _m0.Reader | Uint8Array,
+    length?: number
+  ): QueryDataSourcesRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryDataSourcesRequest,
+    } as QueryDataSourcesRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryDataSourcesRequest {
+    const message = {
+      ...baseQueryDataSourcesRequest,
+    } as QueryDataSourcesRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryDataSourcesRequest): unknown {
+    const obj: any = {};
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryDataSourcesRequest>
+  ): QueryDataSourcesRequest {
+    const message = {
+      ...baseQueryDataSourcesRequest,
+    } as QueryDataSourcesRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryDataSourcesResponse: object = {};
+
+export const QueryDataSourcesResponse = {
+  encode(
+    message: QueryDataSourcesResponse,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    for (const v of message.dataSources) {
+      DataSource.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: _m0.Reader | Uint8Array,
+    length?: number
+  ): QueryDataSourcesResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryDataSourcesResponse,
+    } as QueryDataSourcesResponse;
+    message.dataSources = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.dataSources.push(DataSource.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryDataSourcesResponse {
+    const message = {
+      ...baseQueryDataSourcesResponse,
+    } as QueryDataSourcesResponse;
+    message.dataSources = [];
+    if (object.dataSources !== undefined && object.dataSources !== null) {
+      for (const e of object.dataSources) {
+        message.dataSources.push(DataSource.fromJSON(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryDataSourcesResponse): unknown {
+    const obj: any = {};
+    if (message.dataSources) {
+      obj.dataSources = message.dataSources.map((e) =>
+        e ? DataSource.toJSON(e) : undefined
+      );
+    } else {
+      obj.dataSources = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryDataSourcesResponse>
+  ): QueryDataSourcesResponse {
+    const message = {
+      ...baseQueryDataSourcesResponse,
+    } as QueryDataSourcesResponse;
+    message.dataSources = [];
+    if (object.dataSources !== undefined && object.dataSources !== null) {
+      for (const e of object.dataSources) {
+        message.dataSources.push(DataSource.fromPartial(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
 const baseQueryOracleScriptRequest: object = { oracleScriptId: Long.ZERO };
 
 export const QueryOracleScriptRequest = {
@@ -722,6 +960,372 @@ export const QueryOracleScriptResponse = {
   },
 };
 
+const baseQueryOracleScriptsRequest: object = {};
+
+export const QueryOracleScriptsRequest = {
+  encode(
+    message: QueryOracleScriptsRequest,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: _m0.Reader | Uint8Array,
+    length?: number
+  ): QueryOracleScriptsRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryOracleScriptsRequest,
+    } as QueryOracleScriptsRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryOracleScriptsRequest {
+    const message = {
+      ...baseQueryOracleScriptsRequest,
+    } as QueryOracleScriptsRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryOracleScriptsRequest): unknown {
+    const obj: any = {};
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryOracleScriptsRequest>
+  ): QueryOracleScriptsRequest {
+    const message = {
+      ...baseQueryOracleScriptsRequest,
+    } as QueryOracleScriptsRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryOracleScriptsResponse: object = {};
+
+export const QueryOracleScriptsResponse = {
+  encode(
+    message: QueryOracleScriptsResponse,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    for (const v of message.oracleScripts) {
+      OracleScript.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: _m0.Reader | Uint8Array,
+    length?: number
+  ): QueryOracleScriptsResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryOracleScriptsResponse,
+    } as QueryOracleScriptsResponse;
+    message.oracleScripts = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.oracleScripts.push(
+            OracleScript.decode(reader, reader.uint32())
+          );
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryOracleScriptsResponse {
+    const message = {
+      ...baseQueryOracleScriptsResponse,
+    } as QueryOracleScriptsResponse;
+    message.oracleScripts = [];
+    if (object.oracleScripts !== undefined && object.oracleScripts !== null) {
+      for (const e of object.oracleScripts) {
+        message.oracleScripts.push(OracleScript.fromJSON(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryOracleScriptsResponse): unknown {
+    const obj: any = {};
+    if (message.oracleScripts) {
+      obj.oracleScripts = message.oracleScripts.map((e) =>
+        e ? OracleScript.toJSON(e) : undefined
+      );
+    } else {
+      obj.oracleScripts = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryOracleScriptsResponse>
+  ): QueryOracleScriptsResponse {
+    const message = {
+      ...baseQueryOracleScriptsResponse,
+    } as QueryOracleScriptsResponse;
+    message.oracleScripts = [];
+    if (object.oracleScripts !== undefined && object.oracleScripts !== null) {
+      for (const e of object.oracleScripts) {
+        message.oracleScripts.push(OracleScript.fromPartial(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryRequestReportsRequest: object = { requestId: Long.ZERO };
+
+export const QueryRequestReportsRequest = {
+  encode(
+    message: QueryRequestReportsRequest,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (!message.requestId.isZero()) {
+      writer.uint32(8).int64(message.requestId);
+    }
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: _m0.Reader | Uint8Array,
+    length?: number
+  ): QueryRequestReportsRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryRequestReportsRequest,
+    } as QueryRequestReportsRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.requestId = reader.int64() as Long;
+          break;
+        case 2:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryRequestReportsRequest {
+    const message = {
+      ...baseQueryRequestReportsRequest,
+    } as QueryRequestReportsRequest;
+    if (object.requestId !== undefined && object.requestId !== null) {
+      message.requestId = Long.fromString(object.requestId);
+    } else {
+      message.requestId = Long.ZERO;
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryRequestReportsRequest): unknown {
+    const obj: any = {};
+    message.requestId !== undefined &&
+      (obj.requestId = (message.requestId || Long.ZERO).toString());
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryRequestReportsRequest>
+  ): QueryRequestReportsRequest {
+    const message = {
+      ...baseQueryRequestReportsRequest,
+    } as QueryRequestReportsRequest;
+    if (object.requestId !== undefined && object.requestId !== null) {
+      message.requestId = object.requestId as Long;
+    } else {
+      message.requestId = Long.ZERO;
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryRequestReportsResponse: object = {};
+
+export const QueryRequestReportsResponse = {
+  encode(
+    message: QueryRequestReportsResponse,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    for (const v of message.reports) {
+      Report.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: _m0.Reader | Uint8Array,
+    length?: number
+  ): QueryRequestReportsResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryRequestReportsResponse,
+    } as QueryRequestReportsResponse;
+    message.reports = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.reports.push(Report.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryRequestReportsResponse {
+    const message = {
+      ...baseQueryRequestReportsResponse,
+    } as QueryRequestReportsResponse;
+    message.reports = [];
+    if (object.reports !== undefined && object.reports !== null) {
+      for (const e of object.reports) {
+        message.reports.push(Report.fromJSON(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryRequestReportsResponse): unknown {
+    const obj: any = {};
+    if (message.reports) {
+      obj.reports = message.reports.map((e) =>
+        e ? Report.toJSON(e) : undefined
+      );
+    } else {
+      obj.reports = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryRequestReportsResponse>
+  ): QueryRequestReportsResponse {
+    const message = {
+      ...baseQueryRequestReportsResponse,
+    } as QueryRequestReportsResponse;
+    message.reports = [];
+    if (object.reports !== undefined && object.reports !== null) {
+      for (const e of object.reports) {
+        message.reports.push(Report.fromPartial(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
 const baseQueryRequestRequest: object = { requestId: Long.ZERO };
 
 export const QueryRequestRequest = {
@@ -788,17 +1392,8 @@ export const QueryRequestResponse = {
     message: QueryRequestResponse,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
-    if (message.requestPacketData !== undefined) {
-      OracleRequestPacketData.encode(
-        message.requestPacketData,
-        writer.uint32(10).fork()
-      ).ldelim();
-    }
-    if (message.responsePacketData !== undefined) {
-      OracleResponsePacketData.encode(
-        message.responsePacketData,
-        writer.uint32(18).fork()
-      ).ldelim();
+    if (message.request !== undefined) {
+      RequestResult.encode(message.request, writer.uint32(10).fork()).ldelim();
     }
     return writer;
   },
@@ -814,16 +1409,7 @@ export const QueryRequestResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.requestPacketData = OracleRequestPacketData.decode(
-            reader,
-            reader.uint32()
-          );
-          break;
-        case 2:
-          message.responsePacketData = OracleResponsePacketData.decode(
-            reader,
-            reader.uint32()
-          );
+          message.request = RequestResult.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -835,63 +1421,188 @@ export const QueryRequestResponse = {
 
   fromJSON(object: any): QueryRequestResponse {
     const message = { ...baseQueryRequestResponse } as QueryRequestResponse;
-    if (
-      object.requestPacketData !== undefined &&
-      object.requestPacketData !== null
-    ) {
-      message.requestPacketData = OracleRequestPacketData.fromJSON(
-        object.requestPacketData
-      );
+    if (object.request !== undefined && object.request !== null) {
+      message.request = RequestResult.fromJSON(object.request);
     } else {
-      message.requestPacketData = undefined;
-    }
-    if (
-      object.responsePacketData !== undefined &&
-      object.responsePacketData !== null
-    ) {
-      message.responsePacketData = OracleResponsePacketData.fromJSON(
-        object.responsePacketData
-      );
-    } else {
-      message.responsePacketData = undefined;
+      message.request = undefined;
     }
     return message;
   },
 
   toJSON(message: QueryRequestResponse): unknown {
     const obj: any = {};
-    message.requestPacketData !== undefined &&
-      (obj.requestPacketData = message.requestPacketData
-        ? OracleRequestPacketData.toJSON(message.requestPacketData)
-        : undefined);
-    message.responsePacketData !== undefined &&
-      (obj.responsePacketData = message.responsePacketData
-        ? OracleResponsePacketData.toJSON(message.responsePacketData)
+    message.request !== undefined &&
+      (obj.request = message.request
+        ? RequestResult.toJSON(message.request)
         : undefined);
     return obj;
   },
 
   fromPartial(object: DeepPartial<QueryRequestResponse>): QueryRequestResponse {
     const message = { ...baseQueryRequestResponse } as QueryRequestResponse;
-    if (
-      object.requestPacketData !== undefined &&
-      object.requestPacketData !== null
-    ) {
-      message.requestPacketData = OracleRequestPacketData.fromPartial(
-        object.requestPacketData
-      );
+    if (object.request !== undefined && object.request !== null) {
+      message.request = RequestResult.fromPartial(object.request);
     } else {
-      message.requestPacketData = undefined;
+      message.request = undefined;
     }
-    if (
-      object.responsePacketData !== undefined &&
-      object.responsePacketData !== null
-    ) {
-      message.responsePacketData = OracleResponsePacketData.fromPartial(
-        object.responsePacketData
+    return message;
+  },
+};
+
+const baseQueryRequestsRequest: object = {};
+
+export const QueryRequestsRequest = {
+  encode(
+    message: QueryRequestsRequest,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: _m0.Reader | Uint8Array,
+    length?: number
+  ): QueryRequestsRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryRequestsRequest } as QueryRequestsRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryRequestsRequest {
+    const message = { ...baseQueryRequestsRequest } as QueryRequestsRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryRequestsRequest): unknown {
+    const obj: any = {};
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryRequestsRequest>): QueryRequestsRequest {
+    const message = { ...baseQueryRequestsRequest } as QueryRequestsRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryRequestsResponse: object = {};
+
+export const QueryRequestsResponse = {
+  encode(
+    message: QueryRequestsResponse,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    for (const v of message.requests) {
+      RequestResult.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: _m0.Reader | Uint8Array,
+    length?: number
+  ): QueryRequestsResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryRequestsResponse } as QueryRequestsResponse;
+    message.requests = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.requests.push(RequestResult.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryRequestsResponse {
+    const message = { ...baseQueryRequestsResponse } as QueryRequestsResponse;
+    message.requests = [];
+    if (object.requests !== undefined && object.requests !== null) {
+      for (const e of object.requests) {
+        message.requests.push(RequestResult.fromJSON(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryRequestsResponse): unknown {
+    const obj: any = {};
+    if (message.requests) {
+      obj.requests = message.requests.map((e) =>
+        e ? RequestResult.toJSON(e) : undefined
       );
     } else {
-      message.responsePacketData = undefined;
+      obj.requests = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryRequestsResponse>
+  ): QueryRequestsResponse {
+    const message = { ...baseQueryRequestsResponse } as QueryRequestsResponse;
+    message.requests = [];
+    if (object.requests !== undefined && object.requests !== null) {
+      for (const e of object.requests) {
+        message.requests.push(RequestResult.fromPartial(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
     }
     return message;
   },
@@ -2100,12 +2811,22 @@ export interface Query {
   Data(request: QueryDataRequest): Promise<QueryDataResponse>;
   /** DataSource queries data source info for given data source id. */
   DataSource(request: QueryDataSourceRequest): Promise<QueryDataSourceResponse>;
+  /** DataSources queries data sources info. */
+  DataSources(
+    request: QueryDataSourcesRequest
+  ): Promise<QueryDataSourcesResponse>;
   /** OracleScript queries oracle script info for given oracle script id. */
   OracleScript(
     request: QueryOracleScriptRequest
   ): Promise<QueryOracleScriptResponse>;
+  /** OracleScripts queries all oracle scripts with pagination. */
+  OracleScripts(
+    request: QueryOracleScriptsRequest
+  ): Promise<QueryOracleScriptsResponse>;
   /** Request queries request info for given request id. */
   Request(request: QueryRequestRequest): Promise<QueryRequestResponse>;
+  /** Requests queries all requests with pagination. */
+  Requests(request: QueryRequestsRequest): Promise<QueryRequestsResponse>;
   /**
    * Validator queries oracle info of validator for given validator
    * address.
@@ -2133,6 +2854,9 @@ export interface Query {
   DataProvidersPool(
     request: QueryDataProvidersPoolRequest
   ): Promise<QueryDataProvidersPoolResponse>;
+  RequestReports(
+    request: QueryRequestReportsRequest
+  ): Promise<QueryRequestReportsResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -2166,6 +2890,16 @@ export class QueryClientImpl implements Query {
     );
   }
 
+  DataSources(
+    request: QueryDataSourcesRequest
+  ): Promise<QueryDataSourcesResponse> {
+    const data = QueryDataSourcesRequest.encode(request).finish();
+    const promise = this.rpc.request("oracle.v1.Query", "DataSources", data);
+    return promise.then((data) =>
+      QueryDataSourcesResponse.decode(new _m0.Reader(data))
+    );
+  }
+
   OracleScript(
     request: QueryOracleScriptRequest
   ): Promise<QueryOracleScriptResponse> {
@@ -2176,11 +2910,29 @@ export class QueryClientImpl implements Query {
     );
   }
 
+  OracleScripts(
+    request: QueryOracleScriptsRequest
+  ): Promise<QueryOracleScriptsResponse> {
+    const data = QueryOracleScriptsRequest.encode(request).finish();
+    const promise = this.rpc.request("oracle.v1.Query", "OracleScripts", data);
+    return promise.then((data) =>
+      QueryOracleScriptsResponse.decode(new _m0.Reader(data))
+    );
+  }
+
   Request(request: QueryRequestRequest): Promise<QueryRequestResponse> {
     const data = QueryRequestRequest.encode(request).finish();
     const promise = this.rpc.request("oracle.v1.Query", "Request", data);
     return promise.then((data) =>
       QueryRequestResponse.decode(new _m0.Reader(data))
+    );
+  }
+
+  Requests(request: QueryRequestsRequest): Promise<QueryRequestsResponse> {
+    const data = QueryRequestsRequest.encode(request).finish();
+    const promise = this.rpc.request("oracle.v1.Query", "Requests", data);
+    return promise.then((data) =>
+      QueryRequestsResponse.decode(new _m0.Reader(data))
     );
   }
 
@@ -2255,6 +3007,16 @@ export class QueryClientImpl implements Query {
       QueryDataProvidersPoolResponse.decode(new _m0.Reader(data))
     );
   }
+
+  RequestReports(
+    request: QueryRequestReportsRequest
+  ): Promise<QueryRequestReportsResponse> {
+    const data = QueryRequestReportsRequest.encode(request).finish();
+    const promise = this.rpc.request("oracle.v1.Query", "RequestReports", data);
+    return promise.then((data) =>
+      QueryRequestReportsResponse.decode(new _m0.Reader(data))
+    );
+  }
 }
 
 interface Rpc {
@@ -2267,6 +3029,7 @@ interface Rpc {
 
 declare var self: any | undefined;
 declare var window: any | undefined;
+declare var global: any | undefined;
 var globalThis: any = (() => {
   if (typeof globalThis !== "undefined") return globalThis;
   if (typeof self !== "undefined") return self;

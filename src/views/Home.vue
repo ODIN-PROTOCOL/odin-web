@@ -19,6 +19,8 @@ import {
   setupStakingExtension,
 } from '@cosmjs/stargate'
 import { showTestDialog } from '@/components/modals/TestModal.vue'
+import Long from 'long'
+import { setupOracleExtension } from '@/api/query-client-ext/oracleExtension'
 
 export default defineComponent({
   name: 'Home',
@@ -33,7 +35,8 @@ export default defineComponent({
         setupBankExtension,
         setupDistributionExtension,
         setupStakingExtension,
-        setupIbcExtension
+        setupIbcExtension,
+        setupOracleExtension
       )
 
       // Supply
@@ -48,6 +51,23 @@ export default defineComponent({
         await client.distribution.unverified.params()
       )
       console.log('Staking params: ', await client.staking.unverified.params())
+
+      // console.log(
+      //   'Data source: ',
+      //   await client.oracle.unverified.dataSource(new Long(1))
+      // )
+      console.log(
+        'Data sources: ',
+        await client.oracle.unverified.dataSources(new Long(2), new Long(0))
+      )
+      // console.log(
+      //   'Oracle script: ',
+      //   await client.oracle.unverified.oracleScript(new Long(1))
+      // )
+      console.log(
+        'Oracle scripts: ',
+        await client.oracle.unverified.oracleScripts(new Long(2), new Long(0))
+      )
     }
 
     test()

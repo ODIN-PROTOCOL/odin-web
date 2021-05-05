@@ -44,11 +44,20 @@ export interface Params {
    * activate back after missing an oracle report.
    */
   inactivePenaltyDuration: Long;
-  /** MaxDataSize is the maximum number of bytes that can be present in the report as the result */
+  /**
+   * MaxDataSize is the maximum number of bytes that can be present in the
+   * report as the result
+   */
   maxDataSize: Long;
-  /** MaxCalldataSize is the maximum number of bytes that can be present in the calldata */
+  /**
+   * MaxCalldataSize is the maximum number of bytes that can be present in the
+   * calldata
+   */
   maxCalldataSize: Long;
-  /** DataProviderRewardPerByte is the amount of tokens, user gets for the byte of data provided */
+  /**
+   * DataProviderRewardPerByte is the amount of tokens, user gets for the byte
+   * of data provided
+   */
   dataProviderRewardPerByte: DecCoin[];
   /** Denominations that can be used for withdrawing fee from data requesters */
   dataRequesterFeeDenoms: string[];
