@@ -9,8 +9,6 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from 'vue'
 import { initDialogs } from '@/helpers/dialogs'
-import { useAuthorization } from '@/composables/useAuthorization'
-import router from '@/router'
 import Nav from './components/Nav.vue'
 
 export default defineComponent({
@@ -18,7 +16,6 @@ export default defineComponent({
   setup() {
     const _readyStates = ref({
       dialogs: false,
-      session: false,
     })
     const isAppReady = computed(() => {
       return Object.values(_readyStates.value).every((v) => v === true)
@@ -33,16 +30,7 @@ export default defineComponent({
       }
     })
 
-    // Session
-    const { tryRestoreSession, isLoggedIn } = useAuthorization()
-    tryRestoreSession().then((wallet) => {
-      _readyStates.value.session = true
-      if (wallet) {
-        router.push({ name: 'Home' })
-      }
-    })
-
-    return { isAppReady, dialogsContainerRef, isLoggedIn }
+    return { isAppReady, dialogsContainerRef }
   },
 })
 </script>

@@ -1,3 +1,4 @@
+import { clearQueryClient, initQueryClient } from '@/api/client/queryClient'
 import {
   clearSigningStargateClient,
   initSigningStargateClient,
@@ -17,7 +18,8 @@ async function logIn(mnemonic: string): Promise<Wallet | null> {
   const [wallet] = await initWallet(mnemonic)
   if (!wallet) return null
 
-  await initTendermintClient()
+  const tendermint = await initTendermintClient()
+  initQueryClient(tendermint)
   await initSigningStargateClient(wallet)
 
   _isLoggedIn.value = true
@@ -29,13 +31,14 @@ async function logIn(mnemonic: string): Promise<Wallet | null> {
 function logOut(): void {
   clearWallet()
   clearTendermintClient()
+  clearQueryClient()
   clearSigningStargateClient()
 
   _isLoggedIn.value = false
   removeStorageItem('mnemonic')
 }
 
-async function tryRestoreSession(): Promise<Wallet | null> {
+export async function tryRestoreSession(): Promise<Wallet | null> {
   const mnemonic = fromStorage('mnemonic')
   if (!mnemonic) return null
 
