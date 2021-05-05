@@ -10,17 +10,17 @@
 </template>
 
 <script lang="ts">
-import { DialogEventHandler, makeDialog } from '@/helpers/dialogs'
-import { defineComponent, inject } from 'vue'
+import { makeDialog } from '@/helpers/dialogs'
+import { defineComponent } from 'vue'
 import ModalBase from './ModalBase.vue'
+import { injectDialogHandler } from './modals-helper'
 
 const TestModal = defineComponent({
   props: { userName: String },
   components: { ModalBase },
   setup() {
-    const onClose = inject<DialogEventHandler>('onClose')
     return {
-      onClose: onClose || (() => console.warn('Missing onClose handler')),
+      onClose: injectDialogHandler('onClose'),
     }
   },
 })

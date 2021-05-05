@@ -15,7 +15,7 @@ export function initDialogs(container: HTMLElement): void {
 }
 
 export function makeDialog<R = null>(
-  modalComponent: Component<DialogProps, Record<string, DialogEventHandler>>,
+  modalComponent: Component,
   callbacks: Record<string, DialogCallback<R>> = {},
   { props }: { props?: DialogProps } = {}
 ): Promise<R | null> {

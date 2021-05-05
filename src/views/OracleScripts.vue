@@ -32,11 +32,11 @@ import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
   setup() {
-    const queryClient = getQueryClient()
+    const queries = getQueryClient()
 
     const oracleScripts = ref()
     const loadOracleScripts = async () => {
-      const response = await queryClient.oracle.unverified.oracleScripts(
+      const response = await queries.oracle.unverified.oracleScripts(
         new Long(100)
       )
       oracleScripts.value = response.oracleScripts

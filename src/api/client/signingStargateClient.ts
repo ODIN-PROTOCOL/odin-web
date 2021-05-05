@@ -1,6 +1,7 @@
 import { API_CONFIG } from '@/api/api-config'
 import { OfflineSigner, Registry } from '@cosmjs/proto-signing'
 import { SigningStargateClient, defaultRegistryTypes } from '@cosmjs/stargate'
+import { createDataSource } from '@/api/callers/createDataSource'
 
 let _signingStargateClient: SigningStargateClient | null
 
@@ -41,6 +42,8 @@ function _genRegistry() {
   for (const [typeUrl, type] of defaultRegistryTypes) {
     registry.register(typeUrl, type)
   }
+
+  registry.register(createDataSource.typeUrl, createDataSource.type)
 
   // TODO: extend registry from callers
 

@@ -2,6 +2,7 @@
   <div class="nav">
     <router-link :to="{ name: 'Home' }">Home</router-link> |
     <router-link :to="{ name: 'About' }">About</router-link> |
+    <router-link :to="{ name: 'DataSources' }">Data Sources</router-link> |
     <router-link :to="{ name: 'OracleScripts' }">Oracle Scripts</router-link>
     <template v-if="isLoggedIn">
       | <button type="button" @click="logOutAndLeave()">LogOut</button>

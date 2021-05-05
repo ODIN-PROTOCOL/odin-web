@@ -2,9 +2,15 @@
   <div class="modal-base">
     <div class="modal-base__backdrop" @click="emitClose()"></div>
     <div class="modal-base__content">
-      <button class="modal-base__close-btn" type="button" @click="emitClose()">
-        CLOSE!
-      </button>
+      <div class="modal-base__content-head">
+        <button
+          class="modal-base__close-btn"
+          type="button"
+          @click="emitClose()"
+        >
+          X
+        </button>
+      </div>
 
       <slot name="main"></slot>
     </div>
@@ -48,5 +54,14 @@ export default defineComponent<{ testMsg: string }>({
   border-radius: 8px;
   padding: 20px;
   z-index: 1;
+}
+
+.modal-base__content-head {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.modal-base__close-btn {
+  margin-left: auto;
 }
 </style>
