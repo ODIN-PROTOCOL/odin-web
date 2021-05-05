@@ -1,8 +1,26 @@
 import { QueryClient, createRpc } from '@cosmjs/stargate'
-import { QueryClientImpl } from '@/api/codec/mint/query'
+import {
+  QueryAnnualProvisionsResponse,
+  QueryClientImpl,
+  QueryEthIntegrationAddressResponse,
+  QueryInflationResponse,
+  QueryParamsResponse,
+  QueryTreasuryPoolResponse,
+} from '@/api/codec/mint/query'
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function setupMintExtension(base: QueryClient) {
+export interface MintExtension {
+  mint: {
+    unverified: {
+      params: () => Promise<QueryParamsResponse>
+      inflation: () => Promise<QueryInflationResponse>
+      annualProvisions: () => Promise<QueryAnnualProvisionsResponse>
+      ethIntegrationAddress: () => Promise<QueryEthIntegrationAddressResponse>
+      treasuryPool: () => Promise<QueryTreasuryPoolResponse>
+    }
+  }
+}
+
+export function setupMintExtension(base: QueryClient): MintExtension {
   const rpc = createRpc(base)
   // Use this service to get easy typed access to query methods
   // This cannot be used for proof verification
@@ -10,23 +28,20 @@ export function setupMintExtension(base: QueryClient) {
   return {
     mint: {
       unverified: {
-        params: async () => {
-          const { params } = await queryService.Params({})
-          return params
+        params: () => {
+          return queryService.Params({})
         },
-        inflation: async () => {
-          const { inflation } = await queryService.Inflation({})
-          return inflation
+        inflation: () => {
+          return queryService.Inflation({})
         },
-        annualProvisions: async () => {
-          const { annualProvisions } = await queryService.AnnualProvisions({})
-          return annualProvisions
+        annualProvisions: () => {
+          return queryService.AnnualProvisions({})
         },
-        ethIntegrationAddress: async () => {
-          return await queryService.EthIntegrationAddress({})
+        ethIntegrationAddress: () => {
+          return queryService.EthIntegrationAddress({})
         },
-        treasuryPool: async () => {
-          return await queryService.TreasuryPool({})
+        treasuryPool: () => {
+          return queryService.TreasuryPool({})
         },
       },
     },

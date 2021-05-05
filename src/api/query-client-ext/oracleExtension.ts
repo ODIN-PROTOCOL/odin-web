@@ -1,9 +1,67 @@
 import Long from 'long'
 import { QueryClient, createRpc } from '@cosmjs/stargate'
-import { QueryClientImpl } from '@/api/codec/oracle/v1/query'
+import {
+  QueryActiveValidatorsResponse,
+  QueryClientImpl,
+  QueryCountsResponse,
+  QueryDataProvidersPoolResponse,
+  QueryDataResponse,
+  QueryDataSourceResponse,
+  QueryDataSourcesResponse,
+  QueryOracleScriptResponse,
+  QueryOracleScriptsResponse,
+  QueryParamsResponse,
+  QueryReportersResponse,
+  QueryRequestReportsResponse,
+  QueryRequestResponse,
+  QueryRequestSearchResponse,
+  QueryRequestsResponse,
+  QueryValidatorResponse,
+} from '@/api/codec/oracle/v1/query'
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function setupOracleExtension(base: QueryClient) {
+export interface OracleExtension {
+  oracle: {
+    unverified: {
+      params: () => Promise<QueryParamsResponse>
+      counts: () => Promise<QueryCountsResponse>
+      data: (dataHash: string) => Promise<QueryDataResponse>
+      dataSource: (dataSourceId: Long.Long) => Promise<QueryDataSourceResponse>
+      dataSources: (
+        limit: Long.Long,
+        offset?: Long.Long
+      ) => Promise<QueryDataSourcesResponse>
+      oracleScript: (
+        oracleScriptId: Long.Long
+      ) => Promise<QueryOracleScriptResponse>
+      oracleScripts: (
+        limit: Long.Long,
+        offset?: Long.Long
+      ) => Promise<QueryOracleScriptsResponse>
+      request: (requestId: Long.Long) => Promise<QueryRequestResponse>
+      requests: (
+        limit: Long.Long,
+        offset?: Long.Long
+      ) => Promise<QueryRequestsResponse>
+      reports: (
+        requestId: Long.Long,
+        limit: Long.Long,
+        offset?: Long.Long
+      ) => Promise<QueryRequestReportsResponse>
+      validator: (validatorAddress: string) => Promise<QueryValidatorResponse>
+      reporters: (validatorAddress: string) => Promise<QueryReportersResponse>
+      activeValidators: () => Promise<QueryActiveValidatorsResponse>
+      requestSearch: (
+        oracleScriptId: Long.Long,
+        calldata: Uint8Array,
+        askCount: Long.Long,
+        minCount: Long.Long
+      ) => Promise<QueryRequestSearchResponse>
+      dataProvidersPool: () => Promise<QueryDataProvidersPoolResponse>
+    }
+  }
+}
+
+export function setupOracleExtension(base: QueryClient): OracleExtension {
   const rpc = createRpc(base)
   // Use this service to get easy typed access to query methods
   // This cannot be used for proof verification
@@ -11,25 +69,22 @@ export function setupOracleExtension(base: QueryClient) {
   return {
     oracle: {
       unverified: {
-        params: async () => {
-          const { params } = await queryService.Params({})
-          return params
+        params: () => {
+          return queryService.Params({})
         },
-        counts: async () => {
-          return await queryService.Counts({})
+        counts: () => {
+          return queryService.Counts({})
         },
-        data: async (dataHash: string) => {
-          const { data } = await queryService.Data({ dataHash: dataHash })
-          return data
+        data: (dataHash: string) => {
+          return queryService.Data({ dataHash: dataHash })
         },
-        dataSource: async (dataSourceId: Long.Long) => {
-          const { dataSource } = await queryService.DataSource({
+        dataSource: (dataSourceId: Long.Long) => {
+          return queryService.DataSource({
             dataSourceId: dataSourceId,
           })
-          return dataSource
         },
-        dataSources: async (limit: Long.Long, offset: Long.Long) => {
-          const { dataSources } = await queryService.DataSources({
+        dataSources: (limit: Long.Long, offset = new Long(0)) => {
+          return queryService.DataSources({
             pagination: {
               key: new Uint8Array(),
               countTotal: false,
@@ -38,16 +93,14 @@ export function setupOracleExtension(base: QueryClient) {
               offset: offset,
             },
           })
-          return dataSources
         },
-        oracleScript: async (oracleScriptId: Long.Long) => {
-          const { oracleScript } = await queryService.OracleScript({
+        oracleScript: (oracleScriptId: Long.Long) => {
+          return queryService.OracleScript({
             oracleScriptId: oracleScriptId,
           })
-          return oracleScript
         },
-        oracleScripts: async (limit: Long.Long, offset: Long.Long) => {
-          const { oracleScripts } = await queryService.OracleScripts({
+        oracleScripts: (limit: Long.Long, offset = new Long(0)) => {
+          return queryService.OracleScripts({
             pagination: {
               key: new Uint8Array(),
               countTotal: false,
@@ -56,13 +109,14 @@ export function setupOracleExtension(base: QueryClient) {
               offset: offset,
             },
           })
-          return oracleScripts
         },
-        request: async (requestId: Long.Long) => {
-          return await queryService.Request({ requestId: requestId })
+        request: (requestId: Long.Long) => {
+          return queryService.Request({
+            requestId: requestId,
+          })
         },
-        requests: async (limit: Long.Long, offset: Long.Long) => {
-          const { requests } = await queryService.Requests({
+        requests: (limit: Long.Long, offset = new Long(0)) => {
+          return queryService.Requests({
             pagination: {
               key: new Uint8Array(),
               countTotal: false,
@@ -71,14 +125,13 @@ export function setupOracleExtension(base: QueryClient) {
               offset: offset,
             },
           })
-          return requests
         },
-        reports: async (
+        reports: (
           requestId: Long.Long,
           limit: Long.Long,
-          offset: Long.Long
+          offset = new Long(0)
         ) => {
-          const { reports } = await queryService.RequestReports({
+          return queryService.RequestReports({
             requestId: requestId,
             pagination: {
               key: new Uint8Array(),
@@ -88,37 +141,35 @@ export function setupOracleExtension(base: QueryClient) {
               offset: offset,
             },
           })
-          return reports
         },
-        validator: async (validatorAddress: string) => {
-          return await queryService.Validator({
+        validator: (validatorAddress: string) => {
+          return queryService.Validator({
             validatorAddress: validatorAddress,
           })
         },
-        reporters: async (validatorAddress: string) => {
-          return await queryService.Reporters({
+        reporters: (validatorAddress: string) => {
+          return queryService.Reporters({
             validatorAddress: validatorAddress,
           })
         },
-        activeValidators: async () => {
-          return await queryService.ActiveValidators({})
+        activeValidators: () => {
+          return queryService.ActiveValidators({})
         },
-        requestSearch: async (
+        requestSearch: (
           oracleScriptId: Long.Long,
           calldata: Uint8Array,
           askCount: Long.Long,
           minCount: Long.Long
         ) => {
-          const { requestPacketData } = await queryService.RequestSearch({
+          return queryService.RequestSearch({
             oracleScriptId: oracleScriptId,
             calldata: calldata,
             askCount: askCount,
             minCount: minCount,
           })
-          return requestPacketData
         },
-        dataProvidersPool: async () => {
-          return await queryService.DataProvidersPool({})
+        dataProvidersPool: () => {
+          return queryService.DataProvidersPool({})
         },
       },
     },
