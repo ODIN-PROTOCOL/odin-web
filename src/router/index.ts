@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import Home from '../views/Home.vue'
 import { makeAuthorizedOnlyGuard, makeUnauthorizedOnlyGuard } from './guards'
+import Home from '../views/Home.vue'
 
 const authorizedOnlyGuard = makeAuthorizedOnlyGuard({ name: 'Auth' })
 const unauthorizedOnlyGuard = makeUnauthorizedOnlyGuard({ name: 'Auth' })
@@ -17,6 +17,15 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Auth',
     beforeEnter: unauthorizedOnlyGuard,
     component: () => import(/* webpackChunkName: "auth" */ '../views/Auth.vue'),
+  },
+  {
+    path: '/oracle-scripts',
+    name: 'OracleScripts',
+    beforeEnter: authorizedOnlyGuard,
+    component: () =>
+      import(
+        /* webpackChunkName: "oracle-scripts" */ '../views/OracleScripts.vue'
+      ),
   },
   {
     path: '/about',
