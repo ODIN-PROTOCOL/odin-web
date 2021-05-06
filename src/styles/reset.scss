@@ -21,7 +21,7 @@ button {
   border: none;
   padding: 0;
 
-  &:not(:disabled):not(:read-only) {
+  &:not(:disabled) {
     cursor: pointer;
   }
 }
