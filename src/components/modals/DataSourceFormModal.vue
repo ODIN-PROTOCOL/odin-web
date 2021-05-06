@@ -45,7 +45,7 @@
         </label>
 
         <button
-          class="data-source-form-modal__form-submit-btn"
+          class="data-source-form-modal__form-submit-btn app-btn"
           type="button"
           @click="submit()"
           :disabled="!isFormValid"

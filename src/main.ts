@@ -1,12 +1,16 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import { tryRestoreSession } from './composables/useAuthorization'
 import router from './router'
+import { tryRestoreSession } from './composables/useAuthorization'
+import { cropAddress } from './helpers/strings'
 
 async function main() {
   await tryRestoreSession()
 
-  createApp(App).use(router).mount('#app')
+  const app = createApp(App)
+  app.config.globalProperties.$cropAddress = cropAddress
+  app.use(router)
+  app.mount('#app')
 }
 
 main()

@@ -4,7 +4,7 @@
     <div class="modal-base__content">
       <div class="modal-base__content-head">
         <button
-          class="modal-base__close-btn"
+          class="modal-base__close-btn app-btn"
           type="button"
           @click="emitClose()"
         >

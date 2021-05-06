@@ -8,7 +8,9 @@
         <input class="auth__form-field-input" type="text" v-model="mnemonic" />
       </label>
 
-      <button class="auth__form-submit-btn" type="submit">Submit</button>
+      <button class="auth__form-submit-btn app-btn" type="submit">
+        Submit
+      </button>
     </form>
   </div>
 </template>

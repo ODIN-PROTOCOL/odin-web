@@ -5,7 +5,10 @@
     <router-link :to="{ name: 'DataSources' }">Data Sources</router-link> |
     <router-link :to="{ name: 'OracleScripts' }">Oracle Scripts</router-link>
     <template v-if="isLoggedIn">
-      | <button type="button" @click="logOutAndLeave()">LogOut</button>
+      |
+      <button class="app-btn" type="button" @click="logOutAndLeave()">
+        LogOut
+      </button>
     </template>
   </div>
 </template>

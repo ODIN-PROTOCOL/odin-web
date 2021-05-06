@@ -1,0 +1,14 @@
+.fs-cut {
+  @include ellipsis;
+}
+
+.mg-t8 {
+  margin-top: 0.8rem;
+}
+.mg-b8 {
+  margin-bottom: 0.8rem;
+}
+
+.fx-cont {
+  @include flex-container;
+}

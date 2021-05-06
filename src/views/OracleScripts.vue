@@ -1,7 +1,7 @@
 <template>
   <div class="oracle-scripts">
     <h3>Oracle scripts</h3>
-    <button type="button" @click="createOracleScript()">
+    <button class="app-btn" type="button" @click="createOracleScript()">
       Create oracle script
     </button>
     <div class="oracle-scripts__table">

@@ -36,12 +36,19 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+@import '~@/styles/reset.scss';
+@import '~@/styles/root.scss';
+@import '~@/styles/buttons.scss';
+@import '~@/styles/tables.scss';
+@import '~@/styles/shortcuts.scss';
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
+  color: var(--clr__text);
   max-width: 550px;
-  margin: auto;
+  margin: 0 auto;
+  @include flex-container;
 }
 </style>

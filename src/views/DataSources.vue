@@ -1,25 +1,41 @@
 <template>
   <div class="data-sources">
     <h3>Data sources</h3>
-    <button type="button" @click="createDataSource()">
+    <button class="app-btn mg-b8" type="button" @click="createDataSource()">
       Create data source
     </button>
-    <div class="data-sources__table">
-      <div class="data-sources__table-head">
-        <div class="data-sources__table-cell"><span>Column</span></div>
-        <div class="data-sources__table-cell"><span>Column</span></div>
-        <div class="data-sources__table-cell"><span>Column</span></div>
-        <div class="data-sources__table-cell"><span>Column</span></div>
+    <div class="app-table">
+      <div class="data-sources__table-head app-table__head">
+        <div class="app-table__cell">
+          <span class="app-table__cell-txt"> Name </span>
+        </div>
+        <div class="app-table__cell">
+          <span class="app-table__cell-txt"> Description </span>
+        </div>
+        <div class="app-table__cell">
+          <span class="app-table__cell-txt"> Owner </span>
+        </div>
       </div>
       <div
         v-for="item in dataSources"
         :key="item.id"
-        class="data-sources__table-row"
+        class="data-sources__table-row app-table__row"
       >
-        <div class="data-sources__table-cell"><span>Cell</span></div>
-        <div class="data-sources__table-cell"><span>Cell</span></div>
-        <div class="data-sources__table-cell"><span>Cell</span></div>
-        <div class="data-sources__table-cell"><span>Cell</span></div>
+        <div class="app-table__cell">
+          <span class="app-table__cell-txt" :title="item.name">
+            {{ item.name }}
+          </span>
+        </div>
+        <div class="app-table__cell">
+          <span class="app-table__cell-txt" :title="item.description">
+            {{ item.description }}
+          </span>
+        </div>
+        <div class="app-table__cell">
+          <span class="app-table__cell-txt" :title="item.owner">
+            {{ $cropAddress(item.owner) }}
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -40,8 +56,8 @@ export default defineComponent({
       const response = await queries.oracle.unverified.dataSources(
         new Long(100)
       )
+      console.log(response.dataSources)
       dataSources.value = response.dataSources
-      console.log(dataSources.value)
     }
     loadDataSources()
 
@@ -58,7 +74,6 @@ export default defineComponent({
 <style scoped>
 .data-sources__table-head,
 .data-sources__table-row {
-  display: grid;
-  grid: auto / auto-flow auto;
+  grid: auto / minmax(8rem, 14rem) minmax(0, 1fr) minmax(8rem, 14rem);
 }
 </style>

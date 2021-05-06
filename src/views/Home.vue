@@ -2,7 +2,9 @@
   <div class="home">
     <img alt="Vue logo" src="../assets/logo.png" />
     <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
-    <button type="button" @click="openDialog()">OPEN DIALOG</button>
+    <button class="app-btn" type="button" @click="openDialog()">
+      OPEN DIALOG
+    </button>
   </div>
 </template>
 

@@ -1,0 +1,18 @@
+@mixin flex-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex: 1;
+}
+
+@mixin ellipsis($display: null, $max-width: null) {
+  @if ($display) {
+    #{display}: $display;
+  }
+  @if ($max-width) {
+    #{max-width}: $max-width;
+  }
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

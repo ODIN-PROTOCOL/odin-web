@@ -1,0 +1,27 @@
+.app-table {
+  display: block;
+}
+
+.app-table__head,
+.app-table__row {
+  display: grid;
+  grid: auto / auto-flow minmax(0, auto);
+  gap: 0.8rem;
+
+  & + & {
+    margin-top: 0.8rem;
+  }
+}
+
+.app-table__cell {
+  display: flex;
+  min-width: 0;
+}
+
+.app-table__cell-txt {
+  @include ellipsis(inline-block);
+
+  &[title] {
+    cursor: help;
+  }
+}

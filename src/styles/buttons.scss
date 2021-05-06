@@ -1,0 +1,12 @@
+.app-btn {
+  display: inline-block;
+  border: 2px solid currentColor;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.4rem;
+  line-height: 1.25;
+
+  &:disabled {
+    border-color: $clr-disabled-line;
+    color: $clr-disabled-text;
+  }
+}
