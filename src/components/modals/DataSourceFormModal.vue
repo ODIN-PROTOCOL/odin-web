@@ -1,5 +1,5 @@
 <template>
-  <ModalBase class="data-source-form-modal" @close="onClose()">
+  <ModalBase class="oracle-script-form-modal" @close="onClose()">
     <template #main>
       <form
         class="app-form load-fog"
@@ -30,13 +30,12 @@
 
         <div class="app-form__field">
           <label class="app-form__field-lbl"> Executable (.py) </label>
-          <input
+          <InputFile
             class="app-form__field-input"
-            type="file"
             name="executable"
-            @change="parseFile($event)"
             accept=".py"
             :disabled="isLoading"
+            v-model="form.executable"
           />
           <p v-if="formErrors.executable" class="app-form__field-err">
             {{ formErrors.executable }}
@@ -67,12 +66,13 @@ import { computed, defineComponent, ref } from 'vue'
 import { injectDialogHandler } from './modals-helper'
 import Long from 'long'
 import ModalBase from './ModalBase.vue'
-import { getEventFile, readFile } from '@/helpers/files'
+import { readFile } from '@/helpers/files'
 import { loremIpsum } from 'lorem-ipsum'
+import InputFile from '@/components/inputs/InputFile.vue'
 
 const DataSourceFormModal = defineComponent({
   props: { dataSourceId: Long },
-  components: { ModalBase },
+  components: { ModalBase, InputFile },
   setup() {
     const form = ref({
       name: 'DataSource ' + loremIpsum({ units: 'words', count: 3 }),
@@ -89,13 +89,6 @@ const DataSourceFormModal = defineComponent({
     })
 
     const onSubmit = injectDialogHandler('onSubmit')
-
-    const parseFile = (event: Event | DragEvent) => {
-      const file = getEventFile(event)
-      if (!file) return
-
-      form.value.executable = file
-    }
 
     const submit = async () => {
       const [account] = getWalletAccounts()
@@ -141,7 +134,6 @@ const DataSourceFormModal = defineComponent({
       isFormValid,
       isLoading,
       submit,
-      parseFile,
       onClose: injectDialogHandler('onClose'),
     }
   },
