@@ -48,7 +48,8 @@ export default defineComponent({
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: var(--clr__text);
-  max-width: 550px;
+  width: 100%;
+  max-width: 55rem;
   margin: 0 auto;
   @include flex-container;
 }
