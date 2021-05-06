@@ -4,34 +4,50 @@ export function readFile(
 ): Promise<ArrayBuffer | null>
 export function readFile(
   file: File,
+  readAs: 'uint8Array'
+): Promise<Uint8Array | null>
+export function readFile(
+  file: File,
   readAs: 'dataUrl' | 'binaryString' | 'text'
 ): Promise<string | null>
 export function readFile(
   file: File,
-  readAs: 'dataUrl' | 'binaryString' | 'arrayBuffer' | 'text'
-): Promise<ArrayBuffer | string | null> {
-  return new Promise<ArrayBuffer | string | null>((resolve, reject) => {
-    const reader = new FileReader()
+  readAs: 'arrayBuffer' | 'uint8Array' | 'dataUrl' | 'binaryString' | 'text'
+): Promise<ArrayBuffer | Uint8Array | string | null> {
+  return new Promise<ArrayBuffer | Uint8Array | string | null>(
+    (resolve, reject) => {
+      const reader = new FileReader()
 
-    reader.onload = (event) => {
-      resolve((event.target as FileReader).result)
-    }
+      reader.onload = (event) => {
+        const fr: FileReader | null = event.target
+        if (!fr || !fr.result) {
+          resolve(null)
+        } else {
+          const res =
+            readAs === 'uint8Array'
+              ? new Uint8Array(<ArrayBuffer>fr.result)
+              : fr.result
+          resolve(res)
+        }
+      }
 
-    reader.onerror = (error) => {
-      reject(error)
-    }
+      reader.onerror = (error) => {
+        reject(error)
+      }
 
-    switch (readAs) {
-      case 'dataUrl':
-        return reader.readAsDataURL(file)
-      case 'binaryString':
-        return reader.readAsBinaryString(file)
-      case 'arrayBuffer':
-        return reader.readAsArrayBuffer(file)
-      case 'text':
-        return reader.readAsText(file)
+      switch (readAs) {
+        case 'uint8Array':
+        case 'arrayBuffer':
+          return reader.readAsArrayBuffer(file)
+        case 'dataUrl':
+          return reader.readAsDataURL(file)
+        case 'binaryString':
+          return reader.readAsBinaryString(file)
+        case 'text':
+          return reader.readAsText(file)
+      }
     }
-  })
+  )
 }
 
 export function getEventFile(event: Event | DragEvent | null): File | null {

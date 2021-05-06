@@ -1,12 +1,12 @@
 import { Component, createApp } from 'vue'
 
 export type DialogProps = Record<string, unknown>
-export type DialogCallback<T> = (dialog: {
-  payload?: T | null
-  kill: DialogKillFunction<T>
+export type DialogCallback = (dialog: {
+  payload?: unknown | null
+  kill: DialogKillFunction
 }) => void
-export type DialogKillFunction<T = null> = (result?: T | null) => void
-export type DialogEventHandler<T = null> = (payload?: T | null) => void
+export type DialogKillFunction = (result?: unknown | null) => void
+export type DialogEventHandler = (payload?: unknown | null) => void
 
 let _dialogContainer: HTMLElement
 
@@ -14,19 +14,19 @@ export function initDialogs(container: HTMLElement): void {
   _dialogContainer = container
 }
 
-export function makeDialog<R = null>(
+export function makeDialog(
   modalComponent: Component,
-  callbacks: Record<string, DialogCallback<R>> = {},
+  callbacks: Record<string, DialogCallback | undefined> = {},
   { props }: { props?: DialogProps } = {}
-): Promise<R | null> {
+): Promise<unknown | null> {
   if (!_dialogContainer) {
     throw new ReferenceError('Dialogs not initialized!')
   }
 
-  return new Promise<R | null>((resolve) => {
+  return new Promise<unknown | null>((resolve) => {
     const dialog = createApp(modalComponent, props)
 
-    const kill: DialogKillFunction<R> = (result?: R | null) => {
+    const kill: DialogKillFunction = (result?: unknown | null) => {
       resolve(result ?? null)
       dialog.unmount()
     }
@@ -35,7 +35,8 @@ export function makeDialog<R = null>(
       callbacks.onClose = (d) => d.kill(null)
     }
     for (const [cbName, cb] of Object.entries(callbacks)) {
-      const handler: DialogEventHandler<R> = (payload) => cb({ payload, kill })
+      if (!cbName || !cb) continue
+      const handler: DialogEventHandler = (payload) => cb({ payload, kill })
       dialog.provide(cbName, handler)
     }
 

@@ -26,8 +26,8 @@ const TestModal = defineComponent({
 })
 
 export default TestModal
-export function showTestDialog(userName: string): Promise<null> {
-  return makeDialog<null>(TestModal, {}, { props: { userName } })
+export function showTestDialog(userName: string): Promise<unknown | null> {
+  return makeDialog(TestModal, {}, { props: { userName } })
 }
 </script>
 

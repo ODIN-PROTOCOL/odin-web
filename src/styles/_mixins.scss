@@ -16,3 +16,24 @@
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
+@mixin transition($props...) {
+  $dur: 0.2s;
+  $val: '';
+  $len: length($props);
+  @for $i from 1 through $len {
+    $val: $val + nth($props, $i) + ' ' + $dur;
+    @if ($i < $len) {
+      $val: $val + ', ';
+    }
+  }
+  transition: unquote($val);
+}
+
+@mixin absolute-cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}

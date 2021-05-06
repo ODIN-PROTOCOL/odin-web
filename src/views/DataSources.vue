@@ -43,7 +43,7 @@
 
 <script lang="ts">
 import { getQueryClient } from '@/api/client/queryClient'
-import { showCreateDataSourceFormDialog } from '@/components/modals/DataSourceFormModal.vue'
+import { showDataSourceFormDialog } from '@/components/modals/DataSourceFormModal.vue'
 import Long from 'long'
 import { defineComponent, ref } from 'vue'
 
@@ -56,13 +56,18 @@ export default defineComponent({
       const response = await queries.oracle.unverified.dataSources(
         new Long(100)
       )
-      console.log(response.dataSources)
+      console.log(response, response.dataSources)
       dataSources.value = response.dataSources
     }
     loadDataSources()
 
     const createDataSource = async () => {
-      const res = await showCreateDataSourceFormDialog()
+      const res = await showDataSourceFormDialog({
+        onSubmit: (d) => {
+          d.kill()
+          loadDataSources()
+        },
+      })
       console.log(res)
     }
 

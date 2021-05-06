@@ -3,10 +3,10 @@
     <h3>Auth</h3>
 
     <form class="auth__form" @submit.prevent="submit()">
-      <label class="auth__form-field">
-        <span class="auth__form-field-lbl"> Mnemonic </span>
+      <div class="auth__form-field">
+        <label class="auth__form-field-lbl"> Mnemonic </label>
         <input class="auth__form-field-input" type="text" v-model="mnemonic" />
-      </label>
+      </div>
 
       <button class="auth__form-submit-btn app-btn" type="submit">
         Submit

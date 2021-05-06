@@ -17,6 +17,7 @@
     "@cosmjs/tendermint-rpc": "^0.24.1",
     "core-js": "^3.6.5",
     "long": "^4.0.0",
+    "lorem-ipsum": "^2.0.3",
     "protobufjs": "^6.10.2",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0"

@@ -41,6 +41,7 @@ export default defineComponent({
 @import '~@/styles/buttons.scss';
 @import '~@/styles/tables.scss';
 @import '~@/styles/shortcuts.scss';
+@import '~@/styles/load-fog.scss';
 
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

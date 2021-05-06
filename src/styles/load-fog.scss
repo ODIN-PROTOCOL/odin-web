@@ -1,0 +1,23 @@
+.load-fog {
+  position: relative;
+
+  &:after {
+    @include absolute-cover;
+    @include transition(visibility, background);
+    transition-duration: 0.3s;
+    transition-delay: 0s;
+    content: '';
+    display: block;
+    visibility: hidden;
+    background: none;
+  }
+
+  &_show {
+    &:after {
+      transition-duration: 0s;
+      transition-delay: 0.5s;
+      visibility: visible;
+      background: var(--load-fog__bg, rgba($clr-white, 0.75));
+    }
+  }
+}

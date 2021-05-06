@@ -1,48 +1,54 @@
 <template>
   <ModalBase class="data-source-form-modal" @close="onClose()">
     <template #main>
-      <form class="data-source-form-modal__form" @submit.prevent>
-        <label class="data-source-form-modal__form-field">
-          <span class="data-source-form-modal__form-field-lbl"> Name </span>
+      <form
+        class="data-source-form-modal__form load-fog"
+        :class="{ 'load-fog_show': isLoading }"
+        @submit.prevent
+      >
+        <div class="data-source-form-modal__form-field">
+          <label class="data-source-form-modal__form-field-lbl"> Name </label>
           <input
             class="data-source-form-modal__form-field-input"
             name="name"
             type="text"
             v-model="form.name"
+            :disabled="isLoading"
           />
-        </label>
+        </div>
 
-        <label class="data-source-form-modal__form-field">
-          <span class="data-source-form-modal__form-field-lbl">
+        <div class="data-source-form-modal__form-field">
+          <label class="data-source-form-modal__form-field-lbl">
             Description
-          </span>
+          </label>
           <textarea
             class="data-source-form-modal__form-field-input"
             name="description"
-            cols="30"
-            rows="10"
+            rows="5"
             v-model="form.description"
+            :disabled="isLoading"
           ></textarea>
-        </label>
+        </div>
 
-        <label class="data-source-form-modal__form-field">
-          <span class="data-source-form-modal__form-field-lbl">
+        <div class="data-source-form-modal__form-field">
+          <label class="data-source-form-modal__form-field-lbl">
             Executable (.py)
-          </span>
+          </label>
           <input
             class="data-source-form-modal__form-field-input"
             type="file"
             name="executable"
             @change="parseFile($event)"
             accept=".py"
+            :disabled="isLoading"
           />
           <p
-            v-if="executableParseError"
+            v-if="formErrors.executable"
             class="data-source-form-modal__form-field-error"
           >
-            {{ executableParseError }}
+            {{ formErrors.executable }}
           </p>
-        </label>
+        </div>
 
         <button
           class="data-source-form-modal__form-submit-btn app-btn"
@@ -60,29 +66,34 @@
 <script lang="ts">
 import { createDataSource } from '@/api/callers/createDataSource'
 import { getWalletAccounts } from '@/api/client/wallet'
-import { makeDialog } from '@/helpers/dialogs'
+import { DialogCallback, makeDialog } from '@/helpers/dialogs'
 import { coins } from '@cosmjs/launchpad'
 import { computed, defineComponent, ref } from 'vue'
 import { injectDialogHandler } from './modals-helper'
 import Long from 'long'
 import ModalBase from './ModalBase.vue'
 import { getEventFile, readFile } from '@/helpers/files'
+import { loremIpsum } from 'lorem-ipsum'
 
 const DataSourceFormModal = defineComponent({
   props: { dataSourceId: Long },
   components: { ModalBase },
   setup() {
     const form = ref({
-      name: 'Test DataSource',
-      description:
-        'Proident elit eiusmod incididunt reprehenderit elit nostrud nulla et veniam Lorem adipisicing esse. Deserunt aute tempor id incididunt magna enim eu esse. Ut voluptate ad occaecat cillum voluptate adipisicing est cillum. Officia cillum id id do Lorem laboris anim tempor. Exercitation mollit laboris anim quis elit consectetur cillum. Veniam culpa id aliqua pariatur deserunt ex Lorem et fugiat anim enim et duis.',
+      name: 'DataSource ' + loremIpsum({ units: 'words', count: 3 }),
+      description: loremIpsum({ units: 'sentences', count: 3 }),
       executable: null as File | null,
     })
+    const formErrors = ref({
+      executable: null as string | null,
+    })
+    const isLoading = ref(false)
     const isFormValid = computed(() => {
       const f = form.value
       return f.name.length && f.description.length && f.executable !== null
     })
-    const executableParseError = ref()
+
+    const onSubmit = injectDialogHandler('onSubmit')
 
     const parseFile = (event: Event | DragEvent) => {
       const file = getEventFile(event)
@@ -96,6 +107,7 @@ const DataSourceFormModal = defineComponent({
       const executableParsed = await _parseExecutable(form.value.executable)
       if (!executableParsed) return
 
+      isLoading.value = true
       try {
         const response = await createDataSource({
           name: form.value.name,
@@ -106,27 +118,33 @@ const DataSourceFormModal = defineComponent({
           sender: account.address,
         })
 
-        console.log('OK!', response.data)
+        onSubmit()
+        console.log('OK!', response)
       } catch (error) {
-        console.log('NOT OK!', error.txCode)
+        console.log('NOT OK!', error)
       }
+      isLoading.value = false
     }
 
     const _parseExecutable = async (
       file: File | null
     ): Promise<Uint8Array | null> => {
-      const parsed = file ? await readFile(file as File, 'arrayBuffer') : null
+      formErrors.value.executable = null
+
+      const parsed = file ? await readFile(file as File, 'uint8Array') : null
       if (!parsed) {
-        executableParseError.value = 'Cannot parse the file'
+        formErrors.value.executable = 'Cannot parse the file'
         return null
       }
-      return new Uint8Array(parsed)
+
+      return parsed
     }
 
     return {
       form,
+      formErrors,
       isFormValid,
-      executableParseError,
+      isLoading,
       submit,
       parseFile,
       onClose: injectDialogHandler('onClose'),
@@ -135,10 +153,14 @@ const DataSourceFormModal = defineComponent({
 })
 
 export default DataSourceFormModal
-export function showCreateDataSourceFormDialog(
-  dataSourceId?: Long.Long
-): Promise<null> {
-  return makeDialog<null>(DataSourceFormModal, {}, { props: { dataSourceId } })
+export function showDataSourceFormDialog(
+  callbacks: {
+    onSubmit?: DialogCallback
+    onClose?: DialogCallback
+  },
+  props?: { dataSourceId?: Long.Long }
+): Promise<unknown | null> {
+  return makeDialog(DataSourceFormModal, callbacks, { props })
 }
 </script>
 
