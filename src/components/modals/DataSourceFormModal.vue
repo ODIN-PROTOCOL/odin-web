@@ -12,7 +12,7 @@
             class="app-form__field-input"
             name="name"
             type="text"
-            v-model="form.name"
+            v-model="fields.name"
             :disabled="isLoading"
           />
         </div>
@@ -23,7 +23,7 @@
             class="app-form__field-input"
             name="description"
             rows="5"
-            v-model="form.description"
+            v-model="fields.description"
             :disabled="isLoading"
           ></textarea>
         </div>
@@ -35,7 +35,7 @@
             name="executable"
             accept=".py"
             :disabled="isLoading"
-            v-model="form.executable"
+            v-model="fields.executable"
           />
           <p v-if="formErrors.executable" class="app-form__field-err">
             {{ formErrors.executable }}
@@ -69,45 +69,59 @@ import ModalBase from './ModalBase.vue'
 import { readFile } from '@/helpers/files'
 import { loremIpsum } from 'lorem-ipsum'
 import InputFile from '@/components/inputs/InputFile.vue'
+import { useForm, validators } from '@/composables/useForm'
 
 const DataSourceFormModal = defineComponent({
   props: { dataSourceId: Long },
   components: { ModalBase, InputFile },
   setup() {
-    const form = ref({
-      name: 'DataSource ' + loremIpsum({ units: 'words', count: 3 }),
-      description: loremIpsum({ units: 'sentences', count: 3 }),
-      executable: null as File | null,
+    const { fields, errors, isValid } = useForm({
+      name: ['Data source', validators.required],
+      description: ['Hello', validators.required],
+      executable: [null as File | null, validators.required],
     })
-    const formErrors = ref({
-      executable: null as string | null,
-    })
+
+    // const form = ref({
+    //   name: 'DataSource ' + loremIpsum({ units: 'words', count: 3 }),
+    //   description: loremIpsum({ units: 'sentences', count: 3 }),
+    //   executable: null as File | null,
+    // })
+    // const formErrors = ref({
+    //   executable: null as string | null,
+    // })
     const isLoading = ref(false)
-    const isFormValid = computed(() => {
-      const f = form.value
-      return f.name.length && f.description.length && f.executable !== null
-    })
+    // const isFormValid = computed(() => {
+    //   const f = form.value
+    //   return f.name.length && f.description.length && f.executable !== null
+    // })
 
     const onSubmit = injectDialogHandler('onSubmit')
 
     const submit = async () => {
       const [account] = getWalletAccounts()
-      const executableParsed = await _parseExecutable(form.value.executable)
+      const executableParsed = await _parseExecutable(
+        fields.value.executable as File | null
+      )
       if (!executableParsed) return
 
       isLoading.value = true
       try {
-        const response = await createDataSource({
-          name: form.value.name,
-          description: form.value.description,
+        console.log({
+          name: fields.value.name,
+          description: fields.value.description,
           executable: executableParsed,
-          fee: coins(1, 'loki'),
-          owner: account.address,
-          sender: account.address,
         })
+        // const response = await createDataSource({
+        //   name: fields.value.name,
+        //   description: fields.value.description,
+        //   executable: executableParsed,
+        //   fee: coins(1, 'loki'),
+        //   owner: account.address,
+        //   sender: account.address,
+        // })
 
         onSubmit()
-        console.log('OK!', response)
+        // console.log('OK!', response)
       } catch (error) {
         console.log('NOT OK!', error)
       }
@@ -117,11 +131,11 @@ const DataSourceFormModal = defineComponent({
     const _parseExecutable = async (
       file: File | null
     ): Promise<Uint8Array | null> => {
-      formErrors.value.executable = null
+      errors.value.executable = null
 
       const parsed = file ? await readFile(file as File, 'uint8Array') : null
       if (!parsed) {
-        formErrors.value.executable = 'Cannot parse the file'
+        errors.value.executable = 'Cannot parse the file'
         return null
       }
 
@@ -129,9 +143,9 @@ const DataSourceFormModal = defineComponent({
     }
 
     return {
-      form,
-      formErrors,
-      isFormValid,
+      fields,
+      errors,
+      isValid,
       isLoading,
       submit,
       onClose: injectDialogHandler('onClose'),
