@@ -42,6 +42,7 @@ export default defineComponent({
 @import '~@/styles/tables.scss';
 @import '~@/styles/shortcuts.scss';
 @import '~@/styles/load-fog.scss';
+@import '~@/styles/forms.scss';
 
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

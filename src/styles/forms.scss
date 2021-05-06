@@ -1,0 +1,35 @@
+.app-form {
+  display: block;
+}
+
+.app-form__field {
+  display: block;
+
+  & + & {
+    margin-top: 1.2rem;
+  }
+
+  & + .app-form__footer {
+    margin-top: 1.6rem;
+  }
+}
+
+.app-form__field-lbl {
+  display: block;
+  margin-bottom: 0.8rem;
+}
+
+.app-form__field-input {
+  display: block;
+  width: 100%;
+}
+
+.app-form__field-err {
+  display: block;
+  color: $clr-danger;
+  margin-top: 0.8rem;
+}
+
+.app-form__footer {
+  display: block;
+}

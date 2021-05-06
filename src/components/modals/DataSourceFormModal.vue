@@ -2,14 +2,14 @@
   <ModalBase class="data-source-form-modal" @close="onClose()">
     <template #main>
       <form
-        class="data-source-form-modal__form load-fog"
+        class="app-form load-fog"
         :class="{ 'load-fog_show': isLoading }"
         @submit.prevent
       >
-        <div class="data-source-form-modal__form-field">
-          <label class="data-source-form-modal__form-field-lbl"> Name </label>
+        <div class="app-form__field">
+          <label class="app-form__field-lbl"> Name </label>
           <input
-            class="data-source-form-modal__form-field-input"
+            class="app-form__field-input"
             name="name"
             type="text"
             v-model="form.name"
@@ -17,12 +17,10 @@
           />
         </div>
 
-        <div class="data-source-form-modal__form-field">
-          <label class="data-source-form-modal__form-field-lbl">
-            Description
-          </label>
+        <div class="app-form__field">
+          <label class="app-form__field-lbl"> Description </label>
           <textarea
-            class="data-source-form-modal__form-field-input"
+            class="app-form__field-input"
             name="description"
             rows="5"
             v-model="form.description"
@@ -30,34 +28,31 @@
           ></textarea>
         </div>
 
-        <div class="data-source-form-modal__form-field">
-          <label class="data-source-form-modal__form-field-lbl">
-            Executable (.py)
-          </label>
+        <div class="app-form__field">
+          <label class="app-form__field-lbl"> Executable (.py) </label>
           <input
-            class="data-source-form-modal__form-field-input"
+            class="app-form__field-input"
             type="file"
             name="executable"
             @change="parseFile($event)"
             accept=".py"
             :disabled="isLoading"
           />
-          <p
-            v-if="formErrors.executable"
-            class="data-source-form-modal__form-field-error"
-          >
+          <p v-if="formErrors.executable" class="app-form__field-err">
             {{ formErrors.executable }}
           </p>
         </div>
 
-        <button
-          class="data-source-form-modal__form-submit-btn app-btn"
-          type="button"
-          @click="submit()"
-          :disabled="!isFormValid"
-        >
-          Create
-        </button>
+        <div class="app-form__footer">
+          <button
+            class="app-btn"
+            type="button"
+            @click="submit()"
+            :disabled="!isFormValid"
+          >
+            Create
+          </button>
+        </div>
       </form>
     </template>
   </ModalBase>
@@ -164,18 +159,4 @@ export function showDataSourceFormDialog(
 }
 </script>
 
-<style scoped lang="scss">
-.data-source-form-modal__form-field {
-  display: grid;
-  grid: auto-flow auto / auto;
-  gap: 8px;
-
-  & + & {
-    margin-top: 12px;
-  }
-}
-
-.data-source-form-modal__form-submit-btn {
-  margin-top: 16px;
-}
-</style>
+<style scoped lang="scss"></style>
