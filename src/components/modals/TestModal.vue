@@ -13,7 +13,7 @@
 import { makeDialog } from '@/helpers/dialogs'
 import { defineComponent } from 'vue'
 import ModalBase from './ModalBase.vue'
-import { injectDialogHandler } from './modals-helper'
+import { injectDialogHandler } from './modal-helpers'
 
 const TestModal = defineComponent({
   props: { userName: String },
