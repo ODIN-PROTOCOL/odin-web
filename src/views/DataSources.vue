@@ -68,7 +68,7 @@ export default defineComponent({
           loadDataSources()
         },
       })
-      console.log(res)
+      console.log('Dialog Result', res)
     }
 
     return { dataSources, createDataSource }
