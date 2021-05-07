@@ -68,58 +68,53 @@ import { createDataSource } from '@/api/callers/createDataSource'
 import { getWalletAccounts } from '@/api/client/wallet'
 import { DialogCallback, makeDialog } from '@/helpers/dialogs'
 import { coins } from '@cosmjs/launchpad'
-import { computed, defineComponent, ref } from 'vue'
+import { defineComponent, ref } from 'vue'
 import { injectDialogHandler } from './modal-helpers'
 import Long from 'long'
 import ModalBase from './ModalBase.vue'
 import { readFile } from '@/helpers/files'
 import { loremIpsum } from 'lorem-ipsum'
 import InputFile from '@/components/inputs/InputFile.vue'
-import { useField, useForm, validators } from '@/composables/useForm'
+import { useForm, validators } from '@/composables/useForm'
 
 const DataSourceFormModal = defineComponent({
   props: { dataSourceId: Long },
   components: { ModalBase, InputFile },
   setup() {
-    const fdName = useField(
-      'DataSource ' + loremIpsum({ units: 'words', count: 3 }),
-      [validators.required]
-    )
-    const fdDescription = useField(
-      loremIpsum({ units: 'sentences', count: 3 }),
-      [validators.required]
-    )
-    const fdExecutable = useField(null as File | null, [validators.required])
-    const form = useForm(fdName, fdDescription, fdExecutable)
-
+    const form = useForm({
+      name: [
+        'DataSource ' + loremIpsum({ units: 'words', count: 3 }),
+        validators.required,
+      ],
+      description: [
+        loremIpsum({ units: 'sentences', count: 3 }),
+        validators.required,
+      ],
+      executable: [null as File | null, validators.required],
+    })
     const isLoading = ref(false)
     const onSubmit = injectDialogHandler('onSubmit')
 
     const submit = async () => {
       const [account] = getWalletAccounts()
       const executableParsed = await _parseExecutable(
-        fdExecutable.current.value as File | null
+        form.executable.current.value as File | null
       )
       if (!executableParsed) return
 
       isLoading.value = true
       try {
-        console.log({
-          name: fdName.current.value,
-          description: fdDescription.current.value,
+        const response = await createDataSource({
+          name: form.name.current.value,
+          description: form.description.current.value,
           executable: executableParsed,
+          fee: coins(1, 'loki'),
+          owner: account.address,
+          sender: account.address,
         })
-        // const response = await createDataSource({
-        //   name: value.name,
-        //   description: value.description,
-        //   executable: executableParsed,
-        //   fee: coins(1, 'loki'),
-        //   owner: account.address,
-        //   sender: account.address,
-        // })
 
         onSubmit()
-        // console.log('OK!', response)
+        console.log('OK!', response)
       } catch (error) {
         console.log('NOT OK!', error)
       }
@@ -129,24 +124,24 @@ const DataSourceFormModal = defineComponent({
     const _parseExecutable = async (
       file: File | null
     ): Promise<Uint8Array | null> => {
-      fdExecutable.error.value = null
+      form.executable.error.value = null
 
       const parsed = file ? await readFile(file as File, 'uint8Array') : null
-      // if (!parsed) {
-      fdExecutable.error.value = 'Cannot parse the file'
-      return null
-      // }
+      if (!parsed) {
+        form.executable.error.value = 'Cannot parse the file'
+        return null
+      }
 
-      // return parsed
+      return parsed
     }
 
     return {
-      name: fdName.current,
-      nameError: fdName.errorIfDirty,
-      description: fdDescription.current,
-      descriptionError: fdDescription.errorIfDirty,
-      executable: fdExecutable.current,
-      executableError: fdExecutable.errorIfDirty,
+      name: form.name.current,
+      nameError: form.name.errorIfDirty,
+      description: form.description.current,
+      descriptionError: form.description.errorIfDirty,
+      executable: form.executable.current,
+      executableError: form.executable.errorIfDirty,
       isValid: form.isValid,
       isLoading,
       submit,
