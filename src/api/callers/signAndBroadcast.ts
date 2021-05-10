@@ -4,7 +4,7 @@ import { BroadcastTxFailure, BroadcastTxResponse } from '@cosmjs/stargate'
 import { getSigningStargateClient } from '@/api/client/signingStargateClient'
 import { getWalletAccounts } from '@/api/client/wallet'
 
-class BroadcastError extends Error {
+export class BroadcastError extends Error {
   txCode: number
   txHash: string
   txRawLog?: string
@@ -34,7 +34,7 @@ export async function signAndBroadcast(
 
   const res = await stargate.signAndBroadcast(account.address, messages, fee)
 
-  if ('code' in res && res.code !== 0) {
+  if (!res || ('code' in res && res.code !== 0)) {
     throw new BroadcastError(res)
   }
 

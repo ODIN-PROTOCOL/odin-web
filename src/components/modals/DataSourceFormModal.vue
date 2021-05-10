@@ -1,5 +1,5 @@
 <template>
-  <ModalBase class="oracle-script-form-modal" @close="onClose()">
+  <ModalBase class="data-source-form-modal" @close="onClose()">
     <template #main>
       <form
         class="app-form load-fog"
@@ -64,18 +64,19 @@
 </template>
 
 <script lang="ts">
+import { defineComponent, ref } from 'vue'
+import Long from 'long'
+import { loremIpsum } from 'lorem-ipsum'
+import { coins } from '@cosmjs/launchpad'
 import { createDataSource } from '@/api/callers/createDataSource'
 import { getWalletAccounts } from '@/api/client/wallet'
 import { DialogCallback, makeDialog } from '@/helpers/dialogs'
-import { coins } from '@cosmjs/launchpad'
-import { defineComponent, ref } from 'vue'
-import { injectDialogHandler } from './modal-helpers'
-import Long from 'long'
-import ModalBase from './ModalBase.vue'
 import { readFile } from '@/helpers/files'
-import { loremIpsum } from 'lorem-ipsum'
-import InputFile from '@/components/inputs/InputFile.vue'
+import { showError } from '@/helpers/errors'
+import { injectDialogHandler } from './modal-helpers'
 import { useForm, validators } from '@/composables/useForm'
+import ModalBase from './ModalBase.vue'
+import InputFile from '@/components/inputs/InputFile.vue'
 
 const DataSourceFormModal = defineComponent({
   props: { dataSourceId: Long },
@@ -102,7 +103,7 @@ const DataSourceFormModal = defineComponent({
 
       isLoading.value = true
       try {
-        const response = await createDataSource({
+        await createDataSource({
           name: form.name.current.value,
           description: form.description.current.value,
           executable: executableParsed,
@@ -112,9 +113,8 @@ const DataSourceFormModal = defineComponent({
         })
 
         onSubmit()
-        console.log('OK!', response)
       } catch (error) {
-        console.log('NOT OK!', error)
+        showError(error)
       }
       isLoading.value = false
     }
