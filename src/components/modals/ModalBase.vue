@@ -3,6 +3,8 @@
     <div class="modal-base__backdrop" @click="emitClose()"></div>
     <div class="modal-base__content">
       <div class="modal-base__content-head">
+        <slot name="title"></slot>
+
         <button
           class="modal-base__close-btn app-btn"
           type="button"

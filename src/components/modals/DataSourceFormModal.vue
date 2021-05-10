@@ -1,5 +1,9 @@
 <template>
   <ModalBase class="data-source-form-modal" @close="onClose()">
+    <template #title>
+      <h3>Create data source</h3>
+    </template>
+
     <template #main>
       <form
         class="app-form load-fog"
