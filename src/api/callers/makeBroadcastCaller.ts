@@ -1,5 +1,6 @@
 import { GeneratedType } from '@cosmjs/proto-signing'
 import { BroadcastTxResponse } from '@cosmjs/stargate'
+import { getSigningStargateRegistry } from '../client/signingStargateClient'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -22,6 +23,7 @@ export function makeBroadcastCaller<T extends BroadcastCallerFn>(
   type: GeneratedType,
   caller: T
 ): BroadcastCallerFnTyped<T> {
+  getSigningStargateRegistry().register(typeUrl, type)
   const callerTyped: BroadcastCallerFnTyped<T> = Object.assign(
     caller.bind(undefined, typeUrl),
     { typeUrl, type }
