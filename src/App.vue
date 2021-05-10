@@ -4,6 +4,7 @@
     <router-view />
   </template>
   <div class="dialogs-container" ref="dialogsContainerRef"></div>
+  <notifications width="100%" />
 </template>
 
 <script lang="ts">
@@ -43,6 +44,7 @@ export default defineComponent({
 @import '~@/styles/shortcuts.scss';
 @import '~@/styles/load-fog.scss';
 @import '~@/styles/forms.scss';
+@import '~@/styles/vue-notification.scss';
 
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

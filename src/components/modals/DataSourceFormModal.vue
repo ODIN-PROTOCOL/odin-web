@@ -74,6 +74,7 @@ import { DialogCallback, makeDialog } from '@/helpers/dialogs'
 import { readFile } from '@/helpers/files'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
+import { notifySuccess } from '@/helpers/notifications'
 import { injectDialogHandler } from './modal-helpers'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
@@ -114,6 +115,7 @@ const DataSourceFormModal = defineComponent({
         })
 
         onSubmit()
+        notifySuccess('Data source created')
       } catch (error) {
         handleError(error)
       }
