@@ -40,8 +40,8 @@
             class="app-form__field-input"
             name="executable"
             accept=".py"
-            :disabled="isLoading"
             v-model="executable"
+            :disabled="isLoading"
           />
           <p v-if="executableError" class="app-form__field-err">
             {{ executableError }}
@@ -97,9 +97,7 @@ const DataSourceFormModal = defineComponent({
 
     const submit = async () => {
       const [account] = getWalletAccounts()
-      const executableParsed = await _parseExecutable(
-        form.executable.current.value as File | null
-      )
+      const executableParsed = await _parseExecutable()
       if (!executableParsed) return
 
       isLoading.value = true
@@ -121,12 +119,11 @@ const DataSourceFormModal = defineComponent({
       isLoading.value = false
     }
 
-    const _parseExecutable = async (
-      file: File | null
-    ): Promise<Uint8Array | null> => {
+    const _parseExecutable = async (): Promise<Uint8Array | null> => {
       form.executable.error.value = null
 
-      const parsed = file ? await readFile(file as File, 'uint8Array') : null
+      const file = form.executable.current.value as File | null
+      const parsed = file ? await readFile(file, 'uint8Array') : null
       if (!parsed) {
         form.executable.error.value = 'Cannot parse the file'
         return null
