@@ -23,6 +23,10 @@ import { defineComponent } from 'vue'
 export default defineComponent<{ testMsg: string }>({
   emits: ['close'],
   setup(_, { emit }) {
+    if (document.activeElement) {
+      const activeEl = document.activeElement as HTMLElement
+      activeEl.blur()
+    }
     return { emitClose: () => emit('close') }
   },
 })
