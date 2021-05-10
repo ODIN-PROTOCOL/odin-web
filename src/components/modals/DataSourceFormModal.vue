@@ -73,6 +73,7 @@ import { getWalletAccounts } from '@/api/client/wallet'
 import { DialogCallback, makeDialog } from '@/helpers/dialogs'
 import { readFile } from '@/helpers/files'
 import { showError } from '@/helpers/errors'
+import { preventIf } from '@/helpers/functions'
 import { injectDialogHandler } from './modal-helpers'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
@@ -142,7 +143,7 @@ const DataSourceFormModal = defineComponent({
       isValid: form.isValid,
       isLoading,
       submit,
-      onClose: injectDialogHandler('onClose'),
+      onClose: preventIf(injectDialogHandler('onClose'), isLoading),
     }
   },
 })
