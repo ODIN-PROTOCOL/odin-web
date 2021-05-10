@@ -6,7 +6,7 @@ import {
   QueryInflationResponse,
   QueryParamsResponse,
   QueryTreasuryPoolResponse,
-} from '@/api/codec/mint/query'
+} from '@provider/codec/mint/query'
 
 export interface MintExtension {
   mint: {

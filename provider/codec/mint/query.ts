@@ -35,28 +35,28 @@ export interface QueryInflationResponse {
 }
 
 /**
- * QueryAnnualProvisionsRequest is request type for the Query/QueryAnnualProvisions RPC
- * method.
+ * QueryAnnualProvisionsRequest is request type for the
+ * Query/QueryAnnualProvisions RPC method.
  */
 export interface QueryAnnualProvisionsRequest {}
 
 /**
- * QueryAnnualProvisionsResponse is response type for the Query/QueryAnnualProvisions RPC
- * method.
+ * QueryAnnualProvisionsResponse is response type for the
+ * Query/QueryAnnualProvisions RPC method.
  */
 export interface QueryAnnualProvisionsResponse {
   annualProvisions: string;
 }
 
 /**
- * QueryEthIntegrationAddressRequest is request type for the Query/QueryEthIntegrationAddress RPC
- * method.
+ * QueryEthIntegrationAddressRequest is request type for the
+ * Query/QueryEthIntegrationAddress RPC method.
  */
 export interface QueryEthIntegrationAddressRequest {}
 
 /**
- * QueryEthIntegrationAddressResponse is response type for the Query/QueryEthIntegrationAddress RPC
- * method.
+ * QueryEthIntegrationAddressResponse is response type for the
+ * Query/QueryEthIntegrationAddress RPC method.
  */
 export interface QueryEthIntegrationAddressResponse {
   ethIntegrationAddress: string;
@@ -69,8 +69,8 @@ export interface QueryEthIntegrationAddressResponse {
 export interface QueryTreasuryPoolRequest {}
 
 /**
- * QueryTreasuryPoolResponse is response type for the Query/QueryTreasuryPool RPC
- * method.
+ * QueryTreasuryPoolResponse is response type for the Query/QueryTreasuryPool
+ * RPC method.
  */
 export interface QueryTreasuryPoolResponse {
   treasuryPool: Coin[];

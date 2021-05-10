@@ -1,5 +1,5 @@
 import { QueryClient, createRpc } from '@cosmjs/stargate'
-import { ProposalStatus } from '@/api/codec/cosmos/gov/v1beta1/gov'
+import { ProposalStatus } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import {
   QueryClientImpl,
   QueryDepositResponse,
@@ -9,7 +9,7 @@ import {
   QueryProposalsResponse,
   QueryVoteResponse,
   QueryVotesResponse,
-} from '@/api/codec/cosmos/gov/v1beta1/query'
+} from '@provider/codec/cosmos/gov/v1beta1/query'
 
 export interface GovExtension {
   gov: {

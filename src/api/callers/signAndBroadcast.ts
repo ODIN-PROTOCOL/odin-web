@@ -28,7 +28,7 @@ export async function signAndBroadcast(
   }
 
   const fee: StdFee = {
-    amount: coins(0, 'loki'),
+    amount: coins(0, 'odin'),
     gas: '2000000',
   }
 

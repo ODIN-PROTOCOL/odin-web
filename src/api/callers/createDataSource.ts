@@ -1,4 +1,4 @@
-import { MsgCreateDataSource } from '@/api/codec/oracle/v1/tx'
+import { MsgCreateDataSource } from '@provider/codec/oracle/v1/tx'
 import { signAndBroadcast } from '@/api/callers/signAndBroadcast'
 import { BroadcastTxResponse } from '@cosmjs/stargate'
 import { makeBroadcastCaller } from './makeBroadcastCaller'

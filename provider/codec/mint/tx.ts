@@ -5,7 +5,10 @@ import { Coin } from "../cosmos/base/v1beta1/coin";
 
 export const protobufPackage = "mint";
 
-/** MsgWithdrawCoinsToAccFromTreasury is a message for withdrawing from mint module. */
+/**
+ * MsgWithdrawCoinsToAccFromTreasury is a message for withdrawing from mint
+ * module.
+ */
 export interface MsgWithdrawCoinsToAccFromTreasury {
   /** Amount is the amoutn of coins to withdraw */
   amount: Coin[];
@@ -185,7 +188,10 @@ export const MsgWithdrawCoinsToAccFromTreasuryResponse = {
 
 /** Msg defines the mint Msg service. */
 export interface Msg {
-  /** WithdrawCoinsToAccFromTreasury defines a method for withdrawing from mint module. */
+  /**
+   * WithdrawCoinsToAccFromTreasury defines a method for withdrawing from mint
+   * module.
+   */
   WithdrawCoinsToAccFromTreasury(
     request: MsgWithdrawCoinsToAccFromTreasury
   ): Promise<MsgWithdrawCoinsToAccFromTreasuryResponse>;

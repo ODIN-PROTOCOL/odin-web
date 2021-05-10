@@ -17,7 +17,7 @@ import {
   QueryRequestSearchResponse,
   QueryRequestsResponse,
   QueryValidatorResponse,
-} from '@/api/codec/oracle/v1/query'
+} from '@provider/codec/oracle/v1/query'
 
 export interface OracleExtension {
   oracle: {
@@ -88,7 +88,6 @@ export function setupOracleExtension(base: QueryClient): OracleExtension {
             pagination: {
               key: new Uint8Array(),
               countTotal: false,
-              reverse: false,
               limit: limit,
               offset: offset,
             },
@@ -104,7 +103,6 @@ export function setupOracleExtension(base: QueryClient): OracleExtension {
             pagination: {
               key: new Uint8Array(),
               countTotal: false,
-              reverse: false,
               limit: limit,
               offset: offset,
             },
@@ -120,7 +118,6 @@ export function setupOracleExtension(base: QueryClient): OracleExtension {
             pagination: {
               key: new Uint8Array(),
               countTotal: false,
-              reverse: false,
               limit: limit,
               offset: offset,
             },
@@ -136,7 +133,6 @@ export function setupOracleExtension(base: QueryClient): OracleExtension {
             pagination: {
               key: new Uint8Array(),
               countTotal: false,
-              reverse: false,
               limit: limit,
               offset: offset,
             },

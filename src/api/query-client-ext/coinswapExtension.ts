@@ -3,7 +3,7 @@ import {
   QueryClientImpl,
   QueryParamsResponse,
   QueryRateResponse,
-} from '@/api/codec/coinswap/query'
+} from '@provider/codec/coinswap/query'
 
 export interface CoinswapExtension {
   coinswap: {

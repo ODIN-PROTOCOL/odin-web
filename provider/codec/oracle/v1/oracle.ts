@@ -60,6 +60,7 @@ export function resolveStatusToJSON(object: ResolveStatus): string {
 
 /** DataSource is the data structure for storing data sources in the storage. */
 export interface DataSource {
+  id: Long;
   owner: string;
   name: string;
   description: string;
@@ -69,6 +70,7 @@ export interface DataSource {
 
 /** OracleScript is the data structure for storing oracle scripts in the storage. */
 export interface OracleScript {
+  id: Long;
   owner: string;
   name: string;
   description: string;
@@ -93,6 +95,7 @@ export interface RawReport {
 
 /** Request is the data structure for storing requests in the storage. */
 export interface Request {
+  id: Long;
   oracleScriptId: Long;
   calldata: Uint8Array;
   requestedValidators: string[];
@@ -290,6 +293,7 @@ export interface DataProviderAccumulatedReward {
 }
 
 const baseDataSource: object = {
+  id: Long.ZERO,
   owner: "",
   name: "",
   description: "",
@@ -301,20 +305,23 @@ export const DataSource = {
     message: DataSource,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
+    if (!message.id.isZero()) {
+      writer.uint32(8).int64(message.id);
+    }
     if (message.owner !== "") {
-      writer.uint32(10).string(message.owner);
+      writer.uint32(18).string(message.owner);
     }
     if (message.name !== "") {
-      writer.uint32(18).string(message.name);
+      writer.uint32(26).string(message.name);
     }
     if (message.description !== "") {
-      writer.uint32(26).string(message.description);
+      writer.uint32(34).string(message.description);
     }
     if (message.filename !== "") {
-      writer.uint32(34).string(message.filename);
+      writer.uint32(42).string(message.filename);
     }
     for (const v of message.fee) {
-      Coin.encode(v!, writer.uint32(42).fork()).ldelim();
+      Coin.encode(v!, writer.uint32(50).fork()).ldelim();
     }
     return writer;
   },
@@ -328,18 +335,21 @@ export const DataSource = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.owner = reader.string();
+          message.id = reader.int64() as Long;
           break;
         case 2:
-          message.name = reader.string();
+          message.owner = reader.string();
           break;
         case 3:
-          message.description = reader.string();
+          message.name = reader.string();
           break;
         case 4:
-          message.filename = reader.string();
+          message.description = reader.string();
           break;
         case 5:
+          message.filename = reader.string();
+          break;
+        case 6:
           message.fee.push(Coin.decode(reader, reader.uint32()));
           break;
         default:
@@ -353,6 +363,11 @@ export const DataSource = {
   fromJSON(object: any): DataSource {
     const message = { ...baseDataSource } as DataSource;
     message.fee = [];
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Long.fromString(object.id);
+    } else {
+      message.id = Long.ZERO;
+    }
     if (object.owner !== undefined && object.owner !== null) {
       message.owner = String(object.owner);
     } else {
@@ -383,6 +398,7 @@ export const DataSource = {
 
   toJSON(message: DataSource): unknown {
     const obj: any = {};
+    message.id !== undefined && (obj.id = (message.id || Long.ZERO).toString());
     message.owner !== undefined && (obj.owner = message.owner);
     message.name !== undefined && (obj.name = message.name);
     message.description !== undefined &&
@@ -399,6 +415,11 @@ export const DataSource = {
   fromPartial(object: DeepPartial<DataSource>): DataSource {
     const message = { ...baseDataSource } as DataSource;
     message.fee = [];
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id as Long;
+    } else {
+      message.id = Long.ZERO;
+    }
     if (object.owner !== undefined && object.owner !== null) {
       message.owner = object.owner;
     } else {
@@ -429,6 +450,7 @@ export const DataSource = {
 };
 
 const baseOracleScript: object = {
+  id: Long.ZERO,
   owner: "",
   name: "",
   description: "",
@@ -442,23 +464,26 @@ export const OracleScript = {
     message: OracleScript,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
+    if (!message.id.isZero()) {
+      writer.uint32(8).int64(message.id);
+    }
     if (message.owner !== "") {
-      writer.uint32(10).string(message.owner);
+      writer.uint32(18).string(message.owner);
     }
     if (message.name !== "") {
-      writer.uint32(18).string(message.name);
+      writer.uint32(26).string(message.name);
     }
     if (message.description !== "") {
-      writer.uint32(26).string(message.description);
+      writer.uint32(34).string(message.description);
     }
     if (message.filename !== "") {
-      writer.uint32(34).string(message.filename);
+      writer.uint32(42).string(message.filename);
     }
     if (message.schema !== "") {
-      writer.uint32(42).string(message.schema);
+      writer.uint32(50).string(message.schema);
     }
     if (message.sourceCodeUrl !== "") {
-      writer.uint32(50).string(message.sourceCodeUrl);
+      writer.uint32(58).string(message.sourceCodeUrl);
     }
     return writer;
   },
@@ -471,21 +496,24 @@ export const OracleScript = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.owner = reader.string();
+          message.id = reader.int64() as Long;
           break;
         case 2:
-          message.name = reader.string();
+          message.owner = reader.string();
           break;
         case 3:
-          message.description = reader.string();
+          message.name = reader.string();
           break;
         case 4:
-          message.filename = reader.string();
+          message.description = reader.string();
           break;
         case 5:
-          message.schema = reader.string();
+          message.filename = reader.string();
           break;
         case 6:
+          message.schema = reader.string();
+          break;
+        case 7:
           message.sourceCodeUrl = reader.string();
           break;
         default:
@@ -498,6 +526,11 @@ export const OracleScript = {
 
   fromJSON(object: any): OracleScript {
     const message = { ...baseOracleScript } as OracleScript;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Long.fromString(object.id);
+    } else {
+      message.id = Long.ZERO;
+    }
     if (object.owner !== undefined && object.owner !== null) {
       message.owner = String(object.owner);
     } else {
@@ -533,6 +566,7 @@ export const OracleScript = {
 
   toJSON(message: OracleScript): unknown {
     const obj: any = {};
+    message.id !== undefined && (obj.id = (message.id || Long.ZERO).toString());
     message.owner !== undefined && (obj.owner = message.owner);
     message.name !== undefined && (obj.name = message.name);
     message.description !== undefined &&
@@ -546,6 +580,11 @@ export const OracleScript = {
 
   fromPartial(object: DeepPartial<OracleScript>): OracleScript {
     const message = { ...baseOracleScript } as OracleScript;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id as Long;
+    } else {
+      message.id = Long.ZERO;
+    }
     if (object.owner !== undefined && object.owner !== null) {
       message.owner = object.owner;
     } else {
@@ -777,6 +816,7 @@ export const RawReport = {
 };
 
 const baseRequest: object = {
+  id: Long.ZERO,
   oracleScriptId: Long.ZERO,
   requestedValidators: "",
   minCount: Long.UZERO,
@@ -791,35 +831,38 @@ export const Request = {
     message: Request,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
+    if (!message.id.isZero()) {
+      writer.uint32(8).int64(message.id);
+    }
     if (!message.oracleScriptId.isZero()) {
-      writer.uint32(8).int64(message.oracleScriptId);
+      writer.uint32(16).int64(message.oracleScriptId);
     }
     if (message.calldata.length !== 0) {
-      writer.uint32(18).bytes(message.calldata);
+      writer.uint32(26).bytes(message.calldata);
     }
     for (const v of message.requestedValidators) {
-      writer.uint32(26).string(v!);
+      writer.uint32(34).string(v!);
     }
     if (!message.minCount.isZero()) {
-      writer.uint32(32).uint64(message.minCount);
+      writer.uint32(40).uint64(message.minCount);
     }
     if (!message.requestHeight.isZero()) {
-      writer.uint32(40).int64(message.requestHeight);
+      writer.uint32(48).int64(message.requestHeight);
     }
     if (!message.requestTime.isZero()) {
-      writer.uint32(48).uint64(message.requestTime);
+      writer.uint32(56).uint64(message.requestTime);
     }
     if (message.clientId !== "") {
-      writer.uint32(58).string(message.clientId);
+      writer.uint32(66).string(message.clientId);
     }
     for (const v of message.rawRequests) {
-      RawRequest.encode(v!, writer.uint32(66).fork()).ldelim();
+      RawRequest.encode(v!, writer.uint32(74).fork()).ldelim();
     }
     if (message.ibcSource !== undefined) {
-      IBCSource.encode(message.ibcSource, writer.uint32(74).fork()).ldelim();
+      IBCSource.encode(message.ibcSource, writer.uint32(82).fork()).ldelim();
     }
     if (!message.executeGas.isZero()) {
-      writer.uint32(80).uint64(message.executeGas);
+      writer.uint32(88).uint64(message.executeGas);
     }
     return writer;
   },
@@ -835,33 +878,36 @@ export const Request = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.oracleScriptId = reader.int64() as Long;
+          message.id = reader.int64() as Long;
           break;
         case 2:
-          message.calldata = reader.bytes();
+          message.oracleScriptId = reader.int64() as Long;
           break;
         case 3:
-          message.requestedValidators.push(reader.string());
+          message.calldata = reader.bytes();
           break;
         case 4:
-          message.minCount = reader.uint64() as Long;
+          message.requestedValidators.push(reader.string());
           break;
         case 5:
-          message.requestHeight = reader.int64() as Long;
+          message.minCount = reader.uint64() as Long;
           break;
         case 6:
-          message.requestTime = reader.uint64() as Long;
+          message.requestHeight = reader.int64() as Long;
           break;
         case 7:
-          message.clientId = reader.string();
+          message.requestTime = reader.uint64() as Long;
           break;
         case 8:
-          message.rawRequests.push(RawRequest.decode(reader, reader.uint32()));
+          message.clientId = reader.string();
           break;
         case 9:
-          message.ibcSource = IBCSource.decode(reader, reader.uint32());
+          message.rawRequests.push(RawRequest.decode(reader, reader.uint32()));
           break;
         case 10:
+          message.ibcSource = IBCSource.decode(reader, reader.uint32());
+          break;
+        case 11:
           message.executeGas = reader.uint64() as Long;
           break;
         default:
@@ -877,6 +923,11 @@ export const Request = {
     message.requestedValidators = [];
     message.rawRequests = [];
     message.calldata = new Uint8Array();
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Long.fromString(object.id);
+    } else {
+      message.id = Long.ZERO;
+    }
     if (object.oracleScriptId !== undefined && object.oracleScriptId !== null) {
       message.oracleScriptId = Long.fromString(object.oracleScriptId);
     } else {
@@ -933,6 +984,7 @@ export const Request = {
 
   toJSON(message: Request): unknown {
     const obj: any = {};
+    message.id !== undefined && (obj.id = (message.id || Long.ZERO).toString());
     message.oracleScriptId !== undefined &&
       (obj.oracleScriptId = (message.oracleScriptId || Long.ZERO).toString());
     message.calldata !== undefined &&
@@ -971,6 +1023,11 @@ export const Request = {
     const message = { ...baseRequest } as Request;
     message.requestedValidators = [];
     message.rawRequests = [];
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id as Long;
+    } else {
+      message.id = Long.ZERO;
+    }
     if (object.oracleScriptId !== undefined && object.oracleScriptId !== null) {
       message.oracleScriptId = object.oracleScriptId as Long;
     } else {
@@ -2400,14 +2457,13 @@ export const DataProviderAccumulatedReward = {
 
 declare var self: any | undefined;
 declare var window: any | undefined;
-declare var global: any | undefined
 var globalThis: any = (() => {
-  if (typeof globalThis !== 'undefined') return globalThis
-  if (typeof self !== 'undefined') return self
-  if (typeof window !== 'undefined') return window
-  if (typeof global !== 'undefined') return global
-  throw 'Unable to locate global object'
-})()
+  if (typeof globalThis !== "undefined") return globalThis;
+  if (typeof self !== "undefined") return self;
+  if (typeof window !== "undefined") return window;
+  if (typeof global !== "undefined") return global;
+  throw "Unable to locate global object";
+})();
 
 const atob: (b64: string) => string =
   globalThis.atob ||
