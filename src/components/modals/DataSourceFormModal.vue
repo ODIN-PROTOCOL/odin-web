@@ -72,7 +72,7 @@ import { createDataSource } from '@/api/callers/createDataSource'
 import { getWalletAccounts } from '@/api/client/wallet'
 import { DialogCallback, makeDialog } from '@/helpers/dialogs'
 import { readFile } from '@/helpers/files'
-import { showError } from '@/helpers/errors'
+import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { injectDialogHandler } from './modal-helpers'
 import { useForm, validators } from '@/composables/useForm'
@@ -115,7 +115,7 @@ const DataSourceFormModal = defineComponent({
 
         onSubmit()
       } catch (error) {
-        showError(error)
+        handleError(error)
       }
       isLoading.value = false
     }

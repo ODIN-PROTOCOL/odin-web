@@ -1,13 +1,13 @@
 import { BroadcastError } from '@/api/callers/signAndBroadcast'
 
-export function showError(error: Error): void {
+export function handleError(error: Error): void {
   if (error instanceof BroadcastError) {
-    _showBroadcastError(error)
+    _handleBroadcastError(error)
   } else {
     console.error(error)
   }
 }
 
-function _showBroadcastError(error: BroadcastError): void {
+function _handleBroadcastError(error: BroadcastError): void {
   console.error(error)
 }
