@@ -113,7 +113,7 @@ const DataSourceFormModal = defineComponent({
           name: form.name.current.value,
           description: form.description.current.value,
           executable: executableParsed,
-          fee: coins(1, 'odin'),
+          fee: coins(1, 'loki'),
           owner: account.address,
           sender: account.address,
         })
