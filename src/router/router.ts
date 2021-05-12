@@ -1,17 +1,20 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import { makeAuthorizedOnlyGuard, makeUnauthorizedOnlyGuard } from './guards'
-import Home from '../views/Home.vue'
+import {
+  makeAuthorizedOnlyGuard,
+  makeRootRedirector,
+  makeUnauthorizedOnlyGuard,
+} from './guards'
 
+const rootRedirector = makeRootRedirector(
+  { name: 'DataSources' },
+  { name: 'Auth' }
+)
 const authorizedOnlyGuard = makeAuthorizedOnlyGuard({ name: 'Auth' })
-const unauthorizedOnlyGuard = makeUnauthorizedOnlyGuard({ name: 'Auth' })
+const unauthorizedOnlyGuard = makeUnauthorizedOnlyGuard({ name: 'Redirector' })
 
 const routes: Array<RouteRecordRaw> = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home,
-    beforeEnter: authorizedOnlyGuard,
-  },
+  { path: '/', name: 'Redirector', redirect: rootRedirector },
+  { path: '/:pathMatch(.*)*', name: 'NotFound', redirect: rootRedirector },
   {
     path: '/auth',
     name: 'Auth',
@@ -33,13 +36,6 @@ const routes: Array<RouteRecordRaw> = [
       import(
         /* webpackChunkName: "oracle-scripts" */ '../views/OracleScripts.vue'
       ),
-  },
-  {
-    path: '/about',
-    name: 'About',
-    beforeEnter: authorizedOnlyGuard,
-    component: () =>
-      import(/* webpackChunkName: "about" */ '../views/About.vue'),
   },
 ]
 

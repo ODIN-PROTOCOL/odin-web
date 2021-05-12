@@ -31,7 +31,7 @@ export default defineComponent({
       const wallet = await logIn(mnemonic.value)
       if (!wallet) return
 
-      router.push({ name: 'Home' })
+      router.push({ name: 'Redirector' })
     }
 
     return {
