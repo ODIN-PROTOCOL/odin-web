@@ -60,6 +60,8 @@ export default defineComponent<{ testMsg: string }>({
   border-radius: 8px;
   padding: 20px;
   z-index: 1;
+  width: 100%;
+  max-width: 48rem;
 }
 
 .modal-base__content-head {
