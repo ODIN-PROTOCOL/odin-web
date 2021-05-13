@@ -10,9 +10,9 @@ export type FormFieldDefinition = [
 
 /* prettier-ignore */
 type FormFlattened<T extends Record<string, FormFieldDefinition>> =
-{ [P in keyof T]: FormField<T[P][0]>['current'] } &
-{ [P in keyof T as `${string & P}Err`]: FormField<T[P][0]>['errorIfDirty'] } &
-{ isValid: ComputedRef<boolean> }
+  { [P in keyof T]: FormField<T[P][0]>['current'] } &
+  { [P in keyof T as `${string & P}Err`]: FormField<T[P][0]>['errorIfDirty'] } &
+  { isValid: ComputedRef<boolean> }
 
 export function useForm<T extends Record<string, FormFieldDefinition>>(
   fieldDefinitions: T
