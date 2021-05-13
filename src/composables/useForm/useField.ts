@@ -14,6 +14,7 @@ export interface FormField<T> {
   error: Ref<FormFieldValidatorResult>
   errorIfDirty: ComputedRef<FormFieldValidatorResult | null>
   isDirty: Ref<boolean>
+  val: () => UnwrapRef<T>
   validate: () => FormFieldValidatorResult
 }
 
@@ -22,12 +23,14 @@ export function useField<T>(
   validators: FormFieldValidator[] = []
 ): FormField<T> {
   const current = ref(initialValue)
+  const val = () => current.value
+
   const isDirty = ref(false)
-  const error = ref(_runValidators(current.value, validators))
+  const error = ref(_runValidators(val(), validators))
   const errorIfDirty = computed(() => (isDirty.value ? error.value : null))
 
   const validate = (): FormFieldValidatorResult => {
-    error.value = _runValidators(current.value, validators)
+    error.value = _runValidators(val(), validators)
     return error.value
   }
 
@@ -45,7 +48,7 @@ export function useField<T>(
     unwatchFirstChange()
   })
 
-  return { current, error, errorIfDirty, isDirty, validate }
+  return { current, error, errorIfDirty, isDirty, validate, val }
 }
 
 function _runValidators(value: unknown, validators: FormFieldValidator[]) {

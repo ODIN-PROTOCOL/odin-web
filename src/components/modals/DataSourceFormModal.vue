@@ -14,13 +14,13 @@
           <label class="app-form__field-lbl"> Name </label>
           <input
             class="app-form__field-input"
-            name="name"
+            name="data-source-name"
             type="text"
-            v-model="name"
+            v-model="form.name"
             :disabled="isLoading"
           />
-          <p v-if="nameError" class="app-form__field-err">
-            {{ nameError }}
+          <p v-if="form.nameErr" class="app-form__field-err">
+            {{ form.nameErr }}
           </p>
         </div>
 
@@ -28,13 +28,13 @@
           <label class="app-form__field-lbl"> Description </label>
           <textarea
             class="app-form__field-input"
-            name="description"
+            name="data-source-description"
             rows="5"
-            v-model="description"
+            v-model="form.description"
             :disabled="isLoading"
           ></textarea>
-          <p v-if="descriptionError" class="app-form__field-err">
-            {{ descriptionError }}
+          <p v-if="form.descriptionErr" class="app-form__field-err">
+            {{ form.descriptionErr }}
           </p>
         </div>
 
@@ -42,13 +42,13 @@
           <label class="app-form__field-lbl"> Executable (.py) </label>
           <InputFile
             class="app-form__field-input"
-            name="executable"
+            name="data-source-executable"
             accept=".py"
-            v-model="executable"
+            v-model="form.executable"
             :disabled="isLoading"
           />
-          <p v-if="executableError" class="app-form__field-err">
-            {{ executableError }}
+          <p v-if="form.executableErr" class="app-form__field-err">
+            {{ form.executableErr }}
           </p>
         </div>
 
@@ -57,7 +57,7 @@
             class="app-btn"
             type="button"
             @click="submit()"
-            :disabled="!isValid"
+            :disabled="!form.isValid"
           >
             Create
           </button>
@@ -110,8 +110,8 @@ const DataSourceFormModal = defineComponent({
       isLoading.value = true
       try {
         await createDataSource({
-          name: form.name.current.value,
-          description: form.description.current.value,
+          name: form.name.val(),
+          description: form.description.val(),
           executable: executableParsed,
           fee: coins(1, 'loki'),
           owner: account.address,
@@ -129,7 +129,7 @@ const DataSourceFormModal = defineComponent({
     const _parseExecutable = async (): Promise<Uint8Array | null> => {
       form.executable.error.value = null
 
-      const file = form.executable.current.value as File | null
+      const file = form.executable.val() as File | null
       const parsed = file ? await readFile(file, 'uint8Array') : null
       if (!parsed) {
         form.executable.error.value = 'Cannot parse the file'
@@ -140,13 +140,7 @@ const DataSourceFormModal = defineComponent({
     }
 
     return {
-      name: form.name.current,
-      nameError: form.name.errorIfDirty,
-      description: form.description.current,
-      descriptionError: form.description.errorIfDirty,
-      executable: form.executable.current,
-      executableError: form.executable.errorIfDirty,
-      isValid: form.isValid,
+      form: form.flatten(),
       isLoading,
       submit,
       onClose: preventIf(injectDialogHandler('onClose'), isLoading),

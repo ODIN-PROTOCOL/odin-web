@@ -14,13 +14,13 @@
           <label class="app-form__field-lbl"> Name </label>
           <input
             class="app-form__field-input"
-            name="name"
+            name="oracle-script-name"
             type="text"
-            v-model="name"
+            v-model="form.name"
             :disabled="isLoading"
           />
-          <p v-if="nameError" class="app-form__field-err">
-            {{ nameError }}
+          <p v-if="form.nameEr" class="app-form__field-err">
+            {{ form.nameErr }}
           </p>
         </div>
 
@@ -28,13 +28,13 @@
           <label class="app-form__field-lbl"> Description </label>
           <textarea
             class="app-form__field-input"
-            name="description"
+            name="oracle-script-description"
             rows="5"
-            v-model="description"
+            v-model="form.description"
             :disabled="isLoading"
           ></textarea>
-          <p v-if="descriptionError" class="app-form__field-err">
-            {{ descriptionError }}
+          <p v-if="form.descriptionErr" class="app-form__field-err">
+            {{ form.descriptionErr }}
           </p>
         </div>
 
@@ -42,13 +42,13 @@
           <label class="app-form__field-lbl"> Code (.wasm) </label>
           <InputFile
             class="app-form__field-input"
-            name="executable"
+            name="oracle-script-executable"
             accept=".wasm"
-            v-model="codeFile"
+            v-model="form.codeFile"
             :disabled="isLoading"
           />
-          <p v-if="codeFileError" class="app-form__field-err">
-            {{ codeFileError }}
+          <p v-if="form.codeFileErr" class="app-form__field-err">
+            {{ form.codeFileErr }}
           </p>
         </div>
 
@@ -57,7 +57,7 @@
             class="app-btn"
             type="button"
             @click="submit()"
-            :disabled="!isValid"
+            :disabled="!form.isValid"
           >
             Create
           </button>
@@ -107,8 +107,8 @@ const OracleScriptFormModal = defineComponent({
       isLoading.value = true
       try {
         await createOracleScript({
-          name: form.name.current.value,
-          description: form.description.current.value,
+          name: form.name.val(),
+          description: form.description.val(),
           code: codeFileParsed,
           owner: account.address,
           sender: account.address,
@@ -127,7 +127,7 @@ const OracleScriptFormModal = defineComponent({
     const _parseCodeFile = async (): Promise<Uint8Array | null> => {
       form.codeFile.error.value = null
 
-      const file = form.codeFile.current.value as File | null
+      const file = form.codeFile.val() as File | null
       const parsed = file ? await readFile(file, 'uint8Array') : null
       if (!parsed) {
         form.codeFile.error.value = 'Cannot parse the file'
@@ -138,13 +138,7 @@ const OracleScriptFormModal = defineComponent({
     }
 
     return {
-      name: form.name.current,
-      nameError: form.name.errorIfDirty,
-      description: form.description.current,
-      descriptionError: form.description.errorIfDirty,
-      codeFile: form.codeFile.current,
-      codeFileError: form.codeFile.errorIfDirty,
-      isValid: form.isValid,
+      form: form.flatten(),
       isLoading,
       submit,
       onClose: preventIf(injectDialogHandler('onClose'), isLoading),
