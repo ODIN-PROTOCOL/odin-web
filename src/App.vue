@@ -1,6 +1,9 @@
 <template>
   <template v-if="isAppReady">
-    <Nav></Nav>
+    <div class="fx-row fx-row_gap-8">
+      <img class="logo" src="~@/assets/odin-logo.png" alt="Logo" width="120" />
+      <Nav></Nav>
+    </div>
     <router-view />
   </template>
   <div class="dialogs-container" ref="dialogsContainerRef"></div>
@@ -52,7 +55,7 @@ export default defineComponent({
   -moz-osx-font-smoothing: grayscale;
   color: var(--clr__text);
   width: 100%;
-  max-width: 55rem;
+  max-width: 70rem;
   margin: 0 auto;
   @include flex-container;
 }
