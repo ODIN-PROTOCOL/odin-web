@@ -1,45 +1,74 @@
-import { Component, createApp } from 'vue'
+import { App, Component, createApp, inject } from 'vue'
 
 export type DialogProps = Record<string, unknown>
-export type DialogCallback = (dialog: {
+export type DialogHandler = (dialog: {
   payload?: unknown | null
-  kill: DialogKillFunction
+  kill: DialogKiller
 }) => void
-export type DialogKillFunction = (result?: unknown | null) => void
-export type DialogEventHandler = (payload?: unknown | null) => void
+export type DialogHandlers = Record<string, DialogHandler | undefined>
+export type DialogKiller = (result?: unknown | null) => void
+export type DialogPayloadHandler = (payload?: unknown | null) => void
 
-let _dialogContainer: HTMLElement
+class Dialogs {
+  private _dialogContainer: HTMLElement | null = null
 
-export function initDialogs(container: HTMLElement): void {
-  _dialogContainer = container
-}
-
-export function makeDialog(
-  modalComponent: Component,
-  callbacks: Record<string, DialogCallback | undefined> = {},
-  { props }: { props?: DialogProps } = {}
-): Promise<unknown | null> {
-  if (!_dialogContainer) {
-    throw new ReferenceError('Dialogs not initialized!')
+  init(container: HTMLElement) {
+    this._dialogContainer = container
   }
 
-  return new Promise<unknown | null>((resolve) => {
-    const dialog = createApp(modalComponent, props)
+  show(
+    component: Component,
+    handlers: DialogHandlers = {},
+    { props }: { props?: DialogProps } = {}
+  ): Promise<unknown | null> {
+    if (!this._dialogContainer) {
+      throw new ReferenceError('Dialogs not initialized!')
+    }
 
-    const kill: DialogKillFunction = (result?: unknown | null) => {
+    return new Promise<unknown | null>((resolve) => {
+      const dialog = createApp(component, props)
+      this._provideHandlers(
+        dialog,
+        this._addDefaultHandlers(handlers),
+        this._makeKiller(resolve, dialog)
+      )
+      dialog.mount(this._dialogContainer as HTMLElement)
+    })
+  }
+
+  getHandler(name: string): DialogPayloadHandler {
+    return inject(name, () => console.warn(`Missing ${name} handler`), false)
+  }
+
+  private _makeKiller(
+    resolve: (value: unknown) => void,
+    dialog: App<Element>
+  ): DialogKiller {
+    return (result?: unknown | null) => {
       resolve(result ?? null)
       dialog.unmount()
     }
+  }
 
-    if (!callbacks.onClose) {
-      callbacks.onClose = (d) => d.kill(null)
+  private _addDefaultHandlers(callbacks: DialogHandlers) {
+    const newCbs = { ...callbacks }
+    if (!newCbs.onClose) {
+      newCbs.onClose = (d) => d.kill(null)
     }
-    for (const [cbName, cb] of Object.entries(callbacks)) {
+    return newCbs
+  }
+
+  private _provideHandlers(
+    dialog: App<Element>,
+    handlers: DialogHandlers,
+    kill: DialogKiller
+  ) {
+    for (const [cbName, cb] of Object.entries(handlers)) {
       if (!cbName || !cb) continue
-      const handler: DialogEventHandler = (payload) => cb({ payload, kill })
+      const handler: DialogPayloadHandler = (payload) => cb({ payload, kill })
       dialog.provide(cbName, handler)
     }
-
-    dialog.mount(_dialogContainer)
-  })
+  }
 }
+
+export const dialogs = new Dialogs()

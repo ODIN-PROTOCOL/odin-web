@@ -112,12 +112,11 @@ import { defineComponent, ref } from 'vue'
 import Long from 'long'
 import { createRequest } from '@/api/callers/createRequest'
 import { getWalletAccounts } from '@/api/client/wallet'
-import { DialogCallback, makeDialog } from '@/helpers/dialogs'
+import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
 import { obiPhoneModels } from '@/helpers/obi-structures'
-import { injectDialogHandler } from './modal-helpers'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import { coins } from '@cosmjs/launchpad'
@@ -138,8 +137,8 @@ const RequestFormModal = defineComponent({
       feeLimit: ['1', validators.required, validators.min(1)],
     })
     const isLoading = ref(false)
-    const onSubmit = injectDialogHandler('onSubmit')
-    const onClose = preventIf(injectDialogHandler('onClose'), isLoading)
+    const onSubmit = dialogs.getHandler('onSubmit')
+    const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
 
     console.log(onSubmit)
 
@@ -181,12 +180,12 @@ const RequestFormModal = defineComponent({
 export default RequestFormModal
 export function showRequestFormDialog(
   callbacks: {
-    onSubmit?: DialogCallback
-    onClose?: DialogCallback
+    onSubmit?: DialogHandler
+    onClose?: DialogHandler
   },
   props: { oracleScriptId: Long.Long }
 ): Promise<unknown | null> {
-  return makeDialog(RequestFormModal, callbacks, { props })
+  return dialogs.show(RequestFormModal, callbacks, { props })
 }
 </script>
 

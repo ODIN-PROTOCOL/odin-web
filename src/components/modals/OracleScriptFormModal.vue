@@ -72,12 +72,11 @@ import { defineComponent, ref } from 'vue'
 import { loremIpsum } from 'lorem-ipsum'
 import { createOracleScript } from '@/api/callers/createOracleScript'
 import { getWalletAccounts } from '@/api/client/wallet'
-import { DialogCallback, makeDialog } from '@/helpers/dialogs'
+import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { readFile } from '@/helpers/files'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
-import { injectDialogHandler } from './modal-helpers'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import InputFile from '@/components/inputs/InputFile.vue'
@@ -91,7 +90,7 @@ const OracleScriptFormModal = defineComponent({
       codeFile: [null as File | null, validators.required],
     })
     const isLoading = ref(false)
-    const onSubmit = injectDialogHandler('onSubmit')
+    const onSubmit = dialogs.getHandler('onSubmit')
 
     const submit = async () => {
       const [account] = getWalletAccounts()
@@ -142,17 +141,17 @@ const OracleScriptFormModal = defineComponent({
       form: form.flatten(),
       isLoading,
       submit,
-      onClose: preventIf(injectDialogHandler('onClose'), isLoading),
+      onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
     }
   },
 })
 
 export default OracleScriptFormModal
 export function showOracleScriptFormDialog(callbacks: {
-  onSubmit?: DialogCallback
-  onClose?: DialogCallback
+  onSubmit?: DialogHandler
+  onClose?: DialogHandler
 }): Promise<unknown | null> {
-  return makeDialog(OracleScriptFormModal, callbacks)
+  return dialogs.show(OracleScriptFormModal, callbacks)
 }
 </script>
 

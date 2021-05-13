@@ -60,9 +60,8 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import { DialogCallback, makeDialog } from '@/helpers/dialogs'
+import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { preventIf } from '@/helpers/functions'
-import { injectDialogHandler } from './modal-helpers'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import InputFile from '@/components/inputs/InputFile.vue'
@@ -84,8 +83,8 @@ const OracleScriptModal = defineComponent({
       codeFile: [oracleScript.filename, validators.required],
     })
     const isLoading = ref(false)
-    const onRequestCreated = injectDialogHandler('onRequestCreated')
-    const onClose = preventIf(injectDialogHandler('onClose'), isLoading)
+    const onRequestCreated = dialogs.getHandler('onRequestCreated')
+    const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
 
     const toRequestCreation = () => {
       onClose()
@@ -106,12 +105,12 @@ const OracleScriptModal = defineComponent({
 export default OracleScriptModal
 export function showOracleScriptDialog(
   callbacks: {
-    onRequestCreated?: DialogCallback
-    onClose?: DialogCallback
+    onRequestCreated?: DialogHandler
+    onClose?: DialogHandler
   },
   props: { oracleScript: OracleScript }
 ): Promise<unknown | null> {
-  return makeDialog(OracleScriptModal, callbacks, { props })
+  return dialogs.show(OracleScriptModal, callbacks, { props })
 }
 </script>
 

@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from 'vue'
-import { initDialogs } from '@/helpers/dialogs'
+import { dialogs } from '@/helpers/dialogs'
 import Nav from './components/Nav.vue'
 
 export default defineComponent({
@@ -29,7 +29,7 @@ export default defineComponent({
     const dialogsContainerRef = ref<HTMLElement>()
     onMounted(() => {
       if (dialogsContainerRef.value instanceof HTMLElement) {
-        initDialogs(dialogsContainerRef.value)
+        dialogs.init(dialogsContainerRef.value)
         _readyStates.value.dialogs = true
       }
     })

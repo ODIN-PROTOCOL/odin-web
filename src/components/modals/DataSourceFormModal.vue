@@ -74,12 +74,11 @@ import { loremIpsum } from 'lorem-ipsum'
 import { coins } from '@cosmjs/launchpad'
 import { createDataSource } from '@/api/callers/createDataSource'
 import { getWalletAccounts } from '@/api/client/wallet'
-import { DialogCallback, makeDialog } from '@/helpers/dialogs'
+import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { readFile } from '@/helpers/files'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
-import { injectDialogHandler } from './modal-helpers'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import InputFile from '@/components/inputs/InputFile.vue'
@@ -94,7 +93,7 @@ const DataSourceFormModal = defineComponent({
       executable: [null as File | null, validators.required],
     })
     const isLoading = ref(false)
-    const onSubmit = injectDialogHandler('onSubmit')
+    const onSubmit = dialogs.getHandler('onSubmit')
 
     const submit = async () => {
       const [account] = getWalletAccounts()
@@ -144,7 +143,7 @@ const DataSourceFormModal = defineComponent({
       form: form.flatten(),
       isLoading,
       submit,
-      onClose: preventIf(injectDialogHandler('onClose'), isLoading),
+      onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
     }
   },
 })
@@ -152,12 +151,12 @@ const DataSourceFormModal = defineComponent({
 export default DataSourceFormModal
 export function showDataSourceFormDialog(
   callbacks: {
-    onSubmit?: DialogCallback
-    onClose?: DialogCallback
+    onSubmit?: DialogHandler
+    onClose?: DialogHandler
   },
   props?: { dataSourceId?: Long.Long }
 ): Promise<unknown | null> {
-  return makeDialog(DataSourceFormModal, callbacks, { props })
+  return dialogs.show(DataSourceFormModal, callbacks, { props })
 }
 </script>
 
