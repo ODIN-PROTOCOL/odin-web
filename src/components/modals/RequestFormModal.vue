@@ -163,7 +163,6 @@ const RequestFormModal = defineComponent({
         onSubmit()
         notifySuccess('Oracle Script created')
       } catch (error) {
-        onSubmit()
         handleError(error)
       }
       isLoading.value = false
