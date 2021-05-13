@@ -19,7 +19,7 @@
             v-model="form.name"
             :disabled="isLoading"
           />
-          <p v-if="form.nameEr" class="app-form__field-err">
+          <p v-if="form.nameErr" class="app-form__field-err">
             {{ form.nameErr }}
           </p>
         </div>
@@ -86,14 +86,8 @@ const OracleScriptFormModal = defineComponent({
   components: { ModalBase, InputFile },
   setup() {
     const form = useForm({
-      name: [
-        'Oracle Script ' + loremIpsum({ units: 'words', count: 3 }),
-        validators.required,
-      ],
-      description: [
-        loremIpsum({ units: 'sentences', count: 3 }),
-        validators.required,
-      ],
+      name: ['', validators.required],
+      description: ['', validators.required],
       codeFile: [null as File | null, validators.required],
     })
     const isLoading = ref(false)
@@ -125,17 +119,24 @@ const OracleScriptFormModal = defineComponent({
     }
 
     const _parseCodeFile = async (): Promise<Uint8Array | null> => {
-      form.codeFile.error.value = null
+      form.codeFile.err(null)
 
       const file = form.codeFile.val() as File | null
       const parsed = file ? await readFile(file, 'uint8Array') : null
       if (!parsed) {
-        form.codeFile.error.value = 'Cannot parse the file'
+        form.codeFile.err('Cannot parse the file')
         return null
       }
 
       return parsed
     }
+
+    const _fakeForm = () => {
+      form.name.val('Oracle Script ' + loremIpsum({ units: 'words', count: 3 }))
+      form.description.val(loremIpsum({ units: 'sentences', count: 3 }))
+    }
+
+    _fakeForm()
 
     return {
       form: form.flatten(),

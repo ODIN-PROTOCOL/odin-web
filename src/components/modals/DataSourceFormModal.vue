@@ -89,14 +89,8 @@ const DataSourceFormModal = defineComponent({
   components: { ModalBase, InputFile },
   setup() {
     const form = useForm({
-      name: [
-        'DataSource ' + loremIpsum({ units: 'words', count: 3 }),
-        validators.required,
-      ],
-      description: [
-        loremIpsum({ units: 'sentences', count: 3 }),
-        validators.required,
-      ],
+      name: ['', validators.required],
+      description: ['', validators.required],
       executable: [null as File | null, validators.required],
     })
     const isLoading = ref(false)
@@ -127,17 +121,24 @@ const DataSourceFormModal = defineComponent({
     }
 
     const _parseExecutable = async (): Promise<Uint8Array | null> => {
-      form.executable.error.value = null
+      form.executable.err(null)
 
       const file = form.executable.val() as File | null
       const parsed = file ? await readFile(file, 'uint8Array') : null
       if (!parsed) {
-        form.executable.error.value = 'Cannot parse the file'
+        form.executable.err('Cannot parse the file')
         return null
       }
 
       return parsed
     }
+
+    const _fakeForm = () => {
+      form.name.val('Data source ' + loremIpsum({ units: 'words', count: 3 }))
+      form.description.val(loremIpsum({ units: 'sentences', count: 3 }))
+    }
+
+    _fakeForm()
 
     return {
       form: form.flatten(),
