@@ -19,22 +19,26 @@
       <div
         v-for="item in oracleScripts"
         :key="item.id"
-        class="oracle-scripts__table-row app-table__row"
+        class="app-table__row-btn"
+        type="button"
+        @click="showOracleScript(item)"
       >
-        <div class="app-table__cell">
-          <span class="app-table__cell-txt" :title="item.name">
-            {{ item.name }}
-          </span>
-        </div>
-        <div class="app-table__cell">
-          <span class="app-table__cell-txt" :title="item.description">
-            {{ item.description }}
-          </span>
-        </div>
-        <div class="app-table__cell">
-          <span class="app-table__cell-txt" :title="item.owner">
-            {{ $cropAddress(item.owner) }}
-          </span>
+        <div class="oracle-scripts__table-row app-table__row">
+          <div class="app-table__cell">
+            <span class="app-table__cell-txt" :title="item.name">
+              {{ item.name }}
+            </span>
+          </div>
+          <div class="app-table__cell">
+            <span class="app-table__cell-txt" :title="item.description">
+              {{ item.description }}
+            </span>
+          </div>
+          <div class="app-table__cell">
+            <span class="app-table__cell-txt" :title="item.owner">
+              {{ $cropAddress(item.owner) }}
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -44,6 +48,9 @@
 <script lang="ts">
 import { getQueryClient } from '@/api/client/queryClient'
 import { showOracleScriptFormDialog } from '@/components/modals/OracleScriptFormModal.vue'
+import { showOracleScriptDialog } from '@/components/modals/OracleScriptModal.vue'
+import router from '@/router'
+import { OracleScript } from '@provider/codec/oracle/v1/oracle'
 import Long from 'long'
 import { defineComponent, ref } from 'vue'
 
@@ -71,7 +78,19 @@ export default defineComponent({
       console.log(res)
     }
 
-    return { oracleScripts, createOracleScript }
+    const showOracleScript = (oracleScript: OracleScript) => {
+      showOracleScriptDialog(
+        {
+          onRequestCreated: (d) => {
+            d.kill()
+            router.push({ name: 'Requests' })
+          },
+        },
+        { oracleScript }
+      )
+    }
+
+    return { oracleScripts, createOracleScript, showOracleScript }
   },
 })
 </script>

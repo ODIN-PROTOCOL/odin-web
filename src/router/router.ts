@@ -37,6 +37,13 @@ const routes: Array<RouteRecordRaw> = [
         /* webpackChunkName: "oracle-scripts" */ '../views/OracleScripts.vue'
       ),
   },
+  {
+    path: '/requests',
+    name: 'Requests',
+    beforeEnter: authorizedOnlyGuard,
+    component: () =>
+      import(/* webpackChunkName: "requests" */ '../views/Requests.vue'),
+  },
 ]
 
 const router = createRouter({

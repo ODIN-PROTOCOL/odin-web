@@ -1,7 +1,8 @@
 <template>
   <div class="nav">
     <router-link :to="{ name: 'DataSources' }">Data Sources</router-link> |
-    <router-link :to="{ name: 'OracleScripts' }">Oracle Scripts</router-link>
+    <router-link :to="{ name: 'OracleScripts' }">Oracle Scripts</router-link> |
+    <router-link :to="{ name: 'Requests' }">Requests</router-link>
     <template v-if="isLoggedIn">
       |
       <button class="app-btn" type="button" @click="logOutAndLeave()">

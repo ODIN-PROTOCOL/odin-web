@@ -7,7 +7,20 @@
   display: grid;
   grid: auto / auto-flow minmax(0, auto);
   gap: 0.8rem;
+}
 
+.app-table__row-btn {
+  display: block;
+  cursor: pointer;
+
+  &:hover {
+    background: $clr-white-hover;
+  }
+}
+
+.app-table__head,
+.app-table__row,
+.app-table__row-btn {
   & + & {
     margin-top: 0.8rem;
   }
@@ -20,8 +33,4 @@
 
 .app-table__cell-txt {
   @include ellipsis(inline-block);
-
-  &[title] {
-    cursor: help;
-  }
 }

@@ -1,0 +1,194 @@
+<template>
+  <ModalBase class="request-form-modal" @close="onClose()">
+    <template #title>
+      <h3>Create request</h3>
+    </template>
+
+    <template #main>
+      <form
+        class="app-form load-fog"
+        :class="{ 'load-fog_show': isLoading }"
+        @submit.prevent
+      >
+        <div class="app-form__field">
+          <label class="app-form__field-lbl"> Oracle Script Id </label>
+          <input
+            class="app-form__field-input"
+            name="request-oracle-script-id"
+            type="text"
+            v-model="form.oracleScriptId"
+            :readonly="true"
+            :disabled="isLoading"
+          />
+          <p v-if="form.oracleScriptIdErr" class="app-form__field-err">
+            {{ form.oracleScriptIdErr }}
+          </p>
+        </div>
+
+        <div class="app-form__field">
+          <label class="app-form__field-lbl"> Ask count </label>
+          <input
+            class="app-form__field-input"
+            name="request-ask-count"
+            type="number"
+            min="10"
+            max="16"
+            step="1"
+            v-model="form.askCount"
+            :disabled="isLoading"
+          />
+          <p v-if="form.askCountErr" class="app-form__field-err">
+            {{ form.askCountErr }}
+          </p>
+        </div>
+
+        <div class="app-form__field">
+          <label class="app-form__field-lbl"> Min count </label>
+          <input
+            class="app-form__field-input"
+            name="request-min-count"
+            type="number"
+            min="10"
+            max="16"
+            step="1"
+            v-model="form.minCount"
+            :disabled="isLoading"
+          />
+          <p v-if="form.minCountErr" class="app-form__field-err">
+            {{ form.minCountErr }}
+          </p>
+        </div>
+
+        <div class="app-form__field">
+          <label class="app-form__field-lbl"> Call data </label>
+          <select
+            class="app-form__field-input"
+            name="request-calldata"
+            multiple
+            v-model="form.calldata"
+            :disabled="isLoading"
+          >
+            <option v-for="phone in phones" :key="phone" :value="phone">
+              {{ phone }}
+            </option>
+          </select>
+          <p v-if="form.calldataErr" class="app-form__field-err">
+            {{ form.calldataErr }}
+          </p>
+        </div>
+
+        <div class="app-form__field">
+          <label class="app-form__field-lbl"> Fee limit </label>
+          <input
+            class="app-form__field-input"
+            name="request-fee-limit"
+            type="number"
+            min="1"
+            v-model="form.feeLimit"
+            :disabled="isLoading"
+          />
+          <p v-if="form.feeLimitErr" class="app-form__field-err">
+            {{ form.feeLimitErr }}
+          </p>
+        </div>
+
+        <div class="app-form__footer">
+          <button
+            class="app-btn"
+            type="button"
+            @click="submit()"
+            :disabled="!form.isValid"
+          >
+            Create
+          </button>
+        </div>
+      </form>
+    </template>
+  </ModalBase>
+</template>
+
+<script lang="ts">
+import { defineComponent, ref } from 'vue'
+import Long from 'long'
+import { createRequest } from '@/api/callers/createRequest'
+import { getWalletAccounts } from '@/api/client/wallet'
+import { DialogCallback, makeDialog } from '@/helpers/dialogs'
+import { handleError } from '@/helpers/errors'
+import { preventIf } from '@/helpers/functions'
+import { notifySuccess } from '@/helpers/notifications'
+import { obiPhoneModels } from '@/helpers/obi-structures'
+import { injectDialogHandler } from './modal-helpers'
+import { useForm, validators } from '@/composables/useForm'
+import ModalBase from './ModalBase.vue'
+import { coins } from '@cosmjs/launchpad'
+import phones from '@/assets/phones.json'
+
+const RequestFormModal = defineComponent({
+  props: { oracleScriptId: Long },
+  components: { ModalBase },
+  setup(props) {
+    const form = useForm({
+      oracleScriptId: [
+        props.oracleScriptId?.toString() || '',
+        validators.required,
+      ],
+      askCount: ['10', validators.required, validators.range(10, 16)],
+      minCount: ['10', validators.required, validators.range(10, 16)],
+      calldata: [[], validators.minItems(1)],
+      feeLimit: ['1', validators.required, validators.min(1)],
+    })
+    const isLoading = ref(false)
+    const onSubmit = injectDialogHandler('onSubmit')
+    const onClose = preventIf(injectDialogHandler('onClose'), isLoading)
+
+    console.log(onSubmit)
+
+    const submit = async () => {
+      const [account] = getWalletAccounts()
+
+      isLoading.value = true
+      try {
+        await createRequest({
+          oracleScriptId: Long.fromString(form.oracleScriptId.val()),
+          askCount: Long.fromString(form.askCount.val()),
+          minCount: Long.fromString(form.minCount.val()),
+          calldata: obiPhoneModels(form.calldata.val()),
+          feeLimit: coins(Number.parseInt(form.feeLimit.val()), 'loki'),
+          prepareGas: new Long(200000),
+          executeGas: new Long(200000),
+          sender: account.address,
+          clientId: '1',
+        })
+
+        onSubmit()
+        notifySuccess('Oracle Script created')
+      } catch (error) {
+        onSubmit()
+        handleError(error)
+      }
+      isLoading.value = false
+    }
+
+    return {
+      form: form.flatten(),
+      isLoading,
+      submit,
+      onClose,
+      phones,
+    }
+  },
+})
+
+export default RequestFormModal
+export function showRequestFormDialog(
+  callbacks: {
+    onSubmit?: DialogCallback
+    onClose?: DialogCallback
+  },
+  props: { oracleScriptId: Long.Long }
+): Promise<unknown | null> {
+  return makeDialog(RequestFormModal, callbacks, { props })
+}
+</script>
+
+<style scoped lang="scss"></style>
