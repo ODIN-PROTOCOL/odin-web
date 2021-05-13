@@ -7,6 +7,9 @@
     <div class="app-table">
       <div class="oracle-scripts__table-head app-table__head">
         <div class="app-table__cell">
+          <span class="app-table__cell-txt"> ID </span>
+        </div>
+        <div class="app-table__cell">
           <span class="app-table__cell-txt"> Name </span>
         </div>
         <div class="app-table__cell">
@@ -24,6 +27,11 @@
         @click="showOracleScript(item)"
       >
         <div class="oracle-scripts__table-row app-table__row">
+          <div class="app-table__cell">
+            <span class="app-table__cell-txt" :title="item.id.toString()">
+              {{ item.id.toString() }}
+            </span>
+          </div>
           <div class="app-table__cell">
             <span class="app-table__cell-txt" :title="item.name">
               {{ item.name }}
@@ -98,6 +106,8 @@ export default defineComponent({
 <style scoped>
 .oracle-scripts__table-head,
 .oracle-scripts__table-row {
-  grid: auto / minmax(8rem, 14rem) minmax(0, 1fr) minmax(8rem, 14rem);
+  grid:
+    auto /
+    minmax(2rem, 4rem) minmax(8rem, 14rem) minmax(8rem, 1fr) minmax(8rem, 14rem);
 }
 </style>

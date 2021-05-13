@@ -7,6 +7,9 @@
     <div class="app-table">
       <div class="data-sources__table-head app-table__head">
         <div class="app-table__cell">
+          <span class="app-table__cell-txt"> ID </span>
+        </div>
+        <div class="app-table__cell">
           <span class="app-table__cell-txt"> Name </span>
         </div>
         <div class="app-table__cell">
@@ -21,6 +24,11 @@
         :key="item.id"
         class="data-sources__table-row app-table__row"
       >
+        <div class="app-table__cell">
+          <span class="app-table__cell-txt" :title="item.id.toString()">
+            {{ item.id.toString() }}
+          </span>
+        </div>
         <div class="app-table__cell">
           <span class="app-table__cell-txt" :title="item.name">
             {{ item.name }}
@@ -57,6 +65,7 @@ export default defineComponent({
         new Long(100)
       )
       console.log(response, response.dataSources)
+      console.log(response.dataSources[0].id)
       dataSources.value = response.dataSources
     }
     loadDataSources()
@@ -79,6 +88,8 @@ export default defineComponent({
 <style scoped>
 .data-sources__table-head,
 .data-sources__table-row {
-  grid: auto / minmax(8rem, 14rem) minmax(0, 1fr) minmax(8rem, 14rem);
+  grid:
+    auto /
+    minmax(2rem, 4rem) minmax(8rem, 14rem) minmax(8rem, 1fr) minmax(8rem, 14rem);
 }
 </style>
