@@ -11,7 +11,7 @@ import {
   QueryVotesResponse,
 } from '@provider/codec/cosmos/gov/v1beta1/query'
 
-export interface GovExtension {
+export interface GovExt {
   gov: {
     unverified: {
       params: (paramsType: string) => Promise<QueryParamsResponse>
@@ -32,7 +32,7 @@ export interface GovExtension {
   }
 }
 
-export function setupGovExtension(base: QueryClient): GovExtension {
+export function setupGovExt(base: QueryClient): GovExt {
   const rpc = createRpc(base)
   // Use this service to get easy typed access to query methods
   // This cannot be used for proof verification

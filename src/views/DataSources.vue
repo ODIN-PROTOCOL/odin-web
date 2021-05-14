@@ -50,34 +50,28 @@
 </template>
 
 <script lang="ts">
-import { getQueryClient } from '@/api/client/queryClient'
+import { callers } from '@/api/callers'
 import { showDataSourceFormDialog } from '@/components/modals/DataSourceFormModal.vue'
 import Long from 'long'
 import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
   setup() {
-    const queries = getQueryClient()
-
     const dataSources = ref()
     const loadDataSources = async () => {
-      const response = await queries.oracle.unverified.dataSources(
-        new Long(100)
-      )
+      const response = await callers.getDataSources(new Long(100))
       console.log(response, response.dataSources)
-      console.log(response.dataSources[0].id)
       dataSources.value = response.dataSources
     }
     loadDataSources()
 
     const createDataSource = async () => {
-      const res = await showDataSourceFormDialog({
+      showDataSourceFormDialog({
         onSubmit: (d) => {
           d.kill()
           loadDataSources()
         },
       })
-      console.log('Dialog Result', res)
     }
 
     return { dataSources, createDataSource }

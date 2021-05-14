@@ -1,4 +1,4 @@
-import { hasWallet } from '@/api/client/wallet'
+import { wallet } from '@/api/wallet'
 import {
   NavigationGuardWithThis,
   RouteLocation,
@@ -13,7 +13,7 @@ export function makeRootRedirector(
   unauthorizedRoute: RouteLocationRaw
 ): RouteRedirector {
   return () => {
-    if (hasWallet()) {
+    if (!wallet.isEmpty) {
       return authorizedRoute
     } else {
       return unauthorizedRoute
@@ -25,7 +25,7 @@ export function makeAuthorizedOnlyGuard(
   fallback: RouteLocationRaw
 ): RouteGuard {
   return () => {
-    if (!hasWallet()) {
+    if (wallet.isEmpty) {
       return fallback
     }
     return true
@@ -36,7 +36,7 @@ export function makeUnauthorizedOnlyGuard(
   fallback: RouteLocationRaw
 ): RouteGuard {
   return () => {
-    if (hasWallet()) {
+    if (!wallet.isEmpty) {
       return fallback
     }
     return true

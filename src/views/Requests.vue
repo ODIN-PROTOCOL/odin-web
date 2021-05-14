@@ -39,17 +39,15 @@
 </template>
 
 <script lang="ts">
-import { getQueryClient } from '@/api/client/queryClient'
+import { callers } from '@/api/callers'
 import Long from 'long'
 import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
   setup() {
-    const queries = getQueryClient()
-
     const requests = ref()
     const loadRequests = async () => {
-      const response = await queries.oracle.unverified.requests(new Long(100))
+      const response = await callers.getRequests(new Long(100))
       console.log(response, response.requests)
       requests.value = response.requests
     }

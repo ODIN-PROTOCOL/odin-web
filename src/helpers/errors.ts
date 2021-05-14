@@ -1,8 +1,8 @@
-import { BroadcastError } from '@/api/callers/signAndBroadcast'
+import { OdinApiBroadcastError } from '@/api/api'
 import { notifyError } from './notifications'
 
 export function handleError(error: Error): void {
-  if (error instanceof BroadcastError) {
+  if (error instanceof OdinApiBroadcastError) {
     _handleBroadcastError(error)
   } else {
     console.error(error)
@@ -10,7 +10,7 @@ export function handleError(error: Error): void {
   }
 }
 
-function _handleBroadcastError(error: BroadcastError): void {
+function _handleBroadcastError(error: OdinApiBroadcastError): void {
   console.error(error)
   notifyError(error.message)
 }

@@ -1,26 +1,16 @@
-import { clearQueryClient, initQueryClient } from '@/api/client/queryClient'
-import {
-  clearSigningStargateClient,
-  initSigningStargateClient,
-} from '@/api/client/signingStargateClient'
-import {
-  clearTendermintClient,
-  initTendermintClient,
-} from '@/api/client/tendermintClient'
-import { clearWallet, initWallet, Wallet } from '@/api/client/wallet'
+import { api } from '@/api/api'
+import { OdinWallet, wallet } from '@/api/wallet'
 import { fromStorage, removeStorageItem, toStorage } from '@/helpers/storage'
 import { DeepReadonly, readonly, Ref, ref } from 'vue'
 
 const _isLoggedIn = ref<boolean>(false)
 const isLoggedInReadonly = readonly(_isLoggedIn)
 
-async function logIn(mnemonic: string): Promise<Wallet | null> {
-  const [wallet] = await initWallet(mnemonic)
-  if (!wallet) return null
+async function logIn(mnemonic: string): Promise<OdinWallet | null> {
+  await wallet.init(mnemonic)
+  if (wallet.isEmpty) return null
 
-  const tendermint = await initTendermintClient()
-  initQueryClient(tendermint)
-  await initSigningStargateClient(wallet)
+  await api.attachWallet(wallet)
 
   _isLoggedIn.value = true
   toStorage('mnemonic', mnemonic)
@@ -29,16 +19,14 @@ async function logIn(mnemonic: string): Promise<Wallet | null> {
 }
 
 function logOut(): void {
-  clearWallet()
-  clearTendermintClient()
-  clearQueryClient()
-  clearSigningStargateClient()
+  wallet.clear()
+  api.detachWallet()
 
   _isLoggedIn.value = false
   removeStorageItem('mnemonic')
 }
 
-export async function tryRestoreSession(): Promise<Wallet | null> {
+export async function tryRestoreSession(): Promise<OdinWallet | null> {
   const mnemonic = fromStorage('mnemonic')
   if (!mnemonic) return null
 
@@ -51,9 +39,9 @@ export async function tryRestoreSession(): Promise<Wallet | null> {
 
 export function useAuthorization(): {
   isLoggedIn: DeepReadonly<Ref<boolean>>
-  logIn: (mnemonic: string) => Promise<Wallet | null>
+  logIn: (mnemonic: string) => Promise<OdinWallet | null>
   logOut: () => void
-  tryRestoreSession: () => Promise<Wallet | null>
+  tryRestoreSession: () => Promise<OdinWallet | null>
 } {
   return {
     isLoggedIn: isLoggedInReadonly,

@@ -8,7 +8,7 @@ import {
   QueryTreasuryPoolResponse,
 } from '@provider/codec/mint/query'
 
-export interface MintExtension {
+export interface MintExt {
   mint: {
     unverified: {
       params: () => Promise<QueryParamsResponse>
@@ -20,7 +20,7 @@ export interface MintExtension {
   }
 }
 
-export function setupMintExtension(base: QueryClient): MintExtension {
+export function setupMintExt(base: QueryClient): MintExt {
   const rpc = createRpc(base)
   // Use this service to get easy typed access to query methods
   // This cannot be used for proof verification

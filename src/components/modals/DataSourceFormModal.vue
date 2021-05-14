@@ -72,8 +72,8 @@ import { defineComponent, ref } from 'vue'
 import Long from 'long'
 import { loremIpsum } from 'lorem-ipsum'
 import { coins } from '@cosmjs/launchpad'
-import { createDataSource } from '@/api/callers/createDataSource'
-import { getWalletAccounts } from '@/api/client/wallet'
+import { wallet } from '@/api/wallet'
+import { callers } from '@/api/callers'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { readFile } from '@/helpers/files'
 import { handleError } from '@/helpers/errors'
@@ -96,19 +96,18 @@ const DataSourceFormModal = defineComponent({
     const onSubmit = dialogs.getHandler('onSubmit')
 
     const submit = async () => {
-      const [account] = getWalletAccounts()
       const executableParsed = await _parseExecutable()
       if (!executableParsed) return
 
       isLoading.value = true
       try {
-        await createDataSource({
+        await callers.createDataSource({
           name: form.name.val(),
           description: form.description.val(),
           executable: executableParsed,
           fee: coins(1, 'loki'),
-          owner: account.address,
-          sender: account.address,
+          owner: wallet.account.address,
+          sender: wallet.account.address,
         })
 
         onSubmit()

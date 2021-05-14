@@ -110,8 +110,8 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import Long from 'long'
-import { createRequest } from '@/api/callers/createRequest'
-import { getWalletAccounts } from '@/api/client/wallet'
+import { wallet } from '@/api/wallet'
+import { callers } from '@/api/callers'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
@@ -140,14 +140,10 @@ const RequestFormModal = defineComponent({
     const onSubmit = dialogs.getHandler('onSubmit')
     const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
 
-    console.log(onSubmit)
-
     const submit = async () => {
-      const [account] = getWalletAccounts()
-
       isLoading.value = true
       try {
-        await createRequest({
+        await callers.createRequest({
           oracleScriptId: Long.fromString(form.oracleScriptId.val()),
           askCount: Long.fromString(form.askCount.val()),
           minCount: Long.fromString(form.minCount.val()),
@@ -155,7 +151,7 @@ const RequestFormModal = defineComponent({
           feeLimit: coins(Number.parseInt(form.feeLimit.val()), 'loki'),
           prepareGas: new Long(200000),
           executeGas: new Long(200000),
-          sender: account.address,
+          sender: wallet.account.address,
           clientId: '1',
         })
 

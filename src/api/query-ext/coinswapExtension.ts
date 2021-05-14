@@ -5,7 +5,7 @@ import {
   QueryRateResponse,
 } from '@provider/codec/coinswap/query'
 
-export interface CoinswapExtension {
+export interface CoinswapExt {
   coinswap: {
     unverified: {
       params: () => Promise<QueryParamsResponse>
@@ -14,7 +14,7 @@ export interface CoinswapExtension {
   }
 }
 
-export function setupCoinswapExtension(base: QueryClient): CoinswapExtension {
+export function setupCoinswapExt(base: QueryClient): CoinswapExt {
   const rpc = createRpc(base)
   // Use this service to get easy typed access to query methods
   // This cannot be used for proof verification

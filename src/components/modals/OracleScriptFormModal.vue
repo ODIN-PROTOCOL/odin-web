@@ -70,8 +70,8 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import { loremIpsum } from 'lorem-ipsum'
-import { createOracleScript } from '@/api/callers/createOracleScript'
-import { getWalletAccounts } from '@/api/client/wallet'
+import { wallet } from '@/api/wallet'
+import { callers } from '@/api/callers'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { readFile } from '@/helpers/files'
 import { handleError } from '@/helpers/errors'
@@ -93,18 +93,17 @@ const OracleScriptFormModal = defineComponent({
     const onSubmit = dialogs.getHandler('onSubmit')
 
     const submit = async () => {
-      const [account] = getWalletAccounts()
       const codeFileParsed = await _parseCodeFile()
       if (!codeFileParsed) return
 
       isLoading.value = true
       try {
-        await createOracleScript({
+        await callers.createOracleScript({
           name: form.name.val(),
           description: form.description.val(),
           code: codeFileParsed,
-          owner: account.address,
-          sender: account.address,
+          owner: wallet.account.address,
+          sender: wallet.account.address,
           schema: '',
           sourceCodeUrl: '',
         })

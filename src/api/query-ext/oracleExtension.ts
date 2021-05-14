@@ -19,7 +19,7 @@ import {
   QueryValidatorResponse,
 } from '@provider/codec/oracle/v1/query'
 
-export interface OracleExtension {
+export interface OracleExt {
   oracle: {
     unverified: {
       params: () => Promise<QueryParamsResponse>
@@ -61,7 +61,7 @@ export interface OracleExtension {
   }
 }
 
-export function setupOracleExtension(base: QueryClient): OracleExtension {
+export function setupOracleExt(base: QueryClient): OracleExt {
   const rpc = createRpc(base)
   // Use this service to get easy typed access to query methods
   // This cannot be used for proof verification

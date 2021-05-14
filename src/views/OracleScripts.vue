@@ -54,7 +54,7 @@
 </template>
 
 <script lang="ts">
-import { getQueryClient } from '@/api/client/queryClient'
+import { callers } from '@/api/callers'
 import { showOracleScriptFormDialog } from '@/components/modals/OracleScriptFormModal.vue'
 import { showOracleScriptDialog } from '@/components/modals/OracleScriptModal.vue'
 import router from '@/router'
@@ -64,26 +64,21 @@ import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
   setup() {
-    const queries = getQueryClient()
-
     const oracleScripts = ref()
     const loadOracleScripts = async () => {
-      const response = await queries.oracle.unverified.oracleScripts(
-        new Long(100)
-      )
+      const response = await callers.getOracleScripts(new Long(100))
       console.log(response, response.oracleScripts)
       oracleScripts.value = response.oracleScripts
     }
     loadOracleScripts()
 
     const createOracleScript = async () => {
-      const res = await showOracleScriptFormDialog({
+      showOracleScriptFormDialog({
         onSubmit: (d) => {
           d.kill()
           loadOracleScripts()
         },
       })
-      console.log(res)
     }
 
     const showOracleScript = (oracleScript: OracleScript) => {
