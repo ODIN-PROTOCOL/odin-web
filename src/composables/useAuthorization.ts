@@ -1,6 +1,6 @@
 import { api } from '@/api/api'
 import { OdinWallet, wallet } from '@/api/wallet'
-import { fromStorage, removeStorageItem, toStorage } from '@/helpers/storage'
+import { storage } from '@/helpers/storage'
 import { DeepReadonly, readonly, Ref, ref } from 'vue'
 
 const _isLoggedIn = ref<boolean>(false)
@@ -13,7 +13,7 @@ async function logIn(mnemonic: string): Promise<OdinWallet | null> {
   await api.attachWallet(wallet)
 
   _isLoggedIn.value = true
-  toStorage('mnemonic', mnemonic)
+  storage.set('mnemonic', mnemonic)
 
   return wallet
 }
@@ -23,11 +23,11 @@ function logOut(): void {
   api.detachWallet()
 
   _isLoggedIn.value = false
-  removeStorageItem('mnemonic')
+  storage.remove('mnemonic')
 }
 
 export async function tryRestoreSession(): Promise<OdinWallet | null> {
-  const mnemonic = fromStorage('mnemonic')
+  const mnemonic = storage.get('mnemonic')
   if (!mnemonic) return null
 
   try {

@@ -1,3 +1,27 @@
+class StorageWrapper {
+  constructor(private _storage: Storage, private _prefix: string) {}
+
+  set(key: string, value: string): void {
+    this._storage.setItem(this._key(key), value)
+  }
+
+  get(key: string): string | null {
+    return this._storage.getItem(this._key(key))
+  }
+
+  remove(key: string): void {
+    this._storage.removeItem(this._key(key))
+  }
+
+  clear(): void {
+    this._storage.clear()
+  }
+
+  private _key(str: string) {
+    return `${this._prefix}_${str}`
+  }
+}
+
 class FallbackStorage implements Storage {
   private _storage: Record<string, string> = {}
   setItem(key: string, value: string): void {
@@ -20,23 +44,10 @@ class FallbackStorage implements Storage {
   }
 }
 
-const _storage: Storage = _getStorage('sessionStorage') || new FallbackStorage()
-
-export function toStorage(key: string, value: string): void {
-  _storage.setItem(_getStorageKey(key), value)
-}
-
-export function fromStorage(key: string): string | null {
-  return _storage.getItem(_getStorageKey(key))
-}
-
-export function removeStorageItem(key: string): void {
-  _storage.removeItem(_getStorageKey(key))
-}
-
-export function clearStorage(): void {
-  _storage.clear()
-}
+export const storage = new StorageWrapper(
+  _getStorage('sessionStorage') || new FallbackStorage(),
+  'odin'
+)
 
 function _getStorage(type: string): Storage | null {
   try {
@@ -48,9 +59,4 @@ function _getStorage(type: string): Storage | null {
   } catch (e) {
     return null
   }
-}
-
-const STORAGE_KEY_PREFIX = 'odin'
-function _getStorageKey(key: string) {
-  return `${STORAGE_KEY_PREFIX}_${key}`
 }
