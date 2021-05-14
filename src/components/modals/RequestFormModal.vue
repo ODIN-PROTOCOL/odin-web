@@ -31,8 +31,8 @@
             class="app-form__field-input"
             name="request-ask-count"
             type="number"
-            min="10"
-            max="16"
+            min="1"
+            max="10"
             step="1"
             v-model="form.askCount"
             :disabled="isLoading"
@@ -48,8 +48,8 @@
             class="app-form__field-input"
             name="request-min-count"
             type="number"
-            min="10"
-            max="16"
+            min="1"
+            max="10"
             step="1"
             v-model="form.minCount"
             :disabled="isLoading"
@@ -116,7 +116,7 @@ import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
-import { obiPhoneModels } from '@/helpers/obi-structures'
+import { obiCoinMultiplier } from '@/helpers/obi-structures'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import { coins } from '@cosmjs/launchpad'
@@ -131,8 +131,8 @@ const RequestFormModal = defineComponent({
         props.oracleScriptId?.toString() || '',
         validators.required,
       ],
-      askCount: ['10', validators.required, validators.range(10, 16)],
-      minCount: ['10', validators.required, validators.range(10, 16)],
+      askCount: ['1', validators.required, validators.range(1, 10)],
+      minCount: ['1', validators.required, validators.range(1, 10)],
       calldata: [[], validators.minItems(1)],
       feeLimit: ['1', validators.required, validators.min(1)],
     })
@@ -147,7 +147,9 @@ const RequestFormModal = defineComponent({
           oracleScriptId: Long.fromString(form.oracleScriptId.val()),
           askCount: Long.fromString(form.askCount.val()),
           minCount: Long.fromString(form.minCount.val()),
-          calldata: obiPhoneModels(form.calldata.val()),
+          // TODO: clarify calldata
+          // calldata: obiPhoneModels(form.calldata.val()),
+          calldata: obiCoinMultiplier('BTC', 1000000000),
           feeLimit: coins(Number.parseInt(form.feeLimit.val()), 'loki'),
           prepareGas: new Long(200000),
           executeGas: new Long(200000),
