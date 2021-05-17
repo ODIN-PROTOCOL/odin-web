@@ -14,7 +14,7 @@
   cursor: pointer;
 
   &:hover {
-    background: $clr-white-hover;
+    background: var(--clr__main-bg-hover);
   }
 }
 

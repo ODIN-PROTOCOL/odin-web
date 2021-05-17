@@ -19,8 +19,13 @@
   align-items: center;
 
   &_gap-8 {
-    & > *:not(:first-child) {
+    & > *:not(:first-child):not(.fx-sae) {
       margin-left: 0.8rem;
     }
   }
+}
+
+.fx-sae {
+  // self align end
+  margin-left: auto;
 }

@@ -57,8 +57,8 @@ export default defineComponent<{ testMsg: string }>({
 
 .modal-base__content {
   background: white;
-  border-radius: 8px;
-  padding: 20px;
+  border-radius: 0.8rem;
+  padding: 2rem;
   z-index: 1;
   width: 100%;
   max-width: 48rem;
@@ -66,7 +66,7 @@ export default defineComponent<{ testMsg: string }>({
 
 .modal-base__content-head {
   display: flex;
-  margin-bottom: 8px;
+  margin-bottom: 0.8rem;
 }
 
 .modal-base__close-btn {

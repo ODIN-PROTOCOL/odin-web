@@ -1,9 +1,12 @@
 <template>
   <template v-if="isAppReady">
-    <div class="fx-row fx-row_gap-8">
+    <header class="fx-row fx-row_gap-8">
       <img class="logo" src="~@/assets/odin-logo.png" alt="Logo" width="120" />
       <Nav></Nav>
-    </div>
+      <template v-if="isLoggedIn">
+        <UserWidget class="fx-sae"></UserWidget>
+      </template>
+    </header>
     <router-view />
   </template>
   <div class="dialogs-container" ref="dialogsContainerRef"></div>
@@ -13,10 +16,12 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from 'vue'
 import { dialogs } from '@/helpers/dialogs'
-import Nav from './components/Nav.vue'
+import { useAuthorization } from '@/composables/useAuthorization'
+import Nav from '@/components/Nav.vue'
+import UserWidget from '@/components/UserWidget.vue'
 
 export default defineComponent({
-  components: { Nav },
+  components: { Nav, UserWidget },
   setup() {
     const _readyStates = ref({
       dialogs: false,
@@ -34,7 +39,11 @@ export default defineComponent({
       }
     })
 
-    return { isAppReady, dialogsContainerRef }
+    return {
+      isAppReady,
+      dialogsContainerRef,
+      isLoggedIn: useAuthorization().isLoggedIn,
+    }
   },
 })
 </script>
@@ -50,12 +59,9 @@ export default defineComponent({
 @import '~@/styles/vue-notification.scss';
 
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: var(--clr__text);
   width: 100%;
-  max-width: 70rem;
+  max-width: 144rem;
+  padding: 0 4rem;
   margin: 0 auto;
   @include flex-container;
 }

@@ -66,7 +66,7 @@ export default defineComponent({
   setup() {
     const oracleScripts = ref()
     const loadOracleScripts = async () => {
-      const response = await callers.getOracleScripts(new Long(100))
+      const response = await callers.getOracleScripts(Long.fromNumber(100))
       console.log(response, response.oracleScripts)
       oracleScripts.value = response.oracleScripts
     }

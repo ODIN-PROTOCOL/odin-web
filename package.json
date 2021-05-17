@@ -16,6 +16,7 @@
     "@cosmjs/stargate": "^0.24.1",
     "@cosmjs/tendermint-rpc": "^0.24.1",
     "@kyvg/vue3-notification": "^2.3.0",
+    "bignumber.js": "^9.0.1",
     "core-js": "^3.6.5",
     "lodash-es": "^4.17.21",
     "long": "^4.0.0",

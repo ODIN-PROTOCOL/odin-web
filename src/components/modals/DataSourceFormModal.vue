@@ -57,7 +57,7 @@
             class="app-btn"
             type="button"
             @click="submit()"
-            :disabled="!form.isValid"
+            :disabled="!form.isValid || isLoading"
           >
             Create
           </button>

@@ -59,7 +59,7 @@ export default defineComponent({
   setup() {
     const dataSources = ref()
     const loadDataSources = async () => {
-      const response = await callers.getDataSources(new Long(100))
+      const response = await callers.getDataSources(Long.fromNumber(100))
       console.log(response, response.dataSources)
       dataSources.value = response.dataSources
     }

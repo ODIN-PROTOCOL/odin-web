@@ -47,9 +47,14 @@ export default defineComponent({
   setup() {
     const requests = ref()
     const loadRequests = async () => {
-      const response = await callers.getRequests(new Long(100))
+      const response = await callers.getRequests(Long.fromNumber(100))
       console.log(response, response.requests)
       requests.value = response.requests
+      console.log(
+        new TextDecoder().decode(
+          response.requests[0].responsePacketData?.result
+        )
+      )
     }
     loadRequests()
 

@@ -1,16 +1,16 @@
 import { api } from '@/api/api'
 import { OdinWallet, wallet } from '@/api/wallet'
 import { storage } from '@/helpers/storage'
-import { DeepReadonly, readonly, Ref, ref } from 'vue'
+import { readonly, ref } from 'vue'
+import { useBalances } from './useBalances'
 
 const _isLoggedIn = ref<boolean>(false)
 const isLoggedInReadonly = readonly(_isLoggedIn)
 
-async function logIn(mnemonic: string): Promise<OdinWallet | null> {
+async function createSession(mnemonic: string): Promise<OdinWallet> {
   await wallet.init(mnemonic)
-  if (wallet.isEmpty) return null
 
-  await api.attachWallet(wallet)
+  await Promise.all([api.attachWallet(wallet), useBalances().load()])
 
   _isLoggedIn.value = true
   storage.set('mnemonic', mnemonic)
@@ -18,9 +18,10 @@ async function logIn(mnemonic: string): Promise<OdinWallet | null> {
   return wallet
 }
 
-function logOut(): void {
+function destroySession(): void {
   wallet.clear()
   api.detachWallet()
+  useBalances().clear()
 
   _isLoggedIn.value = false
   storage.remove('mnemonic')
@@ -31,22 +32,18 @@ export async function tryRestoreSession(): Promise<OdinWallet | null> {
   if (!mnemonic) return null
 
   try {
-    return logIn(mnemonic)
+    return createSession(mnemonic)
   } catch (error) {
     return null
   }
 }
 
-export function useAuthorization(): {
-  isLoggedIn: DeepReadonly<Ref<boolean>>
-  logIn: (mnemonic: string) => Promise<OdinWallet | null>
-  logOut: () => void
-  tryRestoreSession: () => Promise<OdinWallet | null>
-} {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function useAuthorization() {
   return {
     isLoggedIn: isLoggedInReadonly,
-    logIn,
-    logOut,
+    logIn: createSession,
+    logOut: destroySession,
     tryRestoreSession,
   }
 }

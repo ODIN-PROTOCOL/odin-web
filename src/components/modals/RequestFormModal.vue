@@ -97,7 +97,7 @@
             class="app-btn"
             type="button"
             @click="submit()"
-            :disabled="!form.isValid"
+            :disabled="!form.isValid || isLoading"
           >
             Create
           </button>
@@ -151,8 +151,8 @@ const RequestFormModal = defineComponent({
           // calldata: obiPhoneModels(form.calldata.val()),
           calldata: obiCoinMultiplier('BTC', 1000000000),
           feeLimit: coins(Number.parseInt(form.feeLimit.val()), 'loki'),
-          prepareGas: new Long(200000),
-          executeGas: new Long(200000),
+          prepareGas: Long.fromNumber(200000),
+          executeGas: Long.fromNumber(200000),
           sender: wallet.account.address,
           clientId: '1',
         })

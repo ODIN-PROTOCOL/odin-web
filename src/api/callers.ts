@@ -3,7 +3,9 @@ import {
   MsgCreateOracleScript,
   MsgRequestData,
 } from '@provider/codec/oracle/v1/tx'
+import { MsgExchange } from '@provider/codec/coinswap/tx'
 import { api } from './api'
+import { wallet } from './wallet'
 
 const makeCallers = () => {
   const bc = api.makeBroadcastCaller.bind(api)
@@ -27,6 +29,14 @@ const makeCallers = () => {
       MsgRequestData
     ),
     getRequests: qc((q) => q.oracle.unverified.requests),
+
+    getBalances: qc((q) => () => {
+      const myAddress = wallet.account.address
+      return q.bank.unverified.allBalances(myAddress)
+    }),
+
+    createExchange: bc<MsgExchange>('/coinswap.MsgExchange', MsgExchange),
+    getRate: qc((q) => q.coinswap.unverified.rate),
   }
 }
 

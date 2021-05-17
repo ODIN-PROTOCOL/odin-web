@@ -1,12 +1,26 @@
 .app-btn {
   display: inline-block;
-  border: 2px solid currentColor;
-  padding: 0.4rem 0.8rem;
+  background: var(--clr__action);
+  color: var(--clr__action-text);
+  border: 2px solid transparent; // to sync position with the 2nd variant
   border-radius: 0.4rem;
+  padding: 0.4rem 0.8rem;
   line-height: 1.25;
 
   &:disabled {
-    border-color: $clr-disabled-line;
-    color: $clr-disabled-text;
+    background: var(--clr__action-disabled);
+  }
+}
+
+.app-btn-2nd {
+  display: inline-block;
+  color: var(--clr__action);
+  border: 2px solid currentColor;
+  border-radius: 0.4rem;
+  padding: 0.4rem 0.8rem;
+  line-height: 1.25;
+
+  &:disabled {
+    color: var(--clr__action-disabled);
   }
 }

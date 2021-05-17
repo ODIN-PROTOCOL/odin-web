@@ -2,9 +2,11 @@ import { API_CONFIG } from './api-config'
 import { Tendermint34Client } from '@cosmjs/tendermint-rpc'
 import { OdinWallet } from './wallet'
 import {
+  BankExtension,
   BroadcastTxResponse,
   defaultRegistryTypes,
   QueryClient,
+  setupBankExtension,
   SigningStargateClient,
 } from '@cosmjs/stargate'
 import { EncodeObject, GeneratedType, Registry } from '@cosmjs/proto-signing'
@@ -29,7 +31,12 @@ export class OdinApiBroadcastError extends Error {
   }
 }
 
-type OdinQueryClient = QueryClient & CoinswapExt & GovExt & MintExt & OracleExt
+type OdinQueryClient = QueryClient &
+  CoinswapExt &
+  GovExt &
+  MintExt &
+  OracleExt &
+  BankExtension
 
 class Api {
   private _query: OdinQueryClient = stub('Query not initialized!')
@@ -81,7 +88,8 @@ class Api {
       setupCoinswapExt,
       setupGovExt,
       setupMintExt,
-      setupOracleExt
+      setupOracleExt,
+      setupBankExtension
     )
   }
 
@@ -99,7 +107,7 @@ class Api {
     const res = await this._stargate.signAndBroadcast(
       this._wallet.account.address,
       messages,
-      { amount: coins(0, '  loki'), gas: '2000000' }
+      { amount: coins(0, 'loki'), gas: '2000000' }
     )
     if (!res || ('code' in res && res.code !== 0)) {
       throw new OdinApiBroadcastError(res as BroadcastTxFailure)

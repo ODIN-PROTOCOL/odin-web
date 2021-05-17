@@ -17,7 +17,7 @@
       transition-duration: 0s;
       transition-delay: 0.5s;
       visibility: visible;
-      background: var(--load-fog__bg, rgba($clr-white, 0.75));
+      background: var(--load-fog__bg, rgba($clr-main-bg, 0.75));
     }
   }
 }

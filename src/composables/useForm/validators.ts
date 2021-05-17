@@ -1,6 +1,8 @@
 export type FormFieldValidator = (...args: unknown[]) => string | null
 export type FormFieldValidatorResult = ReturnType<FormFieldValidator>
 
+// TODO: translate validation errors
+
 export const required: FormFieldValidator = (val: unknown) => {
   if (!val && val !== 0) return 'The field is required'
   return null
@@ -44,4 +46,21 @@ export const minItems = (minNum: number): FormFieldValidator => {
     }
     return null
   }
+}
+
+export const oneOf = (subset: unknown[]): FormFieldValidator => {
+  return (val: unknown): FormFieldValidatorResult => {
+    if ((val || val === 0) && !subset.includes(val)) {
+      return `Value is out of allowed subset: ${subset}`
+    }
+    return null
+  }
+}
+
+// TODO: real validator
+export const erc20Address: FormFieldValidator = (val: unknown) => {
+  if (val && typeof val === 'string' && val.length < 8) {
+    return 'Invalid address'
+  }
+  return null
 }

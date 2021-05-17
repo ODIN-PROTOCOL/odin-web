@@ -3,37 +3,18 @@
     <router-link :to="{ name: 'DataSources' }">Data Sources</router-link> |
     <router-link :to="{ name: 'OracleScripts' }">Oracle Scripts</router-link> |
     <router-link :to="{ name: 'Requests' }">Requests</router-link>
-    <template v-if="isLoggedIn">
-      |
-      <button class="app-btn" type="button" @click="logOutAndLeave()">
-        LogOut
-      </button>
-    </template>
   </div>
 </template>
 
 <script lang="ts">
-import { useAuthorization } from '@/composables/useAuthorization'
-import router from '@/router'
 import { defineComponent } from 'vue'
 
-export default defineComponent({
-  setup() {
-    const { isLoggedIn, logOut } = useAuthorization()
-
-    const logOutAndLeave = () => {
-      logOut()
-      router.push({ name: 'Auth' })
-    }
-
-    return { isLoggedIn, logOutAndLeave }
-  },
-})
+export default defineComponent({})
 </script>
 
 <style scoped lang="scss">
 .nav {
-  padding: 30px;
+  padding: 3rem;
 
   a {
     font-weight: bold;

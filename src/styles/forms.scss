@@ -24,12 +24,22 @@
   width: 100%;
 }
 
+.app-form__field-note {
+  display: block;
+  color: var(--clr__text-secondary);
+  margin-top: 0.8rem;
+}
+
 .app-form__field-err {
   display: block;
-  color: $clr-danger;
+  color: var(--clr__danger);
   margin-top: 0.8rem;
 }
 
 .app-form__footer {
   display: block;
+
+  & > *:not(:first-child) {
+    margin-left: 0.8rem;
+  }
 }

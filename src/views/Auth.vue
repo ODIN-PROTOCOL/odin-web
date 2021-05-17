@@ -20,6 +20,7 @@ import router from '@/router'
 import { API_CONFIG } from '@/api/api-config'
 import { defineComponent, ref } from 'vue'
 import { useAuthorization } from '@/composables/useAuthorization'
+import { handleError } from '@/helpers/errors'
 
 export default defineComponent({
   setup() {
@@ -27,11 +28,13 @@ export default defineComponent({
     const mnemonic = ref<string>(API_CONFIG.mnemonic)
 
     const submit = async () => {
-      const { logIn } = useAuthorization()
-      const wallet = await logIn(mnemonic.value)
-      if (!wallet) return
-
-      router.push({ name: 'Redirector' })
+      const auth = useAuthorization()
+      try {
+        await auth.logIn(mnemonic.value)
+        router.push({ name: 'Redirector' })
+      } catch (error) {
+        handleError(error)
+      }
     }
 
     return {
@@ -46,7 +49,7 @@ export default defineComponent({
 .auth__form-field {
   display: grid;
   grid: auto-flow auto / auto;
-  gap: 8px;
+  gap: 0.8rem;
 }
 
 .auth__form-submit-btn {

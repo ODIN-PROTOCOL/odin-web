@@ -10,7 +10,7 @@ body {
   line-height: 1.42856;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: $clr-text;
+  color: var(--clr__text);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;

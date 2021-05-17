@@ -83,7 +83,7 @@ export function setupOracleExt(base: QueryClient): OracleExt {
             dataSourceId: dataSourceId,
           })
         },
-        dataSources: (limit: Long.Long, offset = new Long(0)) => {
+        dataSources: (limit: Long.Long, offset = Long.ZERO) => {
           return queryService.DataSources({
             pagination: {
               key: new Uint8Array(),
@@ -98,7 +98,7 @@ export function setupOracleExt(base: QueryClient): OracleExt {
             oracleScriptId: oracleScriptId,
           })
         },
-        oracleScripts: (limit: Long.Long, offset = new Long(0)) => {
+        oracleScripts: (limit: Long.Long, offset = Long.ZERO) => {
           return queryService.OracleScripts({
             pagination: {
               key: new Uint8Array(),
@@ -113,7 +113,7 @@ export function setupOracleExt(base: QueryClient): OracleExt {
             requestId: requestId,
           })
         },
-        requests: (limit: Long.Long, offset = new Long(0)) => {
+        requests: (limit: Long.Long, offset = Long.ZERO) => {
           return queryService.Requests({
             pagination: {
               key: new Uint8Array(),
@@ -126,7 +126,7 @@ export function setupOracleExt(base: QueryClient): OracleExt {
         reports: (
           requestId: Long.Long,
           limit: Long.Long,
-          offset = new Long(0)
+          offset = Long.ZERO
         ) => {
           return queryService.RequestReports({
             requestId: requestId,

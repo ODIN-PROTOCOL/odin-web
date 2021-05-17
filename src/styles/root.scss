@@ -1,8 +1,10 @@
 :root {
-  --clr__white: #{$clr-white};
-  --clr__white-hover: #{$clr-white-hover};
+  --clr__main-bg: #{$clr-main-bg};
+  --clr__main-bg-hover: #{$clr-main-bg-hover};
   --clr__text: #{$clr-text};
-  --clr__disabled-line: #{$clr-disabled-line};
-  --clr__disabled-text: #{$clr-disabled-text};
+  --clr__text-secondary: #{$clr-text-secondary};
+  --clr__action: #{$clr-action};
+  --clr__action-text: #{$clr-action-text};
+  --clr__action-disabled: #{$clr-action-disabled};
   --clr__danger: #{$clr-danger};
 }

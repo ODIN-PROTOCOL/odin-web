@@ -30,7 +30,7 @@ export class OdinWallet {
       API_CONFIG.hdDeviation,
       'odin'
     )
-    this._walletAccounts = this._wallet && (await this._wallet.getAccounts())
+    this._walletAccounts = await this._wallet.getAccounts()
   }
 
   clear(): void {
