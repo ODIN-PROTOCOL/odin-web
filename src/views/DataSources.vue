@@ -58,7 +58,7 @@ export default defineComponent({
     const dataSources = ref()
     const loadDataSources = async () => {
       const response = await callers.getDataSources(Long.fromNumber(100))
-      console.log(response, response.dataSources)
+      console.debug('DataSources:', response)
       dataSources.value = response.dataSources
     }
     loadDataSources()

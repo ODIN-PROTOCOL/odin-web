@@ -44,7 +44,7 @@ export default defineComponent({
     const requests = ref()
     const loadRequests = async () => {
       const response = await callers.getRequests(Long.fromNumber(100))
-      console.log(response, response.requests)
+      console.debug('Requests:', response)
       response.requests[0].responsePacketData.resultDecoded
       requests.value = response.requests.map((el) => el.responsePacketData)
       // TODO: no request state?

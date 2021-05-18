@@ -6,6 +6,7 @@ const _balances: Ref<Coin[]> = ref([])
 
 async function loadBalances(): Promise<void> {
   const balances = await callers.getBalances()
+  console.debug('Balances:', balances)
   _balances.value = balances
 }
 

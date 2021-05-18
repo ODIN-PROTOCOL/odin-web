@@ -49,7 +49,7 @@ export default defineComponent({
         '',
         ''
       )
-      console.log(response, response.proposals)
+      console.debug('Proposals:', response)
       // response.proposals[0].responsePacketData.resultDecoded
       // proposals.value = response.proposals.map((el) => el.responsePacketData)
       // TODO: no request state?
