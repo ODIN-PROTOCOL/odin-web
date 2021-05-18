@@ -113,10 +113,13 @@ const ExchangeFormModal = defineComponent({
       isLoading.value = true
       try {
         await callers.createExchange({
-          from: form.sourceAsset.val(),
+          from: form.sourceAsset.val().toLowerCase(),
           to: 'loki',
           requester: form.sourceAddress.val(),
-          amount: coin(+form.sourceAmount.val(), form.sourceAsset.val()),
+          amount: coin(
+            Number(form.sourceAmount.val()),
+            form.sourceAsset.val().toLowerCase()
+          ),
         })
 
         onSubmit()
