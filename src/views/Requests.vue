@@ -48,6 +48,7 @@ export default defineComponent({
       response.requests[0].responsePacketData.resultDecoded
       requests.value = response.requests.map((el) => el.responsePacketData)
       // TODO: no request state?
+      // TODO: request result page?
     }
     loadRequests()
 
