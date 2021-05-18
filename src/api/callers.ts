@@ -48,6 +48,8 @@ const makeCallers = () => {
       })
     ),
 
+    getProposals: querier((qc) => qc.gov.unverified.proposals),
+
     getBalances: querier((qc) => () => {
       const myAddress = wallet.account.address
       return qc.bank.unverified.allBalances(myAddress)
