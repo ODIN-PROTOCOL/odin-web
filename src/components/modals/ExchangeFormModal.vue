@@ -94,7 +94,7 @@ import { useRateAutoCalc } from '@/composables/useRateAutoCalc'
 import ModalBase from './ModalBase.vue'
 import { coin } from '@cosmjs/launchpad'
 
-// TODO: cannot exchange
+// TODO: integrate bridge
 
 const ExchangeFormModal = defineComponent({
   components: { ModalBase },

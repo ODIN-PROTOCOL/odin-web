@@ -22,6 +22,7 @@ export default defineComponent({
     const auth = useAuthorization()
     const {
       coins: [lokiCoins],
+      load: loadBalances,
     } = useBalances(['loki'])
 
     const logOutAndLeave = () => {
@@ -29,7 +30,16 @@ export default defineComponent({
       router.push({ name: 'Auth' })
     }
 
-    return { lokiCoins, logOutAndLeave, exchange: showExchangeFormDialog }
+    const exchange = () => {
+      showExchangeFormDialog({
+        onSubmit: (d) => {
+          d.kill()
+          loadBalances()
+        },
+      })
+    }
+
+    return { lokiCoins, logOutAndLeave, exchange }
   },
 })
 </script>
