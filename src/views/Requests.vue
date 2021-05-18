@@ -4,13 +4,13 @@
     <div class="app-table">
       <div class="requests__table-head app-table__head">
         <div class="app-table__cell">
-          <span class="app-table__cell-txt"> Name </span>
+          <span class="app-table__cell-txt"> ID </span>
         </div>
         <div class="app-table__cell">
-          <span class="app-table__cell-txt"> Description </span>
+          <span class="app-table__cell-txt"> Result </span>
         </div>
         <div class="app-table__cell">
-          <span class="app-table__cell-txt"> Owner </span>
+          <span class="app-table__cell-txt"> Count </span>
         </div>
       </div>
       <div
@@ -19,19 +19,13 @@
         class="requests__table-row app-table__row"
       >
         <div class="app-table__cell">
-          <span class="app-table__cell-txt" :title="item.name">
-            {{ item.name }}
-          </span>
+          <TitledSpan class="app-table__cell-txt" :text="item.requestId" />
         </div>
         <div class="app-table__cell">
-          <span class="app-table__cell-txt" :title="item.description">
-            {{ item.description }}
-          </span>
+          <TitledSpan class="app-table__cell-txt" :text="item.resultDecoded" />
         </div>
         <div class="app-table__cell">
-          <span class="app-table__cell-txt" :title="item.owner">
-            {{ $cropAddress(item.owner) }}
-          </span>
+          <TitledSpan class="app-table__cell-txt" :text="item.ansCount" />
         </div>
       </div>
     </div>
@@ -40,21 +34,20 @@
 
 <script lang="ts">
 import { callers } from '@/api/callers'
+import TitledSpan from '@/components/TitledSpan.vue'
 import Long from 'long'
 import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
+  components: { TitledSpan },
   setup() {
     const requests = ref()
     const loadRequests = async () => {
       const response = await callers.getRequests(Long.fromNumber(100))
       console.log(response, response.requests)
-      requests.value = response.requests
-      console.log(
-        new TextDecoder().decode(
-          response.requests[0].responsePacketData?.result
-        )
-      )
+      response.requests[0].responsePacketData.resultDecoded
+      requests.value = response.requests.map((el) => el.responsePacketData)
+      // TODO: no request state?
     }
     loadRequests()
 
@@ -66,6 +59,8 @@ export default defineComponent({
 <style scoped>
 .requests__table-head,
 .requests__table-row {
-  grid: auto / minmax(8rem, 14rem) minmax(0, 1fr) minmax(8rem, 14rem);
+  grid:
+    auto /
+    minmax(2rem, 0.1fr) minmax(8rem, 1fr) minmax(3rem, 0.15fr);
 }
 </style>

@@ -25,24 +25,20 @@
         class="data-sources__table-row app-table__row"
       >
         <div class="app-table__cell">
-          <span class="app-table__cell-txt" :title="item.id.toString()">
-            {{ item.id.toString() }}
-          </span>
+          <TitledSpan class="app-table__cell-txt" :text="item.id" />
         </div>
         <div class="app-table__cell">
-          <span class="app-table__cell-txt" :title="item.name">
-            {{ item.name }}
-          </span>
+          <TitledSpan class="app-table__cell-txt" :text="item.name" />
         </div>
         <div class="app-table__cell">
-          <span class="app-table__cell-txt" :title="item.description">
-            {{ item.description }}
-          </span>
+          <TitledSpan class="app-table__cell-txt" :text="item.description" />
         </div>
         <div class="app-table__cell">
-          <span class="app-table__cell-txt" :title="item.owner">
-            {{ $cropAddress(item.owner) }}
-          </span>
+          <TitledSpan
+            class="app-table__cell-txt"
+            :text="$cropAddress(item.owner)"
+            :title="item.owner"
+          />
         </div>
       </div>
     </div>
@@ -52,10 +48,12 @@
 <script lang="ts">
 import { callers } from '@/api/callers'
 import { showDataSourceFormDialog } from '@/components/modals/DataSourceFormModal.vue'
+import TitledSpan from '@/components/TitledSpan.vue'
 import Long from 'long'
 import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
+  components: { TitledSpan },
   setup() {
     const dataSources = ref()
     const loadDataSources = async () => {
@@ -84,6 +82,6 @@ export default defineComponent({
 .data-sources__table-row {
   grid:
     auto /
-    minmax(2rem, 4rem) minmax(8rem, 14rem) minmax(8rem, 1fr) minmax(8rem, 14rem);
+    minmax(2rem, 0.1fr) minmax(8rem, 0.5fr) minmax(8rem, 1fr) minmax(8rem, 0.5fr);
 }
 </style>

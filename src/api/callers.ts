@@ -6,37 +6,58 @@ import {
 import { MsgExchange } from '@provider/codec/coinswap/tx'
 import { api } from './api'
 import { wallet } from './wallet'
+import { mapResponse } from './callersHelpers'
 
 const makeCallers = () => {
-  const bc = api.makeBroadcastCaller.bind(api)
-  const qc = api.makeQueryCaller.bind(api)
+  const broadcaster = api.makeBroadcastCaller.bind(api)
+  const querier = api.makeQueryCaller.bind(api)
 
   return {
-    createDataSource: bc<MsgCreateDataSource>(
+    createDataSource: broadcaster<MsgCreateDataSource>(
       '/oracle.v1.MsgCreateDataSource',
       MsgCreateDataSource
     ),
-    getDataSources: qc((q) => q.oracle.unverified.dataSources),
+    getDataSources: querier((qc) => qc.oracle.unverified.dataSources),
 
-    createOracleScript: bc<MsgCreateOracleScript>(
+    createOracleScript: broadcaster<MsgCreateOracleScript>(
       '/oracle.v1.MsgCreateOracleScript',
       MsgCreateOracleScript
     ),
-    getOracleScripts: qc((q) => q.oracle.unverified.oracleScripts),
+    getOracleScripts: querier((qc) => qc.oracle.unverified.oracleScripts),
 
-    createRequest: bc<MsgRequestData>(
+    createRequest: broadcaster<MsgRequestData>(
       '/oracle.v1.MsgRequestData',
       MsgRequestData
     ),
-    getRequests: qc((q) => q.oracle.unverified.requests),
+    getRequests: querier((qc) =>
+      mapResponse(qc.oracle.unverified.requests, (response) => {
+        return {
+          ...response,
+          requests: response.requests.map((req) => {
+            const result = req.responsePacketData?.result
+            const resultDecoded = new TextDecoder().decode(result)
+            return {
+              ...req,
+              responsePacketData: {
+                ...req?.responsePacketData,
+                resultDecoded,
+              },
+            }
+          }),
+        }
+      })
+    ),
 
-    getBalances: qc((q) => () => {
+    getBalances: querier((qc) => () => {
       const myAddress = wallet.account.address
-      return q.bank.unverified.allBalances(myAddress)
+      return qc.bank.unverified.allBalances(myAddress)
     }),
 
-    createExchange: bc<MsgExchange>('/coinswap.MsgExchange', MsgExchange),
-    getRate: qc((q) => q.coinswap.unverified.rate),
+    createExchange: broadcaster<MsgExchange>(
+      '/coinswap.MsgExchange',
+      MsgExchange
+    ),
+    getRate: querier((qc) => qc.coinswap.unverified.rate),
   }
 }
 
