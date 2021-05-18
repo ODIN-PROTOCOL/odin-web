@@ -1,4 +1,5 @@
 import { Coin } from '@provider/codec/cosmos/base/v1beta1/coin'
+import { bigMath } from './bigMath'
 import { NumLike, toNumber, toString } from './casts'
 
 const NBSP = '\u00A0'
@@ -50,5 +51,5 @@ export function formatCoin(input: NumLike | Coin, denom?: string): string {
     value = toString(input)
   }
   denom = denom || ''
-  return `${abbreviateNumber(value)}${NBSP}${denom.toUpperCase()}`
+  return `${bigMath.format(value)}${NBSP}${denom.toUpperCase()}`
 }

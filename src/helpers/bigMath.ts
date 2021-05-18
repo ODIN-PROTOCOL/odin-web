@@ -1,8 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { NumLike, toBigNumber } from './casts'
 
-BigNumber.config({ ROUNDING_MODE: BigNumber.ROUND_HALF_UP })
-
 export enum ROUNDING {
   DEFAULT = 4,
   UP = 0,
@@ -16,6 +14,22 @@ export enum ROUNDING {
   HALF_FLOOR = 8,
 }
 
+type BigFormatCfg = BigNumber.Format & {
+  decimals?: number
+  rounding?: ROUNDING
+}
+
+BigNumber.config({
+  DECIMAL_PLACES: 0,
+  ROUNDING_MODE: ROUNDING.DEFAULT,
+  FORMAT: {
+    // TODO: translate
+    decimalSeparator: '.',
+    groupSeparator: ',',
+    groupSize: 3,
+  },
+})
+
 function bigMultiply(a: NumLike, b: NumLike): BigNumber {
   return _bn(a).multipliedBy(_bn(b))
 }
@@ -28,10 +42,22 @@ function bigRound(a: NumLike, precision: number, mode?: ROUNDING): string {
   return _bn(a).toPrecision(precision, mode)
 }
 
+function bigFormat(a: NumLike, format?: BigFormatCfg): string {
+  const {
+    decimals = BigNumber.config({}).DECIMAL_PLACES as number,
+    rounding = BigNumber.config({}).ROUNDING_MODE as ROUNDING,
+    ...fmt
+  } = format || {}
+  Object.assign(fmt, BigNumber.config({}).FORMAT)
+  const res = _bn(a).toFormat(decimals, rounding, fmt)
+  return res
+}
+
 const _bn = toBigNumber
 
 export const bigMath = {
   multiply: bigMultiply,
   divide: bigDivide,
   round: bigRound,
+  format: bigFormat,
 }
