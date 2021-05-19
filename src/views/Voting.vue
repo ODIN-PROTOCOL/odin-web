@@ -10,7 +10,7 @@
           <span class="app-table__cell-txt"> Result </span>
         </div>
         <div class="app-table__cell">
-          <span class="app-table__cell-txt"> Count </span>
+          <span class="app-table__cell-txt"> Status </span>
         </div>
       </div>
       <div
@@ -19,13 +19,16 @@
         class="requests__table-row app-table__row"
       >
         <div class="app-table__cell">
-          <TitledSpan class="app-table__cell-txt" :text="item.requestId" />
+          <TitledSpan class="app-table__cell-txt" :text="item.proposalId" />
         </div>
         <div class="app-table__cell">
-          <TitledSpan class="app-table__cell-txt" :text="item.resultDecoded" />
+          <TitledSpan class="app-table__cell-txt" :text="item.votingEndTime" />
         </div>
         <div class="app-table__cell">
-          <TitledSpan class="app-table__cell-txt" :text="item.ansCount" />
+          <TitledSpan
+            class="app-table__cell-txt"
+            :text="$tProposalStatus(item.status)"
+          />
         </div>
       </div>
     </div>
@@ -49,11 +52,9 @@ export default defineComponent({
         '',
         ''
       )
+      // console.log(response.proposals[0].)
       console.debug('Proposals:', response)
-      // response.proposals[0].responsePacketData.resultDecoded
-      // proposals.value = response.proposals.map((el) => el.responsePacketData)
-      // TODO: no request state?
-      // TODO: request result page?
+      proposals.value = response.proposals
     }
     loadRequests()
 
