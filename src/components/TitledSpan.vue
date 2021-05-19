@@ -5,19 +5,17 @@
 </template>
 
 <script lang="ts">
-import { NumLike, toString } from '@/helpers/casts'
-import BigNumber from 'bignumber.js'
-import Long from 'long'
+import { NumLike, NumLikeTypes, toString } from '@/helpers/casts'
 import { computed, defineComponent } from 'vue'
 
 export default defineComponent({
   props: {
     text: {
-      type: [String, Number, Long, BigNumber],
+      type: NumLikeTypes,
       required: true,
     },
     title: {
-      type: [String, Number, Long, BigNumber],
+      type: NumLikeTypes,
       required: false,
     },
   },

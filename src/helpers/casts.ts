@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js'
 import Long from 'long'
 
 export type NumLike = string | number | Long | BigNumber
+export const NumLikeTypes = [String, Number, Long, BigNumber]
 
 export function toBigNumber(value: NumLike): BigNumber {
   if (Long.isLong(value)) {
