@@ -4,6 +4,7 @@ import { cropAddress, formatCoin } from './helpers/formatters'
 import Notifications from '@kyvg/vue3-notification'
 import { api } from './api/api'
 import { bigMath } from './helpers/bigMath'
+import { translateRequestStatus } from './helpers/translators'
 
 async function _main() {
   try {
@@ -27,6 +28,7 @@ async function _main() {
   app.config.globalProperties.$cropAddress = cropAddress
   app.config.globalProperties.$formatCoin = formatCoin
   app.config.globalProperties.$formatNum = bigMath.format
+  app.config.globalProperties.$tRequestStatus = translateRequestStatus
   app.use(router)
   app.use(Notifications)
   app.mount('#app')

@@ -12,6 +12,9 @@
         <div class="app-table__cell">
           <span class="app-table__cell-txt"> Count </span>
         </div>
+        <div class="app-table__cell">
+          <span class="app-table__cell-txt"> Status </span>
+        </div>
       </div>
       <div
         v-for="item in requests"
@@ -26,6 +29,12 @@
         </div>
         <div class="app-table__cell">
           <TitledSpan class="app-table__cell-txt" :text="item.ansCount" />
+        </div>
+        <div class="app-table__cell">
+          <TitledSpan
+            class="app-table__cell-txt"
+            :text="$tRequestStatus(item.resolveStatus)"
+          />
         </div>
       </div>
     </div>
@@ -62,6 +71,6 @@ export default defineComponent({
 .requests__table-row {
   grid:
     auto /
-    minmax(2rem, 0.1fr) minmax(8rem, 1fr) minmax(3rem, 0.15fr);
+    minmax(2rem, 0.1fr) minmax(8rem, 1fr) minmax(3rem, 0.15fr) minmax(3rem, 0.15fr);
 }
 </style>
