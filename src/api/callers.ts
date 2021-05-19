@@ -6,7 +6,7 @@ import {
 import { MsgExchange } from '@provider/codec/coinswap/tx'
 import { api } from './api'
 import { wallet } from './wallet'
-import { mapResponse } from './callersHelpers'
+import { mapResponse, longsToStrings } from './callersHelpers'
 
 const makeCallers = () => {
   const broadcaster = api.makeBroadcastCaller.bind(api)
@@ -17,13 +17,17 @@ const makeCallers = () => {
       '/oracle.v1.MsgCreateDataSource',
       MsgCreateDataSource
     ),
-    getDataSources: querier((qc) => qc.oracle.unverified.dataSources),
+    getDataSources: querier((qc) =>
+      mapResponse(qc.oracle.unverified.dataSources, longsToStrings)
+    ),
 
     createOracleScript: broadcaster<MsgCreateOracleScript>(
       '/oracle.v1.MsgCreateOracleScript',
       MsgCreateOracleScript
     ),
-    getOracleScripts: querier((qc) => qc.oracle.unverified.oracleScripts),
+    getOracleScripts: querier((qc) =>
+      mapResponse(qc.oracle.unverified.oracleScripts, longsToStrings)
+    ),
 
     createRequest: broadcaster<MsgRequestData>(
       '/oracle.v1.MsgRequestData',
@@ -31,7 +35,7 @@ const makeCallers = () => {
     ),
     getRequests: querier((qc) =>
       mapResponse(qc.oracle.unverified.requests, (response) => {
-        return {
+        return longsToStrings({
           ...response,
           requests: response.requests.map((req) => {
             const result = req.responsePacketData?.result
@@ -44,22 +48,26 @@ const makeCallers = () => {
               },
             }
           }),
-        }
+        })
       })
     ),
 
-    getProposals: querier((qc) => qc.gov.unverified.proposals),
+    getProposals: querier((qc) =>
+      mapResponse(qc.gov.unverified.proposals, longsToStrings)
+    ),
 
     getBalances: querier((qc) => () => {
       const myAddress = wallet.account.address
-      return qc.bank.unverified.allBalances(myAddress)
+      return qc.bank.unverified.allBalances(myAddress).then(longsToStrings)
     }),
 
     createExchange: broadcaster<MsgExchange>(
       '/coinswap.MsgExchange',
       MsgExchange
     ),
-    getRate: querier((qc) => qc.coinswap.unverified.rate),
+    getRate: querier((qc) =>
+      mapResponse(qc.coinswap.unverified.rate, longsToStrings)
+    ),
   }
 }
 

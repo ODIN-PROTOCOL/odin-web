@@ -56,7 +56,6 @@ import { showOracleScriptDialog } from '@/components/modals/OracleScriptModal.vu
 import TitledSpan from '@/components/TitledSpan.vue'
 import router from '@/router'
 import { OracleScript } from '@provider/codec/oracle/v1/oracle'
-import Long from 'long'
 import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
@@ -64,7 +63,7 @@ export default defineComponent({
   setup() {
     const oracleScripts = ref()
     const loadOracleScripts = async () => {
-      const response = await callers.getOracleScripts(Long.fromNumber(100))
+      const response = await callers.getOracleScripts(100)
       console.debug('OracleScripts:', response)
       oracleScripts.value = response.oracleScripts
     }

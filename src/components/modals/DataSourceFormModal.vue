@@ -69,7 +69,6 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import Long from 'long'
 import { loremIpsum } from 'lorem-ipsum'
 import { coins } from '@cosmjs/launchpad'
 import { wallet } from '@/api/wallet'
@@ -84,7 +83,7 @@ import ModalBase from './ModalBase.vue'
 import InputFile from '@/components/inputs/InputFile.vue'
 
 const DataSourceFormModal = defineComponent({
-  props: { dataSourceId: Long },
+  props: { dataSourceId: String },
   components: { ModalBase, InputFile },
   setup() {
     const form = useForm({
@@ -153,7 +152,7 @@ export function showDataSourceFormDialog(
     onSubmit?: DialogHandler
     onClose?: DialogHandler
   },
-  props?: { dataSourceId?: Long.Long }
+  props?: { dataSourceId?: string }
 ): Promise<unknown | null> {
   return dialogs.show(DataSourceFormModal, callbacks, { props })
 }

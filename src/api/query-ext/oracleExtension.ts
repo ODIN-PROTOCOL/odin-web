@@ -1,4 +1,3 @@
-import Long from 'long'
 import { QueryClient, createRpc } from '@cosmjs/stargate'
 import {
   QueryActiveValidatorsResponse,
@@ -18,6 +17,7 @@ import {
   QueryRequestsResponse,
   QueryValidatorResponse,
 } from '@provider/codec/oracle/v1/query'
+import { NumLike, toLong } from '@/helpers/casts'
 
 export interface OracleExt {
   oracle: {
@@ -25,36 +25,36 @@ export interface OracleExt {
       params: () => Promise<QueryParamsResponse>
       counts: () => Promise<QueryCountsResponse>
       data: (dataHash: string) => Promise<QueryDataResponse>
-      dataSource: (dataSourceId: Long.Long) => Promise<QueryDataSourceResponse>
+      dataSource: (dataSourceId: NumLike) => Promise<QueryDataSourceResponse>
       dataSources: (
-        limit: Long.Long,
-        offset?: Long.Long
+        limit: NumLike,
+        offset?: NumLike
       ) => Promise<QueryDataSourcesResponse>
       oracleScript: (
-        oracleScriptId: Long.Long
+        oracleScriptId: NumLike
       ) => Promise<QueryOracleScriptResponse>
       oracleScripts: (
-        limit: Long.Long,
-        offset?: Long.Long
+        limit: NumLike,
+        offset?: NumLike
       ) => Promise<QueryOracleScriptsResponse>
-      request: (requestId: Long.Long) => Promise<QueryRequestResponse>
+      request: (requestId: NumLike) => Promise<QueryRequestResponse>
       requests: (
-        limit: Long.Long,
-        offset?: Long.Long
+        limit: NumLike,
+        offset?: NumLike
       ) => Promise<QueryRequestsResponse>
       reports: (
-        requestId: Long.Long,
-        limit: Long.Long,
-        offset?: Long.Long
+        requestId: NumLike,
+        limit: NumLike,
+        offset?: NumLike
       ) => Promise<QueryRequestReportsResponse>
       validator: (validatorAddress: string) => Promise<QueryValidatorResponse>
       reporters: (validatorAddress: string) => Promise<QueryReportersResponse>
       activeValidators: () => Promise<QueryActiveValidatorsResponse>
       requestSearch: (
-        oracleScriptId: Long.Long,
+        oracleScriptId: NumLike,
         calldata: Uint8Array,
-        askCount: Long.Long,
-        minCount: Long.Long
+        askCount: NumLike,
+        minCount: NumLike
       ) => Promise<QueryRequestSearchResponse>
       dataProvidersPool: () => Promise<QueryDataProvidersPoolResponse>
     }
@@ -78,63 +78,59 @@ export function setupOracleExt(base: QueryClient): OracleExt {
         data: (dataHash: string) => {
           return queryService.Data({ dataHash: dataHash })
         },
-        dataSource: (dataSourceId: Long.Long) => {
+        dataSource: (dataSourceId: NumLike) => {
           return queryService.DataSource({
-            dataSourceId: dataSourceId,
+            dataSourceId: toLong(dataSourceId),
           })
         },
-        dataSources: (limit: Long.Long, offset = Long.ZERO) => {
+        dataSources: (limit: NumLike, offset = 0) => {
           return queryService.DataSources({
             pagination: {
               key: new Uint8Array(),
               countTotal: false,
-              limit: limit,
-              offset: offset,
+              limit: toLong(limit),
+              offset: toLong(offset),
             },
           })
         },
-        oracleScript: (oracleScriptId: Long.Long) => {
+        oracleScript: (oracleScriptId: NumLike) => {
           return queryService.OracleScript({
-            oracleScriptId: oracleScriptId,
+            oracleScriptId: toLong(oracleScriptId),
           })
         },
-        oracleScripts: (limit: Long.Long, offset = Long.ZERO) => {
+        oracleScripts: (limit: NumLike, offset = 0) => {
           return queryService.OracleScripts({
             pagination: {
               key: new Uint8Array(),
               countTotal: false,
-              limit: limit,
-              offset: offset,
+              limit: toLong(limit),
+              offset: toLong(offset),
             },
           })
         },
-        request: (requestId: Long.Long) => {
+        request: (requestId: NumLike) => {
           return queryService.Request({
-            requestId: requestId,
+            requestId: toLong(requestId),
           })
         },
-        requests: (limit: Long.Long, offset = Long.ZERO) => {
+        requests: (limit: NumLike, offset = 0) => {
           return queryService.Requests({
             pagination: {
               key: new Uint8Array(),
               countTotal: false,
-              limit: limit,
-              offset: offset,
+              limit: toLong(limit),
+              offset: toLong(offset),
             },
           })
         },
-        reports: (
-          requestId: Long.Long,
-          limit: Long.Long,
-          offset = Long.ZERO
-        ) => {
+        reports: (requestId: NumLike, limit: NumLike, offset = 0) => {
           return queryService.RequestReports({
-            requestId: requestId,
+            requestId: toLong(requestId),
             pagination: {
               key: new Uint8Array(),
               countTotal: false,
-              limit: limit,
-              offset: offset,
+              limit: toLong(limit),
+              offset: toLong(offset),
             },
           })
         },
@@ -152,16 +148,16 @@ export function setupOracleExt(base: QueryClient): OracleExt {
           return queryService.ActiveValidators({})
         },
         requestSearch: (
-          oracleScriptId: Long.Long,
+          oracleScriptId: NumLike,
           calldata: Uint8Array,
-          askCount: Long.Long,
-          minCount: Long.Long
+          askCount: NumLike,
+          minCount: NumLike
         ) => {
           return queryService.RequestSearch({
-            oracleScriptId: oracleScriptId,
+            oracleScriptId: toLong(oracleScriptId),
             calldata: calldata,
-            askCount: askCount,
-            minCount: minCount,
+            askCount: toLong(askCount),
+            minCount: toLong(minCount),
           })
         },
         dataProvidersPool: () => {

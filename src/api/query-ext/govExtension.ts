@@ -1,3 +1,4 @@
+import { NumLike, toLong } from '@/helpers/casts'
 import { QueryClient, createRpc } from '@cosmjs/stargate'
 import { ProposalStatus } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import {
@@ -20,14 +21,14 @@ export interface GovExt {
         voter: string,
         depositor: string
       ) => Promise<QueryProposalsResponse>
-      proposal: (proposalId: Long.Long) => Promise<QueryProposalResponse>
-      vote: (proposalId: Long.Long, voter: string) => Promise<QueryVoteResponse>
-      votes: (proposalId: Long.Long) => Promise<QueryVotesResponse>
+      proposal: (proposalId: NumLike) => Promise<QueryProposalResponse>
+      vote: (proposalId: NumLike, voter: string) => Promise<QueryVoteResponse>
+      votes: (proposalId: NumLike) => Promise<QueryVotesResponse>
       deposit: (
-        proposalId: Long.Long,
+        proposalId: NumLike,
         depositor: string
       ) => Promise<QueryDepositResponse>
-      deposits: (proposalId: Long.Long) => Promise<QueryDepositsResponse>
+      deposits: (proposalId: NumLike) => Promise<QueryDepositsResponse>
     }
   }
 }
@@ -54,29 +55,29 @@ export function setupGovExt(base: QueryClient): GovExt {
             depositor: depositor,
           })
         },
-        proposal: (proposalId: Long.Long) => {
+        proposal: (proposalId: NumLike) => {
           return queryService.Proposal({
-            proposalId: proposalId,
+            proposalId: toLong(proposalId),
           })
         },
-        vote: (proposalId: Long.Long, voter: string) => {
+        vote: (proposalId: NumLike, voter: string) => {
           return queryService.Vote({
-            proposalId: proposalId,
+            proposalId: toLong(proposalId),
             voter: voter,
           })
         },
-        votes: (proposalId: Long.Long) => {
-          return queryService.Votes({ proposalId: proposalId })
+        votes: (proposalId: NumLike) => {
+          return queryService.Votes({ proposalId: toLong(proposalId) })
         },
-        deposit: (proposalId: Long.Long, depositor: string) => {
+        deposit: (proposalId: NumLike, depositor: string) => {
           return queryService.Deposit({
-            proposalId: proposalId,
+            proposalId: toLong(proposalId),
             depositor: depositor,
           })
         },
-        deposits: (proposalId: Long.Long) => {
+        deposits: (proposalId: NumLike) => {
           return queryService.Deposits({
-            proposalId: proposalId,
+            proposalId: toLong(proposalId),
           })
         },
       },

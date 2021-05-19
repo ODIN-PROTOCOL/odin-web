@@ -121,16 +121,14 @@ import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import { coins } from '@cosmjs/launchpad'
 import phones from '@/assets/phones.json'
+import { NumLike, toStr } from '@/helpers/casts'
 
 const RequestFormModal = defineComponent({
-  props: { oracleScriptId: Long },
+  props: ['oracleScriptId'],
   components: { ModalBase },
   setup(props) {
     const form = useForm({
-      oracleScriptId: [
-        props.oracleScriptId?.toString() || '',
-        validators.required,
-      ],
+      oracleScriptId: [toStr(props.oracleScriptId), validators.required],
       askCount: ['1', validators.required, validators.range(1, 10)],
       minCount: ['1', validators.required, validators.range(1, 10)],
       calldata: [[], validators.minItems(1)],
@@ -181,7 +179,7 @@ export function showRequestFormDialog(
     onSubmit?: DialogHandler
     onClose?: DialogHandler
   },
-  props: { oracleScriptId: Long.Long }
+  props: { oracleScriptId: NumLike }
 ): Promise<unknown | null> {
   return dialogs.show(RequestFormModal, callbacks, { props })
 }

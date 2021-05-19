@@ -28,7 +28,12 @@ export function toLong(value: NumLike): Long {
   return Long.fromValue(value)
 }
 
-export function toString(value: NumLike): string {
+export function toStr(
+  value: NumLike | undefined | null,
+  fallback = ''
+): string {
+  if (!value) return fallback
+
   if (Long.isLong(value) || BigNumber.isBigNumber(value)) {
     return value.toString()
   }
@@ -36,7 +41,7 @@ export function toString(value: NumLike): string {
   return String(value)
 }
 
-export function toNumber(value: NumLike): number {
+export function toNum(value: NumLike): number {
   if (Long.isLong(value) || BigNumber.isBigNumber(value)) {
     return value.toNumber()
   }

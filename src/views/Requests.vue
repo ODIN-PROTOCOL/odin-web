@@ -44,7 +44,6 @@
 <script lang="ts">
 import { callers } from '@/api/callers'
 import TitledSpan from '@/components/TitledSpan.vue'
-import Long from 'long'
 import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
@@ -52,7 +51,7 @@ export default defineComponent({
   setup() {
     const requests = ref()
     const loadRequests = async () => {
-      const response = await callers.getRequests(Long.fromNumber(100))
+      const response = await callers.getRequests(100)
       console.debug('Requests:', response)
       response.requests[0].responsePacketData.resultDecoded
       requests.value = response.requests.map((el) => el.responsePacketData)

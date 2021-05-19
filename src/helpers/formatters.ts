@@ -1,6 +1,6 @@
 import { Coin } from '@provider/codec/cosmos/base/v1beta1/coin'
 import { bigMath } from './bigMath'
-import { NumLike, toNumber, toString } from './casts'
+import { NumLike, toNum, toStr } from './casts'
 
 const NBSP = '\u00A0'
 
@@ -11,7 +11,7 @@ export function cropAddress(value: string): string {
 }
 
 export function abbreviateNumber(value: NumLike): string {
-  value = toNumber(value)
+  value = toNum(value)
 
   let res = String(value)
   if (value >= 1000) {
@@ -48,7 +48,7 @@ export function formatCoin(input: NumLike | Coin, denom?: string): string {
     value = input.amount
     denom = input.denom
   } else {
-    value = toString(input)
+    value = toStr(input)
   }
   denom = denom || ''
   return `${bigMath.format(value)}${NBSP}${denom.toUpperCase()}`

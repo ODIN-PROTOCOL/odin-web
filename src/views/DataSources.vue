@@ -49,7 +49,6 @@
 import { callers } from '@/api/callers'
 import { showDataSourceFormDialog } from '@/components/modals/DataSourceFormModal.vue'
 import TitledSpan from '@/components/TitledSpan.vue'
-import Long from 'long'
 import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
@@ -57,7 +56,7 @@ export default defineComponent({
   setup() {
     const dataSources = ref()
     const loadDataSources = async () => {
-      const response = await callers.getDataSources(Long.fromNumber(100))
+      const response = await callers.getDataSources(100)
       console.debug('DataSources:', response)
       dataSources.value = response.dataSources
     }
