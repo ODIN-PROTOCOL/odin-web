@@ -18,7 +18,7 @@ const makeCallers = () => {
       MsgCreateDataSource
     ),
     getDataSources: querier((qc) =>
-      mapResponse(qc.oracle.unverified.dataSources, longsToStrings)
+      mapResponse(qc.oracle.unverified.dataSources, (r) => longsToStrings(r))
     ),
 
     createOracleScript: broadcaster<MsgCreateOracleScript>(
@@ -26,7 +26,7 @@ const makeCallers = () => {
       MsgCreateOracleScript
     ),
     getOracleScripts: querier((qc) =>
-      mapResponse(qc.oracle.unverified.oracleScripts, longsToStrings)
+      mapResponse(qc.oracle.unverified.oracleScripts, (r) => longsToStrings(r))
     ),
 
     createRequest: broadcaster<MsgRequestData>(
@@ -53,21 +53,19 @@ const makeCallers = () => {
     ),
 
     getProposals: querier((qc) =>
-      mapResponse(qc.gov.unverified.proposals, longsToStrings)
+      mapResponse(qc.gov.unverified.proposals, (r) => longsToStrings(r))
     ),
 
     getBalances: querier((qc) => () => {
       const myAddress = wallet.account.address
-      return qc.bank.unverified.allBalances(myAddress).then(longsToStrings)
+      return qc.bank.unverified.allBalances(myAddress)
     }),
 
     createExchange: broadcaster<MsgExchange>(
       '/coinswap.MsgExchange',
       MsgExchange
     ),
-    getRate: querier((qc) =>
-      mapResponse(qc.coinswap.unverified.rate, longsToStrings)
-    ),
+    getRate: querier((qc) => qc.coinswap.unverified.rate),
   }
 }
 

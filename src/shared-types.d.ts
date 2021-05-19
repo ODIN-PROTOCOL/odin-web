@@ -1,8 +1,5 @@
-export type GetterFn<R = unknown> = () => R
-export interface AnyFn<R = unknown> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (...args: Array<any>): R
-}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnyFn<R = unknown> = (...args: any[]) => R
 export interface DecoratedFn<F extends AnyFn> {
   (...args: Parameters<F>): ReturnType<F>
 }
