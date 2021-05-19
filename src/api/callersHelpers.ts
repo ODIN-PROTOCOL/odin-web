@@ -1,4 +1,4 @@
-import { AnyFn, Unpacked } from '@/shared-types'
+import { AnyFn, AnyObj, Unpacked } from '@/shared-types'
 import mapValues from 'lodash-es/mapValues'
 import Long from 'long'
 
@@ -16,27 +16,26 @@ export function mapResponse<T extends AnyFn, R = unknown>(
   }
 }
 
-/* prettier-ignore */
-type UnwrappedLongs<T> = {
-  [P in keyof T]: T[P] extends Long.Long
-    ? string : T[P] extends Record<string, unknown>
-    ? UnwrappedLongs<T[P]> : T[P] extends Array<unknown>
-    ? UnwrappedLongs<T[P]> : T[P]
-}
+type UnwrappedLongs<T> = T extends Record<string, unknown> | Array<unknown>
+  ? { [P in keyof T]: UnwrappedLongs<T[P]> }
+  : T extends Long.Long
+  ? string
+  : T
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function longsToStrings<T>(obj: T): UnwrappedLongs<T> {
-  return Array.isArray(obj)
-    ? ((obj.map(longsToStrings) as unknown) as UnwrappedLongs<T>)
-    : ((mapValues(obj as Record<string, unknown>, (value) => {
-        if (Long.isLong(value)) {
-          return value.toString()
-        } else if (Array.isArray(value)) {
-          return value.map(longsToStrings)
-        } else if (value && typeof value === 'object') {
-          return longsToStrings(value)
-        } else {
-          return value
-        }
-      }) as unknown) as UnwrappedLongs<T>)
+export function longsToStrings<T>(anything: T): UnwrappedLongs<T> {
+  if (Array.isArray(anything)) {
+    return (anything.map(longsToStrings) as unknown) as UnwrappedLongs<T>
+  } else if (Long.isLong(anything)) {
+    return (anything.toString() as unknown) as UnwrappedLongs<T>
+  } else if (_isPlainObject(anything)) {
+    return (mapValues(anything, longsToStrings) as unknown) as UnwrappedLongs<T>
+  } else {
+    return anything as UnwrappedLongs<T>
+  }
+}
+
+function _isPlainObject(value: unknown): value is AnyObj {
+  if (!value) return false
+  return (value as AnyObj)?.constructor === Object
 }
