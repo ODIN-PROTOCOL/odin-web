@@ -6,7 +6,8 @@ import {
 import { MsgExchange } from '@provider/codec/coinswap/tx'
 import { api } from './api'
 import { wallet } from './wallet'
-import { mapResponse, longsToStrings } from './callersHelpers'
+import { mapResponse, longsToStrings } from './callers-helpers/callersHelpers'
+import { decodeProposalContent } from './callers-helpers/decodeProposalContent'
 
 const makeCallers = () => {
   const broadcaster = api.makeBroadcastCaller.bind(api)
@@ -44,7 +45,7 @@ const makeCallers = () => {
               ...req,
               responsePacketData: {
                 ...req?.responsePacketData,
-                resultDecoded,
+                result: resultDecoded,
               },
             }
           }),
@@ -53,7 +54,17 @@ const makeCallers = () => {
     ),
 
     getProposals: querier((qc) =>
-      mapResponse(qc.gov.unverified.proposals, (r) => longsToStrings(r))
+      mapResponse(qc.gov.unverified.proposals, (response) => {
+        return longsToStrings({
+          ...response,
+          proposals: response.proposals.map((proposal) => {
+            return {
+              ...proposal,
+              content: decodeProposalContent(proposal.content),
+            }
+          }),
+        })
+      })
     ),
 
     getBalances: querier((qc) => () => {

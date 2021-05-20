@@ -1,7 +1,7 @@
 <template>
   <div class="user-widget fx-row fx-row_gap-8">
     <button class="user-widget__balance-btn" type="button" @click="exchange()">
-      Balance: {{ $formatCoin(lokiCoins) }}
+      Balance: {{ $fCoin(lokiCoins) }}
     </button>
 
     <button class="app-btn" type="button" @click="logOutAndLeave()">

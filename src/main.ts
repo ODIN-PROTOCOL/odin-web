@@ -1,12 +1,15 @@
 import { createApp } from 'vue'
 import router from './router'
-import { cropAddress, formatCoin } from './helpers/formatters'
+import { cropAddress, formatCoin, formatDate } from './helpers/formatters'
 import Notifications from '@kyvg/vue3-notification'
 import { api } from './api/api'
 import { bigMath } from './helpers/bigMath'
 import {
   translateProposalStatus,
+  translateProposalStatusDated,
   translateRequestStatus,
+  translateTally,
+  translateTallyShort,
 } from './helpers/translators'
 
 async function _main() {
@@ -29,10 +32,14 @@ async function _main() {
   )
   const app = createApp(appModule.default)
   app.config.globalProperties.$cropAddress = cropAddress
-  app.config.globalProperties.$formatCoin = formatCoin
-  app.config.globalProperties.$formatNum = bigMath.format
+  app.config.globalProperties.$fCoin = formatCoin
+  app.config.globalProperties.$fNum = bigMath.format
+  app.config.globalProperties.$fDate = formatDate
   app.config.globalProperties.$tRequestStatus = translateRequestStatus
   app.config.globalProperties.$tProposalStatus = translateProposalStatus
+  app.config.globalProperties.$tProposalStatusDated = translateProposalStatusDated
+  app.config.globalProperties.$tTally = translateTally
+  app.config.globalProperties.$tTallyShort = translateTallyShort
   app.use(router)
   app.use(Notifications)
   app.mount('#app')

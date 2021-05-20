@@ -25,7 +25,7 @@
           <TitledSpan class="app-table__cell-txt" :text="item.requestId" />
         </div>
         <div class="app-table__cell">
-          <TitledSpan class="app-table__cell-txt" :text="item.resultDecoded" />
+          <TitledSpan class="app-table__cell-txt" :text="item.result" />
         </div>
         <div class="app-table__cell">
           <TitledSpan class="app-table__cell-txt" :text="item.ansCount" />
@@ -53,9 +53,7 @@ export default defineComponent({
     const loadRequests = async () => {
       const response = await callers.getRequests(100)
       console.debug('Requests:', response)
-      response.requests[0].responsePacketData.resultDecoded
       requests.value = response.requests.map((el) => el.responsePacketData)
-      // TODO: no request state?
       // TODO: request result page?
     }
     loadRequests()

@@ -2,12 +2,18 @@
   <div class="proposals">
     <h3>Voting</h3>
     <div class="app-table">
-      <div class="requests__table-head app-table__head">
+      <div class="proposals__table-head app-table__head">
         <div class="app-table__cell">
           <span class="app-table__cell-txt"> ID </span>
         </div>
         <div class="app-table__cell">
-          <span class="app-table__cell-txt"> Result </span>
+          <span class="app-table__cell-txt"> Title </span>
+        </div>
+        <div class="app-table__cell">
+          <span class="app-table__cell-txt"> Tally </span>
+        </div>
+        <div class="app-table__cell">
+          <span class="app-table__cell-txt"> Deposit </span>
         </div>
         <div class="app-table__cell">
           <span class="app-table__cell-txt"> Status </span>
@@ -16,18 +22,31 @@
       <div
         v-for="item in proposals"
         :key="item.id"
-        class="requests__table-row app-table__row"
+        class="proposals__table-row app-table__row"
       >
         <div class="app-table__cell">
           <TitledSpan class="app-table__cell-txt" :text="item.proposalId" />
         </div>
         <div class="app-table__cell">
-          <TitledSpan class="app-table__cell-txt" :text="item.votingEndTime" />
+          <TitledSpan class="app-table__cell-txt" :text="item.content.title" />
         </div>
         <div class="app-table__cell">
           <TitledSpan
             class="app-table__cell-txt"
-            :text="$tProposalStatus(item.status)"
+            :text="$tTallyShort(item.finalTallyResult)"
+            :title="$tTally(item.finalTallyResult)"
+          />
+        </div>
+        <div class="app-table__cell">
+          <TitledSpan
+            class="app-table__cell-txt"
+            :text="$fCoin(item.totalDeposit[0])"
+          />
+        </div>
+        <div class="app-table__cell">
+          <TitledSpan
+            class="app-table__cell-txt"
+            :text="$tProposalStatusDated(item)"
           />
         </div>
       </div>
@@ -37,7 +56,6 @@
 
 <script lang="ts">
 import { callers } from '@/api/callers'
-import { wallet } from '@/api/wallet'
 import TitledSpan from '@/components/TitledSpan.vue'
 import { ProposalStatus } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { defineComponent, ref } from 'vue'
@@ -52,7 +70,6 @@ export default defineComponent({
         '',
         ''
       )
-      // console.log(response.proposals[0].)
       console.debug('Proposals:', response)
       proposals.value = response.proposals
     }
@@ -66,8 +83,7 @@ export default defineComponent({
 <style scoped>
 .proposals__table-head,
 .proposals__table-row {
-  grid:
-    auto /
-    minmax(2rem, 0.1fr) minmax(8rem, 1fr) minmax(3rem, 0.15fr);
+  /* prettier-ignore */
+  grid: auto / minmax(2rem, 0.1fr) minmax(8rem, 1fr) minmax(4rem, 1fr) minmax(4rem, 1fr) minmax(4rem, 1fr);
 }
 </style>

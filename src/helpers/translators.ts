@@ -1,5 +1,10 @@
-import { ProposalStatus } from '@provider/codec/cosmos/gov/v1beta1/gov'
+import {
+  Proposal,
+  ProposalStatus,
+  TallyResult,
+} from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { ResolveStatus } from '@provider/codec/oracle/v1/oracle'
+import { formatDate } from './formatters'
 
 // TODO: translate
 
@@ -36,5 +41,64 @@ export function translateProposalStatus(status: ProposalStatus): string {
     case ProposalStatus.UNRECOGNIZED:
     default:
       return 'Unrecognized'
+  }
+}
+
+export function translateProposalStatusDated(proposal: Proposal): string {
+  switch (proposal.status) {
+    case ProposalStatus.PROPOSAL_STATUS_DEPOSIT_PERIOD:
+      return `Deposit till ${formatDate(proposal.depositEndTime as Date, {
+        default: 'MMM d, yyyy, HH:mm',
+        thisYear: 'MMM d, HH:mm',
+      })}`
+    case ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD:
+      return `Voting till ${formatDate(proposal.votingEndTime as Date, {
+        default: 'MMM d, yyyy, HH:mm',
+        thisYear: 'MMM d, HH:mm',
+      })}`
+    default:
+      return translateProposalStatus(proposal.status)
+  }
+}
+
+export function translateTally(tally: TallyResult): string {
+  return Object.entries(tally)
+    .map(([opt, count]) => {
+      return `${translateTallyOpt(opt as keyof TallyResult)}: ${count}`
+    })
+    .join('\n')
+}
+
+export function translateTallyOpt(tallyVote: keyof TallyResult): string {
+  switch (tallyVote) {
+    case 'yes':
+      return 'Yes'
+    case 'abstain':
+      return 'Abstain'
+    case 'no':
+      return 'No'
+    case 'noWithVeto':
+      return 'Veto'
+  }
+}
+
+export function translateTallyShort(tally: TallyResult): string {
+  return Object.entries(tally)
+    .map(([opt, count]) => {
+      return `${translateTallyOptShort(opt as keyof TallyResult)}: ${count}`
+    })
+    .join(', ')
+}
+
+export function translateTallyOptShort(tallyVote: keyof TallyResult): string {
+  switch (tallyVote) {
+    case 'yes':
+      return 'Y'
+    case 'abstain':
+      return 'A'
+    case 'no':
+      return 'N'
+    case 'noWithVeto':
+      return 'V'
   }
 }
