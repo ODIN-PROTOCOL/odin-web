@@ -66,7 +66,7 @@ export function translateTally(tally: TallyResult): string {
     .map(([opt, count]) => {
       return `${translateTallyOpt(opt as keyof TallyResult)}: ${count}`
     })
-    .join('\n')
+    .join(', ')
 }
 
 export function translateTallyOpt(tallyVote: keyof TallyResult): string {

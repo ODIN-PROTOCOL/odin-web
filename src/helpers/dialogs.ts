@@ -1,3 +1,4 @@
+import { app } from '@/main'
 import { App, Component, createApp, inject } from 'vue'
 
 export type DialogProps = Record<string, unknown>
@@ -27,6 +28,10 @@ class Dialogs {
 
     return new Promise<unknown | null>((resolve) => {
       const dialog = createApp(component, props)
+      dialog.config.globalProperties = {
+        ...dialog.config.globalProperties,
+        ...app.config.globalProperties,
+      }
       this._provideHandlers(
         dialog,
         this._addDefaultHandlers(handlers),

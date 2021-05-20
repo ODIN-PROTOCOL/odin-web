@@ -19,7 +19,7 @@
           <span class="app-table__cell-txt"> Owner </span>
         </div>
       </div>
-      <div
+      <button
         v-for="item in oracleScripts"
         :key="item.id"
         class="app-table__row-btn"
@@ -44,7 +44,7 @@
             />
           </div>
         </div>
-      </div>
+      </button>
     </div>
   </div>
 </template>

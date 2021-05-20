@@ -2,11 +2,32 @@
   @include ellipsis;
 }
 
+.fs-12 {
+  font-size: 1.2rem;
+}
+
+.fs-14 {
+  font-size: 1.4rem;
+}
+
+.fs-wb {
+  font-weight: bold;
+}
+
 .mg-t8 {
   margin-top: 0.8rem;
 }
+.mg-t4 {
+  margin-top: 0.4rem;
+}
+.mg-r8 {
+  margin-right: 0.8rem;
+}
 .mg-b8 {
   margin-bottom: 0.8rem;
+}
+.mg-b4 {
+  margin-bottom: 0.4rem;
 }
 
 .fx-cont {

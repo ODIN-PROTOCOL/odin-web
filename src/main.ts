@@ -1,4 +1,4 @@
-import { createApp } from 'vue'
+import { App, createApp } from 'vue'
 import router from './router'
 import { cropAddress, formatCoin, formatDate } from './helpers/formatters'
 import Notifications from '@kyvg/vue3-notification'
@@ -18,7 +18,7 @@ async function _main() {
   } catch (error) {
     _renderInitError('Initialization failed!')
     console.error(error)
-    return
+    return null
   }
 
   // Session should be restored before first router guard executed
@@ -43,6 +43,7 @@ async function _main() {
   app.use(router)
   app.use(Notifications)
   app.mount('#app')
+  return app
 }
 
 function _renderInitError(msg: string) {
@@ -63,4 +64,9 @@ function _renderInitError(msg: string) {
   appNode.appendChild(cont)
 }
 
-_main()
+let app: App<Element>
+_main().then((_app) => {
+  if (_app) app = _app
+})
+
+export { app }

@@ -19,46 +19,59 @@
           <span class="app-table__cell-txt"> Status </span>
         </div>
       </div>
-      <div
+      <button
         v-for="item in proposals"
         :key="item.id"
-        class="proposals__table-row app-table__row"
+        class="app-table__row-btn"
+        type="button"
+        @click="showProposal(item)"
       >
-        <div class="app-table__cell">
-          <TitledSpan class="app-table__cell-txt" :text="item.proposalId" />
+        <div class="proposals__table-row app-table__row">
+          <div class="app-table__cell">
+            <TitledSpan class="app-table__cell-txt" :text="item.proposalId" />
+          </div>
+          <div class="app-table__cell">
+            <TitledSpan
+              class="app-table__cell-txt"
+              :text="item.content.title"
+            />
+          </div>
+          <div class="app-table__cell">
+            <TitledSpan
+              class="app-table__cell-txt"
+              :text="$tTallyShort(item.finalTallyResult)"
+              :title="$tTally(item.finalTallyResult)"
+            />
+          </div>
+          <div class="app-table__cell">
+            <TitledSpan
+              class="app-table__cell-txt"
+              :text="$fCoin(item.totalDeposit[0])"
+            />
+          </div>
+          <div class="app-table__cell">
+            <TitledSpan
+              class="app-table__cell-txt"
+              :text="$tProposalStatusDated(item)"
+            />
+          </div>
         </div>
-        <div class="app-table__cell">
-          <TitledSpan class="app-table__cell-txt" :text="item.content.title" />
-        </div>
-        <div class="app-table__cell">
-          <TitledSpan
-            class="app-table__cell-txt"
-            :text="$tTallyShort(item.finalTallyResult)"
-            :title="$tTally(item.finalTallyResult)"
-          />
-        </div>
-        <div class="app-table__cell">
-          <TitledSpan
-            class="app-table__cell-txt"
-            :text="$fCoin(item.totalDeposit[0])"
-          />
-        </div>
-        <div class="app-table__cell">
-          <TitledSpan
-            class="app-table__cell-txt"
-            :text="$tProposalStatusDated(item)"
-          />
-        </div>
-      </div>
+      </button>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { callers } from '@/api/callers'
+import { showProposalDialog } from '@/components/modals/ProposalModal'
 import TitledSpan from '@/components/TitledSpan.vue'
-import { ProposalStatus } from '@provider/codec/cosmos/gov/v1beta1/gov'
+import {
+  Proposal,
+  ProposalStatus,
+} from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { defineComponent, ref } from 'vue'
+
+// TODO: my votes
 
 export default defineComponent({
   components: { TitledSpan },
@@ -75,7 +88,11 @@ export default defineComponent({
     }
     loadRequests()
 
-    return { proposals }
+    const showProposal = (proposal: Proposal) => {
+      showProposalDialog({}, { proposal })
+    }
+
+    return { proposals, showProposal }
   },
 })
 </script>

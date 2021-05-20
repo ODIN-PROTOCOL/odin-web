@@ -1,5 +1,5 @@
 <template>
-  <ModalBase class="oracle-script-form-modal" @close="onClose()">
+  <ModalBase class="oracle-script-modal" @close="onClose()">
     <template #title>
       <h3>View oracle script</h3>
     </template>

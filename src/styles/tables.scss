@@ -12,6 +12,8 @@
 .app-table__row-btn {
   display: block;
   cursor: pointer;
+  text-align: start;
+  width: 100%;
 
   &:hover {
     background: var(--clr__main-bg-hover);
