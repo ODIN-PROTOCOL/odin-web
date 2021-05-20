@@ -8,6 +8,7 @@ import {
   QueryParamsResponse,
   QueryProposalResponse,
   QueryProposalsResponse,
+  QueryTallyResultResponse,
   QueryVoteResponse,
   QueryVotesResponse,
 } from '@provider/codec/cosmos/gov/v1beta1/query'
@@ -29,6 +30,7 @@ export interface GovExt {
         depositor: string
       ) => Promise<QueryDepositResponse>
       deposits: (proposalId: NumLike) => Promise<QueryDepositsResponse>
+      tallyResult: (proposalId: NumLike) => Promise<QueryTallyResultResponse>
     }
   }
 }
@@ -79,6 +81,9 @@ export function setupGovExt(base: QueryClient): GovExt {
           return queryService.Deposits({
             proposalId: toLong(proposalId),
           })
+        },
+        tallyResult: (proposalId: NumLike) => {
+          return queryService.TallyResult({ proposalId: toLong(proposalId) })
         },
       },
     },

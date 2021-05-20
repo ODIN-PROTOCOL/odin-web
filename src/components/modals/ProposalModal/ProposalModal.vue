@@ -65,6 +65,19 @@
           Your vote: Unknown
         </pre>
       </div>
+
+      <ProposalModalDepositForm
+        v-if="isDepositPeriod"
+        :proposal="proposal"
+        v-model:isLoading="isLoading"
+        @submitted="onSubmit()"
+      />
+      <ProposalModalVoteForm
+        v-if="isVotingPeriod"
+        :proposal="proposal"
+        v-model:isLoading="isLoading"
+        @submitted="onSubmit()"
+      />
     </template>
   </ModalBase>
 </template>
@@ -77,11 +90,16 @@ import { defineComponent, ref } from 'vue'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { preventIf } from '@/helpers/functions'
 import ModalBase from '../ModalBase.vue'
-import { Proposal } from '@provider/codec/cosmos/gov/v1beta1/gov'
+import {
+  Proposal,
+  ProposalStatus,
+} from '@provider/codec/cosmos/gov/v1beta1/gov'
+import ProposalModalDepositForm from './ProposalModalDepositForm.vue'
+import ProposalModalVoteForm from './ProposalModalVoteForm.vue'
 
 const ProposalModal = defineComponent({
   props: ['proposal'],
-  components: { ModalBase /*InputFile*/ },
+  components: { ModalBase, ProposalModalDepositForm, ProposalModalVoteForm },
   setup(props) {
     const proposal = props.proposal as Proposal
     if (!proposal?.proposalId) {
@@ -89,9 +107,20 @@ const ProposalModal = defineComponent({
     }
 
     const isLoading = ref(false)
+    const isDepositPeriod = ref(
+      proposal.status === ProposalStatus.PROPOSAL_STATUS_DEPOSIT_PERIOD
+    )
+    const isVotingPeriod = ref(
+      proposal.status === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
+    )
+    const onSubmit = dialogs.getHandler('onSubmit')
     const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
 
     return {
+      isLoading,
+      isDepositPeriod,
+      isVotingPeriod,
+      onSubmit,
       onClose,
     }
   },
@@ -100,6 +129,7 @@ const ProposalModal = defineComponent({
 export default ProposalModal
 export function showProposalDialog(
   callbacks: {
+    onSubmit?: DialogHandler
     onClose?: DialogHandler
   },
   props: { proposal: Proposal }

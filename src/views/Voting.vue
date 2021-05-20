@@ -77,7 +77,7 @@ export default defineComponent({
   components: { TitledSpan },
   setup() {
     const proposals = ref()
-    const loadRequests = async () => {
+    const loadProposals = async () => {
       const response = await callers.getProposals(
         ProposalStatus.UNRECOGNIZED,
         '',
@@ -86,10 +86,18 @@ export default defineComponent({
       console.debug('Proposals:', response)
       proposals.value = response.proposals
     }
-    loadRequests()
+    loadProposals()
 
     const showProposal = (proposal: Proposal) => {
-      showProposalDialog({}, { proposal })
+      showProposalDialog(
+        {
+          onSubmit: (d) => {
+            d.kill()
+            loadProposals()
+          },
+        },
+        { proposal }
+      )
     }
 
     return { proposals, showProposal }

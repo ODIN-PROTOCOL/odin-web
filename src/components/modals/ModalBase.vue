@@ -22,7 +22,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 
-export default defineComponent<{ testMsg: string }>({
+export default defineComponent({
   emits: ['close'],
   setup(_, { emit }) {
     if (document.activeElement) {

@@ -2,6 +2,7 @@ import {
   Proposal,
   ProposalStatus,
   TallyResult,
+  VoteOption,
 } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { ResolveStatus } from '@provider/codec/oracle/v1/oracle'
 import { formatDate } from './formatters'
@@ -100,5 +101,23 @@ export function translateTallyOptShort(tallyVote: keyof TallyResult): string {
       return 'N'
     case 'noWithVeto':
       return 'V'
+  }
+}
+
+export function translateVote(vote: VoteOption): string {
+  switch (Number(vote)) {
+    case VoteOption.VOTE_OPTION_UNSPECIFIED:
+      return 'Unspecified'
+    case VoteOption.VOTE_OPTION_YES:
+      return 'Yes'
+    case VoteOption.VOTE_OPTION_ABSTAIN:
+      return 'Abstain'
+    case VoteOption.VOTE_OPTION_NO:
+      return 'No'
+    case VoteOption.VOTE_OPTION_NO_WITH_VETO:
+      return 'No with veto'
+    case VoteOption.UNRECOGNIZED:
+    default:
+      return 'Unrecognized'
   }
 }

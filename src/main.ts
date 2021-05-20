@@ -10,6 +10,7 @@ import {
   translateRequestStatus,
   translateTally,
   translateTallyShort,
+  translateVote,
 } from './helpers/translators'
 
 async function _main() {
@@ -40,6 +41,7 @@ async function _main() {
   app.config.globalProperties.$tProposalStatusDated = translateProposalStatusDated
   app.config.globalProperties.$tTally = translateTally
   app.config.globalProperties.$tTallyShort = translateTallyShort
+  app.config.globalProperties.$tVote = translateVote
   app.use(router)
   app.use(Notifications)
   app.mount('#app')

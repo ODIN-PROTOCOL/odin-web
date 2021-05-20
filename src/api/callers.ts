@@ -4,6 +4,7 @@ import {
   MsgRequestData,
 } from '@provider/codec/oracle/v1/tx'
 import { MsgExchange } from '@provider/codec/coinswap/tx'
+import { MsgDeposit, MsgVote } from '@provider/codec/cosmos/gov/v1beta1/tx'
 import { api } from './api'
 import { wallet } from './wallet'
 import { mapResponse, longsToStrings } from './callers-helpers/callersHelpers'
@@ -55,6 +56,14 @@ const makeCallers = () => {
 
     getProposals: querier((qc) =>
       mapResponse(qc.gov.unverified.proposals, (response) => {
+        // TODO: remove
+        qc.gov.unverified
+          .vote(response.proposals[0].proposalId, wallet.account.address)
+          .then(console.log)
+        qc.gov.unverified
+          .tallyResult(response.proposals[0].proposalId)
+          .then(console.log)
+
         return longsToStrings({
           ...response,
           proposals: response.proposals.map((proposal) => {
@@ -66,6 +75,11 @@ const makeCallers = () => {
         })
       })
     ),
+    proposalDeposit: broadcaster<MsgDeposit>(
+      '/cosmos.gov.v1beta1.MsgDeposit',
+      MsgDeposit
+    ),
+    proposalVote: broadcaster<MsgVote>('/cosmos.gov.v1beta1.MsgVote', MsgVote),
 
     getBalances: querier((qc) => () => {
       const myAddress = wallet.account.address
