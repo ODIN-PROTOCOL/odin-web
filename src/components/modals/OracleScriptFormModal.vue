@@ -129,6 +129,7 @@ const OracleScriptFormModal = defineComponent({
       return parsed
     }
 
+    // TODO: remove fakeForm
     const _fakeForm = () => {
       form.name.val('Oracle Script ' + loremIpsum({ units: 'words', count: 3 }))
       form.description.val(loremIpsum({ units: 'sentences', count: 3 }))

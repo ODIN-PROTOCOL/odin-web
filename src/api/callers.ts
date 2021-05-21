@@ -8,11 +8,7 @@ import { MsgDeposit, MsgVote } from '@provider/codec/cosmos/gov/v1beta1/tx'
 import { api } from './api'
 import { wallet } from './wallet'
 import { mapResponse } from './callersHelpers'
-import { QueryRequestsResponse } from '@provider/codec/oracle/v1/query'
-import {
-  decodeRequestResults,
-  RequestResultDecoded,
-} from '@/helpers/requestResultDecoders'
+import { decodeRequestResults } from '@/helpers/requestResultDecoders'
 import { decodeProposals } from '@/helpers/proposalDecoders'
 
 const makeCallers = () => {
@@ -54,6 +50,8 @@ const makeCallers = () => {
       })
     ),
     getProposalVote: querier((qc) => qc.gov.unverified.vote),
+    getProposalVotes: querier((qc) => qc.gov.unverified.votes),
+    getProposalTally: querier((qc) => qc.gov.unverified.tallyResult),
     proposalDeposit: broadcaster<MsgDeposit>(
       '/cosmos.gov.v1beta1.MsgDeposit',
       MsgDeposit

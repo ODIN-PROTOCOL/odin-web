@@ -130,6 +130,7 @@ const DataSourceFormModal = defineComponent({
       return parsed
     }
 
+    // TODO: remove fakeForm
     const _fakeForm = () => {
       form.name.val('Data source ' + loremIpsum({ units: 'words', count: 3 }))
       form.description.val(loremIpsum({ units: 'sentences', count: 3 }))

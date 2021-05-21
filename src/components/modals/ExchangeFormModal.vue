@@ -136,6 +136,7 @@ const ExchangeFormModal = defineComponent({
       'loki'
     )
 
+    // TODO: remove fakeForm
     const _fakeForm = () => {
       form.sourceAddress.val(wallet.account.address)
     }

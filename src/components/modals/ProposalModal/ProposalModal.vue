@@ -62,7 +62,6 @@
         <pre class="proposal-modal__row-val">
           Status: <strong>{{ $tProposalStatus(proposal.status) }}</strong>
           Tally: {{ $tTally(proposal.finalTallyResult) }}
-          Your vote: Unknown
         </pre>
       </div>
 
@@ -84,7 +83,6 @@
 
 <script lang="ts">
 // TODO: min deposit, thresholds?
-// TODO: my vote
 
 import { defineComponent, ref } from 'vue'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'

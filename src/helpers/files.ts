@@ -88,7 +88,7 @@ export function onFileDialogCancel(callback: () => unknown): () => void {
 }
 
 function _selectFile(attributes?: Record<string, string>) {
-  const input = _makFakeImgInput(attributes)
+  const input = _makeFakeImgInput(attributes)
 
   document.body.appendChild(input)
   input.click()
@@ -99,7 +99,7 @@ function _selectFile(attributes?: Record<string, string>) {
   return promise
 }
 
-function _makFakeImgInput(attributes?: Record<string, string>) {
+function _makeFakeImgInput(attributes?: Record<string, string>) {
   const input = document.createElement('input')
   input.setAttribute('style', 'display: none;')
   input.setAttribute('type', 'file')

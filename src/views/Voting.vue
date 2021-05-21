@@ -72,8 +72,6 @@ import { ProposalDecoded } from '@/helpers/proposalDecoders'
 import { ProposalStatus } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { defineComponent, ref } from 'vue'
 
-// TODO: my votes
-
 export default defineComponent({
   components: { TitledSpan },
   setup() {
@@ -84,10 +82,24 @@ export default defineComponent({
         '',
         ''
       )
+      _test(response.proposals)
       console.debug('Proposals:', response)
       proposals.value = response.proposals
     }
     loadProposals()
+
+    // TODO: remove
+    const _test = async (proposals: ProposalDecoded[]) => {
+      const supply = await callers.getTotalSupply()
+      const pool = await callers.getTreasuryPool()
+      console.log(supply, pool)
+
+      for (const proposal of proposals) {
+        const votes = await callers.getProposalVotes(proposal.proposalId)
+        const tally = await callers.getProposalTally(proposal.proposalId)
+        console.log(proposal, votes, tally)
+      }
+    }
 
     const showProposal = (proposal: ProposalDecoded) => {
       showProposalDialog(

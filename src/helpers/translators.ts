@@ -5,6 +5,7 @@ import {
   VoteOption,
 } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { ResolveStatus } from '@provider/codec/oracle/v1/oracle'
+import { calcVotePercentage } from './calcVotePercentage'
 import { formatDate } from './formatters'
 import { ProposalDecoded } from './proposalDecoders'
 
@@ -67,8 +68,10 @@ export function translateProposalStatusDated(
 
 export function translateTally(tally: TallyResult): string {
   return Object.entries(tally)
-    .map(([opt, count]) => {
-      return `${translateTallyOpt(opt as keyof TallyResult)}: ${count}`
+    .map(([opt, power]) => {
+      return `${translateTallyOpt(
+        opt as keyof TallyResult
+      )}: ${calcVotePercentage(power)}`
     })
     .join(', ')
 }
@@ -88,8 +91,10 @@ export function translateTallyOpt(tallyVote: keyof TallyResult): string {
 
 export function translateTallyShort(tally: TallyResult): string {
   return Object.entries(tally)
-    .map(([opt, count]) => {
-      return `${translateTallyOptShort(opt as keyof TallyResult)}: ${count}`
+    .map(([opt, power]) => {
+      return `${translateTallyOptShort(
+        opt as keyof TallyResult
+      )}: ${calcVotePercentage(power)}`
     })
     .join(', ')
 }
