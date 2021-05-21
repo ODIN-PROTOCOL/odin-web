@@ -53,6 +53,7 @@ const makeCallers = () => {
         }
       })
     ),
+    getProposalVote: querier((qc) => qc.gov.unverified.vote),
     proposalDeposit: broadcaster<MsgDeposit>(
       '/cosmos.gov.v1beta1.MsgDeposit',
       MsgDeposit

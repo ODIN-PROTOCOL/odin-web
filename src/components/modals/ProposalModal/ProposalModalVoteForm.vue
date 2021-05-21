@@ -10,7 +10,7 @@
         class="app-form__field-input"
         name="vote-option"
         v-model="form.vote"
-        :disabled="isLoading || isProcessing"
+        :disabled="isLoading || isProcessing || isLoadingVote"
       >
         <option v-for="opt in voteOptions" :key="opt" :value="opt">
           {{ $tVote(opt) }}
@@ -26,7 +26,7 @@
         class="app-btn"
         type="button"
         @click="submit"
-        :disabled="isLoading || isProcessing || !form.isValid"
+        :disabled="isLoading || isProcessing || isLoadingVote || !form.isValid"
       >
         <template v-if="isProcessing"> Voting… </template>
         <template v-else> Vote </template>
@@ -37,20 +37,19 @@
 
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue'
-import { Proposal, VoteOption } from '@provider/codec/cosmos/gov/v1beta1/gov'
+import { VoteOption } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { useForm, validators } from '@/composables/useForm'
 import { callers } from '@/api/callers'
 import { handleError } from '@/helpers/errors'
 import { notifySuccess } from '@/helpers/notifications'
 import { wallet } from '@/api/wallet'
-
-// TODO: votes broken
+import { ProposalDecoded } from '@/helpers/proposalDecoders'
 
 export default defineComponent({
   emits: ['update:isLoading', 'submitted'],
   props: ['proposal', 'isLoading'],
   setup(props, { emit }) {
-    const proposal = props.proposal as Proposal
+    const proposal = props.proposal as ProposalDecoded
     const form = useForm({ vote: ['', validators.required] })
     const voteOptions: VoteOption[] = [
       VoteOption.VOTE_OPTION_YES,
@@ -81,9 +80,29 @@ export default defineComponent({
       isProcessing.value = false
     }
 
+    const isLoadingVote = ref(false)
+    const _tryLoadMyVote = async () => {
+      isLoadingVote.value = true
+      try {
+        const response = await callers.getProposalVote(
+          proposal.proposalId,
+          wallet.account.address
+        )
+        if (!response?.vote) return
+
+        form.vote.val(response.vote.option.toString())
+      } catch (error) {
+        // noop
+      }
+      isLoadingVote.value = false
+    }
+
+    _tryLoadMyVote()
+
     return {
       form: form.flatten(),
       voteOptions,
+      isLoadingVote,
       isProcessing,
       submit,
     }
