@@ -42,7 +42,6 @@ import { useForm, validators } from '@/composables/useForm'
 import { callers } from '@/api/callers'
 import { handleError } from '@/helpers/errors'
 import { notifySuccess } from '@/helpers/notifications'
-import { toLong } from '@/helpers/casts'
 import { wallet } from '@/api/wallet'
 import { coins } from '@cosmjs/launchpad'
 export default defineComponent({
@@ -62,7 +61,7 @@ export default defineComponent({
       isProcessing.value = true
       try {
         await callers.proposalDeposit({
-          proposalId: toLong(proposal.proposalId),
+          proposalId: proposal.proposalId,
           depositor: wallet.account.address,
           amount: coins(Number(form.amount.val()), 'loki'),
         })

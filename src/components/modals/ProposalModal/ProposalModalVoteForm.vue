@@ -42,7 +42,6 @@ import { useForm, validators } from '@/composables/useForm'
 import { callers } from '@/api/callers'
 import { handleError } from '@/helpers/errors'
 import { notifySuccess } from '@/helpers/notifications'
-import { toLong } from '@/helpers/casts'
 import { wallet } from '@/api/wallet'
 
 // TODO: votes broken
@@ -69,7 +68,7 @@ export default defineComponent({
       isProcessing.value = true
       try {
         await callers.proposalVote({
-          proposalId: toLong(proposal.proposalId),
+          proposalId: proposal.proposalId,
           voter: wallet.account.address,
           option: Number(form.vote.val()),
         })

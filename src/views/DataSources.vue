@@ -25,7 +25,7 @@
         class="data-sources__table-row app-table__row"
       >
         <div class="app-table__cell">
-          <TitledSpan class="app-table__cell-txt" :text="item.id" />
+          <TitledSpan class="app-table__cell-txt" :text="item.id.toString()" />
         </div>
         <div class="app-table__cell">
           <TitledSpan class="app-table__cell-txt" :text="item.name" />

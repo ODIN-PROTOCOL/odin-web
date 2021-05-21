@@ -22,13 +22,19 @@
         class="requests__table-row app-table__row"
       >
         <div class="app-table__cell">
-          <TitledSpan class="app-table__cell-txt" :text="item.requestId" />
+          <TitledSpan
+            class="app-table__cell-txt"
+            :text="item.requestId.toString()"
+          />
         </div>
         <div class="app-table__cell">
           <TitledSpan class="app-table__cell-txt" :text="item.result" />
         </div>
         <div class="app-table__cell">
-          <TitledSpan class="app-table__cell-txt" :text="item.ansCount" />
+          <TitledSpan
+            class="app-table__cell-txt"
+            :text="item.ansCount.toString()"
+          />
         </div>
         <div class="app-table__cell">
           <TitledSpan

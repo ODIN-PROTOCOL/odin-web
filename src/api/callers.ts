@@ -7,7 +7,7 @@ import { MsgExchange } from '@provider/codec/coinswap/tx'
 import { MsgDeposit, MsgVote } from '@provider/codec/cosmos/gov/v1beta1/tx'
 import { api } from './api'
 import { wallet } from './wallet'
-import { mapResponse, longsToStrings } from './callers-helpers/callersHelpers'
+import { mapResponse } from './callers-helpers/callersHelpers'
 import { decodeProposalContent } from './callers-helpers/decodeProposalContent'
 
 const makeCallers = () => {
@@ -19,17 +19,13 @@ const makeCallers = () => {
       '/oracle.v1.MsgCreateDataSource',
       MsgCreateDataSource
     ),
-    getDataSources: querier((qc) =>
-      mapResponse(qc.oracle.unverified.dataSources, (r) => longsToStrings(r))
-    ),
+    getDataSources: querier((qc) => qc.oracle.unverified.dataSources),
 
     createOracleScript: broadcaster<MsgCreateOracleScript>(
       '/oracle.v1.MsgCreateOracleScript',
       MsgCreateOracleScript
     ),
-    getOracleScripts: querier((qc) =>
-      mapResponse(qc.oracle.unverified.oracleScripts, (r) => longsToStrings(r))
-    ),
+    getOracleScripts: querier((qc) => qc.oracle.unverified.oracleScripts),
 
     createRequest: broadcaster<MsgRequestData>(
       '/oracle.v1.MsgRequestData',
@@ -37,7 +33,7 @@ const makeCallers = () => {
     ),
     getRequests: querier((qc) =>
       mapResponse(qc.oracle.unverified.requests, (response) => {
-        return longsToStrings({
+        return {
           ...response,
           requests: response.requests.map((req) => {
             const result = req.responsePacketData?.result
@@ -50,7 +46,7 @@ const makeCallers = () => {
               },
             }
           }),
-        })
+        }
       })
     ),
 
@@ -91,6 +87,9 @@ const makeCallers = () => {
       MsgExchange
     ),
     getRate: querier((qc) => qc.coinswap.unverified.rate),
+
+    getTreasuryPool: querier((qc) => qc.mint.unverified.treasuryPool),
+    getTotalSupply: querier((qc) => qc.bank.unverified.totalSupply),
   }
 }
 

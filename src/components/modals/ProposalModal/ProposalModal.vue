@@ -1,7 +1,7 @@
 <template>
   <ModalBase class="proposal-modal" @close="onClose()">
     <template #title>
-      <h3>View proposal #{{ proposal.proposalId }}</h3>
+      <h3>View proposal #{{ proposal.proposalId.toString() }}</h3>
     </template>
 
     <template #main>
