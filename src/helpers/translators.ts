@@ -6,6 +6,7 @@ import {
 } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { ResolveStatus } from '@provider/codec/oracle/v1/oracle'
 import { formatDate } from './formatters'
+import { ProposalDecoded } from './proposalDecoders'
 
 // TODO: translate
 
@@ -45,7 +46,9 @@ export function translateProposalStatus(status: ProposalStatus): string {
   }
 }
 
-export function translateProposalStatusDated(proposal: Proposal): string {
+export function translateProposalStatusDated(
+  proposal: Proposal | ProposalDecoded
+): string {
   switch (proposal.status) {
     case ProposalStatus.PROPOSAL_STATUS_DEPOSIT_PERIOD:
       return `Deposit till ${formatDate(proposal.depositEndTime as Date, {

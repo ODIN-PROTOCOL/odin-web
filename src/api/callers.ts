@@ -7,8 +7,13 @@ import { MsgExchange } from '@provider/codec/coinswap/tx'
 import { MsgDeposit, MsgVote } from '@provider/codec/cosmos/gov/v1beta1/tx'
 import { api } from './api'
 import { wallet } from './wallet'
-import { mapResponse } from './callers-helpers/callersHelpers'
-import { decodeProposalContent } from './callers-helpers/decodeProposalContent'
+import { mapResponse } from './callersHelpers'
+import { QueryRequestsResponse } from '@provider/codec/oracle/v1/query'
+import {
+  decodeRequestResults,
+  RequestResultDecoded,
+} from '@/helpers/requestResultDecoders'
+import { decodeProposals } from '@/helpers/proposalDecoders'
 
 const makeCallers = () => {
   const broadcaster = api.makeBroadcastCaller.bind(api)
@@ -35,40 +40,17 @@ const makeCallers = () => {
       mapResponse(qc.oracle.unverified.requests, (response) => {
         return {
           ...response,
-          requests: response.requests.map((req) => {
-            const result = req.responsePacketData?.result
-            const resultDecoded = new TextDecoder().decode(result)
-            return {
-              ...req,
-              responsePacketData: {
-                ...req?.responsePacketData,
-                result: resultDecoded,
-              },
-            }
-          }),
+          requests: decodeRequestResults(response.requests),
         }
       })
     ),
 
     getProposals: querier((qc) =>
       mapResponse(qc.gov.unverified.proposals, (response) => {
-        // TODO: remove
-        qc.gov.unverified
-          .vote(response.proposals[0].proposalId, wallet.account.address)
-          .then(console.log)
-        qc.gov.unverified
-          .tallyResult(response.proposals[0].proposalId)
-          .then(console.log)
-
-        return longsToStrings({
+        return {
           ...response,
-          proposals: response.proposals.map((proposal) => {
-            return {
-              ...proposal,
-              content: decodeProposalContent(proposal.content),
-            }
-          }),
-        })
+          proposals: decodeProposals(response.proposals),
+        }
       })
     ),
     proposalDeposit: broadcaster<MsgDeposit>(

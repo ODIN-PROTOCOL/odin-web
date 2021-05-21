@@ -90,18 +90,16 @@ import { defineComponent, ref } from 'vue'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { preventIf } from '@/helpers/functions'
 import ModalBase from '../ModalBase.vue'
-import {
-  Proposal,
-  ProposalStatus,
-} from '@provider/codec/cosmos/gov/v1beta1/gov'
+import { ProposalStatus } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import ProposalModalDepositForm from './ProposalModalDepositForm.vue'
 import ProposalModalVoteForm from './ProposalModalVoteForm.vue'
+import { ProposalDecoded } from '@/helpers/proposalDecoders'
 
 const ProposalModal = defineComponent({
   props: ['proposal'],
   components: { ModalBase, ProposalModalDepositForm, ProposalModalVoteForm },
   setup(props) {
-    const proposal = props.proposal as Proposal
+    const proposal = props.proposal as ProposalDecoded
     if (!proposal?.proposalId) {
       throw new ReferenceError('Missing required arg: proposal')
     }
@@ -132,7 +130,7 @@ export function showProposalDialog(
     onSubmit?: DialogHandler
     onClose?: DialogHandler
   },
-  props: { proposal: Proposal }
+  props: { proposal: ProposalDecoded }
 ): Promise<unknown | null> {
   return dialogs.show(ProposalModal, callbacks, { props })
 }

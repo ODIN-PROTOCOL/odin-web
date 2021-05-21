@@ -68,10 +68,8 @@
 import { callers } from '@/api/callers'
 import { showProposalDialog } from '@/components/modals/ProposalModal'
 import TitledSpan from '@/components/TitledSpan.vue'
-import {
-  Proposal,
-  ProposalStatus,
-} from '@provider/codec/cosmos/gov/v1beta1/gov'
+import { ProposalDecoded } from '@/helpers/proposalDecoders'
+import { ProposalStatus } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { defineComponent, ref } from 'vue'
 
 // TODO: my votes
@@ -91,7 +89,7 @@ export default defineComponent({
     }
     loadProposals()
 
-    const showProposal = (proposal: Proposal) => {
+    const showProposal = (proposal: ProposalDecoded) => {
       showProposalDialog(
         {
           onSubmit: (d) => {

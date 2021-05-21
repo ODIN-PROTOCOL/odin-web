@@ -37,18 +37,18 @@
 
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue'
-import { Proposal } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { useForm, validators } from '@/composables/useForm'
 import { callers } from '@/api/callers'
 import { handleError } from '@/helpers/errors'
 import { notifySuccess } from '@/helpers/notifications'
 import { wallet } from '@/api/wallet'
 import { coins } from '@cosmjs/launchpad'
+import { ProposalDecoded } from '@/helpers/proposalDecoders'
 export default defineComponent({
   emits: ['update:isLoading', 'submitted'],
   props: ['proposal', 'isLoading'],
   setup(props, { emit }) {
-    const proposal = props.proposal as Proposal
+    const proposal = props.proposal as ProposalDecoded
     const form = useForm({
       amount: ['1', validators.required, validators.min(1)],
     })

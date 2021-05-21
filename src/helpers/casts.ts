@@ -48,3 +48,7 @@ export function toNum(value: NumLike): number {
 
   return Number(value)
 }
+
+export function uint8ArrayToStr(arr?: Uint8Array): string {
+  return new TextDecoder().decode(arr)
+}
