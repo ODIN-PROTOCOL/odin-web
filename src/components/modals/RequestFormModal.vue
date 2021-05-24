@@ -108,7 +108,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, PropType, ref } from 'vue'
 import Long from 'long'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
@@ -124,7 +124,9 @@ import phones from '@/assets/phones.json'
 import { NumLike, toStr } from '@/helpers/casts'
 
 const RequestFormModal = defineComponent({
-  props: ['oracleScriptId'],
+  props: {
+    oracleScriptId: { type: String as PropType<NumLike>, required: true },
+  },
   components: { ModalBase },
   setup(props) {
     const form = useForm({

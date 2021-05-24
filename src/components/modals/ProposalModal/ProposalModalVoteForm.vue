@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue'
+import { defineComponent, PropType, ref, watch } from 'vue'
 import { VoteOption } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { useForm, validators } from '@/composables/useForm'
 import { callers } from '@/api/callers'
@@ -47,9 +47,11 @@ import { ProposalDecoded } from '@/helpers/proposalDecoders'
 
 export default defineComponent({
   emits: ['update:isLoading', 'submitted'],
-  props: ['proposal', 'isLoading'],
+  props: {
+    proposal: { type: Object as PropType<ProposalDecoded>, required: true },
+    isLoading: { type: Boolean, required: true },
+  },
   setup(props, { emit }) {
-    const proposal = props.proposal as ProposalDecoded
     const form = useForm({ vote: ['', validators.required] })
     const voteOptions: VoteOption[] = [
       VoteOption.VOTE_OPTION_YES,
@@ -67,7 +69,7 @@ export default defineComponent({
       isProcessing.value = true
       try {
         await callers.proposalVote({
-          proposalId: proposal.proposalId,
+          proposalId: props.proposal.proposalId,
           voter: wallet.account.address,
           option: Number(form.vote.val()),
         })
@@ -85,7 +87,7 @@ export default defineComponent({
       isLoadingVote.value = true
       try {
         const response = await callers.getProposalVote(
-          proposal.proposalId,
+          props.proposal.proposalId,
           wallet.account.address
         )
         if (!response?.vote) return

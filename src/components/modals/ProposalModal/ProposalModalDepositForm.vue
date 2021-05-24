@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue'
+import { defineComponent, PropType, ref, watch } from 'vue'
 import { useForm, validators } from '@/composables/useForm'
 import { callers } from '@/api/callers'
 import { handleError } from '@/helpers/errors'
@@ -46,9 +46,11 @@ import { coins } from '@cosmjs/launchpad'
 import { ProposalDecoded } from '@/helpers/proposalDecoders'
 export default defineComponent({
   emits: ['update:isLoading', 'submitted'],
-  props: ['proposal', 'isLoading'],
+  props: {
+    proposal: { type: Object as PropType<ProposalDecoded>, required: true },
+    isLoading: { type: Boolean, required: true },
+  },
   setup(props, { emit }) {
-    const proposal = props.proposal as ProposalDecoded
     const form = useForm({
       amount: ['1', validators.required, validators.min(1)],
     })
@@ -61,7 +63,7 @@ export default defineComponent({
       isProcessing.value = true
       try {
         await callers.proposalDeposit({
-          proposalId: proposal.proposalId,
+          proposalId: props.proposal.proposalId,
           depositor: wallet.account.address,
           amount: coins(Number(form.amount.val()), 'loki'),
         })
