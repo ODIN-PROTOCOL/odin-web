@@ -61,7 +61,7 @@
         <p class="proposal-modal__row-lbl fs-14 fs-wb">Status</p>
         <pre class="proposal-modal__row-val">
           Status: <strong>{{ $tProposalStatus(proposal.status) }}</strong>
-          Tally: {{ $tTally(proposal.finalTallyResult) }}
+          Tally: <Tally :tally="tally || proposal.finalTallyResult" />
         </pre>
       </div>
 
@@ -84,18 +84,36 @@
 <script lang="ts">
 // TODO: min deposit, thresholds?
 
-import { defineComponent, ref } from 'vue'
+import { defineComponent, PropType, ref } from 'vue'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { preventIf } from '@/helpers/functions'
+import {
+  ProposalStatus,
+  TallyResult,
+} from '@provider/codec/cosmos/gov/v1beta1/gov'
+import { ProposalDecoded } from '@/helpers/proposalDecoders'
 import ModalBase from '../ModalBase.vue'
-import { ProposalStatus } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import ProposalModalDepositForm from './ProposalModalDepositForm.vue'
 import ProposalModalVoteForm from './ProposalModalVoteForm.vue'
-import { ProposalDecoded } from '@/helpers/proposalDecoders'
+import Tally from '@/components/Tally.vue'
 
 const ProposalModal = defineComponent({
-  props: ['proposal'],
-  components: { ModalBase, ProposalModalDepositForm, ProposalModalVoteForm },
+  props: {
+    proposal: {
+      type: Object as PropType<ProposalDecoded>,
+      required: true,
+    },
+    tally: {
+      type: Object as PropType<TallyResult>,
+      default: null,
+    },
+  },
+  components: {
+    ModalBase,
+    Tally,
+    ProposalModalDepositForm,
+    ProposalModalVoteForm,
+  },
   setup(props) {
     const proposal = props.proposal as ProposalDecoded
     if (!proposal?.proposalId) {
@@ -128,7 +146,7 @@ export function showProposalDialog(
     onSubmit?: DialogHandler
     onClose?: DialogHandler
   },
-  props: { proposal: ProposalDecoded }
+  props: { proposal: ProposalDecoded; tally?: TallyResult }
 ): Promise<unknown | null> {
   return dialogs.show(ProposalModal, callbacks, { props })
 }

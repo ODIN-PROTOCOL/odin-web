@@ -14,10 +14,12 @@ export enum ROUNDING {
   HALF_FLOOR = 8,
 }
 
-type BigFormatCfg = BigNumber.Format & {
+export interface BigCfg {
   decimals?: number
   rounding?: ROUNDING
 }
+
+export type BigFormatCfg = BigNumber.Format & BigCfg
 
 BigNumber.config({
   DECIMAL_PLACES: 0,
@@ -30,12 +32,20 @@ BigNumber.config({
   },
 })
 
-function bigMultiply(a: NumLike, b: NumLike): BigNumber {
-  return _bn(a).multipliedBy(_bn(b))
+function bigMultiply(a: NumLike, b: NumLike, cfg?: BigCfg): BigNumber {
+  return _bn(a, cfg).multipliedBy(_bn(b))
 }
 
-function bigDivide(a: NumLike, b: NumLike): BigNumber {
-  return _bn(a).dividedBy(_bn(b))
+function bigDivide(a: NumLike, b: NumLike, cfg?: BigCfg): BigNumber {
+  return _bn(a, cfg).dividedBy(_bn(b))
+}
+
+function bigAdd(a: NumLike, b: NumLike, cfg?: BigCfg): BigNumber {
+  return _bn(a, cfg).plus(_bn(b))
+}
+
+function bigSubtract(a: NumLike, b: NumLike, cfg?: BigCfg): BigNumber {
+  return _bn(a, cfg).minus(_bn(b))
 }
 
 function bigRound(a: NumLike, precision: number, mode?: ROUNDING): string {
@@ -58,6 +68,9 @@ const _bn = toBigNumber
 export const bigMath = {
   multiply: bigMultiply,
   divide: bigDivide,
+  add: bigAdd,
+  subtract: bigSubtract,
   round: bigRound,
   format: bigFormat,
+  zero: _bn(0),
 }

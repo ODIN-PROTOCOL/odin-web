@@ -11,3 +11,4 @@ export type Unpacked<T> = T extends (infer U)[]
   ? U : T
 export type AnyObj<T = unknown> = Record<string, T>
 export type Modify<T, R> = Omit<T, keyof R> & R
+export type MapObj<TObj, TField> = { [P in keyof TObj]: TField }

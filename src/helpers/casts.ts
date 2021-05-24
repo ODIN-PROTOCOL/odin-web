@@ -1,19 +1,29 @@
 import BigNumber from 'bignumber.js'
 import Long from 'long'
+import { BigCfg } from '@/helpers/bigMath'
 
 export type NumLike = string | number | Long | BigNumber
 export const NumLikeTypes = [String, Number, Long, BigNumber]
 
-export function toBigNumber(value: NumLike): BigNumber {
+export function toBigNumber(value: NumLike, config?: BigCfg): BigNumber {
+  let ctor = BigNumber
+  if (config) {
+    ctor = ctor.clone()
+    ctor.config({
+      ...('decimals' in config ? { DECIMAL_PLACES: config.decimals } : {}),
+      ...('rounding' in config ? { ROUNDING_MODE: config.rounding } : {}),
+    })
+  }
+
   if (Long.isLong(value)) {
-    return new BigNumber(value.toString())
+    return new ctor(value.toString())
   }
 
   if (BigNumber.isBigNumber(value)) {
     return value
   }
 
-  return new BigNumber(value)
+  return new ctor(value)
 }
 
 export function toLong(value: NumLike): Long {

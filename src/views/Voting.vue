@@ -20,11 +20,11 @@
         </div>
       </div>
       <button
-        v-for="item in proposals"
+        v-for="(item, idx) in proposals"
         :key="item.id"
         class="app-table__row-btn"
         type="button"
-        @click="showProposal(item)"
+        @click="showProposal(item, tallies[idx])"
       >
         <div class="proposals__table-row app-table__row">
           <div class="app-table__cell">
@@ -40,11 +40,14 @@
             />
           </div>
           <div class="app-table__cell">
-            <TitledSpan
+            <Tally
+              v-if="tallies?.[idx]"
               class="app-table__cell-txt"
-              :text="$tTallyShort(item.finalTallyResult)"
-              :title="$tTally(item.finalTallyResult)"
+              :tally="tallies[idx]"
+              :isShort="true"
+              :isTitled="true"
             />
+            <span v-else></span>
           </div>
           <div class="app-table__cell">
             <TitledSpan
@@ -68,32 +71,50 @@
 import { callers } from '@/api/callers'
 import { showProposalDialog } from '@/components/modals/ProposalModal'
 import TitledSpan from '@/components/TitledSpan.vue'
+import Tally from '@/components/Tally.vue'
 import { ProposalDecoded } from '@/helpers/proposalDecoders'
-import { ProposalStatus } from '@provider/codec/cosmos/gov/v1beta1/gov'
+import {
+  ProposalStatus,
+  TallyResult,
+} from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
-  components: { TitledSpan },
+  components: { TitledSpan, Tally },
   setup() {
     const proposals = ref()
+    const tallies = ref()
     const loadProposals = async () => {
       const response = await callers.getProposals(
         ProposalStatus.UNRECOGNIZED,
         '',
         ''
       )
-      _test(response.proposals)
-      console.debug('Proposals:', response)
+      _loadTallies(response.proposals)
       proposals.value = response.proposals
+
+      console.debug('Proposals:', response)
+      _test(response.proposals)
     }
     loadProposals()
 
+    const _loadTallies = async (proposals: ProposalDecoded[]) => {
+      const _tallies = await Promise.all(
+        proposals.map((el) =>
+          el.status === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
+            ? callers
+                .getProposalTally(el.proposalId)
+                .then((r) => r.tally)
+                .catch(() => el.finalTallyResult)
+            : el.finalTallyResult
+        )
+      )
+      tallies.value = _tallies
+      console.debug('Tallies', _tallies)
+    }
+
     // TODO: remove
     const _test = async (proposals: ProposalDecoded[]) => {
-      const supply = await callers.getTotalSupply()
-      const pool = await callers.getTreasuryPool()
-      console.log(supply, pool)
-
       for (const proposal of proposals) {
         const votes = await callers.getProposalVotes(proposal.proposalId)
         const tally = await callers.getProposalTally(proposal.proposalId)
@@ -101,7 +122,7 @@ export default defineComponent({
       }
     }
 
-    const showProposal = (proposal: ProposalDecoded) => {
+    const showProposal = (proposal: ProposalDecoded, tally: TallyResult) => {
       showProposalDialog(
         {
           onSubmit: (d) => {
@@ -109,11 +130,11 @@ export default defineComponent({
             loadProposals()
           },
         },
-        { proposal }
+        { proposal, tally }
       )
     }
 
-    return { proposals, showProposal }
+    return { proposals, tallies, showProposal }
   },
 })
 </script>
