@@ -9,7 +9,7 @@
       </div>
 
       <button class="auth__form-submit-btn app-btn" type="submit">
-        Submit
+        Log in
       </button>
     </form>
   </div>

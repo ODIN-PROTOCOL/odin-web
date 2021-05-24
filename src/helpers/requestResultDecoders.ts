@@ -3,10 +3,12 @@ import {
   RequestResult,
 } from '@provider/codec/oracle/v1/oracle'
 import { uint8ArrayToStr } from '@/helpers/casts'
+import { Modify } from '@/shared-types'
 
-export type RequestResultDecoded = Omit<RequestResult, 'responsePacketData'> & {
-  responsePacketData?: OracleResponsePacketDataDecoded
-}
+export type RequestResultDecoded = Modify<
+  RequestResult,
+  { responsePacketData?: OracleResponsePacketDataDecoded }
+>
 export function decodeRequestResults(
   requests: RequestResult[]
 ): RequestResultDecoded[] {
@@ -21,7 +23,7 @@ export function decodeRequestResults(
 }
 
 export type OracleResponsePacketDataDecoded =
-  | (Omit<OracleResponsePacketData, 'result'> & { result: string })
+  | Modify<OracleResponsePacketData, { result: string }>
   | undefined
 export function decodeOracleResponsePacketData(
   packet?: OracleResponsePacketData
