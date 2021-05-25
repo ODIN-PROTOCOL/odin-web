@@ -45,16 +45,10 @@
         <p class="proposal-modal__row-lbl fs-14 fs-wb">Time</p>
         <pre class="proposal-modal__row-val">
           Deposited: {{ $fCoin(proposal.totalDeposit[0]) }}
-          Proposal created: {{
-            $fDate(proposal.submitTime, 'dd-MM-yyyy, HH:mm')
-          }}
-          Deposit end: {{
-            $fDate(proposal.depositEndTime, 'dd-MM-yyyy, HH:mm')
-          }}
-          Voting start: {{
-            $fDate(proposal.votingStartTime, 'dd-MM-yyyy, HH:mm')
-          }}
-          Voting end: {{ $fDate(proposal.votingEndTime, 'dd-MM-yyyy, HH:mm') }}
+          Proposal created: {{ $fDate(proposal.submitTime) }}
+          Deposit end: {{ $fDate(proposal.depositEndTime) }}
+          Voting start: {{ $fDate(proposal.votingStartTime) }}
+          Voting end: {{ $fDate(proposal.votingEndTime) }}
         </pre>
       </div>
       <div class="proposal-modal__row mg-b8">

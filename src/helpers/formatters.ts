@@ -9,6 +9,7 @@ import {
   isThisYear,
 } from './dates'
 import { format as _formatDate } from 'date-fns'
+import Long from 'long'
 
 const NBSP = '\u00A0'
 
@@ -70,9 +71,13 @@ export interface DateFormatObject {
 }
 
 export function formatDate(
-  input: Date | number,
-  format: string | DateFormatObject
+  input: Long.Long | Date | number,
+  format: string | DateFormatObject = {
+    default: 'MMM d, yyyy, HH:mm',
+    thisYear: 'MMM d, HH:mm',
+  }
 ): string {
+  if (Long.isLong(input)) input = input.toNumber() * 1000
   format = _chooseFormat(input, format)
   format = _tryInsertToday(input, format)
   return _formatDate(input, format)
