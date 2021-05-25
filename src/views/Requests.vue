@@ -7,10 +7,16 @@
           <span class="app-table__cell-txt"> ID </span>
         </div>
         <div class="app-table__cell">
-          <span class="app-table__cell-txt"> Result </span>
+          <span class="app-table__cell-txt"> Script ID </span>
         </div>
         <div class="app-table__cell">
-          <span class="app-table__cell-txt"> Count </span>
+          <span class="app-table__cell-txt"> Ans. Count </span>
+        </div>
+        <div class="app-table__cell">
+          <span class="app-table__cell-txt"> Requested at</span>
+        </div>
+        <div class="app-table__cell">
+          <span class="app-table__cell-txt"> Resolved at</span>
         </div>
         <div class="app-table__cell">
           <span class="app-table__cell-txt"> Status </span>
@@ -18,28 +24,43 @@
       </div>
       <div
         v-for="item in requests"
-        :key="item.id"
+        :key="item.responsePacketData.requestId.toString()"
         class="requests__table-row app-table__row"
       >
         <div class="app-table__cell">
           <TitledSpan
             class="app-table__cell-txt"
-            :text="item.requestId.toString()"
-          />
-        </div>
-        <div class="app-table__cell">
-          <TitledSpan class="app-table__cell-txt" :text="item.result" />
-        </div>
-        <div class="app-table__cell">
-          <TitledSpan
-            class="app-table__cell-txt"
-            :text="item.ansCount.toString()"
+            :text="item.responsePacketData.requestId.toString()"
           />
         </div>
         <div class="app-table__cell">
           <TitledSpan
             class="app-table__cell-txt"
-            :text="$tRequestStatus(item.resolveStatus)"
+            :text="item.requestPacketData.oracleScriptId.toString()"
+          />
+        </div>
+        <div class="app-table__cell">
+          <TitledSpan
+            class="app-table__cell-txt"
+            :text="item.responsePacketData.ansCount.toString()"
+          />
+        </div>
+        <div class="app-table__cell">
+          <TitledSpan
+            class="app-table__cell-txt"
+            :text="$fDate(item.responsePacketData.requestTime)"
+          />
+        </div>
+        <div class="app-table__cell">
+          <TitledSpan
+            class="app-table__cell-txt"
+            :text="$fDate(item.responsePacketData.resolveTime)"
+          />
+        </div>
+        <div class="app-table__cell">
+          <TitledSpan
+            class="app-table__cell-txt"
+            :text="$tRequestStatus(item.responsePacketData.resolveStatus)"
           />
         </div>
       </div>
@@ -59,7 +80,7 @@ export default defineComponent({
     const loadRequests = async () => {
       const response = await callers.getRequests(100)
       console.debug('Requests:', response)
-      requests.value = response.requests.map((el) => el.responsePacketData)
+      requests.value = response.requests
       // TODO: request result page?
     }
     loadRequests()
@@ -69,11 +90,4 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-.requests__table-head,
-.requests__table-row {
-  grid:
-    auto /
-    minmax(2rem, 0.1fr) minmax(8rem, 1fr) minmax(3rem, 0.15fr) minmax(3rem, 0.15fr);
-}
-</style>
+<style scoped></style>

@@ -51,15 +51,9 @@ export function translateProposalStatusDated(
 ): string {
   switch (proposal.status) {
     case ProposalStatus.PROPOSAL_STATUS_DEPOSIT_PERIOD:
-      return `Deposit till ${formatDate(proposal.depositEndTime as Date, {
-        default: 'MMM d, yyyy, HH:mm',
-        thisYear: 'MMM d, HH:mm',
-      })}`
+      return `Deposit till ${formatDate(proposal.depositEndTime as Date)}`
     case ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD:
-      return `Voting till ${formatDate(proposal.votingEndTime as Date, {
-        default: 'MMM d, yyyy, HH:mm',
-        thisYear: 'MMM d, HH:mm',
-      })}`
+      return `Voting till ${formatDate(proposal.votingEndTime as Date)}`
     default:
       return translateProposalStatus(proposal.status)
   }
@@ -87,11 +81,13 @@ export function translateTallyOpt(tallyVote: keyof TallyResult): string {
 }
 
 export function translateTallyShort(tally: TallyResult): string {
-  return Object.entries(tally)
+  const shorted = Object.entries(tally)
+    .filter(([, power]) => power !== '0%' && power !== '0')
     .map(([opt, power]) => {
       return `${translateTallyOptShort(opt as keyof TallyResult)}: ${power}`
     })
     .join(', ')
+  return shorted || 'No votes yet'
 }
 
 export function translateTallyOptShort(tallyVote: keyof TallyResult): string {
