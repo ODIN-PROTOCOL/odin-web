@@ -21,7 +21,7 @@
       </div>
       <div
         v-for="item in dataSources"
-        :key="item.id"
+        :key="item.id.toString()"
         class="data-sources__table-row app-table__row"
       >
         <div class="app-table__cell">

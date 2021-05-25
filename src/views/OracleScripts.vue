@@ -21,7 +21,7 @@
       </div>
       <button
         v-for="item in oracleScripts"
-        :key="item.id"
+        :key="item.id.toString()"
         class="app-table__row-btn"
         type="button"
         @click="showOracleScript(item)"
