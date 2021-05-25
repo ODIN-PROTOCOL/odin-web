@@ -109,17 +109,12 @@ const ProposalModal = defineComponent({
     ProposalModalVoteForm,
   },
   setup(props) {
-    const proposal = props.proposal as ProposalDecoded
-    if (!proposal?.proposalId) {
-      throw new ReferenceError('Missing required arg: proposal')
-    }
-
     const isLoading = ref(false)
     const isDepositPeriod = ref(
-      proposal.status === ProposalStatus.PROPOSAL_STATUS_DEPOSIT_PERIOD
+      props.proposal.status === ProposalStatus.PROPOSAL_STATUS_DEPOSIT_PERIOD
     )
     const isVotingPeriod = ref(
-      proposal.status === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
+      props.proposal.status === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
     )
     const onSubmit = dialogs.getHandler('onSubmit')
     const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)

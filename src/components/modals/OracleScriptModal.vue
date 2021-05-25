@@ -59,7 +59,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, PropType, ref } from 'vue'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { preventIf } from '@/helpers/functions'
 import { useForm, validators } from '@/composables/useForm'
@@ -69,18 +69,15 @@ import { showRequestFormDialog } from './RequestFormModal.vue'
 import { OracleScript } from '@provider/codec/oracle/v1/oracle'
 
 const OracleScriptModal = defineComponent({
-  props: { oracleScript: Object },
+  props: {
+    oracleScript: { type: Object as PropType<OracleScript>, required: true },
+  },
   components: { ModalBase, InputFile },
   setup(props) {
-    const oracleScript = props.oracleScript as OracleScript
-    if (!oracleScript?.id) {
-      throw new ReferenceError('Missing required arg: oracleScript')
-    }
-
     const form = useForm({
-      name: [oracleScript.name, validators.required],
-      description: [oracleScript.description, validators.required],
-      codeFile: [oracleScript.filename, validators.required],
+      name: [props.oracleScript.name, validators.required],
+      description: [props.oracleScript.description, validators.required],
+      codeFile: [props.oracleScript.filename, validators.required],
     })
     const isLoading = ref(false)
     const onRequestCreated = dialogs.getHandler('onRequestCreated')
@@ -90,7 +87,7 @@ const OracleScriptModal = defineComponent({
       onClose()
       showRequestFormDialog(
         { onSubmit: onRequestCreated },
-        { oracleScriptId: oracleScript.id }
+        { oracleScriptId: props.oracleScript.id }
       )
     }
 
