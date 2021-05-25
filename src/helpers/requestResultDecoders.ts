@@ -1,25 +1,45 @@
 import {
+  OracleRequestPacketData,
   OracleResponsePacketData,
   RequestResult,
 } from '@provider/codec/oracle/v1/oracle'
 import { uint8ArrayToStr } from '@/helpers/casts'
 import { Modify } from '@/shared-types'
+import { ObiCoin, obiCoin } from './obi-structures'
 
 export type RequestResultDecoded = Modify<
   RequestResult,
-  { responsePacketData?: OracleResponsePacketDataDecoded }
+  {
+    requestPacketData?: OracleRequestPacketDataDecoded
+    responsePacketData?: OracleResponsePacketDataDecoded
+  }
 >
 export function decodeRequestResults(
   requests: RequestResult[]
 ): RequestResultDecoded[] {
   return requests.map((request) => {
     return {
-      ...request,
+      requestPacketData: decodeOracleRequestPacketData(
+        request.requestPacketData
+      ),
       responsePacketData: decodeOracleResponsePacketData(
         request.responsePacketData
       ),
     }
   })
+}
+
+export type OracleRequestPacketDataDecoded =
+  | Modify<OracleRequestPacketData, { calldata: ObiCoin }>
+  | undefined
+export function decodeOracleRequestPacketData(
+  packet?: OracleRequestPacketData
+): OracleRequestPacketDataDecoded {
+  if (!packet) return
+  return {
+    ...packet,
+    calldata: obiCoin.decode(packet.calldata),
+  }
 }
 
 export type OracleResponsePacketDataDecoded =

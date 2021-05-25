@@ -53,14 +53,18 @@ function bigRound(a: NumLike, precision: number, mode?: ROUNDING): string {
 }
 
 function bigFormat(a: NumLike, format?: BigFormatCfg): string {
-  const {
-    decimals = BigNumber.config({}).DECIMAL_PLACES as number,
-    rounding = BigNumber.config({}).ROUNDING_MODE as ROUNDING,
-    ...fmt
-  } = format || {}
-  Object.assign(fmt, BigNumber.config({}).FORMAT)
-  const res = _bn(a).toFormat(decimals, rounding, fmt)
-  return res
+  try {
+    const {
+      decimals = BigNumber.config({}).DECIMAL_PLACES as number,
+      rounding = BigNumber.config({}).ROUNDING_MODE as ROUNDING,
+      ...fmt
+    } = format || {}
+    Object.assign(fmt, BigNumber.config({}).FORMAT)
+    return _bn(a).toFormat(decimals, rounding, fmt)
+  } catch (error) {
+    console.error(error)
+    return '—'
+  }
 }
 
 const _bn = toBigNumber

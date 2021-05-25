@@ -22,55 +22,61 @@
           <span class="app-table__cell-txt"> Status </span>
         </div>
       </div>
-      <div
+      <button
         v-for="item in requests"
         :key="item.responsePacketData.requestId.toString()"
-        class="requests__table-row app-table__row"
+        class="app-table__row-btn"
+        type="button"
+        @click="showRequest(item)"
       >
-        <div class="app-table__cell">
-          <TitledSpan
-            class="app-table__cell-txt"
-            :text="item.responsePacketData.requestId.toString()"
-          />
+        <div class="requests__table-row app-table__row">
+          <div class="app-table__cell">
+            <TitledSpan
+              class="app-table__cell-txt"
+              :text="item.responsePacketData.requestId.toString()"
+            />
+          </div>
+          <div class="app-table__cell">
+            <TitledSpan
+              class="app-table__cell-txt"
+              :text="item.requestPacketData.oracleScriptId.toString()"
+            />
+          </div>
+          <div class="app-table__cell">
+            <TitledSpan
+              class="app-table__cell-txt"
+              :text="item.responsePacketData.ansCount.toString()"
+            />
+          </div>
+          <div class="app-table__cell">
+            <TitledSpan
+              class="app-table__cell-txt"
+              :text="$fDate(item.responsePacketData.requestTime)"
+            />
+          </div>
+          <div class="app-table__cell">
+            <TitledSpan
+              class="app-table__cell-txt"
+              :text="$fDate(item.responsePacketData.resolveTime)"
+            />
+          </div>
+          <div class="app-table__cell">
+            <TitledSpan
+              class="app-table__cell-txt"
+              :text="$tRequestStatus(item.responsePacketData.resolveStatus)"
+            />
+          </div>
         </div>
-        <div class="app-table__cell">
-          <TitledSpan
-            class="app-table__cell-txt"
-            :text="item.requestPacketData.oracleScriptId.toString()"
-          />
-        </div>
-        <div class="app-table__cell">
-          <TitledSpan
-            class="app-table__cell-txt"
-            :text="item.responsePacketData.ansCount.toString()"
-          />
-        </div>
-        <div class="app-table__cell">
-          <TitledSpan
-            class="app-table__cell-txt"
-            :text="$fDate(item.responsePacketData.requestTime)"
-          />
-        </div>
-        <div class="app-table__cell">
-          <TitledSpan
-            class="app-table__cell-txt"
-            :text="$fDate(item.responsePacketData.resolveTime)"
-          />
-        </div>
-        <div class="app-table__cell">
-          <TitledSpan
-            class="app-table__cell-txt"
-            :text="$tRequestStatus(item.responsePacketData.resolveStatus)"
-          />
-        </div>
-      </div>
+      </button>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { callers } from '@/api/callers'
+import { showRequestDialog } from '@/components/modals/RequestModal.vue'
 import TitledSpan from '@/components/TitledSpan.vue'
+import { RequestResultDecoded } from '@/helpers/requestResultDecoders'
 import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
@@ -85,7 +91,11 @@ export default defineComponent({
     }
     loadRequests()
 
-    return { requests }
+    const showRequest = (request: RequestResultDecoded) => {
+      showRequestDialog({}, { request })
+    }
+
+    return { requests, showRequest }
   },
 })
 </script>

@@ -77,10 +77,15 @@ export function formatDate(
     thisYear: 'MMM d, HH:mm',
   }
 ): string {
-  if (Long.isLong(input)) input = input.toNumber() * 1000
-  format = _chooseFormat(input, format)
-  format = _tryInsertToday(input, format)
-  return _formatDate(input, format)
+  try {
+    if (Long.isLong(input)) input = input.toNumber() * 1000
+    format = _chooseFormat(input, format)
+    format = _tryInsertToday(input, format)
+    return _formatDate(input, format)
+  } catch (error) {
+    console.error(error)
+    return '—'
+  }
 }
 
 function _chooseFormat(

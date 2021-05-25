@@ -116,7 +116,7 @@ import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
-import { obiCoinMultiplier } from '@/helpers/obi-structures'
+import { obiCoin } from '@/helpers/obi-structures'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import { coins } from '@cosmjs/launchpad'
@@ -149,7 +149,10 @@ const RequestFormModal = defineComponent({
           minCount: Long.fromString(form.minCount.val()),
           // TODO: clarify calldata
           // calldata: obiPhoneModels(form.calldata.val()),
-          calldata: obiCoinMultiplier('BTC', 1000000000),
+          calldata: obiCoin.encode({
+            symbol: 'BTC',
+            multiplier: '1000000000',
+          }),
           feeLimit: coins(Number.parseInt(form.feeLimit.val()), 'loki'),
           prepareGas: Long.fromNumber(200000),
           executeGas: Long.fromNumber(200000),

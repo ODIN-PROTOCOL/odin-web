@@ -17,6 +17,7 @@
     "@cosmjs/tendermint-rpc": "^0.24.1",
     "@kyvg/vue3-notification": "^2.3.0",
     "bignumber.js": "^9.0.1",
+    "buffer": "^4.9.2",
     "core-js": "^3.6.5",
     "date-fns": "^2.21.3",
     "lodash-es": "^4.17.21",
