@@ -108,6 +108,7 @@ export default defineComponent({
   width: 100%;
   min-width: 22rem;
   max-width: 25vw;
+  max-height: 25rem;
   margin-right: 8vw;
 }
 
