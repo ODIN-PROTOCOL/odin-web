@@ -3,6 +3,8 @@ import { bigMath } from '@/helpers/bigMath'
 import { TallyResult } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { computed, ComputedRef, onUnmounted, Ref, ref } from 'vue'
 
+// TODO: use usePoll
+
 const _powerConst = ref<string | null>(null)
 let _subsCount = 0
 let _updateInterval = -1

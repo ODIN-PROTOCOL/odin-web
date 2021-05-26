@@ -4,11 +4,12 @@ import debounce from 'lodash-es/debounce'
 import { formatCoin } from '@/helpers/formatters'
 import { bigMath } from '@/helpers/bigMath'
 import { NumLike } from '@/helpers/casts'
+import { API_CONFIG } from '@/api/api-config'
 
 // TODO: translate
 
 function _calcFactor(rate: string): NumLike {
-  return bigMath.multiply(rate, '0.00000000000000000001')
+  return bigMath.multiply(rate, '0.000000000000000001')
 }
 
 function _calcToAmount(
@@ -16,8 +17,13 @@ function _calcToAmount(
   factor: NumLike,
   toDenom: string
 ): string {
-  const approx = bigMath.multiply(fromAmount, factor)
-  return formatCoin(approx, toDenom)
+  let approx = bigMath.multiply(fromAmount, factor)
+  let prefix = ''
+  if (API_CONFIG.exBridgeFee && API_CONFIG.exBridgeFee !== '0') {
+    approx = bigMath.subtract(approx, API_CONFIG.exBridgeFee)
+    prefix = ` (incl. ${formatCoin(API_CONFIG.exBridgeFee, toDenom)} fee)`
+  }
+  return formatCoin(approx, toDenom) + prefix
 }
 
 function _getPair(from: Ref<string> | string, to: Ref<string> | string) {

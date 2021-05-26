@@ -92,14 +92,13 @@ import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import { useRateAutoCalc } from '@/composables/useRateAutoCalc'
 import ModalBase from './ModalBase.vue'
-import { coin } from '@cosmjs/launchpad'
 
 // TODO: integrate bridge
 
 const ExchangeFormModal = defineComponent({
   components: { ModalBase },
   setup() {
-    const assets = ['ETH', 'MINIGEO']
+    const assets = ['ODIN']
     const form = useForm({
       sourceAsset: [assets[0], validators.required, validators.oneOf(assets)],
       sourceAddress: ['', validators.required, validators.erc20Address],
@@ -151,7 +150,7 @@ const ExchangeFormModal = defineComponent({
 })
 
 export default ExchangeFormModal
-export function showExchangeFormDialog(callbacks: {
+export function showExchangeFormDialog(callbacks?: {
   onSubmit?: DialogHandler
   onClose?: DialogHandler
 }): Promise<unknown | null> {

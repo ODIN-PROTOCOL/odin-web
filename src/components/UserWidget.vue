@@ -11,9 +11,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, onUnmounted } from 'vue'
 import { useAuthorization } from '@/composables/useAuthorization'
 import { useBalances } from '@/composables/useBalances'
+import { usePoll } from '@/composables/usePoll'
 import router from '@/router'
 import { showExchangeFormDialog } from './modals/ExchangeFormModal.vue'
 
@@ -31,13 +32,12 @@ export default defineComponent({
     }
 
     const exchange = () => {
-      showExchangeFormDialog({
-        onSubmit: (d) => {
-          d.kill()
-          loadBalances()
-        },
-      })
+      showExchangeFormDialog()
     }
+
+    const lokiPoll = usePoll(loadBalances, 5000)
+    lokiPoll.start()
+    onUnmounted(lokiPoll.stop)
 
     return { lokiCoins, logOutAndLeave, exchange }
   },

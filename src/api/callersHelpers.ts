@@ -15,7 +15,7 @@ export function mapResponse<
 }
 
 export async function sendPost(url: string, data: AnyObj): Promise<Response> {
-  const response = await fetch(url, {
+  return fetch(url, {
     method: 'POST',
     mode: 'no-cors',
     cache: 'no-cache',
@@ -27,6 +27,4 @@ export async function sendPost(url: string, data: AnyObj): Promise<Response> {
     referrerPolicy: 'no-referrer',
     body: JSON.stringify(data),
   })
-  console.log(response)
-  return await response.json()
 }

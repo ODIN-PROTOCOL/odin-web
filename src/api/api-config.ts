@@ -7,5 +7,6 @@ export const API_CONFIG = {
   // rpc: 'http://35.195.150.105:26657',
   rpc: 'http://localhost:26657',
   exBridge: 'http://localhost:90',
+  exBridgeFee: '10',
   hdDeviation: stringToPath("m/44'/118'/0'/0/0"),
 }

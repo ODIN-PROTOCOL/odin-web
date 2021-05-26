@@ -42,7 +42,14 @@ class Dialogs {
   }
 
   getHandler(name: string): DialogPayloadHandler {
-    return inject(name, () => console.warn(`Missing ${name} handler`), false)
+    return inject(
+      name,
+      () =>
+        inject('onClose', () =>
+          console.warn(`Missing ${name} and no onClose handler`)
+        ),
+      true
+    )
   }
 
   private _makeKiller(
