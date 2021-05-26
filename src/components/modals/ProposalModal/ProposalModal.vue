@@ -42,7 +42,7 @@
         </div>
       </div>
       <div class="proposal-modal__row mg-b8">
-        <p class="proposal-modal__row-lbl fs-14 fs-wb">Time</p>
+        <p class="proposal-modal__row-lbl fs-14 fs-wb">Details</p>
         <pre class="proposal-modal__row-val">
           Deposited: {{ $fCoin(proposal.totalDeposit[0]) }}
           Proposal created: {{ $fDate(proposal.submitTime) }}
