@@ -112,14 +112,11 @@ const ExchangeFormModal = defineComponent({
     const submit = async () => {
       isLoading.value = true
       try {
-        await callers.createExchange({
-          from: form.sourceAsset.val().toLowerCase(),
-          to: 'loki',
-          requester: form.sourceAddress.val(),
-          amount: coin(
-            Number(form.sourceAmount.val()),
-            form.sourceAsset.val().toLowerCase()
-          ),
+        await callers.createBinanceExchange({
+          binance_address: form.sourceAddress.val(),
+          odin_address: wallet.account.address,
+          amount: form.sourceAmount.val(),
+          denom: form.sourceAsset.val().toLowerCase(),
         })
 
         onSubmit()
@@ -138,7 +135,7 @@ const ExchangeFormModal = defineComponent({
 
     // TODO: remove fakeForm
     const _fakeForm = () => {
-      form.sourceAddress.val(wallet.account.address)
+      form.sourceAddress.val('0x6758980b195114d08ce5119cf383a8ec5417f35a')
     }
     _fakeForm()
 

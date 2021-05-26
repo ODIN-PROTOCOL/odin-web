@@ -7,9 +7,10 @@ import { MsgExchange } from '@provider/codec/coinswap/tx'
 import { MsgDeposit, MsgVote } from '@provider/codec/cosmos/gov/v1beta1/tx'
 import { api } from './api'
 import { wallet } from './wallet'
-import { mapResponse } from './callersHelpers'
+import { mapResponse, sendPost } from './callersHelpers'
 import { decodeRequestResults } from '@/helpers/requestResultDecoders'
 import { decodeProposals } from '@/helpers/proposalDecoders'
+import { API_CONFIG } from './api-config'
 
 const makeCallers = () => {
   const broadcaster = api.makeBroadcastCaller.bind(api)
@@ -63,10 +64,19 @@ const makeCallers = () => {
       return qc.bank.unverified.allBalances(myAddress)
     }),
 
+    // TODO: remove createExchange?
     createExchange: broadcaster<MsgExchange>(
       '/coinswap.MsgExchange',
       MsgExchange
     ),
+    createBinanceExchange: (req: {
+      binance_address: string
+      odin_address: string
+      amount: string
+      denom: string
+    }) => {
+      return sendPost(`${API_CONFIG.exBridge}/bsc/exchange`, req)
+    },
     getRate: querier((qc) => qc.coinswap.unverified.rate),
 
     getTreasuryPool: querier((qc) => qc.mint.unverified.treasuryPool),
