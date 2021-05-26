@@ -33,6 +33,7 @@
             class="app-form__field-input"
             name="request-source-address"
             type="text"
+            placeholder="0x675898…"
             v-model="form.sourceAddress"
             :disabled="isLoading"
           />
@@ -49,6 +50,7 @@
             type="number"
             min="1"
             step="1"
+            placeholder="1000"
             v-model="form.sourceAmount"
             :disabled="isLoading"
           />

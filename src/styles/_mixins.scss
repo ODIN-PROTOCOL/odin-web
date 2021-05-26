@@ -5,6 +5,13 @@
   flex: 1;
 }
 
+@mixin flex-pos($alignItems: center, $justCont: center) {
+  display: flex;
+  align-items: $alignItems;
+  justify-content: $justCont;
+  flex: 1;
+}
+
 @mixin ellipsis($display: null, $max-width: null) {
   @if ($display) {
     #{display}: $display;
@@ -36,4 +43,44 @@
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+// MEDIA
+
+$mediaBreakpoints: (
+  xs: 480px,
+  sm: 600px,
+  tablet: 820px,
+  md: 1024px,
+  xm: 1200px,
+  lg: 1440px,
+  xl: 1920px,
+) !default;
+
+@mixin respond-to($media) {
+  $breakpoint: map-get($mediaBreakpoints, $media);
+
+  @if ($breakpoint) {
+    @media (max-width: ($breakpoint - 1)) {
+      @content;
+    }
+  } @else {
+    @media (max-width: ($media - 1)) {
+      @content;
+    }
+  }
+}
+
+@mixin respond-above($media) {
+  $breakpoint: map-get($mediaBreakpoints, $media);
+
+  @if ($breakpoint) {
+    @media (min-width: ($breakpoint)) {
+      @content;
+    }
+  } @else {
+    @media (min-width: ($media)) {
+      @content;
+    }
+  }
 }

@@ -1,10 +1,16 @@
 :root {
   --clr__main-bg: #{$clr-main-bg};
   --clr__main-bg-hover: #{$clr-main-bg-hover};
+  --clr__splash-bg: #{$clr-splash-bg};
   --clr__text: #{$clr-text};
-  --clr__text-secondary: #{$clr-text-secondary};
+  --clr__text-muted: #{$clr-text-muted};
+  --clr__text-on-action: #{$clr-text-on-action};
   --clr__action: #{$clr-action};
-  --clr__action-text: #{$clr-action-text};
   --clr__action-disabled: #{$clr-action-disabled};
   --clr__danger: #{$clr-danger};
+
+  // Inputs
+  --clr__input-bg: #{$clr-input-bg};
+  --clr__input-bg-disabled: #{$clr-input-bg-disabled};
+  --clr__input-border: #{$clr-input-border};
 }

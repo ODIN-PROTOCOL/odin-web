@@ -1,3 +1,7 @@
+@mixin input-placeholder {
+  color: var(--clr__text-muted);
+}
+
 .app-form {
   display: block;
 }
@@ -5,12 +9,8 @@
 .app-form__field {
   display: block;
 
-  & + & {
+  &:not(:first-child) {
     margin-top: 1.2rem;
-  }
-
-  & + .app-form__footer {
-    margin-top: 1.6rem;
   }
 }
 
@@ -22,11 +22,41 @@
 .app-form__field-input {
   display: block;
   width: 100%;
+  padding: 0.8rem 1.2rem;
+  text-overflow: ellipsis;
+  border: 1px solid var(--clr__input-border);
+  border-radius: 0.4rem;
+
+  @include transition(border-color);
+
+  &:focus {
+    border-color: var(--clr__action);
+  }
+
+  &::-webkit-input-placeholder {
+    @include input-placeholder;
+  }
+
+  &::-moz-placeholder {
+    @include input-placeholder;
+  }
+
+  &:-moz-placeholder {
+    @include input-placeholder;
+  }
+
+  &:-ms-input-placeholder {
+    @include input-placeholder;
+  }
+
+  &::placeholder {
+    @include input-placeholder;
+  }
 }
 
 .app-form__field-note {
   display: block;
-  color: var(--clr__text-secondary);
+  color: var(--clr__text-muted);
   margin-top: 0.8rem;
 }
 
@@ -38,6 +68,7 @@
 
 .app-form__footer {
   display: block;
+  margin-top: 1.6rem;
 
   & > *:not(:first-child) {
     margin-left: 0.8rem;
