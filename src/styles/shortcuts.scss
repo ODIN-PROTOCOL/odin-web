@@ -22,34 +22,40 @@
 // MARGINS
 
 .mg-t8 {
-  margin-top: 0.8rem;
+  margin-block-start: 0.8rem;
 }
 .mg-t4 {
-  margin-top: 0.4rem;
+  margin-block-start: 0.4rem;
 }
 .mg-t32 {
-  margin-top: 3.2rem;
+  margin-block-start: 3.2rem;
 }
 .mg-r8 {
-  margin-right: 0.8rem;
+  margin-inline-end: 0.8rem;
 }
 .mg-b8 {
-  margin-bottom: 0.8rem;
+  margin-block-end: 0.8rem;
 }
 .mg-b4 {
-  margin-bottom: 0.4rem;
+  margin-block-end: 0.4rem;
 }
 .mg-b32 {
-  margin-bottom: 3.2rem;
+  margin-block-end: 3.2rem;
 }
 .mg-b48 {
-  margin-bottom: 4.8rem;
+  margin-block-end: 4.8rem;
+}
+.mg-l8 {
+  margin-inline-start: 0.8rem;
+}
+.mg-l16 {
+  margin-inline-start: 1.6rem;
 }
 
 // WIDTHS
 
 .w-full {
-  width: 100%
+  width: 100%;
 }
 
 // FLEX
@@ -58,25 +64,19 @@
   @include flex-container;
 }
 .fx-end {
-  @include flex-pos(center, flex-end)
+  @include flex-pos(center, flex-end);
 }
 .fx-start {
-  @include flex-pos(center, flex-start)
+  @include flex-pos(center, flex-start);
 }
 .fx-row {
   display: flex;
   flex-direction: row;
   align-items: center;
-
-  &_gap-8 {
-    & > *:not(:first-child):not(.fx-sae) {
-      margin-left: 0.8rem;
-    }
-  }
 }
 .fx-sae {
   // self align end
-  margin-left: auto;
+  margin-inline-start: auto;
 }
 
 // MEDIA

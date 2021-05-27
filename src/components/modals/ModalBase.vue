@@ -66,10 +66,10 @@ export default defineComponent({
 
 .modal-base__content-head {
   display: flex;
-  margin-bottom: 0.8rem;
+  margin-block-end: 0.8rem;
 }
 
 .modal-base__close-btn {
-  margin-left: auto;
+  margin-inline-start: auto;
 }
 </style>

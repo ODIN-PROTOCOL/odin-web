@@ -1,9 +1,19 @@
 <template>
   <div class="nav">
-    <router-link :to="{ name: 'DataSources' }">Data Sources</router-link> |
-    <router-link :to="{ name: 'OracleScripts' }">Oracle Scripts</router-link> |
-    <router-link :to="{ name: 'Requests' }">Requests</router-link> |
-    <router-link :to="{ name: 'Voting' }">Voting</router-link>
+    <div class="nav__wrap-cont">
+      <router-link class="nav__link" :to="{ name: 'DataSources' }">
+        Data Sources
+      </router-link>
+      <router-link class="nav__link" :to="{ name: 'OracleScripts' }">
+        Oracle Scripts
+      </router-link>
+      <router-link class="nav__link" :to="{ name: 'Requests' }">
+        Requests
+      </router-link>
+      <router-link class="nav__link" :to="{ name: 'Voting' }">
+        Voting
+      </router-link>
+    </div>
   </div>
 </template>
 
@@ -14,16 +24,25 @@ export default defineComponent({})
 </script>
 
 <style scoped lang="scss">
-.nav {
-  padding: 3rem;
+.nav__wrap-cont {
+  display: flex;
+  flex-wrap: wrap;
+  margin-block-start: -1.2rem;
+  margin-inline-start: -1.2rem;
+  width: calc(100% + 1.2rem);
+}
 
-  a {
+.nav__link {
+  display: inline-block;
+  white-space: nowrap;
+  color: inherit;
+  text-decoration: none;
+  margin-block-start: 1.2rem;
+  margin-inline-start: 1.2rem;
+
+  &.router-link-exact-active {
     font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+    border-bottom: 2px solid var(--clr__action);
   }
 }
 </style>

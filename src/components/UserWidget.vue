@@ -1,10 +1,10 @@
 <template>
-  <div class="user-widget fx-row fx-row_gap-8">
+  <div class="user-widget fx-row">
     <button class="user-widget__balance-btn" type="button" @click="exchange()">
       Balance: <strong>{{ $fCoin(lokiCoins) }}</strong>
     </button>
 
-    <button class="app-ico-btn" type="button" @click="logOutAndLeave()">
+    <button class="app-ico-btn mg-l8" type="button" @click="logOutAndLeave()">
       <img src="~@/assets/icons/exit.svg" alt="Log out" />
     </button>
   </div>

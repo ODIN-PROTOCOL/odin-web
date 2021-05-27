@@ -1,14 +1,14 @@
 <template>
   <template v-if="isAppReady">
     <template v-if="isLoggedIn">
-      <header class="view-header fx-row fx-row_gap-8">
+      <header class="view-header fx-row">
         <img
           class="logo"
           src="~@/assets/brand/odin-logo-black.png"
           alt="Logo"
           width="120"
         />
-        <Nav />
+        <Nav class="mg-l16 mg-r8" />
         <UserWidget class="fx-sae" />
       </header>
     </template>
@@ -66,9 +66,6 @@ export default defineComponent({
 
 #app {
   width: 100%;
-  // max-width: 144rem;
-  // padding: 0 4rem;
-  // margin: 0 auto;
   @include flex-container;
 }
 </style>

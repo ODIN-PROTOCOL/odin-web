@@ -109,7 +109,7 @@ export default defineComponent({
   min-width: 22rem;
   max-width: 25vw;
   max-height: 25rem;
-  margin-right: 8vw;
+  margin-inline-end: 8vw;
 }
 
 .auth__content {
@@ -120,7 +120,7 @@ export default defineComponent({
 .auth__form {
   width: 100%;
   max-width: 30rem;
-  margin-left: 8vw;
+  margin-inline-start: 8vw;
 
   @include respond-to(sm) {
     margin: auto;
