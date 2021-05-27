@@ -1,6 +1,9 @@
 <template>
-  <div class="requests">
-    <h3>Requests</h3>
+  <div class="requests view-main">
+    <div class="fx-row mg-b32">
+      <h2 class="view-title">Requests</h2>
+    </div>
+
     <div class="app-table">
       <div class="requests__table-head app-table__head">
         <div class="app-table__cell">
@@ -22,52 +25,59 @@
           <span class="app-table__cell-txt"> Status </span>
         </div>
       </div>
-      <button
-        v-for="item in requests"
-        :key="item.responsePacketData.requestId.toString()"
-        class="app-table__row-btn"
-        type="button"
-        @click="showRequest(item)"
-      >
-        <div class="requests__table-row app-table__row">
-          <div class="app-table__cell">
-            <TitledSpan
-              class="app-table__cell-txt"
-              :text="item.responsePacketData.requestId.toString()"
-            />
+      <template v-if="requests?.length">
+        <button
+          v-for="item in requests"
+          :key="item.responsePacketData.requestId.toString()"
+          class="app-table__row-btn"
+          type="button"
+          @click="showRequest(item)"
+        >
+          <div class="requests__table-row app-table__row">
+            <div class="app-table__cell">
+              <TitledSpan
+                class="app-table__cell-txt"
+                :text="item.responsePacketData.requestId.toString()"
+              />
+            </div>
+            <div class="app-table__cell">
+              <TitledSpan
+                class="app-table__cell-txt"
+                :text="item.requestPacketData.oracleScriptId.toString()"
+              />
+            </div>
+            <div class="app-table__cell">
+              <TitledSpan
+                class="app-table__cell-txt"
+                :text="item.responsePacketData.ansCount.toString()"
+              />
+            </div>
+            <div class="app-table__cell">
+              <TitledSpan
+                class="app-table__cell-txt"
+                :text="$fDate(item.responsePacketData.requestTime)"
+              />
+            </div>
+            <div class="app-table__cell">
+              <TitledSpan
+                class="app-table__cell-txt"
+                :text="$fDate(item.responsePacketData.resolveTime)"
+              />
+            </div>
+            <div class="app-table__cell">
+              <TitledSpan
+                class="app-table__cell-txt"
+                :text="$tRequestStatus(item.responsePacketData.resolveStatus)"
+              />
+            </div>
           </div>
-          <div class="app-table__cell">
-            <TitledSpan
-              class="app-table__cell-txt"
-              :text="item.requestPacketData.oracleScriptId.toString()"
-            />
-          </div>
-          <div class="app-table__cell">
-            <TitledSpan
-              class="app-table__cell-txt"
-              :text="item.responsePacketData.ansCount.toString()"
-            />
-          </div>
-          <div class="app-table__cell">
-            <TitledSpan
-              class="app-table__cell-txt"
-              :text="$fDate(item.responsePacketData.requestTime)"
-            />
-          </div>
-          <div class="app-table__cell">
-            <TitledSpan
-              class="app-table__cell-txt"
-              :text="$fDate(item.responsePacketData.resolveTime)"
-            />
-          </div>
-          <div class="app-table__cell">
-            <TitledSpan
-              class="app-table__cell-txt"
-              :text="$tRequestStatus(item.responsePacketData.resolveStatus)"
-            />
-          </div>
+        </button>
+      </template>
+      <template v-else>
+        <div class="app-table__row">
+          <p class="app-table-empty-stub">No items yet</p>
         </div>
-      </button>
+      </template>
     </div>
   </div>
 </template>

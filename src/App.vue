@@ -1,10 +1,10 @@
 <template>
   <template v-if="isAppReady">
     <template v-if="isLoggedIn">
-      <header class="fx-row fx-row_gap-8">
+      <header class="view-header fx-row fx-row_gap-8">
         <img
           class="logo"
-          src="~@/assets/odin-logo-black.png"
+          src="~@/assets/brand/odin-logo-black.png"
           alt="Logo"
           width="120"
         />
@@ -58,6 +58,7 @@ export default defineComponent({
 @import '~@/styles/root.scss';
 @import '~@/styles/buttons.scss';
 @import '~@/styles/tables.scss';
+@import '~@/styles/views.scss';
 @import '~@/styles/load-fog.scss';
 @import '~@/styles/forms.scss';
 @import '~@/styles/vue-notification.scss';

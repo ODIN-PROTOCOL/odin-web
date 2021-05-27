@@ -1,9 +1,15 @@
 <template>
-  <div class="oracle-scripts">
-    <h3>Oracle scripts</h3>
-    <button class="app-btn mg-b8" type="button" @click="createOracleScript()">
-      Create oracle script
-    </button>
+  <div class="oracle-scripts view-main">
+    <div class="fx-row mg-b32">
+      <h2 class="view-title">Oracle scripts</h2>
+      <button
+        class="app-btn-2nd fx-sae"
+        type="button"
+        @click="createOracleScript()"
+      >
+        Create oracle script
+      </button>
+    </div>
     <div class="app-table">
       <div class="oracle-scripts__table-head app-table__head">
         <div class="app-table__cell">
@@ -19,35 +25,45 @@
           <span class="app-table__cell-txt"> Owner </span>
         </div>
       </div>
-      <button
-        v-for="item in oracleScripts"
-        :key="item.id.toString()"
-        class="app-table__row-btn"
-        type="button"
-        @click="showOracleScript(item)"
-      >
-        <div class="oracle-scripts__table-row app-table__row">
-          <div class="app-table__cell">
-            <TitledSpan
-              class="app-table__cell-txt"
-              :text="item.id.toString()"
-            />
+      <template v-if="oracleScripts?.length">
+        <button
+          v-for="item in oracleScripts"
+          :key="item.id.toString()"
+          class="app-table__row-btn"
+          type="button"
+          @click="showOracleScript(item)"
+        >
+          <div class="oracle-scripts__table-row app-table__row">
+            <div class="app-table__cell">
+              <TitledSpan
+                class="app-table__cell-txt"
+                :text="item.id.toString()"
+              />
+            </div>
+            <div class="app-table__cell">
+              <TitledSpan class="app-table__cell-txt" :text="item.name" />
+            </div>
+            <div class="app-table__cell">
+              <TitledSpan
+                class="app-table__cell-txt"
+                :text="item.description"
+              />
+            </div>
+            <div class="app-table__cell">
+              <TitledSpan
+                class="app-table__cell-txt"
+                :text="$cropAddress(item.owner)"
+                :title="item.owner"
+              />
+            </div>
           </div>
-          <div class="app-table__cell">
-            <TitledSpan class="app-table__cell-txt" :text="item.name" />
-          </div>
-          <div class="app-table__cell">
-            <TitledSpan class="app-table__cell-txt" :text="item.description" />
-          </div>
-          <div class="app-table__cell">
-            <TitledSpan
-              class="app-table__cell-txt"
-              :text="$cropAddress(item.owner)"
-              :title="item.owner"
-            />
-          </div>
+        </button>
+      </template>
+      <template v-else>
+        <div class="app-table__row">
+          <p class="app-table-empty-stub">No items yet</p>
         </div>
-      </button>
+      </template>
     </div>
   </div>
 </template>

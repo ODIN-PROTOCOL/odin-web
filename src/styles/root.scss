@@ -1,6 +1,5 @@
 :root {
   --clr__main-bg: #{$clr-main-bg};
-  --clr__main-bg-hover: #{$clr-main-bg-hover};
   --clr__splash-bg: #{$clr-splash-bg};
   --clr__text: #{$clr-text};
   --clr__text-muted: #{$clr-text-muted};
@@ -13,4 +12,8 @@
   --clr__input-bg: #{$clr-input-bg};
   --clr__input-bg-disabled: #{$clr-input-bg-disabled};
   --clr__input-border: #{$clr-input-border};
+
+  // Tables
+  --clr__table-border: #{$clr-table-border};
+  --clr__table-row-hover: #{$clr-table-row-hover};
 }

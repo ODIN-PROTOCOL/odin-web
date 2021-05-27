@@ -3,7 +3,7 @@
     <div class="auth__splash fx-end only-sm-above">
       <img
         class="auth__splash-logo"
-        src="~@/assets/odin-logo-white.png"
+        src="~@/assets/brand/odin-logo-white.png"
         alt="ODIN Logo"
       />
     </div>
@@ -12,7 +12,7 @@
       <form class="auth__form app-form" @submit.prevent="submit()">
         <img
           class="only-sm auth__form-logo"
-          src="~@/assets/odin-logo-black.png"
+          src="~@/assets/brand/odin-logo-black.png"
           alt="ODIN Logo"
         />
 

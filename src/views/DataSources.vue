@@ -1,9 +1,15 @@
 <template>
-  <div class="data-sources">
-    <h3>Data sources</h3>
-    <button class="app-btn mg-b8" type="button" @click="createDataSource()">
-      Create data source
-    </button>
+  <div class="data-sources view-main">
+    <div class="fx-row mg-b32">
+      <h2 class="view-title">Data sources</h2>
+      <button
+        class="app-btn-2nd fx-sae"
+        type="button"
+        @click="createDataSource()"
+      >
+        Create data source
+      </button>
+    </div>
     <div class="app-table">
       <div class="data-sources__table-head app-table__head">
         <div class="app-table__cell">
@@ -19,28 +25,38 @@
           <span class="app-table__cell-txt"> Owner </span>
         </div>
       </div>
-      <div
-        v-for="item in dataSources"
-        :key="item.id.toString()"
-        class="data-sources__table-row app-table__row"
-      >
-        <div class="app-table__cell">
-          <TitledSpan class="app-table__cell-txt" :text="item.id.toString()" />
+      <template v-if="dataSources?.length">
+        <div
+          v-for="item in dataSources"
+          :key="item.id.toString()"
+          class="data-sources__table-row app-table__row"
+        >
+          <div class="app-table__cell">
+            <TitledSpan
+              class="app-table__cell-txt"
+              :text="item.id.toString()"
+            />
+          </div>
+          <div class="app-table__cell">
+            <TitledSpan class="app-table__cell-txt" :text="item.name" />
+          </div>
+          <div class="app-table__cell">
+            <TitledSpan class="app-table__cell-txt" :text="item.description" />
+          </div>
+          <div class="app-table__cell">
+            <TitledSpan
+              class="app-table__cell-txt"
+              :text="$cropAddress(item.owner)"
+              :title="item.owner"
+            />
+          </div>
         </div>
-        <div class="app-table__cell">
-          <TitledSpan class="app-table__cell-txt" :text="item.name" />
+      </template>
+      <template v-else>
+        <div class="app-table__row">
+          <p class="app-table-empty-stub">No items yet</p>
         </div>
-        <div class="app-table__cell">
-          <TitledSpan class="app-table__cell-txt" :text="item.description" />
-        </div>
-        <div class="app-table__cell">
-          <TitledSpan
-            class="app-table__cell-txt"
-            :text="$cropAddress(item.owner)"
-            :title="item.owner"
-          />
-        </div>
-      </div>
+      </template>
     </div>
   </div>
 </template>

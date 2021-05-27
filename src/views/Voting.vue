@@ -1,6 +1,8 @@
 <template>
-  <div class="proposals">
-    <h3>Voting</h3>
+  <div class="proposals view-main">
+    <div class="fx-row mg-b32">
+      <h2 class="view-title">Voting</h2>
+    </div>
     <div class="app-table">
       <div class="proposals__table-head app-table__head">
         <div class="app-table__cell">
@@ -19,50 +21,57 @@
           <span class="app-table__cell-txt"> Status </span>
         </div>
       </div>
-      <button
-        v-for="(item, idx) in proposals"
-        :key="item.id"
-        class="app-table__row-btn"
-        type="button"
-        @click="showProposal(item, tallies[idx])"
-      >
-        <div class="proposals__table-row app-table__row">
-          <div class="app-table__cell">
-            <TitledSpan
-              class="app-table__cell-txt"
-              :text="item.proposalId.toString()"
-            />
+      <template v-if="proposals?.length">
+        <button
+          v-for="(item, idx) in proposals"
+          :key="item.id"
+          class="app-table__row-btn"
+          type="button"
+          @click="showProposal(item, tallies[idx])"
+        >
+          <div class="proposals__table-row app-table__row">
+            <div class="app-table__cell">
+              <TitledSpan
+                class="app-table__cell-txt"
+                :text="item.proposalId.toString()"
+              />
+            </div>
+            <div class="app-table__cell">
+              <TitledSpan
+                class="app-table__cell-txt"
+                :text="item.content.title"
+              />
+            </div>
+            <div class="app-table__cell">
+              <Tally
+                v-if="tallies?.[idx]"
+                class="app-table__cell-txt"
+                :tally="tallies[idx]"
+                :isShort="true"
+                :isTitled="true"
+              />
+              <span v-else></span>
+            </div>
+            <div class="app-table__cell">
+              <TitledSpan
+                class="app-table__cell-txt"
+                :text="$fCoin(item.totalDeposit[0])"
+              />
+            </div>
+            <div class="app-table__cell">
+              <TitledSpan
+                class="app-table__cell-txt"
+                :text="$tProposalStatusDated(item)"
+              />
+            </div>
           </div>
-          <div class="app-table__cell">
-            <TitledSpan
-              class="app-table__cell-txt"
-              :text="item.content.title"
-            />
-          </div>
-          <div class="app-table__cell">
-            <Tally
-              v-if="tallies?.[idx]"
-              class="app-table__cell-txt"
-              :tally="tallies[idx]"
-              :isShort="true"
-              :isTitled="true"
-            />
-            <span v-else></span>
-          </div>
-          <div class="app-table__cell">
-            <TitledSpan
-              class="app-table__cell-txt"
-              :text="$fCoin(item.totalDeposit[0])"
-            />
-          </div>
-          <div class="app-table__cell">
-            <TitledSpan
-              class="app-table__cell-txt"
-              :text="$tProposalStatusDated(item)"
-            />
-          </div>
+        </button>
+      </template>
+      <template v-else>
+        <div class="app-table__row">
+          <p class="app-table-empty-stub">No items yet</p>
         </div>
-      </button>
+      </template>
     </div>
   </div>
 </template>
