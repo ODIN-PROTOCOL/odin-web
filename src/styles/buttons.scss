@@ -24,8 +24,24 @@
 
   @include transition(border-color);
 
-
   &:disabled {
     color: var(--clr__action-disabled);
+  }
+}
+
+.app-ico-btn {
+  display: inline-block;
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 50%;
+
+  @include transition(background-color);
+
+  &:hover {
+    background-color: var(--clr__icon-action-bg-hover);
+  }
+
+  & > img {
+    margin: auto;
   }
 }

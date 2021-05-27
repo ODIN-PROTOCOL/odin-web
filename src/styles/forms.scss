@@ -27,12 +27,6 @@
   border: 1px solid var(--clr__input-border);
   border-radius: 0.4rem;
 
-  @include transition(border-color);
-
-  &:focus {
-    border-color: var(--clr__action);
-  }
-
   &::-webkit-input-placeholder {
     @include input-placeholder;
   }

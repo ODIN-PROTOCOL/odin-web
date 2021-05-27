@@ -33,6 +33,21 @@ textarea {
   padding: 0;
 }
 
+input,
+select {
+  background-color: var(--clr__input-bg);
+
+  @include transition(border-color);
+
+  &:disabled {
+    background-color: var(--clr__input-bg-disabled);
+  }
+
+  &:focus {
+    border-color: var(--clr__action);
+  }
+}
+
 pre {
   white-space: pre-line;
   font-family: inherit;

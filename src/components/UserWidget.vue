@@ -1,11 +1,11 @@
 <template>
   <div class="user-widget fx-row fx-row_gap-8">
     <button class="user-widget__balance-btn" type="button" @click="exchange()">
-      Balance: {{ $fCoin(lokiCoins) }}
+      Balance: <strong>{{ $fCoin(lokiCoins) }}</strong>
     </button>
 
-    <button class="app-btn" type="button" @click="logOutAndLeave()">
-      Log Out
+    <button class="app-ico-btn" type="button" @click="logOutAndLeave()">
+      <img src="~@/assets/icons/exit.svg" alt="Log out" />
     </button>
   </div>
 </template>
@@ -47,8 +47,8 @@ export default defineComponent({
 <style scoped>
 .user-widget__balance-btn {
   display: block;
-  border-radius: 10rem;
-  border: 1px solid currentColor;
+  border-radius: 1.2rem;
+  border: 1px solid var(--clr__action);
   white-space: nowrap;
   padding: 0.4rem 0.8rem;
 }
