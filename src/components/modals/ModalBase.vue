@@ -2,15 +2,15 @@
   <div class="modal-base">
     <div class="modal-base__backdrop" @click="emitClose()"></div>
     <div class="modal-base__content">
-      <div class="modal-base__content-head">
+      <div class="modal-base__content-head fx-row mg-b8">
         <slot name="title"></slot>
 
         <button
-          class="modal-base__close-btn app-btn"
+          class="modal-base__close-btn app-ico-btn fx-sae"
           type="button"
           @click="emitClose()"
         >
-          X
+          <img src="~@/assets/icons/close.svg" alt="Close" />
         </button>
       </div>
 
@@ -62,14 +62,5 @@ export default defineComponent({
   z-index: 1;
   width: 100%;
   max-width: 48rem;
-}
-
-.modal-base__content-head {
-  display: flex;
-  margin-block-end: 0.8rem;
-}
-
-.modal-base__close-btn {
-  margin-inline-start: auto;
 }
 </style>

@@ -121,11 +121,11 @@ import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import { coins } from '@cosmjs/launchpad'
 import phones from '@/assets/phones.json'
-import { NumLike, toStr } from '@/helpers/casts'
+import { NumLike, NumLikeTypes, toStr } from '@/helpers/casts'
 
 const RequestFormModal = defineComponent({
   props: {
-    oracleScriptId: { type: String as PropType<NumLike>, required: true },
+    oracleScriptId: { type: NumLikeTypes as PropType<NumLike>, required: true },
   },
   components: { ModalBase },
   setup(props) {

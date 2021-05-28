@@ -5,45 +5,45 @@
     </template>
 
     <template #main>
-      <div class="proposal-modal__row mg-b8">
-        <p class="proposal-modal__row-lbl fs-14 fs-wb">Title</p>
-        <p class="proposal-modal__row-val">{{ proposal.content.title }}</p>
+      <div class="proposal-modal__section mg-b16">
+        <p class="proposal-modal__section-lbl fs-14 fs-wb">Title</p>
+        <p class="proposal-modal__section-val">{{ proposal.content.title }}</p>
       </div>
-      <div class="proposal-modal__row mg-b8">
-        <p class="proposal-modal__row-lbl fs-14 fs-wb">Description</p>
-        <p class="proposal-modal__row-val">
+      <div class="proposal-modal__section mg-b16">
+        <p class="proposal-modal__section-lbl fs-14 fs-wb">Description</p>
+        <p class="proposal-modal__section-val">
           {{ proposal.content.description }}
         </p>
       </div>
-      <div class="proposal-modal__row mg-b8">
-        <p class="proposal-modal__row-lbl fs-14 fs-wb">Changes</p>
+      <div class="proposal-modal__section mg-b16">
+        <p class="proposal-modal__section-lbl fs-14 fs-wb">Changes</p>
         <div
           v-for="(change, index) in proposal.content.changes"
           :key="index"
-          class="proposal-modal__row-table-wrp fx-row mg-t4"
+          class="proposal-modal__section-table-wrp fx-row mg-t4"
         >
-          <span class="proposal-modal__row-table-idx fs-wb mg-r8">
+          <span class="proposal-modal__section-table-idx fs-wb mg-r8">
             #{{ index + 1 }}
           </span>
-          <div class="proposal-modal__row-table">
+          <div class="proposal-modal__section-table">
             <div
               v-for="(value, key) in change"
               :key="key"
-              class="proposal-modal__row-colum"
+              class="proposal-modal__section-colum"
             >
-              <p class="proposal-modal__row-column-head fs-12 fs-wb">
+              <p class="proposal-modal__section-column-head fs-12 fs-wb">
                 {{ key }}
               </p>
-              <p class="proposal-modal__row-column-body">
+              <p class="proposal-modal__section-column-body">
                 {{ value }}
               </p>
             </div>
           </div>
         </div>
       </div>
-      <div class="proposal-modal__row mg-b8">
-        <p class="proposal-modal__row-lbl fs-14 fs-wb">Details</p>
-        <pre class="proposal-modal__row-val">
+      <div class="proposal-modal__section mg-b16">
+        <p class="proposal-modal__section-lbl fs-14 fs-wb">Details</p>
+        <pre class="proposal-modal__section-val">
           Deposited: {{ $fCoin(proposal.totalDeposit[0]) }}
           Proposal created: {{ $fDate(proposal.submitTime) }}
           Deposit end: {{ $fDate(proposal.depositEndTime) }}
@@ -51,9 +51,9 @@
           Voting end: {{ $fDate(proposal.votingEndTime) }}
         </pre>
       </div>
-      <div class="proposal-modal__row mg-b8">
-        <p class="proposal-modal__row-lbl fs-14 fs-wb">Status</p>
-        <pre class="proposal-modal__row-val">
+      <div class="proposal-modal__section mg-b16">
+        <p class="proposal-modal__section-lbl fs-14 fs-wb">Status</p>
+        <pre class="proposal-modal__section-val">
           Status: <strong>{{ $tProposalStatus(proposal.status) }}</strong>
           Tally: <Tally :tally="tally || proposal.finalTallyResult" />
         </pre>
@@ -142,7 +142,7 @@ export function showProposalDialog(
 </script>
 
 <style scoped lang="scss">
-.proposal-modal__row-table {
+.proposal-modal__section-table {
   display: inline-grid;
   grid: auto / auto-flow auto;
   justify-content: start;
@@ -150,7 +150,7 @@ export function showProposalDialog(
   width: auto;
 }
 
-.proposal-modal__row-colum {
+.proposal-modal__section-colum {
   text-align: center;
 
   &:not(:last-child) {
@@ -158,13 +158,13 @@ export function showProposalDialog(
   }
 }
 
-.proposal-modal__row-column-head {
+.proposal-modal__section-column-head {
   padding: 0.4rem 0.8rem;
   border-bottom: 1px solid var(--clr__text);
   line-height: 1.2;
 }
 
-.proposal-modal__row-column-body {
+.proposal-modal__section-column-body {
   padding: 0.4rem 0.8rem;
   line-height: 1.2;
 }

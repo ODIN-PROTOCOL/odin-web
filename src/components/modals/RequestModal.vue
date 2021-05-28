@@ -7,9 +7,9 @@
     </template>
 
     <template #main>
-      <div class="request-modal__row mg-b8">
-        <p class="request-modal__row-lbl fs-14 fs-wb">Request</p>
-        <pre class="request-modal__row-val">
+      <div class="request-modal__section mg-b16">
+        <p class="request-modal__section-lbl fs-14 fs-wb">Request</p>
+        <pre class="request-modal__section-val">
           Oracle script ID: {{
             request.requestPacketData.oracleScriptId.toString()
           }}
@@ -27,15 +27,15 @@
           Status: <strong>{{ $tRequestStatus(request.responsePacketData.resolveStatus) }}</strong>
         </pre>
       </div>
-      <div class="request-modal__row mg-b8">
-        <p class="request-modal__row-lbl fs-14 fs-wb">Calldata</p>
-        <pre class="request-modal__row-val">
+      <div class="request-modal__section mg-b16">
+        <p class="request-modal__section-lbl fs-14 fs-wb">Calldata</p>
+        <pre class="request-modal__section-val">
           {{ request.requestPacketData.calldata }}
         </pre>
       </div>
-      <div class="request-modal__row mg-b8">
-        <p class="request-modal__row-lbl fs-14 fs-wb">Result</p>
-        <pre class="request-modal__row-val">
+      <div class="request-modal__section mg-b16">
+        <p class="request-modal__section-lbl fs-14 fs-wb">Result</p>
+        <pre class="request-modal__section-val">
           {{ request.responsePacketData.result }}
         </pre>
       </div>
