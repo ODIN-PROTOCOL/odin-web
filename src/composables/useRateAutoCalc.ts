@@ -3,14 +3,10 @@ import { isRef, onUnmounted, ref, Ref, unref, watch } from 'vue'
 import debounce from 'lodash-es/debounce'
 import { formatCoin } from '@/helpers/formatters'
 import { bigMath } from '@/helpers/bigMath'
-import { NumLike } from '@/helpers/casts'
+import { fromPrecise, NumLike } from '@/helpers/casts'
 import { API_CONFIG } from '@/api/api-config'
 
 // TODO: translate
-
-function _calcFactor(rate: string): NumLike {
-  return bigMath.multiply(rate, '0.000000000000000001')
-}
 
 function _calcToAmount(
   fromAmount: NumLike,
@@ -71,7 +67,7 @@ export function useRateAutoCalc(
     }
 
     _prevPair = pair
-    _prevFactor = _calcFactor(response.rate)
+    _prevFactor = fromPrecise(response.rate)
     result.value = _calcToAmount(srcAmount, _prevFactor, dst)
     console.debug(`Rate ${src}-${dst}:`, response.rate, _prevFactor.toString())
   }, 1000)

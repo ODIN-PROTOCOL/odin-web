@@ -6,11 +6,23 @@
   display: block;
 }
 
-.app-form__field {
+.app-form__field,
+.app-form__field-composed {
   display: block;
 
-  &:not(:first-child) {
+  &:not(:first-of-type) {
     margin-block-start: 1.2rem;
+  }
+}
+
+.app-form__field-composed {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+
+  & > .app-form__field:not(:first-of-type) {
+    margin-block-start: 0;
+    margin-inline-start: 1.6rem;
   }
 }
 

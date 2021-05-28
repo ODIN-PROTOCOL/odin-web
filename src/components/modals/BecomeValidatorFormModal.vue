@@ -14,14 +14,68 @@
           <label class="app-form__field-lbl"> Moniker </label>
           <input
             class="app-form__field-input"
-            name="validator-moniker"
+            name="become-validator-moniker"
             type="text"
+            placeholder="validator-x"
             v-model="form.moniker"
             :disabled="isLoading"
           />
           <p v-if="form.monikerErr" class="app-form__field-err">
             {{ form.monikerErr }}
           </p>
+        </div>
+
+        <div class="app-form__field-composed">
+          <div class="app-form__field">
+            <label class="app-form__field-lbl"> Rate </label>
+            <input
+              class="app-form__field-input"
+              name="become-validator-rate"
+              type="number"
+              min="0"
+              step="0.1"
+              placeholder="0.1"
+              v-model="form.rate"
+              :disabled="isLoading"
+            />
+            <p v-if="form.rateErr" class="app-form__field-err">
+              {{ form.rateErr }}
+            </p>
+          </div>
+
+          <div class="app-form__field mg-l16">
+            <label class="app-form__field-lbl"> Max rate </label>
+            <input
+              class="app-form__field-input"
+              name="become-validator-rate"
+              type="number"
+              min="0"
+              step="0.1"
+              placeholder="0.2"
+              v-model="form.maxRate"
+              :disabled="isLoading"
+            />
+            <p v-if="form.maxRateErr" class="app-form__field-err">
+              {{ form.maxRateErr }}
+            </p>
+          </div>
+
+          <div class="app-form__field mg-l16">
+            <label class="app-form__field-lbl"> Max change </label>
+            <input
+              class="app-form__field-input"
+              name="become-validator-rate"
+              type="number"
+              min="0"
+              step="0.1"
+              placeholder="0.1"
+              v-model="form.maxChangeRate"
+              :disabled="isLoading"
+            />
+            <p v-if="form.maxChangeRateErr" class="app-form__field-err">
+              {{ form.maxChangeRateErr }}
+            </p>
+          </div>
         </div>
 
         <div class="app-form__footer">
@@ -51,7 +105,7 @@ import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import { Bech32 } from '@cosmjs/encoding'
-import { strToUnit8Array } from '@/helpers/casts'
+import { fromPrecise, strToUnit8Array, toPrecise } from '@/helpers/casts'
 
 const BecomeValidatorFormModal = defineComponent({
   props: { dataSourceId: String },
@@ -59,8 +113,10 @@ const BecomeValidatorFormModal = defineComponent({
   setup() {
     const form = useForm({
       moniker: ['', validators.required],
+      rate: ['', validators.required, validators.min(0)],
+      maxRate: ['', validators.required, validators.min(0)],
+      maxChangeRate: ['', validators.required, validators.min(0)],
       // TODO:
-      // commission x3
       // minSelfDelegation
       // selfDelegation
       // pubKey
@@ -80,9 +136,9 @@ const BecomeValidatorFormModal = defineComponent({
             details: '',
           },
           commission: {
-            rate: '100000000000000000',
-            maxRate: '200000000000000000',
-            maxChangeRate: '100000000000000000',
+            rate: toPrecise(form.rate.val()).toString(),
+            maxRate: toPrecise(form.maxRate.val()).toString(),
+            maxChangeRate: toPrecise(form.maxChangeRate.val()).toString(),
           },
           minSelfDelegation: '1',
           delegatorAddress: wallet.account.address,
@@ -113,6 +169,9 @@ const BecomeValidatorFormModal = defineComponent({
     // TODO: remove fakeForm
     const _fakeForm = () => {
       form.moniker.val('validator-' + loremIpsum({ units: 'words', count: 1 }))
+      form.rate.val(fromPrecise('100000000000000000').toString())
+      form.maxRate.val(fromPrecise('200000000000000000').toString())
+      form.maxChangeRate.val(fromPrecise('100000000000000000').toString())
     }
 
     _fakeForm()

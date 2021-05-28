@@ -10,6 +10,7 @@ import { wallet } from './wallet'
 import { mapResponse, sendPost } from './callersHelpers'
 import { decodeRequestResults } from '@/helpers/requestResultDecoders'
 import { decodeProposals } from '@/helpers/proposalDecoders'
+import { decodeValidators } from '@/helpers/validatorDecoders'
 import { API_CONFIG } from './api-config'
 import { MsgCreateValidator } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/tx'
 
@@ -87,7 +88,14 @@ const makeCallers = () => {
       '/cosmos.staking.v1beta1.MsgCreateValidator',
       MsgCreateValidator
     ),
-    getValidators: querier((qc) => qc.staking.unverified.validators),
+    getValidators: querier((qc) =>
+      mapResponse(qc.staking.unverified.validators, (response) => {
+        return {
+          ...response,
+          validators: decodeValidators(response.validators),
+        }
+      })
+    ),
   }
 }
 

@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import Long from 'long'
-import { BigCfg } from '@/helpers/bigMath'
+import { BigCfg, bigMath } from '@/helpers/bigMath'
 
 export type NumLike = string | number | Long | BigNumber
 export const NumLikeTypes = [String, Number, Long, BigNumber]
@@ -65,4 +65,12 @@ export function uint8ArrayToStr(arr?: Uint8Array): string {
 
 export function strToUnit8Array(str?: string): Uint8Array {
   return new TextEncoder().encode(str)
+}
+
+export function toPrecise(num: NumLike): BigNumber {
+  return bigMath.multiply(num, '1000000000000000000')
+}
+
+export function fromPrecise(num: NumLike): BigNumber {
+  return bigMath.multiply(num, '0.000000000000000001')
 }
