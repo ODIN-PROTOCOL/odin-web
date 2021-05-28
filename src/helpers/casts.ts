@@ -62,3 +62,7 @@ export function toNum(value: NumLike): number {
 export function uint8ArrayToStr(arr?: Uint8Array): string {
   return new TextDecoder().decode(arr)
 }
+
+export function strToUnit8Array(str?: string): Uint8Array {
+  return new TextEncoder().encode(str)
+}

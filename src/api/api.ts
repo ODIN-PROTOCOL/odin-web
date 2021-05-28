@@ -4,10 +4,11 @@ import { OdinWallet } from './wallet'
 import {
   BankExtension,
   BroadcastTxResponse,
-  defaultRegistryTypes,
   QueryClient,
   setupBankExtension,
+  setupStakingExtension,
   SigningStargateClient,
+  StakingExtension,
 } from '@cosmjs/stargate'
 import { EncodeObject, GeneratedType, Registry } from '@cosmjs/proto-signing'
 import { CoinswapExt, setupCoinswapExt } from './query-ext/coinswapExtension'
@@ -36,13 +37,14 @@ type OdinQueryClient = QueryClient &
   GovExt &
   MintExt &
   OracleExt &
-  BankExtension
+  BankExtension &
+  StakingExtension
 
 class Api {
   private _query: OdinQueryClient = stub('Query not initialized!')
   private _wallet: OdinWallet = stub('Wallet not initialized!')
   private _stargate: SigningStargateClient = stub('Stargate not initialized!')
-  private _stargateRegistry = this._genStargateRegistry()
+  private _stargateRegistry = new Registry()
 
   async init() {
     await this._initQueryClient()
@@ -89,16 +91,9 @@ class Api {
       setupGovExt,
       setupMintExt,
       setupOracleExt,
+      setupStakingExtension,
       setupBankExtension
     )
-  }
-
-  private _genStargateRegistry(): Registry {
-    const registry = new Registry()
-    for (const [typeUrl, type] of defaultRegistryTypes) {
-      registry.register(typeUrl, type)
-    }
-    return registry
   }
 
   private async _signAndBroadcast(

@@ -11,6 +11,7 @@ import { mapResponse, sendPost } from './callersHelpers'
 import { decodeRequestResults } from '@/helpers/requestResultDecoders'
 import { decodeProposals } from '@/helpers/proposalDecoders'
 import { API_CONFIG } from './api-config'
+import { MsgCreateValidator } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/tx'
 
 const makeCallers = () => {
   const broadcaster = api.makeBroadcastCaller.bind(api)
@@ -81,6 +82,12 @@ const makeCallers = () => {
 
     getTreasuryPool: querier((qc) => qc.mint.unverified.treasuryPool),
     getTotalSupply: querier((qc) => qc.bank.unverified.totalSupply),
+
+    createValidator: broadcaster<MsgCreateValidator>(
+      '/cosmos.staking.v1beta1.MsgCreateValidator',
+      MsgCreateValidator
+    ),
+    getValidators: querier((qc) => qc.staking.unverified.validators),
   }
 }
 
