@@ -25,9 +25,24 @@
           </p>
         </div>
 
+        <div class="app-form__field">
+          <label class="app-form__field-lbl"> Public key (ed25519) </label>
+          <input
+            class="app-form__field-input"
+            name="become-validator-pubkey"
+            type="text"
+            placeholder="odinvalconspub1zcj…"
+            v-model="form.pubKey"
+            :disabled="isLoading"
+          />
+          <p v-if="form.pubKeyErr" class="app-form__field-err">
+            {{ form.pubKeyErr }}
+          </p>
+        </div>
+
         <div class="app-form__field-composed">
           <div class="app-form__field">
-            <label class="app-form__field-lbl"> Rate </label>
+            <label class="app-form__field-lbl"> Rate (%) </label>
             <input
               class="app-form__field-input"
               name="become-validator-rate"
@@ -44,7 +59,7 @@
           </div>
 
           <div class="app-form__field mg-l16">
-            <label class="app-form__field-lbl"> Max rate </label>
+            <label class="app-form__field-lbl"> Max rate (%) </label>
             <input
               class="app-form__field-input"
               name="become-validator-rate"
@@ -61,7 +76,7 @@
           </div>
 
           <div class="app-form__field mg-l16">
-            <label class="app-form__field-lbl"> Max change </label>
+            <label class="app-form__field-lbl"> Max change (%) </label>
             <input
               class="app-form__field-input"
               name="become-validator-rate"
@@ -76,6 +91,40 @@
               {{ form.maxChangeRateErr }}
             </p>
           </div>
+        </div>
+
+        <div class="app-form__field">
+          <label class="app-form__field-lbl"> Min delegation (LOKI) </label>
+          <input
+            class="app-form__field-input"
+            name="become-validator-min-delegation"
+            type="number"
+            min="1"
+            step="1000"
+            placeholder="1000"
+            v-model="form.minDelegation"
+            :disabled="isLoading"
+          />
+          <p v-if="form.minDelegationErr" class="app-form__field-err">
+            {{ form.minDelegationErr }}
+          </p>
+        </div>
+
+        <div class="app-form__field">
+          <label class="app-form__field-lbl"> Self delegation (LOKI) </label>
+          <input
+            class="app-form__field-input"
+            name="become-validator-self-delegation"
+            type="number"
+            min="1"
+            step="1000"
+            placeholder="1000"
+            v-model="form.selfDelegation"
+            :disabled="isLoading"
+          />
+          <p v-if="form.selfDelegationErr" class="app-form__field-err">
+            {{ form.selfDelegationErr }}
+          </p>
         </div>
 
         <div class="app-form__footer">
@@ -108,18 +157,16 @@ import { Bech32 } from '@cosmjs/encoding'
 import { fromPrecise, strToUnit8Array, toPrecise } from '@/helpers/casts'
 
 const BecomeValidatorFormModal = defineComponent({
-  props: { dataSourceId: String },
   components: { ModalBase },
   setup() {
     const form = useForm({
       moniker: ['', validators.required],
-      rate: ['', validators.required, validators.min(0)],
-      maxRate: ['', validators.required, validators.min(0)],
-      maxChangeRate: ['', validators.required, validators.min(0)],
-      // TODO:
-      // minSelfDelegation
-      // selfDelegation
-      // pubKey
+      pubKey: ['', validators.required, validators.erc20Address],
+      rate: ['', validators.required, ...validators.num(0)],
+      maxRate: ['', validators.required, ...validators.num(0)],
+      maxChangeRate: ['', validators.required, ...validators.num(0)],
+      minDelegation: ['', validators.required, ...validators.num(1)],
+      selfDelegation: ['', validators.required, ...validators.num(0)],
     })
     const isLoading = ref(false)
     const onSubmit = dialogs.getHandler('onSubmit')
@@ -140,26 +187,25 @@ const BecomeValidatorFormModal = defineComponent({
             maxRate: toPrecise(form.maxRate.val()).toString(),
             maxChangeRate: toPrecise(form.maxChangeRate.val()).toString(),
           },
-          minSelfDelegation: '1',
+          minSelfDelegation: form.minDelegation.val(),
           delegatorAddress: wallet.account.address,
           validatorAddress: Bech32.encode(
             'odinvaloper',
             Bech32.decode(wallet.account.address).data
           ),
           pubkey: {
+            // TODO: key of ed25519 cannot be decoded
             typeUrl: '/cosmos.crypto.ed25519.PubKey',
-            value: strToUnit8Array(
-              'odinvalconspub1zcjduepqjmlpnfqa8e8ep4pk4wrlp02cf3gjgpx5j82pmup4kwt3yxfqk0vqs7k799'
-            ),
+            value: strToUnit8Array(form.pubKey.val()),
           },
           value: {
             denom: 'loki',
-            amount: '10000000',
+            amount: form.selfDelegation.val(),
           },
         })
 
         onSubmit()
-        notifySuccess('Data source created')
+        notifySuccess('Promoted to validators election')
       } catch (error) {
         handleError(error)
       }
@@ -172,6 +218,11 @@ const BecomeValidatorFormModal = defineComponent({
       form.rate.val(fromPrecise('100000000000000000').toString())
       form.maxRate.val(fromPrecise('200000000000000000').toString())
       form.maxChangeRate.val(fromPrecise('100000000000000000').toString())
+      form.pubKey.val(
+        'odinvalconspub1zcjduepqjmlpnfqa8e8ep4pk4wrlp02cf3gjgpx5j82pmup4kwt3yxfqk0vqs7k799'
+      )
+      form.minDelegation.val('1')
+      form.selfDelegation.val('10000000')
     }
 
     _fakeForm()
@@ -186,14 +237,11 @@ const BecomeValidatorFormModal = defineComponent({
 })
 
 export default BecomeValidatorFormModal
-export function showBecomeValidatorFormDialog(
-  callbacks: {
-    onSubmit?: DialogHandler
-    onClose?: DialogHandler
-  },
-  props?: { dataSourceId?: string }
-): Promise<unknown | null> {
-  return dialogs.show(BecomeValidatorFormModal, callbacks, { props })
+export function showBecomeValidatorFormDialog(callbacks: {
+  onSubmit?: DialogHandler
+  onClose?: DialogHandler
+}): Promise<unknown | null> {
+  return dialogs.show(BecomeValidatorFormModal, callbacks)
 }
 </script>
 

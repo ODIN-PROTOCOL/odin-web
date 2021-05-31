@@ -131,10 +131,10 @@ const RequestFormModal = defineComponent({
   setup(props) {
     const form = useForm({
       oracleScriptId: [toStr(props.oracleScriptId), validators.required],
-      askCount: ['1', validators.required, validators.range(1, 10)],
-      minCount: ['1', validators.required, validators.range(1, 10)],
+      askCount: ['1', validators.required, ...validators.num(1, 10)],
+      minCount: ['1', validators.required, ...validators.num(1, 10)],
       calldata: [[], validators.minItems(1)],
-      feeLimit: ['1', validators.required, validators.min(1)],
+      feeLimit: ['1', validators.required, ...validators.num(1)],
     })
     const isLoading = ref(false)
     const onSubmit = dialogs.getHandler('onSubmit')

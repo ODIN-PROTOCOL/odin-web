@@ -104,7 +104,7 @@ const ExchangeFormModal = defineComponent({
     const form = useForm({
       sourceAsset: [assets[0], validators.required, validators.oneOf(assets)],
       sourceAddress: ['', validators.required, validators.erc20Address],
-      sourceAmount: ['1', validators.required, validators.min(0.000001)],
+      sourceAmount: ['1', validators.required, ...validators.num(0.000001)],
     })
     const isLoading = ref(false)
     const onSubmit = dialogs.getHandler('onSubmit')

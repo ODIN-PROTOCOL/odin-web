@@ -52,7 +52,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const form = useForm({
-      amount: ['1', validators.required, validators.min(1)],
+      amount: ['1', validators.required, ...validators.num(1)],
     })
     const isProcessing = ref(false)
     watch(isProcessing, (v) => emit('update:isLoading', v))
