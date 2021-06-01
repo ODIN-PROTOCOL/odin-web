@@ -154,7 +154,8 @@ import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import { Bech32 } from '@cosmjs/encoding'
-import { fromPrecise, strToUnit8Array, toPrecise } from '@/helpers/casts'
+import { strToUnit8Array } from '@/helpers/casts'
+import { bigMath } from '@/helpers/bigMath'
 
 const BecomeValidatorFormModal = defineComponent({
   components: { ModalBase },
@@ -183,9 +184,11 @@ const BecomeValidatorFormModal = defineComponent({
             details: '',
           },
           commission: {
-            rate: toPrecise(form.rate.val()).toString(),
-            maxRate: toPrecise(form.maxRate.val()).toString(),
-            maxChangeRate: toPrecise(form.maxChangeRate.val()).toString(),
+            rate: bigMath.toPrecise(form.rate.val()).toString(),
+            maxRate: bigMath.toPrecise(form.maxRate.val()).toString(),
+            maxChangeRate: bigMath
+              .toPrecise(form.maxChangeRate.val())
+              .toString(),
           },
           minSelfDelegation: form.minDelegation.val(),
           delegatorAddress: wallet.account.address,
@@ -215,9 +218,11 @@ const BecomeValidatorFormModal = defineComponent({
     // TODO: remove fakeForm
     const _fakeForm = () => {
       form.moniker.val('validator-' + loremIpsum({ units: 'words', count: 1 }))
-      form.rate.val(fromPrecise('100000000000000000').toString())
-      form.maxRate.val(fromPrecise('200000000000000000').toString())
-      form.maxChangeRate.val(fromPrecise('100000000000000000').toString())
+      form.rate.val(bigMath.fromPrecise('100000000000000000').toString())
+      form.maxRate.val(bigMath.fromPrecise('200000000000000000').toString())
+      form.maxChangeRate.val(
+        bigMath.fromPrecise('100000000000000000').toString()
+      )
       form.pubKey.val(
         'odinvalconspub1zcjduepqjmlpnfqa8e8ep4pk4wrlp02cf3gjgpx5j82pmup4kwt3yxfqk0vqs7k799'
       )

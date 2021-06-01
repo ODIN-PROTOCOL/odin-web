@@ -12,7 +12,10 @@ import { decodeRequestResults } from '@/helpers/requestResultDecoders'
 import { decodeProposals } from '@/helpers/proposalDecoders'
 import { decodeValidators } from '@/helpers/validatorDecoders'
 import { API_CONFIG } from './api-config'
-import { MsgCreateValidator } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/tx'
+import {
+  MsgCreateValidator,
+  MsgDelegate,
+} from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/tx'
 
 const makeCallers = () => {
   const broadcaster = api.makeBroadcastCaller.bind(api)
@@ -96,6 +99,12 @@ const makeCallers = () => {
         }
       })
     ),
+
+    validatorDelegate: broadcaster<MsgDelegate>(
+      '/cosmos.staking.v1beta1.MsgDelegate',
+      MsgDelegate
+    ),
+    getDelegations: querier((qc) => qc.staking.unverified.delegatorDelegations),
   }
 }
 

@@ -33,6 +33,13 @@ export function abbreviateNumber(value: NumLike): string {
   return newValue.toPrecision(3) + suffixes[suffixNum]
 }
 
+export function preciseAsPercents(amount: string): string {
+  const percents = bigMath
+    .format(bigMath.fromPrecise(amount), { decimals: 2 })
+    .replace(/.00$/, '')
+  return `${percents}%` // TODO: translate
+}
+
 export function formatCoin(coin: Coin, abbr?: boolean): string
 export function formatCoin(
   amount: NumLike,
@@ -54,7 +61,6 @@ export function formatCoin(
     denom = in2 as string
   }
   const fmt = abbr ? abbreviateNumber(amount) : bigMath.format(amount)
-  console.log(fmt)
   return `${fmt}${NBSP}${(denom || '').toUpperCase()}`
 }
 

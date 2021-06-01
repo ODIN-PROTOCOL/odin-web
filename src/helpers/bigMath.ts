@@ -67,6 +67,14 @@ function bigFormat(a: NumLike, format?: BigFormatCfg): string {
   }
 }
 
+export function bigToPrecise(num: NumLike): BigNumber {
+  return bigMultiply(num, '1000000000000000000')
+}
+
+export function bigFromPrecise(num: NumLike): BigNumber {
+  return bigMultiply(num, '0.000000000000000001')
+}
+
 const _bn = toBigNumber
 
 export const bigMath = {
@@ -76,5 +84,7 @@ export const bigMath = {
   subtract: bigSubtract,
   round: bigRound,
   format: bigFormat,
+  toPrecise: bigToPrecise,
+  fromPrecise: bigFromPrecise,
   zero: _bn(0),
 }

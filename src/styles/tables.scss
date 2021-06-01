@@ -41,6 +41,7 @@
   @include ellipsis(inline-block);
 }
 
-.app-table-empty-stub {
+.app-table__empty-stub {
+  // TODO: list loading stubs
   text-align: center;
 }

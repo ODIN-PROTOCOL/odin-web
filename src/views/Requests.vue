@@ -75,7 +75,7 @@
       </template>
       <template v-else>
         <div class="app-table__row">
-          <p class="app-table-empty-stub">No items yet</p>
+          <p class="app-table__empty-stub">No items yet</p>
         </div>
       </template>
     </div>

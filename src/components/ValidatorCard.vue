@@ -10,9 +10,50 @@
         <p>{{ $tBondStatus(validator.status) }}</p>
       </div>
       <div class="fx-sfw mg-l32">
+        <label class="dp-ib mg-b8 fs-14">Jailed?</label>
+        <p>{{ validator.jailed ? 'Yes' : 'No' }}</p>
+      </div>
+      <div class="fx-sfw mg-l32">
         <label class="dp-ib mg-b8 fs-14">Delegated</label>
-        <p :title="$fCoin(delegated, 'loki')">
-          {{ $fCoin(delegated, 'loki', true) }}
+        <p :title="$fCoin(validator.tokens, 'loki')">
+          {{ $fCoin(validator.tokens, 'loki', true) }}
+        </p>
+      </div>
+      <div class="fx-sfw mg-l32">
+        <label class="dp-ib mg-b8 fs-14">Delegator shares</label>
+        <p>
+          {{ $preciseAsPercents(validator.delegatorShares) }}
+        </p>
+      </div>
+      <div class="fx-sfw mg-l32">
+        <button class="app-btn" type="button" @click="delegate">
+          Delegate
+        </button>
+        <!-- TODO: undelegate -->
+      </div>
+    </div>
+
+    <div class="validator-card__row fx-row">
+      <div class="fx-sfw">
+        <label class="dp-ib mg-b8 fs-14">Rate</label>
+        <p>
+          {{ $preciseAsPercents(validator.commission.commissionRates.rate) }}
+        </p>
+      </div>
+      <div class="fx-sfw mg-l32">
+        <label class="dp-ib mg-b8 fs-14">Max rate</label>
+        <p>
+          {{ $preciseAsPercents(validator.commission.commissionRates.maxRate) }}
+        </p>
+      </div>
+      <div class="fx-sfw mg-l32">
+        <label class="dp-ib mg-b8 fs-14">Max change rate</label>
+        <p>
+          {{
+            $preciseAsPercents(
+              validator.commission.commissionRates.maxChangeRate
+            )
+          }}
         </p>
       </div>
       <div class="fx-sfw mg-l32">
@@ -31,40 +72,53 @@
           :displayText="$cropAddress(validator.operatorAddress)"
         />
       </div>
+      <div class="fx-sfw mg-l32"><!-- empty --></div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { bigMath } from '@/helpers/bigMath'
 import { ValidatorDecoded } from '@/helpers/validatorDecoders'
-import { computed, defineComponent, PropType } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import CopyText from './CopyText.vue'
+import { showDelegateFormDialog } from './modals/DelegateFormModal.vue'
 
 export default defineComponent({
+  emits: ['loadValidators'],
   components: { CopyText },
   props: {
     validator: { type: Object as PropType<ValidatorDecoded>, required: true },
   },
-  setup(props) {
-    const delegated = computed(() =>
-      bigMath.add(props.validator.tokens, props.validator.delegatorShares)
-    )
+  setup(props, ctx) {
+    const delegate = () => {
+      showDelegateFormDialog(
+        {
+          onSubmit: (d) => {
+            d.kill()
+            ctx.emit('loadValidators')
+          },
+        },
+        { validator: props.validator }
+      )
+    }
 
-    return { delegated }
+    return { delegate }
   },
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .validator-card {
   border: 1px solid var(--clr__action);
   border-radius: 8px;
-  padding: 3.2rem;
+  padding: 0.8rem 3.2rem;
 }
 
 .validator-card__row {
-  padding-bottom: 2.4rem;
-  border-bottom: 1px solid var(--clr__table-border);
+  padding: 2.4rem 0;
+
+  &:not(:last-of-type) {
+    border-bottom: 1px solid var(--clr__table-border);
+  }
 }
 </style>

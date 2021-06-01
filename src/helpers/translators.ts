@@ -123,7 +123,6 @@ export function translateVote(vote: VoteOption): string {
 }
 
 export function translateBondStatus(bondStatus: BondStatus): string {
-  console.log(bondStatus)
   switch (Number(bondStatus)) {
     case BondStatus.BOND_STATUS_UNSPECIFIED:
       return 'Unspecified'
