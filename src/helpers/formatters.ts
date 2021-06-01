@@ -1,6 +1,6 @@
 import { Coin } from '@provider/codec/cosmos/base/v1beta1/coin'
 import { bigMath } from './bigMath'
-import { NumLike, toNum, toStr } from './casts'
+import { NumLike, toNum } from './casts'
 import {
   isToday,
   isTomorrow,
@@ -15,52 +15,47 @@ const NBSP = '\u00A0'
 
 // TODO: translate
 
-export function cropAddress(value: string): string {
+export function cropAddress(value?: string): string {
+  if (!value) return ''
   return `${value.slice(0, 4)}…${value.slice(-4)}`
 }
 
 export function abbreviateNumber(value: NumLike): string {
-  value = toNum(value)
+  const suffixes = ['', 'k', 'm', 'b', 't', 'q', 'Q', 's', 'S', 'o', 'n', 'd']
 
-  let res = String(value)
-  if (value >= 1000) {
-    const suffixes = ['', 'k', 'm', 'b', 't', 'q', 'Q', 's']
-    const suffixNum = Math.floor(('' + value).length / 3)
-    let shortValue = ''
-    for (let precision = 2; precision >= 1; precision--) {
-      shortValue = String(
-        parseFloat(
-          (suffixNum != 0
-            ? value / Math.pow(1000, suffixNum)
-            : value
-          ).toPrecision(precision)
-        )
-      )
-      const dotLessShortValue = (shortValue + '').replace(/[^a-zA-Z 0-9]+/g, '')
-      if (dotLessShortValue.length <= 2) {
-        break
-      }
-    }
-    if (Number(shortValue) % 1 !== 0) {
-      shortValue = Number(shortValue).toFixed(1)
-    }
-    res = `${shortValue}${suffixes[suffixNum]}`
+  let newValue = toNum(value)
+  let suffixNum = 0
+  while (newValue >= 1000) {
+    newValue /= 1000
+    suffixNum++
   }
-  return res
+
+  return newValue.toPrecision(3) + suffixes[suffixNum]
 }
 
-export function formatCoin(coin: Coin): string
-export function formatCoin(value: NumLike, denom: string): string
-export function formatCoin(input: NumLike | Coin, denom?: string): string {
-  let value: string | number
-  if (input && typeof input === 'object' && 'amount' in input) {
-    value = input.amount
-    denom = input.denom
+export function formatCoin(coin: Coin, abbr?: boolean): string
+export function formatCoin(
+  amount: NumLike,
+  denom: string,
+  abbr?: boolean
+): string
+export function formatCoin(
+  in1: NumLike | Coin,
+  in2?: string | boolean,
+  abbr?: boolean
+): string {
+  let amount: NumLike, denom: string
+  if (in1 && typeof in1 === 'object' && 'amount' in in1) {
+    amount = in1.amount
+    denom = in1.denom
+    abbr = in2 as boolean
   } else {
-    value = toStr(input)
+    amount = in1
+    denom = in2 as string
   }
-  denom = denom || ''
-  return `${bigMath.format(value)}${NBSP}${denom.toUpperCase()}`
+  const fmt = abbr ? abbreviateNumber(amount) : bigMath.format(amount)
+  console.log(fmt)
+  return `${fmt}${NBSP}${(denom || '').toUpperCase()}`
 }
 
 export interface DateFormatObject {

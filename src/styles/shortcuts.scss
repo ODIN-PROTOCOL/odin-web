@@ -21,11 +21,11 @@
 
 // MARGINS
 
-.mg-t8 {
-  margin-block-start: 0.8rem;
-}
 .mg-t4 {
   margin-block-start: 0.4rem;
+}
+.mg-t8 {
+  margin-block-start: 0.8rem;
 }
 .mg-t32 {
   margin-block-start: 3.2rem;
@@ -39,7 +39,7 @@
 .mg-b8 {
   margin-block-end: 0.8rem;
 }
-.mg-b16  {
+.mg-b16 {
   margin-block-end: 1.6rem;
 }
 .mg-b32 {
@@ -53,6 +53,9 @@
 }
 .mg-l16 {
   margin-inline-start: 1.6rem;
+}
+.mg-l32 {
+  margin-inline-start: 3.2rem;
 }
 
 // WIDTHS
@@ -80,6 +83,16 @@
 .fx-sae {
   // self align end
   margin-inline-start: auto;
+}
+.fx-sfw {
+  // self full width
+  flex: 1;
+}
+
+// DISPLAY
+
+.dp-ib {
+  display: inline-block;
 }
 
 // MEDIA

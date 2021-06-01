@@ -5,6 +5,7 @@ import {
   VoteOption,
 } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { ResolveStatus } from '@provider/codec/oracle/v1/oracle'
+import { BondStatus } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
 import { formatDate } from './formatters'
 import { ProposalDecoded } from './proposalDecoders'
 
@@ -116,6 +117,23 @@ export function translateVote(vote: VoteOption): string {
     case VoteOption.VOTE_OPTION_NO_WITH_VETO:
       return 'No with veto'
     case VoteOption.UNRECOGNIZED:
+    default:
+      return 'Unrecognized'
+  }
+}
+
+export function translateBondStatus(bondStatus: BondStatus): string {
+  console.log(bondStatus)
+  switch (Number(bondStatus)) {
+    case BondStatus.BOND_STATUS_UNSPECIFIED:
+      return 'Unspecified'
+    case BondStatus.BOND_STATUS_UNBONDED:
+      return 'Unbonded'
+    case BondStatus.BOND_STATUS_UNBONDING:
+      return 'Unbonding'
+    case BondStatus.BOND_STATUS_BONDED:
+      return 'Bonded'
+    case BondStatus.UNRECOGNIZED:
     default:
       return 'Unrecognized'
   }

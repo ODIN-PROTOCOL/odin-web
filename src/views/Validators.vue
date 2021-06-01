@@ -10,55 +10,30 @@
         Become a validator
       </button>
     </div>
-    <div class="app-table">
-      <div class="validators__table-head app-table__head">
-        <div class="app-table__cell">
-          <span class="app-table__cell-txt"> Moniker </span>
-        </div>
-        <div class="app-table__cell">
-          <span class="app-table__cell-txt"> TODO </span>
-        </div>
-        <div class="app-table__cell">
-          <span class="app-table__cell-txt"> TODO </span>
-        </div>
-        <div class="app-table__cell">
-          <span class="app-table__cell-txt"> TODO </span>
-        </div>
+    <template v-if="validators?.length">
+      <ValidatorCard
+        v-for="item in validators"
+        :key="item.operatorAddress"
+        class="mg-b32"
+        :validator="item"
+      />
+    </template>
+    <template v-else>
+      <div class="app-table__row">
+        <p class="app-table-empty-stub">No items yet</p>
       </div>
-      <template v-if="validators?.length">
-        <div
-          v-for="item in validators"
-          :key="item.operatorAddress"
-          class="validators__table-row app-table__row"
-        >
-          <div class="app-table__cell">
-            <TitledSpan
-              class="app-table__cell-txt"
-              :text="item.description.moniker"
-            />
-          </div>
-          <div class="app-table__cell">TODO</div>
-          <div class="app-table__cell">TODO</div>
-          <div class="app-table__cell">TODO</div>
-        </div>
-      </template>
-      <template v-else>
-        <div class="app-table__row">
-          <p class="app-table-empty-stub">No items yet</p>
-        </div>
-      </template>
-    </div>
+    </template>
   </div>
 </template>
 
 <script lang="ts">
 import { callers } from '@/api/callers'
 import { showBecomeValidatorFormDialog } from '@/components/modals/BecomeValidatorFormModal.vue'
-import TitledSpan from '@/components/TitledSpan.vue'
+import ValidatorCard from '@/components/ValidatorCard.vue'
 import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
-  components: { TitledSpan },
+  components: { ValidatorCard },
   setup() {
     const validators = ref()
     const _loadValidators = async () => {

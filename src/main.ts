@@ -5,6 +5,7 @@ import Notifications from '@kyvg/vue3-notification'
 import { api } from './api/api'
 import { bigMath } from './helpers/bigMath'
 import {
+  translateBondStatus,
   translateProposalStatus,
   translateProposalStatusDated,
   translateRequestStatus,
@@ -42,6 +43,7 @@ async function _main() {
   app.config.globalProperties.$tTally = translateTally
   app.config.globalProperties.$tTallyShort = translateTallyShort
   app.config.globalProperties.$tVote = translateVote
+  app.config.globalProperties.$tBondStatus = translateBondStatus
   app.use(router)
   app.use(Notifications)
   app.mount('#app')
