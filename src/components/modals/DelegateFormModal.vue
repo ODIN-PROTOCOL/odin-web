@@ -66,6 +66,8 @@ import ModalBase from './ModalBase.vue'
 import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { useBalances } from '@/composables/useBalances'
 
+// TODO show min
+
 const DelegateFormDialog = defineComponent({
   props: {
     validator: { type: Object as PropType<ValidatorDecoded>, required: true },
