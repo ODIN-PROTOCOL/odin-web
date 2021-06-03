@@ -19,7 +19,8 @@
         :key="item.operatorAddress"
         class="mg-b32"
         :validator="item"
-        @loadValidators="loadValidators()"
+        :delegation="delegations[item.operatorAddress]"
+        @delegationChanged="loadValidators() & loadDelegations()"
       />
     </template>
     <template v-else>
@@ -31,18 +32,22 @@
 
 <script lang="ts">
 import { callers } from '@/api/callers'
+import { wallet } from '@/api/wallet'
 import { showBecomeValidatorFormDialog } from '@/components/modals/BecomeValidatorFormModal.vue'
 import ValidatorCard from '@/components/ValidatorCard.vue'
 import { handleError } from '@/helpers/errors'
+import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
 import { defineComponent, ref } from 'vue'
+import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 
 export default defineComponent({
   components: { ValidatorCard },
   setup() {
-    const isLoading = ref(false)
+    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+
     const validators = ref()
     const loadValidators = async () => {
-      isLoading.value = true
+      lockLoading()
       try {
         const response = await callers.getValidators('BOND_STATUS_BONDED')
         validators.value = response.validators
@@ -51,20 +56,50 @@ export default defineComponent({
       } catch (error) {
         handleError(error)
       }
-      isLoading.value = false
+      releaseLoading()
     }
     loadValidators()
+
+    const delegations = ref<{ [k: string]: DelegationResponse }>({})
+    const loadDelegations = async () => {
+      lockLoading()
+      try {
+        // TODO: delegations returns invalid delegator's amount?
+        const response = await callers.getDelegations(wallet.account.address)
+
+        const _delegations: { [k: string]: DelegationResponse } = {}
+        for (const delegation of response.delegationResponses) {
+          if (!delegation.delegation?.validatorAddress) continue
+          _delegations[delegation.delegation.validatorAddress] = delegation
+        }
+        delegations.value = _delegations
+
+        console.debug('Delegations:', response)
+      } catch (error) {
+        // error is ignored, since no delegations also throws the error
+      }
+      releaseLoading()
+    }
+    loadDelegations()
 
     const becomeValidator = async () => {
       showBecomeValidatorFormDialog({
         onSubmit: (d) => {
           d.kill()
           loadValidators()
+          loadDelegations()
         },
       })
     }
 
-    return { validators, isLoading, becomeValidator, loadValidators }
+    return {
+      validators,
+      delegations,
+      isLoading,
+      becomeValidator,
+      loadValidators,
+      loadDelegations,
+    }
   },
 })
 </script>

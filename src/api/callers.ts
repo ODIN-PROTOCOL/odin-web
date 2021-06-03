@@ -15,6 +15,7 @@ import { API_CONFIG } from './api-config'
 import {
   MsgCreateValidator,
   MsgDelegate,
+  MsgUndelegate,
 } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/tx'
 
 const makeCallers = () => {
@@ -103,6 +104,10 @@ const makeCallers = () => {
     validatorDelegate: broadcaster<MsgDelegate>(
       '/cosmos.staking.v1beta1.MsgDelegate',
       MsgDelegate
+    ),
+    validatorUndelegate: broadcaster<MsgUndelegate>(
+      '/cosmos.staking.v1beta1.MsgUndelegate',
+      MsgUndelegate
     ),
     getDelegations: querier((qc) => qc.staking.unverified.delegatorDelegations),
   }

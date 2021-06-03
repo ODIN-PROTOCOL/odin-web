@@ -29,7 +29,6 @@
         <button class="app-btn" type="button" @click="delegate">
           Delegate
         </button>
-        <!-- TODO: undelegate -->
       </div>
     </div>
 
@@ -72,22 +71,34 @@
           :displayText="$cropAddress(validator.operatorAddress)"
         />
       </div>
-      <div class="fx-sfw mg-l32"><!-- empty --></div>
+      <div class="fx-sfw mg-l32">
+        <button
+          v-if="delegation"
+          class="app-btn-2nd"
+          type="button"
+          @click="undelegate"
+        >
+          Undelegate
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { ValidatorDecoded } from '@/helpers/validatorDecoders'
+import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
 import { defineComponent, PropType } from 'vue'
 import CopyText from './CopyText.vue'
 import { showDelegateFormDialog } from './modals/DelegateFormModal.vue'
+import { showUndelegateFormDialog } from './modals/UndelegateFormModal.vue'
 
 export default defineComponent({
-  emits: ['loadValidators'],
+  emits: ['delegationChanged'],
   components: { CopyText },
   props: {
     validator: { type: Object as PropType<ValidatorDecoded>, required: true },
+    delegation: { type: Object as PropType<DelegationResponse> },
   },
   setup(props, ctx) {
     const delegate = () => {
@@ -95,14 +106,27 @@ export default defineComponent({
         {
           onSubmit: (d) => {
             d.kill()
-            ctx.emit('loadValidators')
+            ctx.emit('delegationChanged')
           },
         },
-        { validator: props.validator }
+        { validator: props.validator, delegation: props.delegation }
       )
     }
 
-    return { delegate }
+    const undelegate = () => {
+      if (!props.delegation) return
+      showUndelegateFormDialog(
+        {
+          onSubmit: (d) => {
+            d.kill()
+            ctx.emit('delegationChanged')
+          },
+        },
+        { validator: props.validator, delegation: props.delegation }
+      )
+    }
+
+    return { delegate, undelegate }
   },
 })
 </script>

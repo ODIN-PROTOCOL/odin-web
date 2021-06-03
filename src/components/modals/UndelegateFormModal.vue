@@ -1,7 +1,7 @@
 <template>
-  <ModalBase class="delegate-form-modal" @close="onClose()">
+  <ModalBase class="undelegate-form-modal" @close="onClose()">
     <template #title>
-      <h3>Delegate</h3>
+      <h3>Undelegate</h3>
     </template>
 
     <template #main>
@@ -33,10 +33,10 @@
           <label class="app-form__field-lbl"> Amount (LOKI) </label>
           <input
             class="app-form__field-input"
-            name="delegate-amount"
+            name="undelegate-amount"
             type="number"
             min="1"
-            :max="lokiBalance"
+            :max="delegated"
             placeholder="1000"
             v-model="form.amount"
             :disabled="isLoading"
@@ -53,7 +53,7 @@
             @click="submit()"
             :disabled="!form.isValid || isLoading"
           >
-            Delegate
+            Undelegate
           </button>
         </div>
       </form>
@@ -76,18 +76,20 @@ import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { useBalances } from '@/composables/useBalances'
 import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
 
-const DelegateFormDialog = defineComponent({
+const UndelegateFormDialog = defineComponent({
   props: {
     validator: { type: Object as PropType<ValidatorDecoded>, required: true },
-    delegation: { type: Object as PropType<DelegationResponse> },
+    delegation: {
+      type: Object as PropType<DelegationResponse>,
+      required: true,
+    },
   },
   components: { ModalBase, CopyText },
   setup(props) {
-    const { get: getBalance, load: loadBalances } = useBalances()
-    const lokiBalance = getBalance('loki', 'number')
+    const delegated = Number(props.delegation.balance?.amount)
 
     const form = useForm({
-      amount: ['', validators.required, ...validators.num(1, lokiBalance)],
+      amount: ['', validators.required, ...validators.num(1, delegated)],
     })
     const isLoading = ref(false)
     const onSubmit = dialogs.getHandler('onSubmit')
@@ -95,7 +97,7 @@ const DelegateFormDialog = defineComponent({
     const submit = async () => {
       isLoading.value = true
       try {
-        await callers.validatorDelegate({
+        console.log({
           delegatorAddress: wallet.account.address,
           validatorAddress: props.validator.operatorAddress,
           amount: {
@@ -103,9 +105,17 @@ const DelegateFormDialog = defineComponent({
             denom: 'loki',
           },
         })
-        loadBalances()
+        await callers.validatorUndelegate({
+          delegatorAddress: wallet.account.address,
+          validatorAddress: props.validator.operatorAddress,
+          amount: {
+            amount: form.amount.val(),
+            denom: 'loki',
+          },
+        })
+        useBalances().load()
         onSubmit()
-        notifySuccess('Successfully delegated')
+        notifySuccess('Successfully undelegated')
       } catch (error) {
         handleError(error)
       }
@@ -114,7 +124,7 @@ const DelegateFormDialog = defineComponent({
 
     return {
       form: form.flatten(),
-      lokiBalance,
+      delegated,
       isLoading,
       submit,
       onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
@@ -122,15 +132,15 @@ const DelegateFormDialog = defineComponent({
   },
 })
 
-export default DelegateFormDialog
-export function showDelegateFormDialog(
+export default UndelegateFormDialog
+export function showUndelegateFormDialog(
   callbacks: {
     onSubmit?: DialogHandler
     onClose?: DialogHandler
   },
-  props: { validator: ValidatorDecoded; delegation?: DelegationResponse }
+  props: { validator: ValidatorDecoded; delegation: DelegationResponse }
 ): Promise<unknown | null> {
-  return dialogs.show(DelegateFormDialog, callbacks, { props })
+  return dialogs.show(UndelegateFormDialog, callbacks, { props })
 }
 </script>
 
