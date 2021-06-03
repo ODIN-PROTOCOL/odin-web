@@ -7,7 +7,7 @@
   --clr__action: #{$clr-action};
   --clr__action-disabled: #{$clr-action-disabled};
   --clr__danger: #{$clr-danger};
-  --clr__icon-action-bg-hover: #{$clr-icon-action-bg-hover};
+  --clr__action-extra-muted: #{$clr-action-extra-muted};
 
   // Inputs
   --clr__input-bg: #{$clr-input-bg};
@@ -17,4 +17,7 @@
   // Tables
   --clr__table-border: #{$clr-table-border};
   --clr__table-row-hover: #{$clr-table-row-hover};
+
+  // Shadows
+  --clr__dropdown-shadow: #{$clr-dropdown-shadow};
 }

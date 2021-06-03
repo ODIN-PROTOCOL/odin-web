@@ -1,8 +1,6 @@
 <template>
   <div class="user-widget fx-row">
-    <button class="user-widget__balance-btn" type="button" @click="exchange()">
-      Balance: <strong>{{ $fCoin(lokiCoins) }}</strong>
-    </button>
+    <BalanceButton />
 
     <button class="app-ico-btn mg-l8" type="button" @click="logOutAndLeave()">
       <img src="~@/assets/icons/exit.svg" alt="Log out" />
@@ -11,45 +9,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onUnmounted } from 'vue'
+import { defineComponent } from 'vue'
 import { useAuthorization } from '@/composables/useAuthorization'
-import { useBalances } from '@/composables/useBalances'
-import { usePoll } from '@/composables/usePoll'
+import BalanceButton from '@/components/BalanceButton.vue'
 import router from '@/router'
-import { showExchangeFormDialog } from './modals/ExchangeFormModal.vue'
 
 export default defineComponent({
+  components: { BalanceButton },
   setup() {
     const auth = useAuthorization()
-    const {
-      coins: [lokiCoins],
-      load: loadBalances,
-    } = useBalances(['loki'])
-
     const logOutAndLeave = () => {
       auth.logOut()
       router.push({ name: 'Auth' })
     }
 
-    const exchange = () => {
-      showExchangeFormDialog()
-    }
-
-    const lokiPoll = usePoll(loadBalances, 5000)
-    lokiPoll.start()
-    onUnmounted(lokiPoll.stop)
-
-    return { lokiCoins, logOutAndLeave, exchange }
+    return { logOutAndLeave }
   },
 })
 </script>
 
-<style scoped>
-.user-widget__balance-btn {
-  display: block;
-  border-radius: 1.2rem;
-  border: 1px solid var(--clr__action);
-  white-space: nowrap;
-  padding: 0.4rem 0.8rem;
-}
-</style>
+<style scoped lang="scss"></style>

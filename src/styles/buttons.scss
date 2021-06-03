@@ -38,7 +38,7 @@
   @include transition(background-color);
 
   &:hover {
-    background-color: var(--clr__icon-action-bg-hover);
+    background-color: var(--clr__action-extra-muted);
   }
 
   & > img {

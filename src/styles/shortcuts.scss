@@ -18,6 +18,12 @@
 .fs-wb {
   font-weight: bold;
 }
+.fs-ac {
+  text-align: center;
+}
+.fs-c-muted {
+  color: var(--clr__text-muted);
+}
 
 // MARGINS
 
@@ -53,6 +59,9 @@
 }
 .mg-l16 {
   margin-inline-start: 1.6rem;
+}
+.mg-l24 {
+  margin-inline-start: 2.4rem;
 }
 .mg-l32 {
   margin-inline-start: 3.2rem;
