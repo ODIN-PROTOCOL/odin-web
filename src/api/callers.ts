@@ -70,7 +70,6 @@ const makeCallers = () => {
       return qc.bank.unverified.allBalances(myAddress)
     }),
 
-    // TODO: remove createExchange?
     createExchange: broadcaster<MsgExchange>(
       '/coinswap.MsgExchange',
       MsgExchange
@@ -110,6 +109,13 @@ const makeCallers = () => {
       MsgUndelegate
     ),
     getDelegations: querier((qc) => qc.staking.unverified.delegatorDelegations),
+
+    faucetRequest: (req: { denom: string }) => {
+      return sendPost(`${API_CONFIG.faucet}/request`, {
+        address: wallet.account.address,
+        denom: req.denom,
+      })
+    },
   }
 }
 

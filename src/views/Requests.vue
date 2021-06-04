@@ -97,7 +97,6 @@ export default defineComponent({
       const response = await callers.getRequests(100)
       console.debug('Requests:', response)
       requests.value = response.requests
-      // TODO: request result page?
     }
     loadRequests()
 

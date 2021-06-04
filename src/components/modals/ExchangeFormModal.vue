@@ -23,7 +23,7 @@
             </option>
           </select>
           <p v-if="form.sourceAssetErr" class="app-form__field-err">
-            {{ form.askCountErr }}
+            {{ form.sourceAssetErr }}
           </p>
         </div>
 
@@ -94,8 +94,6 @@ import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import { useRateAutoCalc } from '@/composables/useRateAutoCalc'
 import ModalBase from './ModalBase.vue'
-
-// TODO: integrate bridge
 
 const ExchangeFormModal = defineComponent({
   components: { ModalBase },

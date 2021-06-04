@@ -38,6 +38,7 @@ import { useBalances } from '@/composables/useBalances'
 import { useDropdown } from '@/composables/useDropdown'
 import { usePoll } from '@/composables/usePoll'
 import { showExchangeFormDialog } from './modals/ExchangeFormModal.vue'
+import { showFaucetFormDialog } from './modals/FaucetFormModal.vue'
 
 export default defineComponent({
   setup() {
@@ -51,7 +52,7 @@ export default defineComponent({
     }
 
     const faucet = () => {
-      alert('TODO: Deposit from faucet')
+      showFaucetFormDialog()
     }
 
     const lokiPoll = usePoll(loadBalances, 5000)

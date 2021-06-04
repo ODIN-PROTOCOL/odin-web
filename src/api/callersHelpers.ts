@@ -15,7 +15,7 @@ export function mapResponse<
 }
 
 export async function sendPost(url: string, data: AnyObj): Promise<Response> {
-  return fetch(url, {
+  const response = await fetch(url, {
     method: 'POST',
     mode: 'no-cors',
     cache: 'no-cache',
@@ -27,4 +27,9 @@ export async function sendPost(url: string, data: AnyObj): Promise<Response> {
     referrerPolicy: 'no-referrer',
     body: JSON.stringify(data),
   })
+  if (response.ok) {
+    return response
+  } else {
+    throw new Error('Request failed for unknown reason')
+  }
 }
