@@ -1,7 +1,8 @@
 <template>
   <div class="nav">
     <div class="nav__wrap-cont">
-      <router-link class="nav__link" :to="{ name: 'DataSources' }">
+      <!-- TODO: temp. hidden all but validators -->
+      <!-- <router-link class="nav__link" :to="{ name: 'DataSources' }">
         Data Sources
       </router-link>
       <router-link class="nav__link" :to="{ name: 'OracleScripts' }">
@@ -12,7 +13,7 @@
       </router-link>
       <router-link class="nav__link" :to="{ name: 'Voting' }">
         Voting
-      </router-link>
+      </router-link> -->
       <router-link class="nav__link" :to="{ name: 'Validators' }">
         Validators
       </router-link>

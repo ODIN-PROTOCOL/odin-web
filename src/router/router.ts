@@ -6,7 +6,7 @@ import {
 } from './guards'
 
 const rootRedirector = makeRootRedirector(
-  { name: 'DataSources' },
+  { name: 'Validators' },
   { name: 'Auth' }
 )
 const authorizedOnlyGuard = makeAuthorizedOnlyGuard({ name: 'Auth' })
@@ -21,36 +21,37 @@ const routes: Array<RouteRecordRaw> = [
     beforeEnter: unauthorizedOnlyGuard,
     component: () => import(/* webpackChunkName: "auth" */ '../views/Auth.vue'),
   },
-  {
-    path: '/data-sources',
-    name: 'DataSources',
-    beforeEnter: authorizedOnlyGuard,
-    component: () =>
-      import(/* webpackChunkName: "data-sources" */ '../views/DataSources.vue'),
-  },
-  {
-    path: '/oracle-scripts',
-    name: 'OracleScripts',
-    beforeEnter: authorizedOnlyGuard,
-    component: () =>
-      import(
-        /* webpackChunkName: "oracle-scripts" */ '../views/OracleScripts.vue'
-      ),
-  },
-  {
-    path: '/requests',
-    name: 'Requests',
-    beforeEnter: authorizedOnlyGuard,
-    component: () =>
-      import(/* webpackChunkName: "requests" */ '../views/Requests.vue'),
-  },
-  {
-    path: '/voting',
-    name: 'Voting',
-    beforeEnter: authorizedOnlyGuard,
-    component: () =>
-      import(/* webpackChunkName: "voting" */ '../views/Voting.vue'),
-  },
+  // TODO: temp. hidden all but validators
+  // {
+  //   path: '/data-sources',
+  //   name: 'DataSources',
+  //   beforeEnter: authorizedOnlyGuard,
+  //   component: () =>
+  //     import(/* webpackChunkName: "data-sources" */ '../views/DataSources.vue'),
+  // },
+  // {
+  //   path: '/oracle-scripts',
+  //   name: 'OracleScripts',
+  //   beforeEnter: authorizedOnlyGuard,
+  //   component: () =>
+  //     import(
+  //       /* webpackChunkName: "oracle-scripts" */ '../views/OracleScripts.vue'
+  //     ),
+  // },
+  // {
+  //   path: '/requests',
+  //   name: 'Requests',
+  //   beforeEnter: authorizedOnlyGuard,
+  //   component: () =>
+  //     import(/* webpackChunkName: "requests" */ '../views/Requests.vue'),
+  // },
+  // {
+  //   path: '/voting',
+  //   name: 'Voting',
+  //   beforeEnter: authorizedOnlyGuard,
+  //   component: () =>
+  //     import(/* webpackChunkName: "voting" */ '../views/Voting.vue'),
+  // },
   {
     path: '/validators',
     name: 'Validators',

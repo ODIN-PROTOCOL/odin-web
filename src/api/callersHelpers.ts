@@ -17,7 +17,6 @@ export function mapResponse<
 export async function sendPost(url: string, data: AnyObj): Promise<Response> {
   const response = await fetch(url, {
     method: 'POST',
-    mode: 'no-cors',
     cache: 'no-cache',
     credentials: 'same-origin',
     headers: {
@@ -30,6 +29,6 @@ export async function sendPost(url: string, data: AnyObj): Promise<Response> {
   if (response.ok) {
     return response
   } else {
-    throw new Error('Request failed for unknown reason')
+    throw new Error(JSON.stringify(await response.json()))
   }
 }
