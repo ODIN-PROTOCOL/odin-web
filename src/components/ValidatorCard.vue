@@ -56,20 +56,21 @@
         </p>
       </div>
       <div class="fx-sfw mg-l32">
-        <label class="dp-ib mg-b8 fs-14">Public key</label>
-        <CopyText
-          :text="validator.consensusPubkey"
-          :title="validator.consensusPubkey"
-          :displayText="$cropAddress(validator.consensusPubkey)"
-        />
-      </div>
-      <div class="fx-sfw mg-l32">
         <label class="dp-ib mg-b8 fs-14">Operator</label>
         <CopyText
           :text="validator.operatorAddress"
           :title="validator.operatorAddress"
           :displayText="$cropAddress(validator.operatorAddress)"
         />
+      </div>
+      <div class="fx-sfw mg-l32">
+        <!-- TODO: uncomment when the pubkey decoding issue resolved -->
+        <!-- <label class="dp-ib mg-b8 fs-14">Public key</label>
+        <CopyText
+          :text="validator.consensusPubkey"
+          :title="validator.consensusPubkey"
+          :displayText="$cropAddress(validator.consensusPubkey)"
+        /> -->
       </div>
       <div class="fx-sfw mg-l32">
         <button

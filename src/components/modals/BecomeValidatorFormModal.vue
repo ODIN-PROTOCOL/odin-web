@@ -26,7 +26,7 @@
         </div>
 
         <div class="app-form__field">
-          <label class="app-form__field-lbl"> Public key (ed25519) </label>
+          <label class="app-form__field-lbl"> Public key (base64) </label>
           <input
             class="app-form__field-input"
             name="become-validator-pubkey"
@@ -153,9 +153,13 @@ import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
-import { Bech32 } from '@cosmjs/encoding'
-import { strToUnit8Array } from '@/helpers/casts'
+import { Bech32, fromBase64 } from '@cosmjs/encoding'
 import { bigMath } from '@/helpers/bigMath'
+import { PubKey } from '@cosmjs/stargate/build/codec/cosmos/crypto/secp256k1/keys'
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { Buffer } from 'buffer'
 
 const BecomeValidatorFormModal = defineComponent({
   components: { ModalBase },
@@ -199,7 +203,9 @@ const BecomeValidatorFormModal = defineComponent({
           pubkey: {
             // TODO: key of ed25519 cannot be decoded
             typeUrl: '/cosmos.crypto.ed25519.PubKey',
-            value: strToUnit8Array(form.pubKey.val()),
+            value: PubKey.encode({
+              key: Buffer.from(fromBase64(form.pubKey.val())),
+            }).finish(),
           },
           value: {
             denom: 'loki',
@@ -223,9 +229,7 @@ const BecomeValidatorFormModal = defineComponent({
       form.maxChangeRate.val(
         bigMath.fromPrecise('100000000000000000').toString()
       )
-      form.pubKey.val(
-        'odinvalconspub1zcjduepqjmlpnfqa8e8ep4pk4wrlp02cf3gjgpx5j82pmup4kwt3yxfqk0vqs7k799'
-      )
+      form.pubKey.val('YVo5TzlCK5Y5C+7lnOKMlHZKoGfLrEKhmpci3xNs5HA=')
       form.minDelegation.val('1')
       form.selfDelegation.val('10000000')
     }
