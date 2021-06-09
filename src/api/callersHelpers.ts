@@ -25,6 +25,7 @@ export async function sendPost(url: string, data: AnyObj): Promise<Response> {
     redirect: 'follow',
     referrerPolicy: 'no-referrer',
     body: JSON.stringify(data),
+    mode: 'no-cors',
   })
   if (response.ok) {
     return response

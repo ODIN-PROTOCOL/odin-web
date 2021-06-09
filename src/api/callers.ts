@@ -111,6 +111,10 @@ const makeCallers = () => {
     getDelegations: querier((qc) => qc.staking.unverified.delegatorDelegations),
 
     faucetRequest: (req: { denom: string }) => {
+      console.log({
+        address: wallet.account.address,
+        denom: req.denom,
+      })
       return sendPost(`${API_CONFIG.faucet}/request`, {
         address: wallet.account.address,
         denom: req.denom,

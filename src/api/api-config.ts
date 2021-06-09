@@ -9,5 +9,5 @@ export const API_CONFIG = {
   faucet: 'https://node.testnet.odinprotocol.io/faucet/',
   exBridge: 'https://node.testnet.odinprotocol.io/bridge/',
   exBridgeFee: '10',
-  hdDeviation: stringToPath("m/44'/118'/0'/0/0"),
+  hdDeviation: stringToPath("m/44'/494'/0'/0/0"),
 }
