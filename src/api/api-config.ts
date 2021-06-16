@@ -6,7 +6,7 @@ export const API_CONFIG = {
   // api: 'http://35.195.150.105:1317',
   // rpc: 'http://35.195.150.105:26657',
   rpc: 'https://node.testnet.odinprotocol.io/a/',
-  faucet: 'https://node.testnet.odinprotocol.io/faucet/',
+  faucet: 'https://node.testnet.odinprotocol.io/faucet',
   exBridge: 'https://node.testnet.odinprotocol.io/bridge/',
   exBridgeFee: '10',
   hdDeviation: stringToPath("m/44'/494'/0'/0/0"),
