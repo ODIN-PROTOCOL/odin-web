@@ -202,7 +202,7 @@ const BecomeValidatorFormModal = defineComponent({
           ),
           pubkey: {
             // TODO: key of ed25519 cannot be decoded
-            typeUrl: '/cosmos.crypto.ed25519.PubKey',
+            typeUrl: '/cosmos.crypto.secp256k1.PubKey',
             value: PubKey.encode({
               key: Buffer.from(fromBase64(form.pubKey.val())),
             }).finish(),
