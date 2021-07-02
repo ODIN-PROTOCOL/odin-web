@@ -65,6 +65,7 @@ import { useAuthorization } from '@/composables/useAuthorization'
 import { handleError } from '@/helpers/errors'
 import { useForm, validators } from '@/composables/useForm'
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing'
+
 const MNEMONIC_SIZE = 24
 
 export default defineComponent({
@@ -87,11 +88,10 @@ export default defineComponent({
       isLoading.value = false
     }
     const generateKey = async () => {
-      const newWallet = await DirectSecp256k1HdWallet.generate(
-        MNEMONIC_SIZE,
-        API_CONFIG.hdDeviation,
-        'odin'
-      )
+      const newWallet = await DirectSecp256k1HdWallet.generate(MNEMONIC_SIZE, {
+        hdPaths: [API_CONFIG.hdDeviation],
+        prefix: 'odin',
+      })
 
       // const newAccount = await newWallet.getAccounts()
       form.mnemonic.val(newWallet.mnemonic)

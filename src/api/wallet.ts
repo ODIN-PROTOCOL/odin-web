@@ -25,11 +25,10 @@ export class OdinWallet {
   }
 
   async init(mnemonic: string): Promise<void> {
-    this._wallet = await DirectSecp256k1HdWallet.fromMnemonic(
-      mnemonic,
-      API_CONFIG.hdDeviation,
-      'odin'
-    )
+    this._wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, {
+      hdPaths: [API_CONFIG.hdDeviation],
+      prefix: 'odin',
+    })
     this._walletAccounts = await this._wallet.getAccounts()
   }
 

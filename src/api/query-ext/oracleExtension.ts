@@ -1,4 +1,4 @@
-import { QueryClient, createRpc } from '@cosmjs/stargate'
+import { QueryClient, createProtobufRpcClient } from '@cosmjs/stargate'
 import {
   QueryActiveValidatorsResponse,
   QueryClientImpl,
@@ -62,7 +62,7 @@ export interface OracleExt {
 }
 
 export function setupOracleExt(base: QueryClient): OracleExt {
-  const rpc = createRpc(base)
+  const rpc = createProtobufRpcClient(base)
   // Use this service to get easy typed access to query methods
   // This cannot be used for proof verification
   const queryService = new QueryClientImpl(rpc)

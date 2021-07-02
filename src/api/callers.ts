@@ -67,7 +67,7 @@ const makeCallers = () => {
 
     getBalances: querier((qc) => () => {
       const myAddress = wallet.account.address
-      return qc.bank.unverified.allBalances(myAddress)
+      return qc.bank.allBalances(myAddress)
     }),
 
     createExchange: broadcaster<MsgExchange>(
@@ -85,14 +85,14 @@ const makeCallers = () => {
     getRate: querier((qc) => qc.coinswap.unverified.rate),
 
     getTreasuryPool: querier((qc) => qc.mint.unverified.treasuryPool),
-    getTotalSupply: querier((qc) => qc.bank.unverified.totalSupply),
+    getTotalSupply: querier((qc) => qc.bank.totalSupply),
 
     createValidator: broadcaster<MsgCreateValidator>(
       '/cosmos.staking.v1beta1.MsgCreateValidator',
       MsgCreateValidator
     ),
     getValidators: querier((qc) =>
-      mapResponse(qc.staking.unverified.validators, (response) => {
+      mapResponse(qc.staking.validators, (response) => {
         return {
           ...response,
           validators: decodeValidators(response.validators),
@@ -108,7 +108,7 @@ const makeCallers = () => {
       '/cosmos.staking.v1beta1.MsgUndelegate',
       MsgUndelegate
     ),
-    getDelegations: querier((qc) => qc.staking.unverified.delegatorDelegations),
+    getDelegations: querier((qc) => qc.staking.delegatorDelegations),
 
     faucetRequest: (req: { denom: string }) => {
       console.log({
