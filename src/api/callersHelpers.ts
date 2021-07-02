@@ -19,12 +19,13 @@ export async function sendPost(url: string, data: AnyObj): Promise<Response> {
     method: 'POST',
     cache: 'no-cache',
     credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     redirect: 'follow',
     referrerPolicy: 'no-referrer',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+    },
     body: JSON.stringify(data),
+    mode: 'cors',
   })
   if (response.ok) {
     return response

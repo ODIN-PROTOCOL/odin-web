@@ -1,5 +1,5 @@
 import { NumLike, toLong } from '@/helpers/casts'
-import { QueryClient, createRpc } from '@cosmjs/stargate'
+import { QueryClient, createProtobufRpcClient } from '@cosmjs/stargate'
 import { ProposalStatus } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import {
   QueryClientImpl,
@@ -36,7 +36,7 @@ export interface GovExt {
 }
 
 export function setupGovExt(base: QueryClient): GovExt {
-  const rpc = createRpc(base)
+  const rpc = createProtobufRpcClient(base)
   // Use this service to get easy typed access to query methods
   // This cannot be used for proof verification
   const queryService = new QueryClientImpl(rpc)

@@ -1,4 +1,4 @@
-import { QueryClient, createRpc } from '@cosmjs/stargate'
+import { QueryClient, createProtobufRpcClient } from '@cosmjs/stargate'
 import {
   QueryClientImpl,
   QueryParamsResponse,
@@ -15,7 +15,7 @@ export interface CoinswapExt {
 }
 
 export function setupCoinswapExt(base: QueryClient): CoinswapExt {
-  const rpc = createRpc(base)
+  const rpc = createProtobufRpcClient(base)
   // Use this service to get easy typed access to query methods
   // This cannot be used for proof verification
   const queryService = new QueryClientImpl(rpc)
