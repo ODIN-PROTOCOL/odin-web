@@ -1,5 +1,6 @@
 <template>
   <div class="user-widget fx-row">
+    <Search />
     <BalanceButton />
 
     <button class="app-ico-btn mg-l8" type="button" @click="logOutAndLeave()">
@@ -12,10 +13,11 @@
 import { defineComponent } from 'vue'
 import { useAuthorization } from '@/composables/useAuthorization'
 import BalanceButton from '@/components/BalanceButton.vue'
+import Search from '@/components/Search.vue'
 import router from '@/router'
 
 export default defineComponent({
-  components: { BalanceButton },
+  components: { BalanceButton, Search },
   setup() {
     const auth = useAuthorization()
     const logOutAndLeave = () => {
@@ -28,4 +30,8 @@ export default defineComponent({
 })
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.user-widget {
+  gap: 24px;
+}
+</style>

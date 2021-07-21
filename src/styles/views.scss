@@ -1,13 +1,24 @@
-.view-main,
-.view-header {
+.view-main {
   width: 100%;
-  max-width: 1280px;
+  max-width: 1400px;
   padding: 0 3.2rem;
   margin: 0 auto;
 }
 
+.header-wrapper {
+  padding: 25px 10px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap:54px;
+  margin: 0 103px;
+  max-width: 100%;
+}
+
 .view-header {
-  padding: 3.2rem 3.2rem 6.4rem;
+  border-bottom: 1px solid #CCE4FF;
+  margin-bottom: 30px;
 }
 
 h2.view-title {

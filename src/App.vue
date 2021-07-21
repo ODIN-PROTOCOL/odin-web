@@ -2,14 +2,16 @@
   <template v-if="isAppReady">
     <template v-if="isLoggedIn">
       <header class="view-header fx-row">
-        <img
-          class="logo"
-          src="~@/assets/brand/odin-logo-black.png"
-          alt="Logo"
-          width="120"
-        />
-        <Nav class="mg-l16 mg-r8" />
-        <UserWidget class="fx-sae" />
+        <div class="header-wrapper">
+          <img
+            class="logo"
+            src="~@/assets/brand/odin-logo-black.png"
+            alt="Logo"
+            width="120"
+          />
+          <Nav />
+          <UserWidget class="fx-sae" />
+        </div>
       </header>
     </template>
     <router-view />
@@ -55,7 +57,9 @@ export default defineComponent({
 
 <style lang="scss">
 @import '~@/styles/reset.scss';
+@import '~@/styles/font.scss';
 @import '~@/styles/root.scss';
+@import '~@/styles/common.scss';
 @import '~@/styles/buttons.scss';
 @import '~@/styles/tables.scss';
 @import '~@/styles/views.scss';
