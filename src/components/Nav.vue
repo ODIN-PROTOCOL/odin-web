@@ -1,52 +1,271 @@
 <template>
-  <div class="nav">
+  <div class="nav" :class="{ 'nav-mob': isOpen }">
     <div class="nav__wrap-cont">
       <!-- TODO: temp. hidden all but validators -->
-      <!-- <router-link class="nav__link" :to="{ name: 'DataSources' }">
-        Data Sources
+      <router-link
+        class="nav__link"
+        data-text="Data Sources"
+        :to="{ name: 'DataSources' }"
+      >
+        <span>Data Sources</span>
       </router-link>
-      <router-link class="nav__link" :to="{ name: 'OracleScripts' }">
-        Oracle Scripts
+      <router-link
+        class="nav__link"
+        data-text="Oracle Scripts"
+        :to="{ name: 'OracleScripts' }"
+      >
+        <span>Oracle Scripts</span>
       </router-link>
-      <router-link class="nav__link" :to="{ name: 'Requests' }">
-        Requests
+      <router-link
+        class="nav__link"
+        data-text="Requests"
+        :to="{ name: 'Requests' }"
+      >
+        <span>Requests</span>
       </router-link>
-      <router-link class="nav__link" :to="{ name: 'Voting' }">
-        Voting
-      </router-link> -->
-      <router-link class="nav__link" :to="{ name: 'Validators' }">
-        Validators
+      <div
+        @click.stop="dropdown.show()"
+        class="nav__dropdown"
+        :class="{ 'nav__dropdown-wrapper--open': dropdown.isShown.value }"
+      >
+        <span class="nav__dropdown-wrapper">
+          <span class="nav__dropdown-wrapper-name">Validators</span>
+          <ArrowIcon
+            :className="
+              dropdown.isShown.value ? 'nav__dropdown-wrapper-arrow--open' : ''
+            "
+          />
+        </span>
+        <transition name="fade">
+          <div
+            class="nav__dropdown-modal"
+            ref="dropdownEl"
+            v-show="dropdown.isShown.value"
+          >
+            <router-link
+              class="nav__dropdown-link"
+              data-text="Validators and Delegates"
+              :to="{ name: 'Validators' }"
+            >
+              <span>Validators and Delegates</span>
+            </router-link>
+            <router-link
+              class="nav__dropdown-link"
+              data-text="Oracle validators"
+              :to="{ name: 'Validators' }"
+            >
+              <span>Oracle validators</span>
+            </router-link>
+          </div>
+        </transition>
+      </div>
+      <router-link class="nav__link" data-text="Rewards" to="/">
+        <span>Rewards</span>
       </router-link>
+      <router-link class="nav__link" data-text="Governance" to="/">
+        <span>Governance</span>
+      </router-link>
+      <!--      <router-link class="nav__link" :to="{ name: 'Voting' }">-->
+      <!--        Voting-->
+      <!--      </router-link>-->
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
-export default defineComponent({})
+import { useDropdown } from '@/composables/useDropdown'
+import { showExchangeFormDialog } from './modals/ExchangeFormModal.vue'
+import { showFaucetFormDialog } from './modals/FaucetFormModal.vue'
+import ArrowIcon from '@/components/icons/ArrowIcon.vue'
+
+export default defineComponent({
+  components: { ArrowIcon },
+  props: {
+    isOpen: { type: Boolean, default: false },
+  },
+  setup(props, { emit }) {
+    const exchange = () => {
+      showExchangeFormDialog()
+    }
+
+    const faucet = () => {
+      showFaucetFormDialog()
+    }
+
+    const route = useRoute()
+    watch(
+      () => route.path,
+      () => {
+        emit('changeRoute')
+      }
+    )
+
+    const dropdownEl = ref<HTMLElement>()
+    const dropdown = useDropdown(dropdownEl)
+    return { exchange, faucet, dropdown, dropdownEl }
+  },
+})
 </script>
 
 <style scoped lang="scss">
 .nav__wrap-cont {
   display: flex;
   flex-wrap: wrap;
-  margin-block-start: -1.2rem;
-  margin-inline-start: -1.2rem;
-  width: calc(100% + 1.2rem);
+  width: 100%;
+  align-items: center;
+  gap: 2.4rem;
+}
+
+.nav__dropdown {
+  position: relative;
+  display: grid;
+  grid-template-columns: 100%;
+  text-decoration: none;
+  white-space: nowrap;
+  color: inherit;
+  font-weight: 400;
+  line-height: 2.4rem;
+  font-size: 16px;
+  cursor: pointer;
+  &-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    &--open {
+      .nav__dropdown-wrapper-name {
+        color: var(--clr__action);
+        font-weight: 900;
+      }
+    }
+    &-arrow {
+      fill: #212529;
+      transition: all 0.5s ease;
+      &--open {
+        transform: rotate(180deg);
+        fill: var(--clr__action);
+      }
+    }
+  }
+  &-modal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    position: absolute;
+    top: calc(100% + 1rem);
+    left: 0;
+    border-radius: 0.8rem;
+    background: var(--clr__main-bg);
+    padding: 0.8rem;
+    z-index: 1;
+    box-shadow: 0 0 1rem 1rem var(--clr__dropdown-shadow);
+    min-width: 16rem;
+  }
+  &-link {
+    margin: 0;
+    text-decoration: none;
+    color: inherit;
+    &:hover {
+      color: var(--clr__action);
+    }
+  }
 }
 
 .nav__link {
-  display: inline-block;
+  display: grid;
+  grid-template-columns: 100%;
+  text-decoration: none;
   white-space: nowrap;
   color: inherit;
-  text-decoration: none;
-  margin-block-start: 1.2rem;
-  margin-inline-start: 1.2rem;
+  font-weight: 400;
+  line-height: 2.4rem;
+  font-size: 16px;
+  cursor: pointer;
 
-  &.router-link-exact-active {
+  &:hover {
+    color: var(--clr__action);
+  }
+
+  &::before {
+    content: attr(data-text);
+    font-weight: 900;
+    opacity: 0;
+    grid-column: 1;
+    grid-row: 1;
+  }
+  > span {
+    text-align: center;
+    grid-column: 1;
+    grid-row: 1;
+    transition: color 0.5s ease, font-weight 0.5s ease;
+  }
+  &.router-link-exact-active > span {
     font-weight: bold;
-    border-bottom: 2px solid var(--clr__action);
+    color: var(--clr__action);
+  }
+}
+@media (max-width: 768px) {
+  .nav {
+    display: none;
+    background: #fff;
+    position: absolute;
+    top: calc(100% + 0.1rem);
+    width: 100%;
+    z-index: 9999;
+    height: 100vh;
+    &__wrap-cont {
+      flex-direction: column;
+      padding: 0 1.6rem;
+      gap: 0;
+    }
+    &__dropdown {
+      width: 100%;
+    }
+    &__dropdown-modal {
+      position: relative;
+      box-shadow: none;
+      top: initial;
+      padding: 0;
+      gap: 0;
+    }
+    &__dropdown-link {
+      width: 100%;
+      padding: 2.4rem 1.2rem;
+      border-bottom: 0.1rem solid #ced4da;
+      &:hover {
+        background: rgba(204, 228, 255, 0.4);
+      }
+      &:first-child {
+        padding: 2.4rem 1.2rem;
+      }
+    }
+    &__dropdown-wrapper {
+      text-align: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 2.4rem 1.2rem;
+      border-bottom: 0.1rem solid #ced4da;
+    }
+    &__link {
+      width: 100%;
+      padding: 2.4rem 1.2rem;
+      border-bottom: 0.1rem solid #ced4da;
+      > span {
+        text-align: left;
+      }
+      &:hover {
+        background: rgba(204, 228, 255, 0.4);
+      }
+      &:first-child {
+        padding: 2.4rem 1.2rem;
+      }
+    }
+  }
+  .nav-mob {
+    display: block;
   }
 }
 </style>

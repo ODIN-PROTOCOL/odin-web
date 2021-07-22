@@ -2,14 +2,21 @@
   <template v-if="isAppReady">
     <template v-if="isLoggedIn">
       <header class="view-header fx-row">
-        <img
-          class="logo"
-          src="~@/assets/brand/odin-logo-black.png"
-          alt="Logo"
-          width="120"
-        />
-        <Nav class="mg-l16 mg-r8" />
-        <UserWidget class="fx-sae" />
+        <div class="header-wrapper">
+          <img
+            class="logo"
+            src="~@/assets/brand/odin-logo-black.png"
+            alt="Logo"
+            width="120"
+          />
+          <Nav :isOpen="isOpen" @changeRoute="changeRoute($event)" />
+          <UserWidget class="fx-sae" />
+          <BurgerMenu
+            class="burger-menu"
+            :isOpen="isOpen"
+            @click="burgerMenuHandler($event)"
+          />
+        </div>
       </header>
     </template>
     <router-view />
@@ -24,9 +31,10 @@ import { dialogs } from '@/helpers/dialogs'
 import { useAuthorization } from '@/composables/useAuthorization'
 import Nav from '@/components/Nav.vue'
 import UserWidget from '@/components/UserWidget.vue'
+import BurgerMenu from '@/components/BurgerMenu.vue'
 
 export default defineComponent({
-  components: { Nav, UserWidget },
+  components: { Nav, UserWidget, BurgerMenu },
   setup() {
     const _readyStates = ref({
       dialogs: false,
@@ -44,10 +52,24 @@ export default defineComponent({
       }
     })
 
+    // Burger Menu
+    const isOpen = ref(false)
+    const burgerMenuHandler = (event: Event | MouseEvent) => {
+      event.preventDefault()
+      isOpen.value = isOpen.value !== true
+    }
+
+    const changeRoute = () => {
+      isOpen.value = isOpen.value !== true
+    }
+
     return {
       isAppReady,
       dialogsContainerRef,
       isLoggedIn: useAuthorization().isLoggedIn,
+      isOpen,
+      burgerMenuHandler,
+      changeRoute,
     }
   },
 })
@@ -55,7 +77,9 @@ export default defineComponent({
 
 <style lang="scss">
 @import '~@/styles/reset.scss';
+@import '~@/styles/font.scss';
 @import '~@/styles/root.scss';
+@import '~@/styles/common.scss';
 @import '~@/styles/buttons.scss';
 @import '~@/styles/tables.scss';
 @import '~@/styles/views.scss';
@@ -67,5 +91,16 @@ export default defineComponent({
 #app {
   width: 100%;
   @include flex-container;
+}
+
+.burger-menu {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .burger-menu {
+    display: flex;
+    flex-shrink: 0;
+  }
 }
 </style>
