@@ -38,6 +38,7 @@ async function _main() {
     /* webpackChunkName: "app-entry" */ './App.vue'
   )
   const app = createApp(appModule.default)
+  app.config.performance = true
   app.config.globalProperties.$cropAddress = cropAddress
   app.config.globalProperties.$fCoin = formatCoin
   app.config.globalProperties.$preciseAsPercents = preciseAsPercents
