@@ -32,7 +32,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .user-widget {
-  gap: 24px;
+  gap: 2.4rem;
 }
 @media (min-width: 768px) {
   .logOutAndLeave {

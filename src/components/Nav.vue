@@ -1,77 +1,75 @@
 <template>
-  <div class="nav" :class="{ 'nav-mob': mobileOpen }">
-      <div class="nav__wrap-cont">
-        <!-- TODO: temp. hidden all but validators -->
-        <router-link
-          class="nav__link"
-          data-text="Data Sources"
-          :to="{ name: 'DataSources' }"
-        >
-          <span>Data Sources</span>
-        </router-link>
-        <router-link
-          class="nav__link"
-          data-text="Oracle Scripts"
-          :to="{ name: 'OracleScripts' }"
-        >
-          <span>Oracle Scripts</span>
-        </router-link>
-        <router-link
-          class="nav__link"
-          data-text="Requests"
-          :to="{ name: 'Requests' }"
-        >
-          <span>Requests</span>
-        </router-link>
-        <div
-          @click.stop="dropdown.show()"
-          class="nav__dropdown"
-          :class="{ 'nav__dropdown-wrapper--open': dropdown.isShown.value }"
-        >
-          <span class="nav__dropdown-wrapper">
-            <span class="nav__dropdown-wrapper-name">Validators</span>
-            <Arrow_icon
-              :className="
-                dropdown.isShown.value
-                  ? 'nav__dropdown-wrapper-arrow--open'
-                  : ''
-              "
-            />
-          </span>
-          <transition name="fade">
-            <div
-              class="nav__dropdown-modal"
-              ref="dropdownEl"
-              v-show="dropdown.isShown.value"
+  <div class="nav" :class="{ 'nav-mob': isOpen }">
+    <div class="nav__wrap-cont">
+      <!-- TODO: temp. hidden all but validators -->
+      <router-link
+        class="nav__link"
+        data-text="Data Sources"
+        :to="{ name: 'DataSources' }"
+      >
+        <span>Data Sources</span>
+      </router-link>
+      <router-link
+        class="nav__link"
+        data-text="Oracle Scripts"
+        :to="{ name: 'OracleScripts' }"
+      >
+        <span>Oracle Scripts</span>
+      </router-link>
+      <router-link
+        class="nav__link"
+        data-text="Requests"
+        :to="{ name: 'Requests' }"
+      >
+        <span>Requests</span>
+      </router-link>
+      <div
+        @click.stop="dropdown.show()"
+        class="nav__dropdown"
+        :class="{ 'nav__dropdown-wrapper--open': dropdown.isShown.value }"
+      >
+        <span class="nav__dropdown-wrapper">
+          <span class="nav__dropdown-wrapper-name">Validators</span>
+          <ArrowIcon
+            :className="
+              dropdown.isShown.value ? 'nav__dropdown-wrapper-arrow--open' : ''
+            "
+          />
+        </span>
+        <transition name="fade">
+          <div
+            class="nav__dropdown-modal"
+            ref="dropdownEl"
+            v-show="dropdown.isShown.value"
+          >
+            <router-link
+              class="nav__dropdown-link"
+              data-text="Validators and Delegates"
+              :to="{ name: 'Validators' }"
             >
-              <router-link
-                class="nav__dropdown-link"
-                data-text="Validators and Delegates"
-                :to="{ name: 'Validators' }"
-              >
-                <span>Validators and Delegates</span>
-              </router-link>
-              <router-link
-                class="nav__dropdown-link"
-                data-text="Oracle validators"
-                :to="{ name: 'Validators' }"
-              >
-                <span>Oracle validators</span>
-              </router-link>
-            </div>
-          </transition>
-        </div>
-        <router-link class="nav__link" data-text="Rewards" to="/">
-          <span>Rewards</span>
-        </router-link>
-        <router-link class="nav__link" data-text="Governance" to="/">
-          <span>Governance</span>
-        </router-link>
-        <!--      <router-link class="nav__link" :to="{ name: 'Voting' }">-->
-        <!--        Voting-->
-        <!--      </router-link>-->
+              <span>Validators and Delegates</span>
+            </router-link>
+            <router-link
+              class="nav__dropdown-link"
+              data-text="Oracle validators"
+              :to="{ name: 'Validators' }"
+            >
+              <span>Oracle validators</span>
+            </router-link>
+          </div>
+        </transition>
       </div>
+      <router-link class="nav__link" data-text="Rewards" to="/">
+        <span>Rewards</span>
+      </router-link>
+      <router-link class="nav__link" data-text="Governance" to="/">
+        <span>Governance</span>
+      </router-link>
+      <!--      <router-link class="nav__link" :to="{ name: 'Voting' }">-->
+      <!--        Voting-->
+      <!--      </router-link>-->
     </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -81,12 +79,12 @@ import { useRoute } from 'vue-router'
 import { useDropdown } from '@/composables/useDropdown'
 import { showExchangeFormDialog } from './modals/ExchangeFormModal.vue'
 import { showFaucetFormDialog } from './modals/FaucetFormModal.vue'
-import Arrow_icon from '@/components/icons/arrow_icon.vue'
+import ArrowIcon from '@/components/icons/ArrowIcon.vue'
 
 export default defineComponent({
-  components: { Arrow_icon },
+  components: { ArrowIcon },
   props: {
-    mobileOpen: { type: Boolean, default: false },
+    isOpen: { type: Boolean, default: false },
   },
   setup(props, { emit }) {
     const exchange = () => {
@@ -135,7 +133,7 @@ export default defineComponent({
   &-wrapper {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 0.4rem;
     &--open {
       .nav__dropdown-wrapper-name {
         color: var(--clr__action);
@@ -214,7 +212,7 @@ export default defineComponent({
     display: none;
     background: #fff;
     position: absolute;
-    top: calc(100% + 1px);
+    top: calc(100% + 0.1rem);
     width: 100%;
     z-index: 9999;
     height: 100vh;
@@ -236,7 +234,7 @@ export default defineComponent({
     &__dropdown-link {
       width: 100%;
       padding: 2.4rem 1.2rem;
-      border-bottom: 1px solid #ced4da;
+      border-bottom: 0.1rem solid #ced4da;
       &:hover {
         background: rgba(204, 228, 255, 0.4);
       }
@@ -249,12 +247,12 @@ export default defineComponent({
       justify-content: space-between;
       width: 100%;
       padding: 2.4rem 1.2rem;
-      border-bottom: 1px solid #ced4da;
+      border-bottom: 0.1rem solid #ced4da;
     }
     &__link {
       width: 100%;
       padding: 2.4rem 1.2rem;
-      border-bottom: 1px solid #ced4da;
+      border-bottom: 0.1rem solid #ced4da;
       > span {
         text-align: left;
       }

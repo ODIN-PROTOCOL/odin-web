@@ -50,7 +50,7 @@ export default defineComponent({
   width: 22.8rem;
   height: 4.8rem;
   border: 0.1rem solid #ced4da;
-  border-radius: 8px 0 0 8px;
+  border-radius: 0.8rem 0 0 0.8rem;
   text-indent: 1.5rem;
   &:hover,
   &:focus {

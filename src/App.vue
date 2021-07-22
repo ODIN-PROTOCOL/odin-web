@@ -9,13 +9,10 @@
             alt="Logo"
             width="120"
           />
-          <Nav
-            :mobileOpen="mobileOpen"
-            @changeRoute="changeRoute($event)"
-          />
+          <Nav :isOpen="isOpen" @changeRoute="changeRoute($event)" />
           <UserWidget class="fx-sae" />
           <BurgerMenu
-            class="burgerMenu"
+            class="burger-menu"
             :isOpen="isOpen"
             @click="burgerMenuHandler($event)"
           />
@@ -57,16 +54,13 @@ export default defineComponent({
 
     // Burger Menu
     const isOpen = ref(false)
-    const mobileOpen = ref(false)
     const burgerMenuHandler = (event: Event | MouseEvent) => {
       event.preventDefault()
       isOpen.value = isOpen.value !== true
-      mobileOpen.value = mobileOpen.value !== true
     }
 
     const changeRoute = () => {
       isOpen.value = isOpen.value !== true
-      mobileOpen.value = mobileOpen.value !== true
     }
 
     return {
@@ -74,7 +68,6 @@ export default defineComponent({
       dialogsContainerRef,
       isLoggedIn: useAuthorization().isLoggedIn,
       isOpen,
-      mobileOpen,
       burgerMenuHandler,
       changeRoute,
     }
@@ -100,12 +93,12 @@ export default defineComponent({
   @include flex-container;
 }
 
-.burgerMenu {
+.burger-menu {
   display: none;
 }
 
 @media (max-width: 768px) {
-  .burgerMenu {
+  .burger-menu {
     display: flex;
     flex-shrink: 0;
   }

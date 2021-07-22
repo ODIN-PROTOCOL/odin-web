@@ -10,7 +10,7 @@
       @click="openAndSearch($event)"
       :class="{ 'search__button--open': data.isOpen }"
     >
-      <Search_icon />
+      <SearchIcon />
     </button>
   </div>
 </template>
@@ -18,7 +18,7 @@
 <script lang="ts">
 import { defineComponent, reactive } from 'vue'
 import Input from '@/components/inputs/Input.vue'
-import Search_icon from '@/components/icons/search_icon.vue'
+import SearchIcon from '@/components/icons/SearchIcon.vue'
 
 type Data = {
   isOpen: boolean
@@ -26,7 +26,7 @@ type Data = {
 }
 
 export default defineComponent({
-  components: { Input, Search_icon },
+  components: { Input, SearchIcon },
   setup() {
     const data = reactive<Data>({
       isOpen: false,
@@ -66,7 +66,7 @@ export default defineComponent({
     justify-content: center;
     align-items: center;
     border: 0.1rem solid var(--clr__action);
-    border-radius: 4px;
+    border-radius: 0.4rem;
     cursor: pointer;
     transition: all 0.5s ease;
     svg {
@@ -75,7 +75,7 @@ export default defineComponent({
     &:hover,
     &--open {
       background: var(--clr__action);
-      border-radius: 0 4px 4px 0;
+      border-radius: 0 0.4rem 0.4rem 0;
       svg {
         fill: white;
       }
