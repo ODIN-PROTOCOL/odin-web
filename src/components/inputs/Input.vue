@@ -47,14 +47,14 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .input {
-  width: 228px;
-  height: 48px;
-  border: 1px solid #ced4da;
+  width: 22.8rem;
+  height: 4.8rem;
+  border: 0.1rem solid #ced4da;
   border-radius: 8px 0 0 8px;
-  text-indent: 15px;
+  text-indent: 1.5rem;
   &:hover,
   &:focus {
-    border: 1px solid var(--clr__action);
+    border: 0.1rem solid var(--clr__action);
   }
 }
 </style>

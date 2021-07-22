@@ -1,92 +1,94 @@
 <template>
-  <div class="nav">
-    <div class="nav__wrap-cont">
-      <!-- TODO: temp. hidden all but validators -->
-      <router-link
-        class="nav__link"
-        data-text="Data Sources"
-        :to="{ name: 'DataSources' }"
-      >
-        <span>Data Sources</span>
-      </router-link>
-      <router-link
-        class="nav__link"
-        data-text="Oracle Scripts"
-        :to="{ name: 'OracleScripts' }"
-      >
-        <span>Oracle Scripts</span>
-      </router-link>
-      <router-link
-        class="nav__link"
-        data-text="Requests"
-        :to="{ name: 'Requests' }"
-      >
-        <span>Requests</span>
-      </router-link>
-      <div @click.stop="dropdown.show()" class="nav__dropdown">
-        <span class="nav__dropdown-wrapper">
-          <span>Validators</span>
-          <svg
-            class="nav__dropdown-wrapper-arrow"
-            :class="{
-              'nav__dropdown-wrapper-arrow--open': dropdown.isShown.value,
-            }"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M16.59 8.59L12 13.17L7.41 8.59L6 10L12 16L18 10L16.59 8.59Z"
+  <div class="nav" :class="{ 'nav-mob': mobileOpen }">
+      <div class="nav__wrap-cont">
+        <!-- TODO: temp. hidden all but validators -->
+        <router-link
+          class="nav__link"
+          data-text="Data Sources"
+          :to="{ name: 'DataSources' }"
+        >
+          <span>Data Sources</span>
+        </router-link>
+        <router-link
+          class="nav__link"
+          data-text="Oracle Scripts"
+          :to="{ name: 'OracleScripts' }"
+        >
+          <span>Oracle Scripts</span>
+        </router-link>
+        <router-link
+          class="nav__link"
+          data-text="Requests"
+          :to="{ name: 'Requests' }"
+        >
+          <span>Requests</span>
+        </router-link>
+        <div
+          @click.stop="dropdown.show()"
+          class="nav__dropdown"
+          :class="{ 'nav__dropdown-wrapper--open': dropdown.isShown.value }"
+        >
+          <span class="nav__dropdown-wrapper">
+            <span class="nav__dropdown-wrapper-name">Validators</span>
+            <Arrow_icon
+              :className="
+                dropdown.isShown.value
+                  ? 'nav__dropdown-wrapper-arrow--open'
+                  : ''
+              "
             />
-          </svg>
-        </span>
-        <transition name="fade">
-          <div
-            class="nav__dropdown-modal"
-            ref="dropdownEl"
-            v-show="dropdown.isShown.value"
-          >
-            <router-link
-              class="nav__dropdown-link"
-              data-text="Validators and Delegates"
-              :to="{ name: 'Validators' }"
+          </span>
+          <transition name="fade">
+            <div
+              class="nav__dropdown-modal"
+              ref="dropdownEl"
+              v-show="dropdown.isShown.value"
             >
-              <span>Validators and Delegates</span>
-            </router-link>
-            <router-link
-              class="nav__dropdown-link"
-              data-text="Oracle validators"
-              :to="{ name: 'Validators' }"
-            >
-              <span>Oracle validators</span>
-            </router-link>
-          </div>
-        </transition>
+              <router-link
+                class="nav__dropdown-link"
+                data-text="Validators and Delegates"
+                :to="{ name: 'Validators' }"
+              >
+                <span>Validators and Delegates</span>
+              </router-link>
+              <router-link
+                class="nav__dropdown-link"
+                data-text="Oracle validators"
+                :to="{ name: 'Validators' }"
+              >
+                <span>Oracle validators</span>
+              </router-link>
+            </div>
+          </transition>
+        </div>
+        <router-link class="nav__link" data-text="Rewards" to="/">
+          <span>Rewards</span>
+        </router-link>
+        <router-link class="nav__link" data-text="Governance" to="/">
+          <span>Governance</span>
+        </router-link>
+        <!--      <router-link class="nav__link" :to="{ name: 'Voting' }">-->
+        <!--        Voting-->
+        <!--      </router-link>-->
       </div>
-
-      <router-link class="nav__link" data-text="Rewards" to="/">
-        <span>Rewards</span>
-      </router-link>
-      <router-link class="nav__link" data-text="Governance" to="/">
-        <span>Governance</span>
-      </router-link>
-      <!--      <router-link class="nav__link" :to="{ name: 'Voting' }">-->
-      <!--        Voting-->
-      <!--      </router-link>-->
     </div>
-  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+
 import { useDropdown } from '@/composables/useDropdown'
 import { showExchangeFormDialog } from './modals/ExchangeFormModal.vue'
 import { showFaucetFormDialog } from './modals/FaucetFormModal.vue'
+import Arrow_icon from '@/components/icons/arrow_icon.vue'
 
 export default defineComponent({
-  setup() {
+  components: { Arrow_icon },
+  props: {
+    mobileOpen: { type: Boolean, default: false },
+  },
+  setup(props, { emit }) {
     const exchange = () => {
       showExchangeFormDialog()
     }
@@ -94,6 +96,14 @@ export default defineComponent({
     const faucet = () => {
       showFaucetFormDialog()
     }
+
+    const route = useRoute()
+    watch(
+      () => route.path,
+      () => {
+        emit('changeRoute')
+      }
+    )
 
     const dropdownEl = ref<HTMLElement>()
     const dropdown = useDropdown(dropdownEl)
@@ -108,7 +118,7 @@ export default defineComponent({
   flex-wrap: wrap;
   width: 100%;
   align-items: center;
-  gap: 24px;
+  gap: 2.4rem;
 }
 
 .nav__dropdown {
@@ -119,13 +129,19 @@ export default defineComponent({
   white-space: nowrap;
   color: inherit;
   font-weight: 400;
-  line-height: 24px;
+  line-height: 2.4rem;
   font-size: 16px;
   cursor: pointer;
   &-wrapper {
     display: flex;
     align-items: center;
     gap: 4px;
+    &--open {
+      .nav__dropdown-wrapper-name {
+        color: var(--clr__action);
+        font-weight: 900;
+      }
+    }
     &-arrow {
       fill: #212529;
       transition: all 0.5s ease;
@@ -139,7 +155,7 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
+    gap: 1.5rem;
     position: absolute;
     top: calc(100% + 1rem);
     left: 0;
@@ -167,7 +183,7 @@ export default defineComponent({
   white-space: nowrap;
   color: inherit;
   font-weight: 400;
-  line-height: 24px;
+  line-height: 2.4rem;
   font-size: 16px;
   cursor: pointer;
 
@@ -191,6 +207,67 @@ export default defineComponent({
   &.router-link-exact-active > span {
     font-weight: bold;
     color: var(--clr__action);
+  }
+}
+@media (max-width: 768px) {
+  .nav {
+    display: none;
+    background: #fff;
+    position: absolute;
+    top: calc(100% + 1px);
+    width: 100%;
+    z-index: 9999;
+    height: 100vh;
+    &__wrap-cont {
+      flex-direction: column;
+      padding: 0 1.6rem;
+      gap: 0;
+    }
+    &__dropdown {
+      width: 100%;
+    }
+    &__dropdown-modal {
+      position: relative;
+      box-shadow: none;
+      top: initial;
+      padding: 0;
+      gap: 0;
+    }
+    &__dropdown-link {
+      width: 100%;
+      padding: 2.4rem 1.2rem;
+      border-bottom: 1px solid #ced4da;
+      &:hover {
+        background: rgba(204, 228, 255, 0.4);
+      }
+      &:first-child {
+        padding: 2.4rem 1.2rem;
+      }
+    }
+    &__dropdown-wrapper {
+      text-align: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 2.4rem 1.2rem;
+      border-bottom: 1px solid #ced4da;
+    }
+    &__link {
+      width: 100%;
+      padding: 2.4rem 1.2rem;
+      border-bottom: 1px solid #ced4da;
+      > span {
+        text-align: left;
+      }
+      &:hover {
+        background: rgba(204, 228, 255, 0.4);
+      }
+      &:first-child {
+        padding: 2.4rem 1.2rem;
+      }
+    }
+  }
+  .nav-mob {
+    display: block;
   }
 }
 </style>

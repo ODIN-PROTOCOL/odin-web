@@ -3,7 +3,7 @@
     <Search />
     <BalanceButton />
 
-    <button class="app-ico-btn mg-l8" type="button" @click="logOutAndLeave()">
+    <button class="app-ico-btn logOutAndLeave" type="button" @click="logOutAndLeave()">
       <img src="~@/assets/icons/exit.svg" alt="Log out" />
     </button>
   </div>
@@ -33,5 +33,10 @@ export default defineComponent({
 <style scoped lang="scss">
 .user-widget {
   gap: 24px;
+}
+@media (min-width: 768px) {
+  .logOutAndLeave {
+    display: none;
+  }
 }
 </style>

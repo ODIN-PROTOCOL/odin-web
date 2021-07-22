@@ -9,8 +9,16 @@
             alt="Logo"
             width="120"
           />
-          <Nav />
+          <Nav
+            :mobileOpen="mobileOpen"
+            @changeRoute="changeRoute($event)"
+          />
           <UserWidget class="fx-sae" />
+          <BurgerMenu
+            class="burgerMenu"
+            :isOpen="isOpen"
+            @click="burgerMenuHandler($event)"
+          />
         </div>
       </header>
     </template>
@@ -26,9 +34,10 @@ import { dialogs } from '@/helpers/dialogs'
 import { useAuthorization } from '@/composables/useAuthorization'
 import Nav from '@/components/Nav.vue'
 import UserWidget from '@/components/UserWidget.vue'
+import BurgerMenu from '@/components/BurgerMenu.vue'
 
 export default defineComponent({
-  components: { Nav, UserWidget },
+  components: { Nav, UserWidget, BurgerMenu },
   setup() {
     const _readyStates = ref({
       dialogs: false,
@@ -46,10 +55,28 @@ export default defineComponent({
       }
     })
 
+    // Burger Menu
+    const isOpen = ref(false)
+    const mobileOpen = ref(false)
+    const burgerMenuHandler = (event: Event | MouseEvent) => {
+      event.preventDefault()
+      isOpen.value = isOpen.value !== true
+      mobileOpen.value = mobileOpen.value !== true
+    }
+
+    const changeRoute = () => {
+      isOpen.value = isOpen.value !== true
+      mobileOpen.value = mobileOpen.value !== true
+    }
+
     return {
       isAppReady,
       dialogsContainerRef,
       isLoggedIn: useAuthorization().isLoggedIn,
+      isOpen,
+      mobileOpen,
+      burgerMenuHandler,
+      changeRoute,
     }
   },
 })
@@ -71,5 +98,16 @@ export default defineComponent({
 #app {
   width: 100%;
   @include flex-container;
+}
+
+.burgerMenu {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .burgerMenu {
+    display: flex;
+    flex-shrink: 0;
+  }
 }
 </style>
