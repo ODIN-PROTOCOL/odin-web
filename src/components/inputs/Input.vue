@@ -13,7 +13,7 @@
     :readonly="readonly"
     :required="required"
     :disabled="disabled"
-    @change="inputChange($event)"
+    @input="inputChange($event)"
   />
 </template>
 
@@ -55,6 +55,11 @@ export default defineComponent({
   &:hover,
   &:focus {
     border: 0.1rem solid var(--clr__action);
+  }
+  &::placeholder {
+    font-size: 16px;
+    line-height: 2.4rem;
+    font-weight: 400;
   }
 }
 </style>

@@ -14,9 +14,21 @@
     </template>
 
     <div class="app-table__controls mg-b32">
-      <div class="app-table__search">Search</div>
+      <div class="app-table__search">
+        <Input
+          classString="app-table__search-input"
+          v-model="searchInput"
+          placeholder="Search"
+          @keypress.enter="searchSubmit($event)"
+        />
+        <button @click="searchSubmit($event)" class="app-table__search-submit">
+          <SearchIcon />
+        </button>
+      </div>
       <div class="app-table__sort">
-        <div class="app-table__sort-by">Sort by</div>
+        <div class="app-table__sort-by">
+
+        </div>
         <div class="app-table__sort-source">Data Source</div>
       </div>
     </div>
@@ -67,11 +79,13 @@
 import { callers } from '@/api/callers'
 import { showDataSourceFormDialog } from '@/components/modals/DataSourceFormModal.vue'
 import TitledSpan from '@/components/TitledSpan.vue'
+import Input from '@/components/inputs/Input.vue'
+import SearchIcon from '@/components/icons/SearchIcon.vue'
 import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
-  components: { TitledSpan },
-  setup() {
+  components: { TitledSpan, Input, SearchIcon },
+  setup: function () {
     const dataSources = ref()
     const loadDataSources = async () => {
       const response = await callers.getDataSources(100)
@@ -89,7 +103,19 @@ export default defineComponent({
       })
     }
 
-    return { dataSources, createDataSource }
+    // search field
+    const searchInput = ref()
+    const searchSubmit = (event: Event | InputEvent | MouseEvent) => {
+      event.preventDefault()
+      console.log(searchInput.value)
+    }
+
+    return {
+      dataSources,
+      createDataSource,
+      searchInput,
+      searchSubmit,
+    }
   },
 })
 </script>
@@ -114,6 +140,46 @@ export default defineComponent({
   }
   &__sort {
     gap: 2.4rem;
+  }
+  &__search {
+    display: flex;
+    align-items: center;
+    border-bottom: 0.1rem solid transparent;
+    &-submit {
+      width: 4.8rem;
+      height: 4.8rem;
+      border-bottom: 0.1rem solid #ced4da;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.5s ease;
+      svg {
+        fill: #212529;
+      }
+      &:hover {
+        background: var(--clr__action);
+        svg {
+          fill: #fff;
+        }
+      }
+    }
+    &-input {
+      border: none;
+      border-radius: 0;
+      border-bottom: 0.1rem solid #ced4da;
+      &:focus {
+        border: none;
+        border-bottom: 0.1rem solid var(--clr__action);
+      }
+    }
+    &:hover {
+      border-bottom: 0.1rem solid var(--clr__action);
+      .app-table__search-submit,
+      .app-table__search-input {
+        border: none;
+        border-bottom: 0.1rem solid var(--clr__action);
+      }
+    }
   }
 }
 </style>
