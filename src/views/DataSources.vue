@@ -27,9 +27,45 @@
       </div>
       <div class="app-table__sort">
         <div class="app-table__sort-by">
-
+          <span class="app-table__sort__title"> Sort by </span>
+          <VuePicker
+            class="_vue-picker"
+            ы
+            placeholder="Sort by"
+            v-model="sortBySelect"
+          >
+            <template #dropdownInner>
+              <div class="_vue-picker__dropdown-custom">
+                <VuePickerOption value="latest" text="Latest Update">
+                  Latest Update
+                </VuePickerOption>
+              </div>
+              <div class="_vue-picker__dropdown-custom">
+                <VuePickerOption value="most" text="Most Requested">
+                  Most Requested
+                </VuePickerOption>
+              </div>
+            </template>
+          </VuePicker>
         </div>
-        <div class="app-table__sort-source">Data Source</div>
+        <div class="app-table__sort-source">
+          <span class="app-table__sort__title">Data Source</span>
+          <VuePicker
+            class="_vue-picker"
+            ы
+            placeholder="Sort by"
+            v-model="dataSourcesSelect"
+          >
+            <template #dropdownInner>
+              <div class="_vue-picker__dropdown-custom">
+                <VuePickerOption value="all" text="All">All</VuePickerOption>
+              </div>
+              <div class="_vue-picker__dropdown-custom">
+                <VuePickerOption value="mine" text="Mine">Mine</VuePickerOption>
+              </div>
+            </template>
+          </VuePicker>
+        </div>
       </div>
     </div>
 
@@ -65,6 +101,7 @@
             />
           </div>
         </div>
+        <Pagination />
       </template>
       <template v-else>
         <div class="app-table__row">
@@ -77,14 +114,25 @@
 
 <script lang="ts">
 import { callers } from '@/api/callers'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 import { showDataSourceFormDialog } from '@/components/modals/DataSourceFormModal.vue'
 import TitledSpan from '@/components/TitledSpan.vue'
 import Input from '@/components/inputs/Input.vue'
 import SearchIcon from '@/components/icons/SearchIcon.vue'
+import Pagination from '@/components/pagination.vue'
 import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
-  components: { TitledSpan, Input, SearchIcon },
+  components: {
+    TitledSpan,
+    Input,
+    SearchIcon,
+    Pagination,
+    VuePicker,
+    VuePickerOption,
+  },
   setup: function () {
     const dataSources = ref()
     const loadDataSources = async () => {
@@ -110,23 +158,30 @@ export default defineComponent({
       console.log(searchInput.value)
     }
 
+    const sortBySelect = ref('latest')
+    const dataSourcesSelect = ref('all')
     return {
       dataSources,
       createDataSource,
       searchInput,
       searchSubmit,
+      sortBySelect,
+      dataSourcesSelect,
     }
   },
 })
 </script>
 
 <style lang="scss" scoped>
+
 .data-sources {
   &__table-head,
   &__table-row {
     grid: auto / minmax(2rem, 1fr) minmax(8rem, 2fr) minmax(1rem, 0.2fr);
+    border-bottom: 0.1rem solid #ced4da;
   }
 }
+
 .app-table {
   &__controls {
     font-size: 14px;
@@ -137,9 +192,13 @@ export default defineComponent({
   &__sort {
     display: flex;
     justify-content: space-between;
+    align-items: center;
   }
   &__sort {
     gap: 2.4rem;
+    &__title {
+      margin-right: 1.6rem;
+    }
   }
   &__search {
     display: flex;
@@ -180,6 +239,9 @@ export default defineComponent({
         border-bottom: 0.1rem solid var(--clr__action);
       }
     }
+  }
+  &__cell-txt {
+    margin: 3.6rem 0 2rem 0;
   }
 }
 </style>
