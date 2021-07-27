@@ -88,20 +88,23 @@
           class="data-sources__table-row app-table__row"
         >
           <div class="app-table__cell">
-            <TitledSpan class="app-table__cell-txt" :text="item.name" />
+            <TitledLink class="app-table__cell-link" :text="item.name" />
           </div>
           <div class="app-table__cell">
             <TitledSpan class="app-table__cell-txt" :text="item.description" />
           </div>
-          <div class="app-table__cell">
+          <div class="app-table__cell app-table__cell--time">
+            <div class="app-table__cell-txt">14:50</div>
+            <div class="app-table__cell-txt">02.06.2021</div>
+            <!--
             <TitledSpan
               class="app-table__cell-txt"
               :text="$cropAddress(item.owner)"
               :title="item.owner"
             />
-          </div>
+          --></div>
         </div>
-        <Pagination />
+        <Pagination :total-length="20" />
       </template>
       <template v-else>
         <div class="app-table__row">
@@ -119,14 +122,16 @@ import { callers } from '@/api/callers'
 import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 import { showDataSourceFormDialog } from '@/components/modals/DataSourceFormModal.vue'
 import TitledSpan from '@/components/TitledSpan.vue'
+import TitledLink from '@/components/TitledLink.vue'
 import Input from '@/components/inputs/Input.vue'
 import SearchIcon from '@/components/icons/SearchIcon.vue'
-import Pagination from '@/components/pagination.vue'
+import Pagination from '@/components/pagination/pagination.vue'
 import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
   components: {
     TitledSpan,
+    TitledLink,
     Input,
     SearchIcon,
     Pagination,
@@ -173,7 +178,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-
 .data-sources {
   &__table-head,
   &__table-row {
@@ -240,8 +244,27 @@ export default defineComponent({
       }
     }
   }
-  &__cell-txt {
-    margin: 3.6rem 0 2rem 0;
+  &__cell {
+    &--time {
+      flex-direction: column;
+      justify-content: center;
+      .app-table__cell-txt {
+        margin: 0;
+        &:first-child {
+          margin-bottom: 0.4rem;
+        }
+      }
+    }
+    &-txt,
+    &-link {
+      margin: 3.6rem 0 2rem 0;
+    }
+    &-link {
+      text-decoration: none;
+      color: var(--clr__action);
+      font-weight: 400;
+      line-height: 2.4rem;
+    }
   }
 }
 </style>
