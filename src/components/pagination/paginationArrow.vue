@@ -34,7 +34,7 @@ export default defineComponent({
     )
     const clickHandler = (event: Event | MouseEvent) => {
       event.preventDefault()
-      emit('paginationArrowClick', { number: props.direction })
+      emit('paginationArrowClick', { direction: props.direction })
     }
 
     return { arrowDirection, clickHandler }

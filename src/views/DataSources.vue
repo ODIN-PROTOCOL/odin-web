@@ -7,9 +7,9 @@
       </button>
     </div>
 
-    <template v-if="dataSources?.length">
+    <template v-if="blocks?.length">
       <div class="fx-row mg-b32">
-        <p>{{ dataSources.length }} data sources found</p>
+        <p>{{ blocks.length }} data sources found</p>
       </div>
     </template>
 
@@ -81,9 +81,9 @@
           <span class="app-table__cell-txt"> Timestamp </span>
         </div>
       </div>
-      <template v-if="dataSources?.length">
+      <template v-if="filteredBlocks?.length">
         <div
-          v-for="item in dataSources"
+          v-for="item in filteredBlocks"
           :key="item.id.toString()"
           class="data-sources__table-row app-table__row"
         >
@@ -104,7 +104,11 @@
             />
           --></div>
         </div>
-        <Pagination :total-length="20" />
+        <Pagination
+          @changePageNumber="paginationHandler($event)"
+          :blocksPerPage="blocksPerPage"
+          :total-length="blocks.length"
+        />
       </template>
       <template v-else>
         <div class="app-table__row">
@@ -139,11 +143,14 @@ export default defineComponent({
     VuePickerOption,
   },
   setup: function () {
-    const dataSources = ref()
+    const filteredBlocks = ref()
+    let currPageNumber = ref(1)
+    const blocks = ref()
+    const blocksPerPage = 4
     const loadDataSources = async () => {
-      const response = await callers.getDataSources(100)
-      console.debug('DataSources:', response)
-      dataSources.value = response.dataSources
+      const { dataSources } = await callers.getDataSources(100)
+      blocks.value = [...dataSources]
+      await filterBlocks(currPageNumber.value)
     }
     loadDataSources()
 
@@ -165,13 +172,38 @@ export default defineComponent({
 
     const sortBySelect = ref('latest')
     const dataSourcesSelect = ref('all')
+
+    // Pagination
+    const paginationHandler = (num: number) => {
+      filterBlocks(num)
+    }
+
+    const filterBlocks = async (newPage: number) => {
+      let tempArr = blocks.value
+
+      if (newPage === 1) {
+        filteredBlocks.value = tempArr.slice(0, newPage * blocksPerPage)
+      } else {
+        filteredBlocks.value = tempArr.slice(
+          (newPage - 1) * blocksPerPage,
+          (newPage - 1) * blocksPerPage + blocksPerPage
+        )
+      }
+      currPageNumber.value = newPage
+    }
+
     return {
-      dataSources,
+      blocks,
       createDataSource,
       searchInput,
       searchSubmit,
       sortBySelect,
       dataSourcesSelect,
+      paginationHandler,
+      currPageNumber,
+      filterBlocks,
+      blocksPerPage,
+      filteredBlocks,
     }
   },
 })

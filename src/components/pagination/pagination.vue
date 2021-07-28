@@ -1,7 +1,11 @@
 <template>
   <div class="pagination">
     <div class="pagination__buttons">
-      <paginationArrow direction="left" :disabled="pageNumber === 1" />
+      <paginationArrow
+        @paginationArrowClick="changePageNumber($event)"
+        direction="left"
+        :disabled="pageNumber === 1"
+      />
       <paginationButton
         :class="{ 'pagination__button--current': pageNumber === count }"
         v-for="count in pageCount"
@@ -9,7 +13,11 @@
         :key="count"
         @paginationButtonClick="changePageNumber($event)"
       />
-      <paginationArrow direction="right" :disabled="pageNumber === pageCount" />
+      <paginationArrow
+        @paginationArrowClick="changePageNumber($event)"
+        direction="right"
+        :disabled="pageNumber === pageCount"
+      />
     </div>
   </div>
 </template>
@@ -20,23 +28,30 @@ import paginationButton from '@/components/pagination/paginationButton.vue'
 import paginationArrow from '@/components/pagination/paginationArrow.vue'
 
 type changePageNumberEvent = {
-  number: number
+  number?: number
+  direction?: string
 }
 
 export default defineComponent({
   props: {
     totalLength: { type: [String, Number], default: 0 },
-    size: { type: Number, required: false, default: 4 },
+    blocksPerPage: { type: Number, required: false, default: 3 },
   },
   components: { paginationButton, paginationArrow },
-  setup(props) {
+  setup(props, { emit }) {
     let pageNumber = ref<number>(1)
     const pageCount = computed(() =>
-      Math.ceil((props.totalLength as number) / props.size)
+      Math.ceil((props.totalLength as number) / props.blocksPerPage)
     )
 
     const changePageNumber = (event: changePageNumberEvent) => {
       pageNumber.value = event.number
+        ? event.number
+        : event.direction === 'right'
+        ? pageNumber.value + 1
+        : pageNumber.value - 1
+
+      emit('changePageNumber', pageNumber.value)
     }
 
     return { pageCount, pageNumber, changePageNumber }
