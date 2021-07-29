@@ -61,7 +61,7 @@ export default defineComponent({
     }
 
     const changeRoute = () => {
-      isOpen.value = isOpen.value !== true
+      if (isOpen.value === true) isOpen.value = false
     }
 
     return {
