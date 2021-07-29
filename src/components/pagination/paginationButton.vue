@@ -13,6 +13,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
+  emits: ['paginationButtonClick'],
   props: {
     number: { type: [String, Number] },
     disabled: { type: Boolean, default: false },

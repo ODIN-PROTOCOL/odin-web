@@ -24,6 +24,7 @@
 import { defineComponent, computed } from 'vue'
 
 export default defineComponent({
+  emits: ['paginationArrowClick'],
   props: {
     direction: { type: String },
     disabled: { type: Boolean, default: false },

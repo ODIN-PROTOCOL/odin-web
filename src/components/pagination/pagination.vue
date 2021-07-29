@@ -33,6 +33,7 @@ type changePageNumberEvent = {
 }
 
 export default defineComponent({
+  emits: ['changePageNumber'],
   props: {
     totalLength: { type: [String, Number], default: 0 },
     blocksPerPage: { type: Number, required: false, default: 3 },

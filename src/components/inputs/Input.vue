@@ -21,6 +21,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
+  emits: ['update:modelValue'],
   props: {
     modelValue: { type: String },
     classString: { type: String },

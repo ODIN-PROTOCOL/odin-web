@@ -83,6 +83,7 @@ import ArrowIcon from '@/components/icons/ArrowIcon.vue'
 
 export default defineComponent({
   components: { ArrowIcon },
+  emits: ['changeRoute'],
   props: {
     isOpen: { type: Boolean, default: false },
   },
