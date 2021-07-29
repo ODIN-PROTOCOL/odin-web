@@ -167,8 +167,9 @@ export default defineComponent({
     const searchInput = ref()
     const searchSubmit = (event: Event | InputEvent | MouseEvent) => {
       event.preventDefault()
+      let tempArr = blocks.value
       if (searchInput.value) {
-        filteredBlocks.value = filteredBlocks.value.filter(
+        filteredBlocks.value = tempArr.filter(
           (el: { description: string }) =>
             el.description.indexOf(searchInput.value) != -1
         )
