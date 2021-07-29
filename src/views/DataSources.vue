@@ -167,7 +167,14 @@ export default defineComponent({
     const searchInput = ref()
     const searchSubmit = (event: Event | InputEvent | MouseEvent) => {
       event.preventDefault()
-      console.log(searchInput.value)
+      if (searchInput.value) {
+        filteredBlocks.value = filteredBlocks.value.filter(
+          (el: { description: string }) =>
+            el.description.indexOf(searchInput.value) != -1
+        )
+      } else {
+        return filterBlocks(1)
+      }
     }
 
     const sortBySelect = ref('latest')
