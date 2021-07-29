@@ -99,6 +99,9 @@ export default defineComponent({
 }
 
 @media (max-width: 768px) {
+  .header-wrapper {
+    gap: 0.4rem;
+  }
   .burger-menu {
     display: flex;
     flex-shrink: 0;

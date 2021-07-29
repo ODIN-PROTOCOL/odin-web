@@ -1,8 +1,12 @@
 <template>
   <div class="data-sources view-main">
-    <div class="fx-row mg-b32">
+    <div class="page-title fx-row mg-b32">
       <h2 class="view-title">Data Sources</h2>
-      <button class="app-btn fx-sae" type="button" @click="createDataSource()">
+      <button
+        class="app-btn createDataSourceBtn createDataSourceBtn--top fx-sae"
+        type="button"
+        @click="createDataSource()"
+      >
         Create data source
       </button>
     </div>
@@ -116,6 +120,13 @@
         </div>
       </template>
     </div>
+    <button
+      class="app-btn createDataSourceBtn createDataSourceBtn--bottom fx-sae"
+      type="button"
+      @click="createDataSource()"
+    >
+      Create data source
+    </button>
   </div>
 </template>
 
@@ -304,6 +315,66 @@ export default defineComponent({
       color: var(--clr__action);
       font-weight: 400;
       line-height: 2.4rem;
+    }
+  }
+}
+
+.createDataSourceBtn {
+  &--bottom {
+    display: none;
+    width: 100%;
+    @media (max-width: 768px) {
+      display: block;
+    }
+  }
+  &--top {
+    display: block;
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+}
+// TODO: media for table
+@media (max-width: 768px) {
+  .data-sources {
+    &__table-head,
+    &__table-row {
+      border-bottom: 0.1rem solid #ced4da;
+    }
+  }
+  .page-title {
+    margin-bottom: 1.6rem;
+  }
+  .app-table {
+    &__controls {
+      flex-wrap: wrap;
+      margin-bottom: 0;
+    }
+    &__search {
+      width: 100%;
+      margin-bottom: 0.8rem;
+    }
+    &__search-input {
+      width: 100%;
+    }
+    &__sort {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 1.6rem;
+      width: 100%;
+    }
+    &__sort-by,
+    &__sort-source {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      .vue-picker {
+        width: 100%;
+      }
+      .vue-picker__opener {
+        padding: 10px 0;
+      }
     }
   }
 }
