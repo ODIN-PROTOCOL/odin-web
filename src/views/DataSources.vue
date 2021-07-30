@@ -73,53 +73,46 @@
       </div>
     </div>
 
-    <div class="app-table">
-      <div class="data-sources__table-head app-table__head">
-        <div class="app-table__cell mg-b20">
-          <span class="app-table__cell-txt"> Data Source </span>
-        </div>
-        <div class="app-table__cell">
-          <span class="app-table__cell-txt"> Description </span>
-        </div>
-        <div class="app-table__cell">
-          <span class="app-table__cell-txt"> Timestamp </span>
-        </div>
-      </div>
-      <template v-if="filteredBlocks?.length">
-        <div
-          v-for="item in filteredBlocks"
-          :key="item.id.toString()"
-          class="data-sources__table-row app-table__row"
-        >
-          <div class="app-table__cell">
-            <TitledLink class="app-table__cell-link" :text="item.name" />
-          </div>
-          <div class="app-table__cell">
-            <TitledSpan class="app-table__cell-txt" :text="item.description" />
-          </div>
-          <div class="app-table__cell app-table__cell--time">
-            <div class="app-table__cell-txt">14:50</div>
-            <div class="app-table__cell-txt">02.06.2021</div>
-            <!--
-            <TitledSpan
-              class="app-table__cell-txt"
-              :text="$cropAddress(item.owner)"
-              :title="item.owner"
-            />
-          --></div>
-        </div>
-        <Pagination
-          @changePageNumber="paginationHandler($event)"
-          :blocksPerPage="blocksPerPage"
-          :total-length="blocks.length"
-        />
-      </template>
-      <template v-else>
-        <div class="app-table__row">
-          <p class="app-table__empty-stub">No items yet</p>
-        </div>
-      </template>
+    <div class="table-wrapper">
+      <table class="table">
+        <thead class="table__head">
+          <tr>
+            <th>Data Source</th>
+            <th>Description</th>
+            <th>Timestamp</th>
+          </tr>
+        </thead>
+        <tbody class="table__body">
+          <template v-if="filteredBlocks?.length">
+            <tr v-for="item in filteredBlocks" :key="item.id.toString()">
+              <td aria-label="Data Source">
+                <TitledLink class="table-link" :text="item.name" />
+              </td>
+              <td aria-label="Description">
+                <TitledSpan :text="item.description" />
+              </td>
+              <td aria-label="Timestamp">
+                <div class="table-time">
+                  <span>14:50</span>
+                  <span>02.06.2021</span>
+                </div>
+              </td>
+            </tr>
+          </template>
+          <template v-else>
+            <tr>
+              <td>No items yet</td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+      <Pagination
+        @changePageNumber="paginationHandler($event)"
+        :blocksPerPage="blocksPerPage"
+        :total-length="blocks.length"
+      />
     </div>
+
     <button
       class="app-btn createDataSourceBtn createDataSourceBtn--bottom fx-sae"
       type="button"
@@ -229,11 +222,73 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.data-sources {
-  &__table-head,
-  &__table-row {
-    grid: auto / minmax(2rem, 1fr) minmax(8rem, 2fr) minmax(1rem, 0.2fr);
+.table-wrapper {
+  .table {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+
+  table tr {
     border-bottom: 0.1rem solid #ced4da;
+  }
+
+  table th,
+  table td {
+    text-align: left;
+    padding: 3.6rem 0 2rem 0;
+    .table-time {
+      display: flex;
+      flex-direction: column;
+    }
+    .table-link {
+      text-decoration: none;
+      color: var(--clr__action);
+    }
+  }
+
+  table th {
+    font-size: 1.4rem;
+    font-weight: 400;
+    line-height: 2.4rem;
+    letter-spacing: 1px;
+    border: none;
+  }
+
+  @media (max-width: 768px) {
+    table {
+      width: 100%;
+      border: 0;
+    }
+
+    table thead {
+      display: none;
+    }
+
+    table td:before {
+      content: attr(aria-label);
+      text-align: left;
+      float: left;
+      width: 50%;
+    }
+
+    table tr {
+      display: block;
+    }
+
+    table td {
+      display: block;
+      text-align: right;
+      font-size: 13px;
+      border-bottom: 1px dotted #ccc;
+      border-right: 1px solid transparent;
+    }
+
+    table td:last-child {
+      border-bottom: 0;
+    }
   }
 }
 
@@ -295,28 +350,6 @@ export default defineComponent({
       }
     }
   }
-  &__cell {
-    &--time {
-      flex-direction: column;
-      justify-content: center;
-      .app-table__cell-txt {
-        margin: 0;
-        &:first-child {
-          margin-bottom: 0.4rem;
-        }
-      }
-    }
-    &-txt,
-    &-link {
-      margin: 3.6rem 0 2rem 0;
-    }
-    &-link {
-      text-decoration: none;
-      color: var(--clr__action);
-      font-weight: 400;
-      line-height: 2.4rem;
-    }
-  }
 }
 
 .createDataSourceBtn {
@@ -334,14 +367,7 @@ export default defineComponent({
     }
   }
 }
-// TODO: media for table
 @media (max-width: 768px) {
-  .data-sources {
-    &__table-head,
-    &__table-row {
-      border-bottom: 0.1rem solid #ced4da;
-    }
-  }
   .page-title {
     margin-bottom: 1.6rem;
   }
