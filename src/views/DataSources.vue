@@ -105,9 +105,6 @@
         </tbody>
       </table>
 
-      <!--
-        TODO: :total-length="totalLength"
-      -->
       <Pagination
         @changePageNumber="paginationHandler($event)"
         :blocksPerPage="blocksPerPage"
@@ -162,8 +159,7 @@ export default defineComponent({
         LIMIT,
         (currPageNumber.value - 1) * LIMIT
       )
-      console.log(pagination?.total)
-      // totalLength.value = pagination.total
+      totalLength.value = pagination?.total
       blocks.value = [...dataSources]
       filteredBlocks.value = blocks.value
     }

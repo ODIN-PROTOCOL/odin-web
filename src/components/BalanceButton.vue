@@ -1,11 +1,12 @@
 <template>
   <div class="balance-button">
-    <button
-      class="balance-button__balance-btn"
-      type="button"
-      @click.stop="dropdown.show()"
-    >
-      <WalletIcon />
+    <button class="balance-button__balance-btn" type="button" @click.stop="dropdown.show()">
+      Balance: <strong>{{ $fCoin(lokiCoins) }}</strong>
+    </button>
+    <button class="balance-button__balance-btn--icon">
+      <router-link :to="{ name: 'Wallet' }">
+        <WalletIcon />
+      </router-link>
     </button>
 
     <div
@@ -14,13 +15,13 @@
       ref="dropdownEl"
     >
       <p class="fs-c-muted fs-p14 mg-t8 mg-l24 mg-b8">Deposit from:</p>
-      <button
-        class="balance-button__dropdown-btn"
-        type="button"
-        @click="dropdown.hide() & exchange()"
-      >
-        Exchange
-      </button>
+      <!--      <button-->
+      <!--        class="balance-button__dropdown-btn"-->
+      <!--        type="button"-->
+      <!--        @click="dropdown.hide() & exchange()"-->
+      <!--      >-->
+      <!--        Exchange-->
+      <!--      </button>-->
       <button
         class="balance-button__dropdown-btn"
         type="button"
@@ -73,16 +74,30 @@ export default defineComponent({
 <style lang="scss" scoped>
 .balance-button {
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .balance-button__balance-btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 0.4rem;
-  background: var(--clr__action);
-  white-space: nowrap;
+  display: block;
+  border-radius: 1.2rem;
+  border: 1px solid var(--clr__action);
   padding: 1.5rem 1.4rem;
+  &--icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0.4rem;
+    background: var(--clr__action);
+    white-space: nowrap;
+    padding: 1.5rem 1.4rem;
+    a {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
 }
 
 .balance-button__dropdown {
