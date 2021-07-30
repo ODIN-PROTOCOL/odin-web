@@ -21,8 +21,8 @@ export default defineComponent({
   name: 'ArrowIcon',
   props: {
     className: { type: String },
-    width: { type: Number, default: 24 },
-    height: { type: Number, default: 24 },
+    width: { type: [Number, String], default: 24 },
+    height: { type: [Number, String], default: 24 },
   },
 })
 </script>
