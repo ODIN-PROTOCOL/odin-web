@@ -3,7 +3,7 @@
     <div class="page-title fx-row mg-b32">
       <h2 class="view-title">Data Sources</h2>
       <button
-        class="app-btn create-data-source-btn create-data-source-btn-top fx-sae"
+        class="app-btn create-data-source-btn create-data-source-btn--top fx-sae"
         type="button"
         @click="createDataSource()"
       >
@@ -352,7 +352,7 @@ export default defineComponent({
 }
 
 .create-data-source-btn {
-  &--bottom {
+  &--bottom  {
     display: none;
     width: 100%;
     @media (max-width: 768px) {

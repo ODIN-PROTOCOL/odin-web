@@ -123,4 +123,10 @@ export default defineComponent({
     background-color: var(--clr__action-extra-muted);
   }
 }
+
+@media (max-width: 768px) {
+  .balance-button__balance-btn {
+    display: none;
+  }
+}
 </style>
