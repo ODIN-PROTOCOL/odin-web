@@ -5,25 +5,16 @@
     @click="clickHandler"
     :disabled="disabled"
   >
-    <svg
-      :class="arrowDirection"
-      width="7"
-      height="10"
-      viewBox="0 0 7 10"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M6.84199 1.175L5.66699 0L0.666992 5L5.66699 10L6.84199 8.825L3.02533 5L6.84199 1.175Z"
-      />
-    </svg>
+    <ArrowIcon :className="arrowDirection" width="7" height="10" />
   </button>
 </template>
 
 <script lang="ts">
 import { defineComponent, computed } from 'vue'
+import ArrowIcon from '@/components/icons/ArrowIcon.vue'
 
 export default defineComponent({
+  components: { ArrowIcon },
   emits: ['paginationArrowClick'],
   props: {
     direction: { type: String },
@@ -48,6 +39,10 @@ export default defineComponent({
   &__button {
     .right-arrow,
     .left-arrow {
+      display: flex;
+      flex-shrink: 0;
+      justify-content: center;
+      align-items: center;
       fill: var(--clr__action);
     }
     .right-arrow {

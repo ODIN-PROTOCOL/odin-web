@@ -4,11 +4,13 @@
     :class="className"
     :width="width"
     :height="height"
-    viewBox="0 0 24 24"
+    :viewBox="`0 0 ${width} ${height}`"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <path d="M16.59 8.59L12 13.17L7.41 8.59L6 10L12 16L18 10L16.59 8.59Z" />
+    <path
+      d="M6.84199 1.175L5.66699 0L0.666992 5L5.66699 10L6.84199 8.825L3.02533 5L6.84199 1.175Z"
+    />
   </svg>
 </template>
 

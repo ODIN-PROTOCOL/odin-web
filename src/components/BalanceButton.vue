@@ -5,7 +5,7 @@
       type="button"
       @click.stop="dropdown.show()"
     >
-      Balance: <strong>{{ $fCoin(lokiCoins) }}</strong>
+      <WalletIcon />
     </button>
 
     <div
@@ -39,8 +39,11 @@ import { useDropdown } from '@/composables/useDropdown'
 import { usePoll } from '@/composables/usePoll'
 import { showExchangeFormDialog } from './modals/ExchangeFormModal.vue'
 import { showFaucetFormDialog } from './modals/FaucetFormModal.vue'
-
+import WalletIcon from '@/components/icons/WalletIcon.vue'
 export default defineComponent({
+  components: {
+    WalletIcon
+  },
   setup() {
     const {
       coins: [lokiCoins],
@@ -73,11 +76,13 @@ export default defineComponent({
 }
 
 .balance-button__balance-btn {
-  display: block;
-  border-radius: 1.2rem;
-  border: 1px solid var(--clr__action);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.4rem;
+  background: var(--clr__action);
   white-space: nowrap;
-  padding: 0.4rem 0.8rem;
+  padding: 1.5rem 1.4rem;
 }
 
 .balance-button__dropdown {
