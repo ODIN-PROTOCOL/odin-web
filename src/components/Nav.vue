@@ -143,9 +143,9 @@ export default defineComponent({
     }
     &-arrow {
       fill: #212529;
-      transition: all 0.5s ease;
+      transform: translate(-11px, 9px) rotate(90deg);
       &--open {
-        transform: rotate(180deg);
+        transform: translate(3px, -6px) rotate(270deg);
         fill: var(--clr__action);
       }
     }
