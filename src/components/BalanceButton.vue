@@ -42,7 +42,7 @@ import { showFaucetFormDialog } from './modals/FaucetFormModal.vue'
 import WalletIcon from '@/components/icons/WalletIcon.vue'
 export default defineComponent({
   components: {
-    WalletIcon
+    WalletIcon,
   },
   setup() {
     const {

@@ -18,7 +18,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: 'WaletIcon',
+  name: 'WalletIcon',
   props: {
     className: { type: String },
     width: { type: Number, default: 19 },
