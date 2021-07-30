@@ -104,10 +104,14 @@
           </template>
         </tbody>
       </table>
+
+      <!--
+        TODO: :total-length="totalLength"
+      -->
       <Pagination
         @changePageNumber="paginationHandler($event)"
         :blocksPerPage="blocksPerPage"
-        :total-length="blocks?.length"
+        :total-length="totalLength"
       />
     </div>
 
@@ -134,6 +138,8 @@ import SearchIcon from '@/components/icons/SearchIcon.vue'
 import Pagination from '@/components/pagination/pagination.vue'
 import { defineComponent, ref } from 'vue'
 
+const LIMIT = 20
+
 export default defineComponent({
   components: {
     TitledSpan,
@@ -147,12 +153,19 @@ export default defineComponent({
   setup: function () {
     const filteredBlocks = ref()
     let currPageNumber = ref(1)
+    let totalLength = ref()
     const blocks = ref()
     const blocksPerPage = 4
+
     const loadDataSources = async () => {
-      const { dataSources } = await callers.getDataSources(100)
+      const { dataSources, pagination } = await callers.getDataSources(
+        LIMIT,
+        (currPageNumber.value - 1) * LIMIT
+      )
+      console.log(pagination?.total)
+      // totalLength.value = pagination.total
       blocks.value = [...dataSources]
-      await filterBlocks(currPageNumber.value)
+      filteredBlocks.value = blocks.value
     }
     loadDataSources()
 
@@ -189,17 +202,8 @@ export default defineComponent({
     }
 
     const filterBlocks = async (newPage: number) => {
-      let tempArr = blocks.value
-
-      if (newPage === 1) {
-        filteredBlocks.value = tempArr.slice(0, newPage * blocksPerPage)
-      } else {
-        filteredBlocks.value = tempArr.slice(
-          (newPage - 1) * blocksPerPage,
-          (newPage - 1) * blocksPerPage + blocksPerPage
-        )
-      }
       currPageNumber.value = newPage
+      await loadDataSources()
     }
 
     return {
@@ -214,6 +218,7 @@ export default defineComponent({
       filterBlocks,
       blocksPerPage,
       filteredBlocks,
+      totalLength,
     }
   },
 })
