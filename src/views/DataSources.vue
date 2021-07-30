@@ -109,7 +109,7 @@
       <Pagination
         @changePageNumber="paginationHandler($event)"
         :blocksPerPage="blocksPerPage"
-        :total-length="blocks.length"
+        :total-length="blocks?.length"
       />
     </div>
 
