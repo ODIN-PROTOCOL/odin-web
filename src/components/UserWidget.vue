@@ -3,7 +3,7 @@
     <Search />
     <BalanceButton />
     <button
-      class="app-ico-btn logOutAndLeave"
+      class="app-ico-btn log-out-and-leave"
       type="button"
       @click="logOutAndLeave()"
     >
@@ -38,7 +38,7 @@ export default defineComponent({
   gap: 2.4rem;
 }
 @media (max-width: 768px) {
-  .logOutAndLeave {
+  .log-out-and-leave {
     display: none;
   }
 }

@@ -3,7 +3,7 @@
     <div class="page-title fx-row mg-b32">
       <h2 class="view-title">Data Sources</h2>
       <button
-        class="app-btn createDataSourceBtn createDataSourceBtn--top fx-sae"
+        class="app-btn create-data-source-btn create-data-source-btn-top fx-sae"
         type="button"
         @click="createDataSource()"
       >
@@ -34,7 +34,6 @@
           <span class="app-table__sort__title"> Sort by </span>
           <VuePicker
             class="_vue-picker"
-            ы
             placeholder="Sort by"
             v-model="sortBySelect"
           >
@@ -56,7 +55,6 @@
           <span class="app-table__sort__title">Data Source</span>
           <VuePicker
             class="_vue-picker"
-            ы
             placeholder="Sort by"
             v-model="dataSourcesSelect"
           >
@@ -114,7 +112,7 @@
     </div>
 
     <button
-      class="app-btn createDataSourceBtn createDataSourceBtn--bottom fx-sae"
+      class="app-btn create-data-source-btn create-data-source-btn--bottom fx-sae"
       type="button"
       @click="createDataSource()"
     >
@@ -352,7 +350,7 @@ export default defineComponent({
   }
 }
 
-.createDataSourceBtn {
+.create-data-source-btn {
   &--bottom {
     display: none;
     width: 100%;
