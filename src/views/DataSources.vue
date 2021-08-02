@@ -134,6 +134,7 @@ import Input from '@/components/inputs/Input.vue'
 import SearchIcon from '@/components/icons/SearchIcon.vue'
 import Pagination from '@/components/pagination/pagination.vue'
 import { defineComponent, ref } from 'vue'
+import { logs } from '@cosmjs/launchpad'
 
 const LIMIT = 20
 
@@ -178,15 +179,27 @@ export default defineComponent({
     const searchInput = ref()
     const searchSubmit = (event: Event | InputEvent | MouseEvent) => {
       event.preventDefault()
-      let tempArr = blocks.value
-      if (searchInput.value) {
-        filteredBlocks.value = tempArr.filter(
-          (el: { description: string }) =>
-            el.description.indexOf(searchInput.value) != -1
-        )
-      } else {
-        return filterBlocks(1)
-      }
+      console.group('searchInput')
+      console.log(
+        '%c DataSources.vue',
+        'color: white; background-color: #2274A5'
+      )
+      console.log(
+        '%c TODO: BACKEND DAITE POISK',
+        'color: white; background-color: #2274A5'
+      )
+      console.table('value:', searchInput.value)
+      console.groupEnd()
+
+      // let tempArr = blocks.value
+      // if (searchInput.value) {
+      //   filteredBlocks.value = tempArr.filter(
+      //     (el: { description: string }) =>
+      //       el.description.indexOf(searchInput.value) != -1
+      //   )
+      // } else {
+      //   return filterBlocks(1)
+      // }
     }
 
     const sortBySelect = ref('latest')
@@ -352,7 +365,7 @@ export default defineComponent({
 }
 
 .create-data-source-btn {
-  &--bottom  {
+  &--bottom {
     display: none;
     width: 100%;
     @media (max-width: 768px) {
