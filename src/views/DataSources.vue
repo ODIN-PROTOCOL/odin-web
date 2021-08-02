@@ -81,8 +81,8 @@
           </tr>
         </thead>
         <tbody class="table__body">
-          <template v-if="filteredBlocks?.length">
-            <tr v-for="item in filteredBlocks" :key="item.id.toString()">
+          <template v-if="blocks?.length">
+            <tr v-for="item in blocks" :key="item.id.toString()">
               <td aria-label="Data Source">
                 <TitledLink class="table-link" :text="item.name" />
               </td>
@@ -134,7 +134,6 @@ import Input from '@/components/inputs/Input.vue'
 import SearchIcon from '@/components/icons/SearchIcon.vue'
 import Pagination from '@/components/pagination/pagination.vue'
 import { defineComponent, ref } from 'vue'
-import { logs } from '@cosmjs/launchpad'
 
 const LIMIT = 20
 
@@ -149,7 +148,6 @@ export default defineComponent({
     VuePickerOption,
   },
   setup: function () {
-    const filteredBlocks = ref()
     let currPageNumber = ref(1)
     let totalLength = ref()
     const blocks = ref()
@@ -162,7 +160,6 @@ export default defineComponent({
       )
       totalLength.value = pagination?.total
       blocks.value = [...dataSources]
-      filteredBlocks.value = blocks.value
     }
     loadDataSources()
 
@@ -190,16 +187,6 @@ export default defineComponent({
       )
       console.table('value:', searchInput.value)
       console.groupEnd()
-
-      // let tempArr = blocks.value
-      // if (searchInput.value) {
-      //   filteredBlocks.value = tempArr.filter(
-      //     (el: { description: string }) =>
-      //       el.description.indexOf(searchInput.value) != -1
-      //   )
-      // } else {
-      //   return filterBlocks(1)
-      // }
     }
 
     const sortBySelect = ref('latest')
@@ -226,7 +213,6 @@ export default defineComponent({
       currPageNumber,
       filterBlocks,
       blocksPerPage,
-      filteredBlocks,
       totalLength,
     }
   },
