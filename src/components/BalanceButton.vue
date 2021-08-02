@@ -1,8 +1,15 @@
 <template>
   <div class="balance-button">
-    <button class="balance-button__balance-btn" type="button" @click.stop="dropdown.show()">
+    <!--
+    <button
+      class="balance-button__balance-btn"
+      type="button"
+      @click.stop="dropdown.show()"
+    >
+
       Balance: <strong>{{ $fCoin(lokiCoins) }}</strong>
     </button>
+    -->
     <button class="balance-button__balance-btn--icon">
       <router-link :to="{ name: 'Wallet' }">
         <WalletIcon />

@@ -166,7 +166,7 @@ export default defineComponent({
     loadDataSources()
 
     const createDataSource = async () => {
-      showDataSourceFormDialog({
+      await showDataSourceFormDialog({
         onSubmit: (d) => {
           d.kill()
           loadDataSources()
