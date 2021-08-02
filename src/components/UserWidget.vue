@@ -2,8 +2,11 @@
   <div class="user-widget fx-row">
     <Search />
     <BalanceButton />
-
-    <button class="app-ico-btn logOutAndLeave" type="button" @click="logOutAndLeave()">
+    <button
+      class="app-ico-btn log-out-and-leave"
+      type="button"
+      @click="logOutAndLeave()"
+    >
       <img src="~@/assets/icons/exit.svg" alt="Log out" />
     </button>
   </div>
@@ -34,8 +37,8 @@ export default defineComponent({
 .user-widget {
   gap: 2.4rem;
 }
-@media (min-width: 768px) {
-  .logOutAndLeave {
+@media (max-width: 768px) {
+  .log-out-and-leave {
     display: none;
   }
 }

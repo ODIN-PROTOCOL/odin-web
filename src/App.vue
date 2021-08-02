@@ -26,6 +26,7 @@
 </template>
 
 <script lang="ts">
+import '@invisiburu/vue-picker/dist/vue-picker.min.css'
 import { computed, defineComponent, onMounted, ref } from 'vue'
 import { dialogs } from '@/helpers/dialogs'
 import { useAuthorization } from '@/composables/useAuthorization'
@@ -60,7 +61,7 @@ export default defineComponent({
     }
 
     const changeRoute = () => {
-      isOpen.value = isOpen.value !== true
+      if (isOpen.value === true) isOpen.value = false
     }
 
     return {
@@ -98,6 +99,9 @@ export default defineComponent({
 }
 
 @media (max-width: 768px) {
+  .header-wrapper {
+    gap: 0.4rem;
+  }
   .burger-menu {
     display: flex;
     flex-shrink: 0;
