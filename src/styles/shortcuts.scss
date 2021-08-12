@@ -84,6 +84,11 @@
 .fx-start {
   @include flex-pos(center, flex-start);
 }
+
+.gap-5 {
+  gap: 5rem;
+}
+
 .fx-row {
   display: flex;
   flex-direction: row;
