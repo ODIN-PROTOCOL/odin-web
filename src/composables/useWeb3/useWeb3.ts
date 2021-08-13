@@ -8,12 +8,30 @@ const web3 = new Web3()
 const contracts = new Contracts(web3)
 const _account = ref<string | null>(null)
 
+enum DetectionStatus {
+  detected = 1,
+  pending = 0,
+  undetected = 2,
+}
+const _providerDetectionStatus = ref(DetectionStatus.pending)
+
 function getAccount() {
   return _account.value
 }
 
 export function useWeb3(opts?: {
+  // Executed when the provider detected
+  onProviderDetected?: () => void
+
+  // Executed when the provider detection time is expired
+  onProviderUndetected?: () => void
+
+  // Executed when both the provider and the account are ready
+  // Also executed on the account change
   onAccountConnected?: (account: string, oldAccount: string | null) => void
+
+  // Executed on account disconnection only.
+  // The account change does not trigger this callback.
   onAccountDisconnected?: () => void
 }): {
   web3: Web3
@@ -34,6 +52,20 @@ export function useWeb3(opts?: {
       { immediate: true }
     )
   }
+  if (opts?.onProviderDetected || opts?.onProviderUndetected) {
+    watch(
+      _providerDetectionStatus,
+      (nV) => {
+        if (nV === DetectionStatus.detected && opts.onProviderDetected) {
+          opts.onProviderDetected()
+        }
+        if (nV === DetectionStatus.undetected && opts.onProviderUndetected) {
+          opts.onProviderUndetected()
+        }
+      },
+      { immediate: true }
+    )
+  }
   return { web3, contracts, getAccount }
 }
 
@@ -41,9 +73,11 @@ export function useWeb3(opts?: {
 setTimeout(() => {
   _detectProvider().then((provider: provider | undefined | null) => {
     if (provider) {
-      console.log('Ethereum provider acquired')
       _adoptProvider(provider)
+      _providerDetectionStatus.value = DetectionStatus.detected
+      console.log('Ethereum provider acquired')
     } else {
+      _providerDetectionStatus.value = DetectionStatus.undetected
       console.error('Cannot acquire Ethereum provider!')
     }
   })
