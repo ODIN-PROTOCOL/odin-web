@@ -16,7 +16,7 @@
               class="app-btn"
               type="button"
               @click="connectMetaMask()"
-              :disabled="!form.isValid || isLoading"
+              :disabled="isLoading"
             >
               Connect to MetaMask
             </button>
@@ -40,7 +40,7 @@
               <input
                 class="app-form__field-input app-form__field-input--disabled"
                 type="text"
-                v-model="totalSupply"
+                v-model="maxWithdrawalPerTime"
                 disabled
               />
             </div>
@@ -89,6 +89,7 @@ const MetaMaskFormModal = defineComponent({
   components: { ModalBase },
   setup() {
     const getError = (error: Error): void => {
+      console.log('Error', error)
       const indTime: number = error.message.indexOf('time')
       const errorStr: string = error.message.slice(10, indTime - 3)
       const newError: Error = new Error(`You ${errorStr}`)
@@ -97,7 +98,7 @@ const MetaMaskFormModal = defineComponent({
 
     const needAuth = ref<boolean>(false)
     const account = ref<string | null>(null)
-    const totalSupply = ref<string | null>(null)
+    const maxWithdrawalPerTime = ref<string | null>(null)
     const balance = ref<string | null>()
     const balanceDecimals = ref<string | null>()
     const balanceBigFromPrecise = ref<string | null>()
@@ -106,7 +107,7 @@ const MetaMaskFormModal = defineComponent({
       amount: [
         0,
         validators.required,
-        ...validators.num(0, Number(totalSupply)),
+        ...validators.num(0, Number(maxWithdrawalPerTime)),
       ],
     })
 
@@ -158,7 +159,7 @@ const MetaMaskFormModal = defineComponent({
       needAuth.value = accounts.length <= 0
     }
     const getBalance = async (): Promise<void> => {
-      totalSupply.value = bigFromPrecise(
+      maxWithdrawalPerTime.value = bigFromPrecise(
         Number(await contracts.odin.methods.totalSupply().call()),
         Number(balanceDecimals.value)
       ).toString()
@@ -182,6 +183,14 @@ const MetaMaskFormModal = defineComponent({
 
       try {
         console.log(
+          'amount bigToPrecise',
+          bigToPrecise(
+            form.amount.val(),
+            Number(balanceDecimals.value)
+          ).toString()
+        )
+        console.log(
+          'approve',
           await contracts.odin.methods
             .approve(
               account.value as string,
@@ -224,7 +233,7 @@ const MetaMaskFormModal = defineComponent({
       submit,
       connectMetaMask,
       account,
-      totalSupply,
+      maxWithdrawalPerTime,
       balance,
       balanceBigFromPrecise,
       needAuth,
