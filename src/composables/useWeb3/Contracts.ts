@@ -1,9 +1,9 @@
 import Web3 from 'web3'
 import { ContractOptions } from 'web3-eth-contract'
 
-import AbiBridge from '@provider/contracts/abi/Bridge.const.ts'
+import AbiBridge from '@provider/contracts/abi/Bridge.const'
 import { BridgeAbi as Bridge } from '@provider/contracts/web3-types/Bridge'
-import AbiErc20 from '@provider/contracts/abi/ERC20.const.ts'
+import AbiErc20 from '@provider/contracts/abi/ERC20.const'
 import { ERC20Abi as ERC20 } from '@provider/contracts/web3-types/ERC20'
 
 const BridgeToken = process.env.VUE_APP_BRIDGE

@@ -69,31 +69,29 @@ function bigFormat(a: NumLike, format?: BigFormatCfg): string {
   }
 }
 
-// export function bigToPrecise(num: NumLike): BigNumber {
-//   return bigMultiply(num, '1000000000000000000')
-// }
-
 function bigPower(a: NumLike, b: NumLike, cfg?: BigCfg): BigNumber {
   return _bn(a, cfg).pow(_bn(b))
 }
 
-const TO_FRACTION_PRECISION = bigPower(10, 17)
-
+const TO_FRACTION_PRECISION = bigPower(10, 29)
 export function bigToPrecise(num: NumLike, decimals?: number): BigNumber {
   const factor = decimals ? bigPower(10, decimals) : TO_FRACTION_PRECISION
   return bigMultiply(num, factor)
 }
 
-const FROM_FRACTION_PRECISION = bigPower(0.1, 17)
-
+const FROM_FRACTION_PRECISION = bigPower(0.1, 18)
 export function bigFromPrecise(num: NumLike, decimals?: number): BigNumber {
   const factor = decimals ? bigPower(0.1, decimals) : FROM_FRACTION_PRECISION
   return bigMultiply(num, factor)
 }
 
-// export function bigFromPrecise(num: NumLike): BigNumber {
-//   return bigMultiply(num, '0.000000000000000001')
-// }
+export function bigToStrStrict(num: NumLike): string {
+  return _bn(num).toFormat({
+    groupSeparator: '',
+    decimalSeparator: '.',
+    fractionGroupSeparator: '',
+  })
+}
 
 export const bigMath = {
   multiply: bigMultiply,
@@ -104,5 +102,6 @@ export const bigMath = {
   format: bigFormat,
   toPrecise: bigToPrecise,
   fromPrecise: bigFromPrecise,
+  toStrStrict: bigToStrStrict,
   zero: _bn(0),
 }

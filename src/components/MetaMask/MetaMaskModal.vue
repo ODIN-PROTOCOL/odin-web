@@ -59,7 +59,7 @@
               <button
                 class="app-btn"
                 type="button"
-                @click="getExchange"
+                @click="exchange"
                 :disabled="!form.isValid || isLoading"
               >
                 Exchange
@@ -82,19 +82,13 @@ import { handleError } from '@/helpers/errors'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from '@/components/modals/ModalBase.vue'
 import { useWeb3 } from '@/composables/useWeb3/useWeb3'
-import { bigFromPrecise, bigToPrecise } from '@/helpers/bigMath'
+import { bigFromPrecise, bigToPrecise, bigToStrStrict } from '@/helpers/bigMath'
+import { wallet } from '@/api/wallet'
 
 const MetaMaskFormModal = defineComponent({
   name: 'MetaMaskModal',
   components: { ModalBase },
   setup() {
-    const getError = (error: Error): void => {
-      const indTime: number = error.message.indexOf('time')
-      const errorStr: string = error.message.slice(10, indTime - 3)
-      const newError: Error = new Error(`You ${errorStr}`)
-      handleError(newError)
-    }
-
     const needAuth = ref<boolean>(false)
     const account = ref<string | null>(null)
     const totalSupply = ref<string | null>(null)
@@ -111,8 +105,9 @@ const MetaMaskFormModal = defineComponent({
     })
 
     const isLoading = ref<boolean>(false)
-    const onSubmit: DecoratedFn<DialogPayloadHandler> =
-      dialogs.getHandler('onSubmit')
+    const onSubmit: DecoratedFn<DialogPayloadHandler> = dialogs.getHandler(
+      'onSubmit'
+    )
     const onClose: DecoratedFn<DialogPayloadHandler> = preventIf(
       dialogs.getHandler('onClose'),
       isLoading
@@ -122,36 +117,6 @@ const MetaMaskFormModal = defineComponent({
     // contracts
 
     const { web3, contracts } = useWeb3()
-
-    useWeb3({
-      onAccountConnected: async (acc): Promise<void> => {
-        account.value = acc
-        if (account.value) {
-          try {
-            await getBalance() // Uncaught (in promise) TypeError: getBalance is not a function
-          } catch (error) {
-            getError(error)
-          }
-        }
-        isLoading.value = false
-        console.log('onAccountConnected')
-      },
-      onAccountDisconnected: (): void => {
-        account.value = null
-        balance.value = null
-        console.log('onAccountDisconnected')
-      },
-      onProviderDetected: async (): Promise<void> => {
-        try {
-          await isNeedAuth() // Uncaught (in promise) TypeError: isNeedAuth is not a function
-        } catch (error) {
-          getError(error)
-        }
-      },
-      onProviderUndetected: async (): Promise<void> => {
-        console.log('onProviderUndetected')
-      },
-    })
 
     const isNeedAuth = async () => {
       const accounts = await web3.eth.getAccounts() // Uncaught (in promise) TypeError: Cannot read property 'eth' of undefined
@@ -177,23 +142,25 @@ const MetaMaskFormModal = defineComponent({
       if (temp) isLoading.value = false
     }
 
-    const getExchange = async (): Promise<void> => {
+    const exchange = async (): Promise<void> => {
       isLoading.value = true
 
       try {
-        console.log(
-          await contracts.odin.methods
-            .approve(
-              account.value as string,
-              bigToPrecise(
-                form.amount.val(),
-                Number(balanceDecimals.value)
-              ).toString()
-            )
-            .call()
+        const amount = bigToStrStrict(
+          bigToPrecise(form.amount.val(), Number(balanceDecimals.value))
         )
+        await contracts.odin.methods
+          .approve(account.value as string, amount)
+          .send()
+        await contracts.bridge.methods
+          .deposit(
+            wallet.account.address,
+            contracts.odin.options.address,
+            amount
+          )
+          .send()
       } catch (error) {
-        getError(error)
+        handleError(error)
       }
       isLoading.value = false
     }
@@ -202,6 +169,36 @@ const MetaMaskFormModal = defineComponent({
       await web3.eth.requestAccounts()
     }
 
+    useWeb3({
+      onAccountConnected: async (acc): Promise<void> => {
+        account.value = acc
+        if (account.value) {
+          try {
+            await getBalance() // Uncaught (in promise) TypeError: getBalance is not a function
+          } catch (error) {
+            handleError(error)
+          }
+        }
+        isLoading.value = false
+        console.log('onAccountConnected')
+      },
+      onAccountDisconnected: (): void => {
+        account.value = null
+        balance.value = null
+        console.log('onAccountDisconnected')
+      },
+      onProviderDetected: async (): Promise<void> => {
+        try {
+          await isNeedAuth() // Uncaught (in promise) TypeError: isNeedAuth is not a function
+        } catch (error) {
+          handleError(error)
+        }
+      },
+      onProviderUndetected: async (): Promise<void> => {
+        console.log('onProviderUndetected')
+      },
+    })
+
     const submit = async (): Promise<void> => {
       isLoading.value = true
       try {
@@ -209,13 +206,15 @@ const MetaMaskFormModal = defineComponent({
         onSubmit()
         notifySuccess('Submit success!')
       } catch (error) {
-        getError(error)
+        handleError(error)
       }
     }
 
-    onMounted(async (): Promise<void> => {
-      isLoading.value = true
-    })
+    onMounted(
+      async (): Promise<void> => {
+        // isLoading.value = true
+      }
+    )
 
     return {
       form: form.flatten(),
@@ -228,7 +227,7 @@ const MetaMaskFormModal = defineComponent({
       balance,
       balanceBigFromPrecise,
       needAuth,
-      getExchange,
+      exchange,
     }
   },
 })
