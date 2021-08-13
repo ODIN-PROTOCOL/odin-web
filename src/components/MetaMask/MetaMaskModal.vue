@@ -39,7 +39,12 @@
               type="number"
               v-model="form.amount"
             />
-            <p class="app-form__field-lbl" style="padding: 1rem 0; font-size: 1rem; color: gray">form.amount: {{ form.amount }}</p>
+            <p
+              class="app-form__field-lbl"
+              style="padding: 1rem 0; font-size: 1rem; color: gray"
+            >
+              form.amount: {{ form.amount }}
+            </p>
             <p v-if="form.amountErr" class="app-form__field-err">
               {{ form.amountErr }}
             </p>
@@ -64,13 +69,13 @@
 import { defineComponent, onMounted, ref } from 'vue'
 import { preventIf } from '@/helpers/functions'
 import { dialogs, DialogPayloadHandler, DialogHandler } from '@/helpers/dialogs'
-import { DecoratedFn } from '@/shared-types.d.ts'
+import { DecoratedFn } from '@/shared-types'
 import { notifySuccess } from '@/helpers/notifications'
 import { handleError } from '@/helpers/errors'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from '@/components/modals/ModalBase.vue'
 import { useWeb3 } from '@/composables/useWeb3/useWeb3'
-import { bigFromPrecise } from '@/helpers/bigMath'
+import { bigFromPrecise, bigToPrecise } from '@/helpers/bigMath'
 
 const MetaMaskFormModal = defineComponent({
   name: 'MetaMaskModal',
@@ -79,6 +84,7 @@ const MetaMaskFormModal = defineComponent({
     const needAuth = ref<boolean>(false)
     const account = ref<string | null>(null)
     const balance = ref<string | null>()
+    const balanceDecimals = ref<string | null>()
     const balanceBigFromPrecise = ref<string | null>()
 
     const form = useForm({
@@ -102,21 +108,39 @@ const MetaMaskFormModal = defineComponent({
     const { web3, contracts } = useWeb3({
       onAccountConnected: async (acc): Promise<void> => {
         account.value = acc
-        if (account.value) await getBalance()
+        if (account.value) await getBalance() // Uncaught (in promise) TypeError: getBalance is not a function
         console.log('onAccountConnected')
       },
-      onAccountDisconnected: () => {
+      onAccountDisconnected: (): void => {
         account.value = null
         balance.value = null
         console.log('onAccountDisconnected')
       },
+      onProviderDetected: async (): Promise<void> => {
+        await isNeedAuth()
+      },
+      onProviderUndetected: async (): Promise<void> => {
+        console.log('onProviderUndetected')
+      },
     })
+
+    const isNeedAuth = async () => {
+      const accounts = await web3.eth.getAccounts() // Uncaught (in promise) TypeError: Cannot read property 'eth' of undefined
+      needAuth.value = accounts.length <= 0
+    }
 
     const getExchange = async (): Promise<void> => {
       isLoading.value = true
+
       console.log(
         await contracts.odin.methods
-          .approve(account.value as string, form.amount.val())
+          .approve(
+            account.value as string,
+            bigToPrecise(
+              form.amount.val(),
+              Number(balanceDecimals.value)
+            ).toString()
+          )
           .call()
       )
       isLoading.value = false
@@ -126,10 +150,11 @@ const MetaMaskFormModal = defineComponent({
       balance.value = await contracts.odin.methods
         .balanceOf(account.value as string)
         .call()
+      balanceDecimals.value = await contracts.odin.methods.decimals().call()
 
       const temp = bigFromPrecise(
         Number(balance.value),
-        Number(await contracts.odin.methods.decimals().call())
+        Number(balanceDecimals.value)
       ).toString()
 
       balanceBigFromPrecise.value = temp
@@ -155,19 +180,9 @@ const MetaMaskFormModal = defineComponent({
         handleError(newError)
       }
     }
-    isLoading.value = false
 
     onMounted(async (): Promise<void> => {
       isLoading.value = true
-      if ((window as any).ethereum) {
-        const accounts = await web3.eth.getAccounts()
-        if (accounts.length <= 0) {
-          needAuth.value = true
-        } else {
-          needAuth.value = false
-          await getBalance()
-        }
-      }
     })
 
     return {

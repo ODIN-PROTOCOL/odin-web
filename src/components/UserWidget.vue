@@ -1,10 +1,7 @@
 <template>
   <div class="user-widget fx-row gap-5">
     <BalanceButton />
-    <button class="metamask-btn" type="submit" @click.prevent="connectMetaMask">
-      <img src="~@/assets/brand/metamask-fox.svg" alt="metamask_logo" />
-      <span>MetaMask</span>
-    </button>
+    <MetaMask />
     <button class="app-ico-btn mg-l8" type="button" @click="logOutAndLeave()">
       <img src="~@/assets/icons/exit.svg" alt="Log out" />
     </button>
@@ -15,11 +12,11 @@
 import { defineComponent } from 'vue'
 import { useAuthorization } from '@/composables/useAuthorization'
 import BalanceButton from '@/components/BalanceButton.vue'
+import MetaMask from '@/components/MetaMask/MetaMask.vue'
 import router from '@/router'
-import { showMetaMaskFormDialog } from '@/components/modals/MetaMaskModal.vue'
 
 export default defineComponent({
-  components: { BalanceButton },
+  components: { BalanceButton, MetaMask },
   setup() {
     const auth = useAuthorization()
     const logOutAndLeave = () => {
@@ -27,10 +24,7 @@ export default defineComponent({
       router.push({ name: 'Auth' })
     }
 
-    const connectMetaMask = (): void => {
-      showMetaMaskFormDialog()
-    }
-    return { logOutAndLeave, connectMetaMask }
+    return { logOutAndLeave }
   },
 })
 </script>
