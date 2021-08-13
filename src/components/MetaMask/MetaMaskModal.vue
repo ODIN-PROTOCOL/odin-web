@@ -23,42 +23,49 @@
           </div>
         </template>
         <template v-else>
-          <div class="app-form__field" v-if="balance">
-            <label class="app-form__field-lbl"> You Balance </label>
-            <input
-              class="app-form__field-input app-form__field-input--disabled"
-              type="text"
-              v-model="balanceBigFromPrecise"
-              disabled
-            />
-          </div>
-          <div class="app-form__field">
-            <label class="app-form__field-lbl"> Amount </label>
-            <input
-              class="app-form__field-input"
-              type="number"
-              v-model="form.amount"
-            />
-            <p
-              class="app-form__field-lbl"
-              style="padding: 1rem 0; font-size: 1rem; color: gray"
-            >
-              form.amount: {{ form.amount }}
-            </p>
-            <p v-if="form.amountErr" class="app-form__field-err">
-              {{ form.amountErr }}
-            </p>
-          </div>
-          <div class="app-form__footer">
-            <button
-              class="app-btn"
-              type="button"
-              @click="getExchange"
-              :disabled="!form.isValid || isLoading"
-            >
-              Exchange
-            </button>
-          </div>
+          <template v-if="balance">
+            <div class="app-form__field">
+              <label class="app-form__field-lbl"> You Balance </label>
+              <input
+                class="app-form__field-input app-form__field-input--disabled"
+                type="text"
+                v-model="balanceBigFromPrecise"
+                disabled
+              />
+            </div>
+            <div class="app-form__field">
+              <label class="app-form__field-lbl">
+                Max withdrawal amount per time
+              </label>
+              <input
+                class="app-form__field-input app-form__field-input--disabled"
+                type="text"
+                v-model="totalSupply"
+                disabled
+              />
+            </div>
+            <div class="app-form__field">
+              <label class="app-form__field-lbl"> Amount </label>
+              <input
+                class="app-form__field-input"
+                type="number"
+                v-model="form.amount"
+              />
+              <p v-if="form.amountErr" class="app-form__field-err">
+                {{ form.amountErr }}
+              </p>
+            </div>
+            <div class="app-form__footer">
+              <button
+                class="app-btn"
+                type="button"
+                @click="getExchange"
+                :disabled="!form.isValid || isLoading"
+              >
+                Exchange
+              </button>
+            </div>
+          </template>
         </template>
       </form>
     </template>
@@ -81,8 +88,16 @@ const MetaMaskFormModal = defineComponent({
   name: 'MetaMaskModal',
   components: { ModalBase },
   setup() {
+    const getError = (error: Error): void => {
+      const indTime: number = error.message.indexOf('time')
+      const errorStr: string = error.message.slice(10, indTime - 3)
+      const newError: Error = new Error(`You ${errorStr}`)
+      handleError(newError)
+    }
+
     const needAuth = ref<boolean>(false)
     const account = ref<string | null>(null)
+    const totalSupply = ref<string | null>(null)
     const balance = ref<string | null>()
     const balanceDecimals = ref<string | null>()
     const balanceBigFromPrecise = ref<string | null>()
@@ -91,7 +106,7 @@ const MetaMaskFormModal = defineComponent({
       amount: [
         0,
         validators.required,
-        ...validators.num(0, Number(balanceBigFromPrecise)),
+        ...validators.num(0, Number(totalSupply)),
       ],
     })
 
@@ -105,10 +120,20 @@ const MetaMaskFormModal = defineComponent({
 
     // await contracts.odin.methods.approve()
     // contracts
-    const { web3, contracts } = useWeb3({
+
+    const { web3, contracts } = useWeb3()
+
+    useWeb3({
       onAccountConnected: async (acc): Promise<void> => {
         account.value = acc
-        if (account.value) await getBalance() // Uncaught (in promise) TypeError: getBalance is not a function
+        if (account.value) {
+          try {
+            await getBalance() // Uncaught (in promise) TypeError: getBalance is not a function
+          } catch (error) {
+            getError(error)
+          }
+        }
+        isLoading.value = false
         console.log('onAccountConnected')
       },
       onAccountDisconnected: (): void => {
@@ -117,7 +142,11 @@ const MetaMaskFormModal = defineComponent({
         console.log('onAccountDisconnected')
       },
       onProviderDetected: async (): Promise<void> => {
-        await isNeedAuth()
+        try {
+          await isNeedAuth() // Uncaught (in promise) TypeError: isNeedAuth is not a function
+        } catch (error) {
+          getError(error)
+        }
       },
       onProviderUndetected: async (): Promise<void> => {
         console.log('onProviderUndetected')
@@ -128,25 +157,12 @@ const MetaMaskFormModal = defineComponent({
       const accounts = await web3.eth.getAccounts() // Uncaught (in promise) TypeError: Cannot read property 'eth' of undefined
       needAuth.value = accounts.length <= 0
     }
-
-    const getExchange = async (): Promise<void> => {
-      isLoading.value = true
-
-      console.log(
-        await contracts.odin.methods
-          .approve(
-            account.value as string,
-            bigToPrecise(
-              form.amount.val(),
-              Number(balanceDecimals.value)
-            ).toString()
-          )
-          .call()
-      )
-      isLoading.value = false
-    }
-
     const getBalance = async (): Promise<void> => {
+      totalSupply.value = bigFromPrecise(
+        Number(await contracts.odin.methods.totalSupply().call()),
+        Number(balanceDecimals.value)
+      ).toString()
+
       balance.value = await contracts.odin.methods
         .balanceOf(account.value as string)
         .call()
@@ -161,6 +177,27 @@ const MetaMaskFormModal = defineComponent({
       if (temp) isLoading.value = false
     }
 
+    const getExchange = async (): Promise<void> => {
+      isLoading.value = true
+
+      try {
+        console.log(
+          await contracts.odin.methods
+            .approve(
+              account.value as string,
+              bigToPrecise(
+                form.amount.val(),
+                Number(balanceDecimals.value)
+              ).toString()
+            )
+            .call()
+        )
+      } catch (error) {
+        getError(error)
+      }
+      isLoading.value = false
+    }
+
     const connectMetaMask = async () => {
       await web3.eth.requestAccounts()
     }
@@ -172,12 +209,7 @@ const MetaMaskFormModal = defineComponent({
         onSubmit()
         notifySuccess('Submit success!')
       } catch (error) {
-        console.log('error', error)
-        const indTime: number = error.message.indexOf('time')
-        const errorStr: string = error.message.slice(10, indTime - 3)
-        const newError: Error = new Error(`You ${errorStr}`)
-
-        handleError(newError)
+        getError(error)
       }
     }
 
@@ -192,6 +224,7 @@ const MetaMaskFormModal = defineComponent({
       submit,
       connectMetaMask,
       account,
+      totalSupply,
       balance,
       balanceBigFromPrecise,
       needAuth,
