@@ -16,7 +16,7 @@
               class="app-btn"
               type="button"
               @click="connectMetaMask()"
-              :disabled="!form.isValid || isLoading"
+              :disabled="isLoading"
             >
               Connect to MetaMask
             </button>
@@ -40,7 +40,7 @@
               <input
                 class="app-form__field-input app-form__field-input--disabled"
                 type="text"
-                v-model="totalSupply"
+                v-model="maxWithdrawalPerTime"
                 disabled
               />
             </div>
@@ -91,7 +91,7 @@ const MetaMaskFormModal = defineComponent({
   setup() {
     const needAuth = ref<boolean>(false)
     const account = ref<string | null>(null)
-    const totalSupply = ref<string | null>(null)
+    const maxWithdrawalPerTime = ref<string | null>(null)
     const balance = ref<string | null>()
     const balanceDecimals = ref<string | null>()
     const balanceBigFromPrecise = ref<string | null>()
@@ -100,7 +100,7 @@ const MetaMaskFormModal = defineComponent({
       amount: [
         0,
         validators.required,
-        ...validators.num(0, Number(totalSupply)),
+        ...validators.num(0, Number(maxWithdrawalPerTime)),
       ],
     })
 
@@ -123,7 +123,7 @@ const MetaMaskFormModal = defineComponent({
       needAuth.value = accounts.length <= 0
     }
     const getBalance = async (): Promise<void> => {
-      totalSupply.value = bigFromPrecise(
+      maxWithdrawalPerTime.value = bigFromPrecise(
         Number(await contracts.odin.methods.totalSupply().call()),
         Number(balanceDecimals.value)
       ).toString()
@@ -223,7 +223,7 @@ const MetaMaskFormModal = defineComponent({
       submit,
       connectMetaMask,
       account,
-      totalSupply,
+      maxWithdrawalPerTime,
       balance,
       balanceBigFromPrecise,
       needAuth,
