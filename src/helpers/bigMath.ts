@@ -73,7 +73,7 @@ function bigPower(a: NumLike, b: NumLike, cfg?: BigCfg): BigNumber {
   return _bn(a, cfg).pow(_bn(b))
 }
 
-const TO_FRACTION_PRECISION = bigPower(10, 29)
+const TO_FRACTION_PRECISION = bigPower(10, 18)
 export function bigToPrecise(num: NumLike, decimals?: number): BigNumber {
   const factor = decimals ? bigPower(10, decimals) : TO_FRACTION_PRECISION
   return bigMultiply(num, factor)
