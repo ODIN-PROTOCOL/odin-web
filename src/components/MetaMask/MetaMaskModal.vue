@@ -148,7 +148,6 @@ const MetaMaskFormModal = defineComponent({
 
     const exchange = async (): Promise<void> => {
       isLoading.value = true
-
       try {
         const amount = bigToStrStrict(
           bigToPrecise(form.amount.val(), Number(balanceDecimals.value))
