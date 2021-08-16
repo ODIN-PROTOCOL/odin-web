@@ -33,14 +33,14 @@
                 disabled
               />
             </div>
-            <div class="app-form__field">
+            <div class="app-form__field" v-if="maxWithdrawalPerTime">
               <label class="app-form__field-lbl">
-                Max withdrawal amount per time
+                Max withdrawal amount per time {{ maxWithdrawalPerTime.denom }}
               </label>
               <input
                 class="app-form__field-input app-form__field-input--disabled"
                 type="text"
-                v-model="maxWithdrawalPerTime"
+                :value="maxWithdrawalPerTime.amount"
                 disabled
               />
             </div>
@@ -73,7 +73,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue'
+import { defineComponent, ref } from 'vue'
 import { preventIf } from '@/helpers/functions'
 import { dialogs, DialogPayloadHandler, DialogHandler } from '@/helpers/dialogs'
 import { DecoratedFn } from '@/shared-types'
@@ -88,19 +88,28 @@ import { wallet } from '@/api/wallet'
 const MetaMaskFormModal = defineComponent({
   name: 'MetaMaskModal',
   components: { ModalBase },
-  setup() {
+  props: {
+    maxWithdrawalPerTime: { type: Object, required: true },
+    odinToLokiRate: { type: Object, required: true },
+  },
+  setup(props) {
     const needAuth = ref<boolean>(false)
     const account = ref<string | null>(null)
-    const maxWithdrawalPerTime = ref<string | null>(null)
     const balance = ref<string | null>()
     const balanceDecimals = ref<string | null>()
     const balanceBigFromPrecise = ref<string | null>()
+
+    // TODO: this
+    // Add the validation for the amount to exchange.
+    // actual amount = amount_to_exchange - _getBurnFee() / 10000  * amount_to_exchange;
+    // converted_amount =  actual_amount / 18 (it is Odin token precision) * rate (odin/loki);
+    // max_withdrawal_amount (mint/params) >= converted_amount > 0
 
     const form = useForm({
       amount: [
         0,
         validators.required,
-        ...validators.num(0, Number(maxWithdrawalPerTime)),
+        ...validators.num(0, Number(props.maxWithdrawalPerTime.amount)),
       ],
     })
 
@@ -123,11 +132,6 @@ const MetaMaskFormModal = defineComponent({
       needAuth.value = accounts.length <= 0
     }
     const getBalance = async (): Promise<void> => {
-      maxWithdrawalPerTime.value = bigFromPrecise(
-        Number(await contracts.odin.methods.totalSupply().call()),
-        Number(balanceDecimals.value)
-      ).toString()
-
       balance.value = await contracts.odin.methods
         .balanceOf(account.value as string)
         .call()
@@ -210,12 +214,6 @@ const MetaMaskFormModal = defineComponent({
       }
     }
 
-    onMounted(
-      async (): Promise<void> => {
-        // isLoading.value = true
-      }
-    )
-
     return {
       form: form.flatten(),
       isLoading,
@@ -223,7 +221,6 @@ const MetaMaskFormModal = defineComponent({
       submit,
       connectMetaMask,
       account,
-      maxWithdrawalPerTime,
       balance,
       balanceBigFromPrecise,
       needAuth,
@@ -233,11 +230,14 @@ const MetaMaskFormModal = defineComponent({
 })
 
 export default MetaMaskFormModal
-export function showMetaMaskFormDialog(callbacks?: {
-  onSubmit?: DialogHandler
-  onClose?: DialogHandler
-}): Promise<unknown | null> {
-  return dialogs.show(MetaMaskFormModal, callbacks)
+export function showMetaMaskFormDialog(
+  callbacks?: {
+    onSubmit?: DialogHandler
+    onClose?: DialogHandler
+  },
+  props?: any
+): Promise<unknown | null> {
+  return dialogs.show(MetaMaskFormModal, callbacks, { props })
 }
 </script>
 
