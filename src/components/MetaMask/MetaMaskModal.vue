@@ -155,6 +155,8 @@ const MetaMaskFormModal = defineComponent({
         await contracts.odin.methods
           .approve(account.value as string, amount)
           .send()
+          .on('receipt', (_) => console.log(_))
+          .on('error', (err) => handleError(err))
         await contracts.bridge.methods
           .deposit(
             wallet.account.address,
@@ -162,6 +164,8 @@ const MetaMaskFormModal = defineComponent({
             amount
           )
           .send()
+          .on('receipt', (_) => console.log('deposit receipt', _))
+          .on('error', (err) => handleError(err))
       } catch (error) {
         handleError(error)
       }
