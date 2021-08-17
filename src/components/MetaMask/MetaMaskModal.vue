@@ -82,8 +82,9 @@ import { handleError } from '@/helpers/errors'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from '@/components/modals/ModalBase.vue'
 import { useWeb3 } from '@/composables/useWeb3/useWeb3'
-import { bigFromPrecise, bigToPrecise, bigToStrStrict } from '@/helpers/bigMath'
+import { bigFromPrecise, bigMath } from '@/helpers/bigMath'
 import { wallet } from '@/api/wallet'
+import BigNumber from 'bignumber.js'
 
 const MetaMaskFormModal = defineComponent({
   name: 'MetaMaskModal',
@@ -99,33 +100,48 @@ const MetaMaskFormModal = defineComponent({
     const balanceDecimals = ref<string | null>()
     const balanceBigFromPrecise = ref<string | null>()
 
-    // TODO: this
-    // Add the validation for the amount to exchange.
-    // actual amount = amount_to_exchange - _getBurnFee() / 10000  * amount_to_exchange;
-    // converted_amount =  actual_amount / 18 (it is Odin token precision) * rate (odin/loki);
-    // max_withdrawal_amount (mint/params) >= converted_amount > 0
+    const { web3, contracts } = useWeb3()
+
+    const max_withdrawal_amount = async () => {
+      const c_a = await converted_amount()
+      return bigMath.compare(c_a, props.maxWithdrawalPerTime.amount)
+    }
+
+    const actual_amount = async (): Promise<BigNumber> => {
+      return bigMath.subtract(
+        Number(form.amount.val()),
+        bigMath.multiply(
+          bigMath.divide(
+            await contracts.odin.methods._getBurnFee().call(),
+            10000
+          ),
+          Number(form.amount.val())
+        )
+      )
+    }
+    const converted_amount = async () => {
+      return bigMath.multiply(
+        bigMath.toPrecise(await actual_amount()),
+        props.odinToLokiRate.rate
+      )
+    }
 
     const form = useForm({
       amount: [
         0,
         validators.required,
-        ...validators.num(0, Number(props.maxWithdrawalPerTime.amount)),
+        ...validators.bigMathCompare(0, Number(props.maxWithdrawalPerTime.amount)),
+        // ...validators.num(0, Number(props.maxWithdrawalPerTime.amount)),
       ],
     })
 
     const isLoading = ref<boolean>(false)
-    const onSubmit: DecoratedFn<DialogPayloadHandler> = dialogs.getHandler(
-      'onSubmit'
-    )
+    const onSubmit: DecoratedFn<DialogPayloadHandler> =
+      dialogs.getHandler('onSubmit')
     const onClose: DecoratedFn<DialogPayloadHandler> = preventIf(
       dialogs.getHandler('onClose'),
       isLoading
     )
-
-    // await contracts.odin.methods.approve()
-    // contracts
-
-    const { web3, contracts } = useWeb3()
 
     const isNeedAuth = async () => {
       const accounts = await web3.eth.getAccounts() // Uncaught (in promise) TypeError: Cannot read property 'eth' of undefined
@@ -146,30 +162,44 @@ const MetaMaskFormModal = defineComponent({
       if (temp) isLoading.value = false
     }
 
-    const exchange = async (): Promise<void> => {
-      isLoading.value = true
-      try {
-        const amount = bigToStrStrict(
-          bigToPrecise(form.amount.val(), Number(balanceDecimals.value))
-        )
-        await contracts.odin.methods
+    const sendApprove = (amount: string): Promise<any> => {
+      return new Promise((resolve, reject) => {
+        contracts.odin.methods
           .approve(account.value as string, amount)
           .send()
-          .on('receipt', (_) => console.log(_))
-          .on('error', (err) => handleError(err))
-        await contracts.bridge.methods
+          .on('receipt', (_) => resolve(_))
+          .on('error', (err) => reject(err))
+      })
+    }
+    const sendDeposit = (amount: string): Promise<any> => {
+      return new Promise((resolve, reject) => {
+        contracts.bridge.methods
           .deposit(
             wallet.account.address,
             contracts.odin.options.address,
             amount
           )
           .send()
-          .on('receipt', (_) => console.log('deposit receipt', _))
-          .on('error', (err) => handleError(err))
+          .on('receipt', (event) => resolve(event))
+          .on('error', (err) => reject(err))
+      })
+    }
+
+    const exchange = async (): Promise<void> => {
+      isLoading.value = true
+
+      console.log('actual_amount', await actual_amount())
+      console.log('converted_amount', await converted_amount())
+      console.log('max_withdrawal_amount', await max_withdrawal_amount())
+
+      isLoading.value = false
+      try {
+        // TODO: Argument of type 'BigNumber' is not assignable to parameter of type 'string'.
+        await sendApprove(await actual_amount())
+        await sendDeposit(await actual_amount())
       } catch (error) {
         handleError(error)
       }
-      isLoading.value = false
     }
 
     const connectMetaMask = async () => {

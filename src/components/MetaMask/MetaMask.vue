@@ -36,12 +36,10 @@ export default defineComponent({
       maxWithdrawalPerTime.value = res?.params?.maxWithdrawalPerTime[0]
     }
 
-    onMounted(
-      async (): Promise<void> => {
-        await getMaxWithdrawalPerTime()
-        await getOdinToLokiRate()
-      }
-    )
+    onMounted(async (): Promise<void> => {
+      await getMaxWithdrawalPerTime()
+      await getOdinToLokiRate()
+    })
 
     return { connectMetaMask }
   },

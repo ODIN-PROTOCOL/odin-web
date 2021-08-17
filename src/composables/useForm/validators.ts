@@ -1,3 +1,7 @@
+// import { bigMath } from '@/helpers/bigMath'
+
+import { bigMath } from '@/helpers/bigMath'
+
 export type FormFieldValidator = (...args: unknown[]) => string | null
 export type FormFieldValidatorResult = ReturnType<FormFieldValidator>
 
@@ -89,4 +93,15 @@ export const erc20Address: FormFieldValidator = (val: unknown) => {
     return 'Invalid address'
   }
   return null
+}
+
+// bigMath
+export function bigMathCompare(maxWithdrawalPerTime: number) {
+  return (val: unknown): FormFieldValidatorResult => {
+    const num = Number(val)
+    if (!Number.isNaN(num) && num > maxWithdrawalPerTime) {
+      return `The value should be lower than ${maxWithdrawalPerTime}`
+    }
+    return null
+  }
 }

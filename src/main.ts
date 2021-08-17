@@ -45,7 +45,8 @@ async function _main() {
   app.config.globalProperties.$fDate = formatDate
   app.config.globalProperties.$tRequestStatus = translateRequestStatus
   app.config.globalProperties.$tProposalStatus = translateProposalStatus
-  app.config.globalProperties.$tProposalStatusDated = translateProposalStatusDated
+  app.config.globalProperties.$tProposalStatusDated =
+    translateProposalStatusDated
   app.config.globalProperties.$tTally = translateTally
   app.config.globalProperties.$tTallyShort = translateTallyShort
   app.config.globalProperties.$tVote = translateVote
