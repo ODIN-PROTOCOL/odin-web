@@ -73,8 +73,8 @@ function bigPower(a: NumLike, b: NumLike, cfg?: BigCfg): BigNumber {
   return _bn(a, cfg).pow(_bn(b))
 }
 
-function bigCompare(a: NumLike, b: NumLike): number {
-  return _bn(a).comparedTo(_bn(b))
+function bigCompare(a: BigNumber, b: number): number {
+  return a.comparedTo(b)
 }
 
 const TO_FRACTION_PRECISION = bigPower(10, 18)

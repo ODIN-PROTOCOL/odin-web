@@ -122,6 +122,18 @@ export function bigMathCompare(
       // @ts-ignore
       bigMath._bn(maxWithdrawalPerTime)
     )
+    console.table(
+      'maxWithdrawalPerTime:',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      maxWithdrawalPerTime
+    )
+    console.table(
+      'maxWithdrawalPerTime toPrecise:',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      bigMath.toPrecise(maxWithdrawalPerTime)
+    )
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     console.table('odinToLokiRate bigNumber:', bigMath._bn(odinToLokiRate))
@@ -139,8 +151,15 @@ export function bigMathCompare(
     )
     console.groupEnd()
 
+    // compare(n: number | string | BigNumber , base : number)
+    // returns:
+    // 1:       If the value of this BigNumber is greater than the value of n
+    // -1:      If the value of this BigNumber is less than the value of n
+    // 0:       If this BigNumber and n have the same value
+    // null:    If the value of either this BigNumber or n is NaN
+
     if (
-      bigMath.compare(bigMath._bn(maxWithdrawalPerTime), converted_amount) === 1
+      bigMath.compare(converted_amount, maxWithdrawalPerTime as number) === 1
     ) {
       return `The value should be lower than ${maxWithdrawalPerTime}`
     }
