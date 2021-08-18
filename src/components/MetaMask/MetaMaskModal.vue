@@ -115,19 +115,10 @@ const MetaMaskFormModal = defineComponent({
     const balance = ref<string | null>()
     const balanceDecimals = ref<string | null>()
     const balanceBigFromPrecise = ref<string | null>()
-    const converted_amount = ref<string | null>('0')
+    const converted_amount = ref<string>('0')
+    const actual_amount = ref<string>('0')
 
     const { web3, contracts } = useWeb3()
-
-    const actual_amount = async (): Promise<BigNumber> => {
-      return bigMath.subtract(
-        Number(form.amount.val()),
-        bigMath.multiply(
-          bigMath.divide(Number(props.burnFee), 10000),
-          Number(form.amount.val())
-        )
-      )
-    }
 
     const form = useForm({
       amount: [
@@ -141,17 +132,33 @@ const MetaMaskFormModal = defineComponent({
       ],
     })
 
-    const changeConvertedAmount = async () => {
-      const actual_temp = await actual_amount()
+    const changeAmount = async () => {
+      const actual_temp = bigMath.subtract(
+        Number(form.amount.val()),
+        bigMath.multiply(
+          bigMath.divide(Number(props.burnFee), 10000),
+          Number(form.amount.val())
+        )
+      )
+
+      actual_amount.value = bigMath.toStrStrict(
+        bigMath.subtract(
+          Number(form.amount.val()),
+          bigMath.multiply(
+            bigMath.divide(Number(props.burnFee), 10000),
+            Number(form.amount.val())
+          )
+        )
+      )
+
       converted_amount.value = bigMath.toStrStrict(
         bigMath.multiply(
           bigMath.toPrecise(actual_temp),
           bigMath._bn(props.odinToLokiRate.rate)
         )
       )
-      console.log(converted_amount.value)
     }
-    watch(() => Number(form.amount.val()), changeConvertedAmount)
+    watch(() => Number(form.amount.val()), changeAmount)
 
     const isLoading = ref<boolean>(false)
     const onSubmit: DecoratedFn<DialogPayloadHandler> =
@@ -180,24 +187,22 @@ const MetaMaskFormModal = defineComponent({
       if (temp) isLoading.value = false
     }
 
-    const sendApprove = async (amount: AmountFn): Promise<any> => {
-      const expectedAmount = await amount()
+    const sendApprove = async (amount: string): Promise<any> => {
       return new Promise((resolve, reject) => {
         contracts.odin.methods
-          .approve(account.value as string, expectedAmount.toString())
+          .approve(account.value as string, amount.toString())
           .send()
           .on('receipt', (_) => resolve(_))
           .on('error', (err) => reject(err))
       })
     }
-    const sendDeposit = async (amount: AmountFn): Promise<any> => {
-      const expectedAmount = await amount()
+    const sendDeposit = async (amount: string): Promise<any> => {
       return new Promise((resolve, reject) => {
         contracts.bridge.methods
           .deposit(
             wallet.account.address,
             contracts.odin.options.address,
-            expectedAmount.toString()
+            amount.toString()
           )
           .send()
           .on('receipt', (event) => resolve(event))
@@ -207,8 +212,8 @@ const MetaMaskFormModal = defineComponent({
     const exchange = async (): Promise<void> => {
       isLoading.value = true
       try {
-        await sendApprove(actual_amount)
-        await sendDeposit(actual_amount)
+        await sendApprove(actual_amount.value)
+        await sendDeposit(actual_amount.value)
       } catch (error) {
         handleError(error)
       } finally {
@@ -232,7 +237,6 @@ const MetaMaskFormModal = defineComponent({
         }
         isLoading.value = false
         console.log('onAccountConnected')
-        console.log('converted_amount', converted_amount.value)
       },
       onAccountDisconnected: (): void => {
         account.value = null

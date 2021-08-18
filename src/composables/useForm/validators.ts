@@ -110,7 +110,6 @@ export function bigMathCompare(
     )
 
     // Monolith of unconsciousness
-
     console.group('validator')
     console.log(
       '%c bigMathCompare ',
@@ -155,7 +154,6 @@ export function bigMathCompare(
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     console.table('converted_amount:', converted_amount)
-
     console.table(
       'converted_amount toStrStrict:',
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
