@@ -109,62 +109,31 @@ export function bigMathCompare(
       bigMath._bn(odinToLokiRate)
     )
 
-    // Monolith of unconsciousness
     console.group('validator')
     console.log(
       '%c bigMathCompare ',
       'padding: 0.3rem;color: white; background-color: #2274A5'
     )
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    console.table('BurnFee:', burnFee)
     console.table(
-      'maxWithdrawalPerTime bigNumber:',
+      'converted_amount toStrStrict',
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      bigMath._bn(maxWithdrawalPerTime)
+      bigMath.toStrStrict(bigMath._bn(converted_amount)) as number
     )
     console.table(
-      'maxWithdrawalPerTime:',
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      maxWithdrawalPerTime
-    )
-    console.table(
-      'maxWithdrawalPerTime toPrecise:',
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      bigMath.toPrecise(maxWithdrawalPerTime)
-    )
-    console.table(
-      'maxWithdrawalPerTime bigNumber toStrStrict:',
+      'bigMath.toStrStrict(bigMath._bn(maxWithdrawalPerTime))',
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       bigMath.toStrStrict(bigMath._bn(maxWithdrawalPerTime))
-    )
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    console.table('odinToLokiRate bigNumber:', bigMath._bn(odinToLokiRate))
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    console.table('input val', val)
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    console.table('actual_amount:', actual_amount)
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    console.table('converted_amount:', converted_amount)
-    console.table(
-      'converted_amount toStrStrict:',
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      bigMath.toStrStrict(converted_amount)
     )
     console.table(
       'bigMath.compare:',
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      bigMath.compare(bigMath._bn(maxWithdrawalPerTime), converted_amount)
+      bigMath.compare(
+        converted_amount,
+        Number(bigMath.toStrStrict(bigMath._bn(maxWithdrawalPerTime))) as number
+      )
     )
     console.groupEnd()
 
