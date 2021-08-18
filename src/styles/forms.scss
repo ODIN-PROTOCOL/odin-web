@@ -84,3 +84,14 @@
     margin-inline-start: 0.8rem;
   }
 }
+
+.metamask-form {
+  margin-top: 3rem;
+  &__field{
+    background: red;
+    &--centered {
+      display: flex;
+      justify-content: center;
+    }
+  }
+}

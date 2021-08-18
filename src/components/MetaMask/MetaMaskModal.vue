@@ -11,7 +11,7 @@
         @submit.prevent
       >
         <template v-if="!account || needAuth.value">
-          <div class="app-form__field">
+          <div class="app-form__field metamask-form__field--centered">
             <button
               class="app-btn"
               type="button"
@@ -130,7 +130,7 @@ const MetaMaskFormModal = defineComponent({
       amount: [
         0,
         validators.required,
-        ...validators.bigMathCompare(0, Number(props.maxWithdrawalPerTime.amount)),
+        // ...validators.bigMathCompare(0, Number(props.maxWithdrawalPerTime.amount)),
         // ...validators.num(0, Number(props.maxWithdrawalPerTime.amount)),
       ],
     })
@@ -188,15 +188,15 @@ const MetaMaskFormModal = defineComponent({
     const exchange = async (): Promise<void> => {
       isLoading.value = true
 
-      console.log('actual_amount', await actual_amount())
-      console.log('converted_amount', await converted_amount())
-      console.log('max_withdrawal_amount', await max_withdrawal_amount())
+      console.log('actual_amount', await actual_amount().toString())
+      console.log('converted_amount', await converted_amount().toString())
+      console.log('max_withdrawal_amount', await max_withdrawal_amount().toString())
 
       isLoading.value = false
       try {
         // TODO: Argument of type 'BigNumber' is not assignable to parameter of type 'string'.
-        await sendApprove(await actual_amount())
-        await sendDeposit(await actual_amount())
+        await sendApprove(await actual_amount().toString())
+        await sendDeposit(await actual_amount().toString())
       } catch (error) {
         handleError(error)
       }
@@ -273,9 +273,3 @@ export function showMetaMaskFormDialog(
   return dialogs.show(MetaMaskFormModal, callbacks, { props })
 }
 </script>
-
-<style lang="scss">
-.metamask-form {
-  margin-top: 3rem;
-}
-</style>
