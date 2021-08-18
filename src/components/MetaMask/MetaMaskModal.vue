@@ -85,6 +85,12 @@ import { useWeb3 } from '@/composables/useWeb3/useWeb3'
 import { bigFromPrecise, bigMath } from '@/helpers/bigMath'
 import { wallet } from '@/api/wallet'
 import BigNumber from 'bignumber.js'
+import { QueryRateResponse } from '@provider/codec/coinswap/query'
+import { Coin } from '@provider/codec/cosmos/base/v1beta1/coin'
+
+type AmountFn = {
+  (): Promise<BigNumber>
+}
 
 const MetaMaskFormModal = defineComponent({
   name: 'MetaMaskModal',
@@ -92,6 +98,7 @@ const MetaMaskFormModal = defineComponent({
   props: {
     maxWithdrawalPerTime: { type: Object, required: true },
     odinToLokiRate: { type: Object, required: true },
+    burnFee: { required: true },
   },
   setup(props) {
     const needAuth = ref<boolean>(false)
@@ -102,36 +109,24 @@ const MetaMaskFormModal = defineComponent({
 
     const { web3, contracts } = useWeb3()
 
-    const max_withdrawal_amount = async () => {
-      const c_a = await converted_amount()
-      return bigMath.compare(c_a, props.maxWithdrawalPerTime.amount)
-    }
-
     const actual_amount = async (): Promise<BigNumber> => {
       return bigMath.subtract(
         Number(form.amount.val()),
         bigMath.multiply(
-          bigMath.divide(
-            await contracts.odin.methods._getBurnFee().call(),
-            10000
-          ),
+          bigMath.divide(Number(props.burnFee), 10000),
           Number(form.amount.val())
         )
       )
     }
-    const converted_amount = async () => {
-      return bigMath.multiply(
-        bigMath.toPrecise(await actual_amount()),
-        props.odinToLokiRate.rate
-      )
-    }
-
     const form = useForm({
       amount: [
         0,
         validators.required,
-        // ...validators.bigMathCompare(0, Number(props.maxWithdrawalPerTime.amount)),
-        // ...validators.num(0, Number(props.maxWithdrawalPerTime.amount)),
+        validators.bigMathCompare(
+          Number(props.burnFee),
+          props.maxWithdrawalPerTime.amount,
+          props.odinToLokiRate.rate
+        ),
       ],
     })
 
@@ -144,7 +139,7 @@ const MetaMaskFormModal = defineComponent({
     )
 
     const isNeedAuth = async () => {
-      const accounts = await web3.eth.getAccounts() // Uncaught (in promise) TypeError: Cannot read property 'eth' of undefined
+      const accounts = await web3.eth.getAccounts()
       needAuth.value = accounts.length <= 0
     }
     const getBalance = async (): Promise<void> => {
@@ -162,43 +157,39 @@ const MetaMaskFormModal = defineComponent({
       if (temp) isLoading.value = false
     }
 
-    const sendApprove = (amount: string): Promise<any> => {
+    const sendApprove = async (amount: AmountFn): Promise<any> => {
+      const expectedAmount = await amount()
       return new Promise((resolve, reject) => {
         contracts.odin.methods
-          .approve(account.value as string, amount)
+          .approve(account.value as string, expectedAmount.toString())
           .send()
           .on('receipt', (_) => resolve(_))
           .on('error', (err) => reject(err))
       })
     }
-    const sendDeposit = (amount: string): Promise<any> => {
+    const sendDeposit = async (amount: AmountFn): Promise<any> => {
+      const expectedAmount = await amount()
       return new Promise((resolve, reject) => {
         contracts.bridge.methods
           .deposit(
             wallet.account.address,
             contracts.odin.options.address,
-            amount
+            expectedAmount.toString()
           )
           .send()
           .on('receipt', (event) => resolve(event))
           .on('error', (err) => reject(err))
       })
     }
-
     const exchange = async (): Promise<void> => {
       isLoading.value = true
-
-      console.log('actual_amount', await actual_amount().toString())
-      console.log('converted_amount', await converted_amount().toString())
-      console.log('max_withdrawal_amount', await max_withdrawal_amount().toString())
-
-      isLoading.value = false
       try {
-        // TODO: Argument of type 'BigNumber' is not assignable to parameter of type 'string'.
-        await sendApprove(await actual_amount().toString())
-        await sendDeposit(await actual_amount().toString())
+        await sendApprove(actual_amount)
+        await sendDeposit(actual_amount)
       } catch (error) {
         handleError(error)
+      } finally {
+        isLoading.value = false
       }
     }
 
@@ -211,7 +202,7 @@ const MetaMaskFormModal = defineComponent({
         account.value = acc
         if (account.value) {
           try {
-            await getBalance() // Uncaught (in promise) TypeError: getBalance is not a function
+            await getBalance()
           } catch (error) {
             handleError(error)
           }
@@ -226,7 +217,7 @@ const MetaMaskFormModal = defineComponent({
       },
       onProviderDetected: async (): Promise<void> => {
         try {
-          await isNeedAuth() // Uncaught (in promise) TypeError: isNeedAuth is not a function
+          await isNeedAuth()
         } catch (error) {
           handleError(error)
         }
@@ -268,7 +259,11 @@ export function showMetaMaskFormDialog(
     onSubmit?: DialogHandler
     onClose?: DialogHandler
   },
-  props?: any
+  props?: {
+    maxWithdrawalPerTime: Coin
+    odinToLokiRate: QueryRateResponse
+    burnFee: number | string | undefined | null
+  }
 ): Promise<unknown | null> {
   return dialogs.show(MetaMaskFormModal, callbacks, { props })
 }

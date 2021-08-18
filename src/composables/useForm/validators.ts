@@ -1,6 +1,5 @@
-// import { bigMath } from '@/helpers/bigMath'
-
 import { bigMath } from '@/helpers/bigMath'
+import { NumLike } from '@/helpers/casts'
 
 export type FormFieldValidator = (...args: unknown[]) => string | null
 export type FormFieldValidatorResult = ReturnType<FormFieldValidator>
@@ -95,11 +94,54 @@ export const erc20Address: FormFieldValidator = (val: unknown) => {
   return null
 }
 
-// bigMath
-export function bigMathCompare(maxWithdrawalPerTime: number) {
+export function bigMathCompare(
+  BurnFee: NumLike,
+  maxWithdrawalPerTime: NumLike,
+  odinToLokiRate: NumLike
+): FormFieldValidator {
   return (val: unknown): FormFieldValidatorResult => {
-    const num = Number(val)
-    if (!Number.isNaN(num) && num > maxWithdrawalPerTime) {
+    const actual_amount = bigMath.subtract(
+      Number(val as number),
+      bigMath.multiply(bigMath.divide(BurnFee, 10000), Number(val as number))
+    )
+    const converted_amount = bigMath.multiply(
+      bigMath.toPrecise(actual_amount),
+      bigMath._bn(odinToLokiRate)
+    )
+    console.group('validator')
+    console.log(
+      '%c bigMathCompare ',
+      'padding: 0.3rem;color: white; background-color: #2274A5'
+    )
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    console.table('BurnFee:', BurnFee)
+    console.table(
+      'maxWithdrawalPerTime bigNumber:',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      bigMath._bn(maxWithdrawalPerTime)
+    )
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    console.table('odinToLokiRate bigNumber:', bigMath._bn(odinToLokiRate))
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    console.table('actual_amount:', actual_amount)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    console.table('converted_amount:', converted_amount)
+    console.table(
+      'bigMath.compare:',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      bigMath.compare(bigMath._bn(maxWithdrawalPerTime), converted_amount)
+    )
+    console.groupEnd()
+
+    if (
+      bigMath.compare(bigMath._bn(maxWithdrawalPerTime), converted_amount) === 1
+    ) {
       return `The value should be lower than ${maxWithdrawalPerTime}`
     }
     return null
