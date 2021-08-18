@@ -8,7 +8,6 @@
       <form
         class="app-form load-fog metamask-form"
         :class="{ 'load-fog_show': isLoading }"
-        @submit.prevent
       >
         <template v-if="!account || needAuth.value">
           <div class="app-form__field metamask-form__field--centered">
@@ -86,20 +85,15 @@ import { defineComponent, ref, watch } from 'vue'
 import { preventIf } from '@/helpers/functions'
 import { dialogs, DialogPayloadHandler, DialogHandler } from '@/helpers/dialogs'
 import { DecoratedFn } from '@/shared-types'
-import { notifySuccess } from '@/helpers/notifications'
+import { TransactionReceipt } from 'web3-core/types'
 import { handleError } from '@/helpers/errors'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from '@/components/modals/ModalBase.vue'
 import { useWeb3 } from '@/composables/useWeb3/useWeb3'
 import { bigFromPrecise, bigMath } from '@/helpers/bigMath'
 import { wallet } from '@/api/wallet'
-import BigNumber from 'bignumber.js'
 import { QueryRateResponse } from '@provider/codec/coinswap/query'
 import { Coin } from '@provider/codec/cosmos/base/v1beta1/coin'
-
-type AmountFn = {
-  (): Promise<BigNumber>
-}
 
 const MetaMaskFormModal = defineComponent({
   name: 'MetaMaskModal',
@@ -187,7 +181,9 @@ const MetaMaskFormModal = defineComponent({
       if (temp) isLoading.value = false
     }
 
-    const sendApprove = async (amount: string): Promise<any> => {
+    const sendApprove = async (
+      amount: string
+    ): Promise<TransactionReceipt | void> => {
       return new Promise((resolve, reject) => {
         contracts.odin.methods
           .approve(account.value as string, amount.toString())
@@ -196,7 +192,9 @@ const MetaMaskFormModal = defineComponent({
           .on('error', (err) => reject(err))
       })
     }
-    const sendDeposit = async (amount: string): Promise<any> => {
+    const sendDeposit = async (
+      amount: string
+    ): Promise<TransactionReceipt | void> => {
       return new Promise((resolve, reject) => {
         contracts.bridge.methods
           .deposit(
@@ -221,12 +219,12 @@ const MetaMaskFormModal = defineComponent({
       }
     }
 
-    const connectMetaMask = async () => {
+    const connectMetaMask = async (): Promise<void> => {
       await web3.eth.requestAccounts()
     }
 
     useWeb3({
-      onAccountConnected: async (acc): Promise<void> => {
+      onAccountConnected: async (acc: string): Promise<void> => {
         account.value = acc
         if (account.value) {
           try {
@@ -255,22 +253,11 @@ const MetaMaskFormModal = defineComponent({
       },
     })
 
-    const submit = async (): Promise<void> => {
-      isLoading.value = true
-      try {
-        console.log('submit')
-        onSubmit()
-        notifySuccess('Submit success!')
-      } catch (error) {
-        handleError(error)
-      }
-    }
 
     return {
       form: form.flatten(),
       isLoading,
       onClose,
-      submit,
       connectMetaMask,
       account,
       balance,

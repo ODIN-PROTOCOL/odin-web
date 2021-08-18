@@ -38,7 +38,8 @@ export default defineComponent({
   border-radius: 1.2rem;
   box-shadow: 0 0 1rem 1rem transparent;
   border: 1px solid var(--clr__action);
-  transition: box-shadow 0.4s ease, color 0.4s ease, background-color 0.4s ease, opacity 0.4s ease;
+  transition: box-shadow 0.4s ease, color 0.4s ease, background-color 0.4s ease,
+    opacity 0.4s ease;
   &:disabled {
     opacity: 0.1;
   }

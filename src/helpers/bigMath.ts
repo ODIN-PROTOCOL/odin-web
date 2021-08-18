@@ -107,6 +107,7 @@ export const bigMath = {
   toPrecise: bigToPrecise,
   compare: bigCompare,
   fromPrecise: bigFromPrecise,
+  pow: bigPower,
   toStrStrict: bigToStrStrict,
   zero: _bn(0),
   _bn,

@@ -1,5 +1,10 @@
 <template>
-  <button :disabled="!burnFee" class="metamask-btn" type="submit" @click.prevent="connectMetaMask">
+  <button
+    :disabled="!burnFee"
+    class="metamask-btn"
+    type="submit"
+    @click.prevent="connectMetaMask"
+  >
     <img src="~@/assets/brand/metamask-fox.svg" alt="metamask_logo" />
     <span>MetaMask</span>
   </button>

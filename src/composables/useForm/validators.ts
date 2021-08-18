@@ -102,7 +102,13 @@ export function bigMathCompare(
   return (val: unknown): FormFieldValidatorResult => {
     const actual_amount = bigMath.subtract(
       Number(val as number),
-      bigMath.multiply(bigMath.divide(burnFee, 10000), Number(val as number))
+      bigMath.multiply(
+        // TODO: decimals
+        // {decimals: Number(bigMath.toStrStrict(bigMath.pow(10, 18))),}
+        // Error: [BigNumber Error] DECIMAL_PLACES out of range: 1000000000000000000
+        bigMath.divide(burnFee, 10000),
+        Number(val as number)
+      )
     )
     const converted_amount = bigMath.multiply(
       bigMath.toPrecise(actual_amount),
@@ -115,10 +121,28 @@ export function bigMathCompare(
       'padding: 0.3rem;color: white; background-color: #2274A5'
     )
     console.table(
+      'input value',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      val as number
+    )
+    console.table(
+      'input bigMath.toStrStrict(bigMath._bn(val))',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      bigMath.toStrStrict(bigMath._bn(val)) as number
+    )
+    console.table(
+      'bigMath.divide(burnFee, 10000)',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      bigMath.divide(burnFee, 10000, { decimals: 10 ** 8 }) as number
+    )
+    console.table(
       'converted_amount toStrStrict',
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      bigMath.toStrStrict(bigMath._bn(converted_amount)) as number
+      bigMath.toStrStrict(converted_amount) as number
     )
     console.table(
       'bigMath.toStrStrict(bigMath._bn(maxWithdrawalPerTime))',
