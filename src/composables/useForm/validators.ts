@@ -95,14 +95,14 @@ export const erc20Address: FormFieldValidator = (val: unknown) => {
 }
 
 export function bigMathCompare(
-  BurnFee: NumLike,
+  burnFee: NumLike,
   maxWithdrawalPerTime: NumLike,
   odinToLokiRate: NumLike
 ): FormFieldValidator {
   return (val: unknown): FormFieldValidatorResult => {
     const actual_amount = bigMath.subtract(
       Number(val as number),
-      bigMath.multiply(bigMath.divide(BurnFee, 10000), Number(val as number))
+      bigMath.multiply(bigMath.divide(burnFee, 10000), Number(val as number))
     )
     const converted_amount = bigMath.multiply(
       bigMath.toPrecise(actual_amount),
@@ -115,7 +115,7 @@ export function bigMathCompare(
     )
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    console.table('BurnFee:', BurnFee)
+    console.table('BurnFee:', burnFee)
     console.table(
       'maxWithdrawalPerTime bigNumber:',
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
