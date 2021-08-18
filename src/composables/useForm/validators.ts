@@ -108,6 +108,9 @@ export function bigMathCompare(
       bigMath.toPrecise(actual_amount),
       bigMath._bn(odinToLokiRate)
     )
+
+    // Monolith of unconsciousness
+
     console.group('validator')
     console.log(
       '%c bigMathCompare ',
@@ -134,15 +137,31 @@ export function bigMathCompare(
       // @ts-ignore
       bigMath.toPrecise(maxWithdrawalPerTime)
     )
+    console.table(
+      'maxWithdrawalPerTime bigNumber toStrStrict:',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      bigMath.toStrStrict(bigMath._bn(maxWithdrawalPerTime))
+    )
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     console.table('odinToLokiRate bigNumber:', bigMath._bn(odinToLokiRate))
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    console.table('input val', val)
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     console.table('actual_amount:', actual_amount)
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     console.table('converted_amount:', converted_amount)
+
+    console.table(
+      'converted_amount toStrStrict:',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      bigMath.toStrStrict(converted_amount)
+    )
     console.table(
       'bigMath.compare:',
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

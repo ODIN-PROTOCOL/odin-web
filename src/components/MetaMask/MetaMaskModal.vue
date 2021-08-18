@@ -55,6 +55,15 @@
                 {{ form.amountErr }}
               </p>
             </div>
+            <div class="app-form__field" v-if="converted_amount">
+              <label class="app-form__field-lbl"> Converted amount </label>
+              <input
+                class="app-form__field-input app-form__field-input--disabled"
+                type="text"
+                :value="converted_amount"
+                disabled
+              />
+            </div>
             <div class="app-form__footer">
               <button
                 class="app-btn"
@@ -73,7 +82,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, watch } from 'vue'
 import { preventIf } from '@/helpers/functions'
 import { dialogs, DialogPayloadHandler, DialogHandler } from '@/helpers/dialogs'
 import { DecoratedFn } from '@/shared-types'
@@ -106,6 +115,7 @@ const MetaMaskFormModal = defineComponent({
     const balance = ref<string | null>()
     const balanceDecimals = ref<string | null>()
     const balanceBigFromPrecise = ref<string | null>()
+    const converted_amount = ref<string | null>('0')
 
     const { web3, contracts } = useWeb3()
 
@@ -118,6 +128,7 @@ const MetaMaskFormModal = defineComponent({
         )
       )
     }
+
     const form = useForm({
       amount: [
         0,
@@ -129,6 +140,18 @@ const MetaMaskFormModal = defineComponent({
         ),
       ],
     })
+
+    const changeConvertedAmount = async () => {
+      const actual_temp = await actual_amount()
+      converted_amount.value = bigMath.toStrStrict(
+        bigMath.multiply(
+          bigMath.toPrecise(actual_temp),
+          bigMath._bn(props.odinToLokiRate.rate)
+        )
+      )
+      console.log(converted_amount.value)
+    }
+    watch(() => Number(form.amount.val()), changeConvertedAmount)
 
     const isLoading = ref<boolean>(false)
     const onSubmit: DecoratedFn<DialogPayloadHandler> =
@@ -209,6 +232,7 @@ const MetaMaskFormModal = defineComponent({
         }
         isLoading.value = false
         console.log('onAccountConnected')
+        console.log('converted_amount', converted_amount.value)
       },
       onAccountDisconnected: (): void => {
         account.value = null
@@ -247,6 +271,7 @@ const MetaMaskFormModal = defineComponent({
       account,
       balance,
       balanceBigFromPrecise,
+      converted_amount,
       needAuth,
       exchange,
     }
