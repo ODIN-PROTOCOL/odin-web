@@ -82,7 +82,6 @@ export default defineComponent({
           errorAbiNet.value = true
           await getBurnFee()
         } catch (error) {
-          handleError(error)
           errorAbiNet.value = false
           errorText.value =
             'You need to switch your MetaMask to the BSC network. Recommended RPC: https://bsc-dataseed.binance.org'
