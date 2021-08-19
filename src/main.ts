@@ -8,7 +8,7 @@ import {
 } from './helpers/formatters'
 import Notifications from '@kyvg/vue3-notification'
 import { api } from './api/api'
-import { bigMath } from './helpers/bigMath'
+import { big } from './helpers/bigMath'
 import {
   translateBondStatus,
   translateProposalStatus,
@@ -41,11 +41,12 @@ async function _main() {
   app.config.globalProperties.$cropAddress = cropAddress
   app.config.globalProperties.$fCoin = formatCoin
   app.config.globalProperties.$preciseAsPercents = preciseAsPercents
-  app.config.globalProperties.$fNum = bigMath.format
+  app.config.globalProperties.$fNum = big.format
   app.config.globalProperties.$fDate = formatDate
   app.config.globalProperties.$tRequestStatus = translateRequestStatus
   app.config.globalProperties.$tProposalStatus = translateProposalStatus
-  app.config.globalProperties.$tProposalStatusDated = translateProposalStatusDated
+  app.config.globalProperties.$tProposalStatusDated =
+    translateProposalStatusDated
   app.config.globalProperties.$tTally = translateTally
   app.config.globalProperties.$tTallyShort = translateTallyShort
   app.config.globalProperties.$tVote = translateVote

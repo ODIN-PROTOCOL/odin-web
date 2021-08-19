@@ -81,7 +81,7 @@ export default defineComponent({
       isLoading.value = true
       try {
         await auth.logIn(form.mnemonic.val())
-        router.push({ name: 'Redirector' })
+        await router.push({ name: 'Redirector' })
       } catch (error) {
         handleError(error)
       }
@@ -98,7 +98,6 @@ export default defineComponent({
 
       copyWarning.value = true
     }
-
     return {
       form: form.flatten(),
       isLoading,

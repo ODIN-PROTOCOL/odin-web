@@ -10,7 +10,9 @@ export function usePoll(cb: AnyFn, interval: number): PollControls {
   let _timesStarted = 0
 
   const start = (): void => {
-    if (_intId === -1) _intId = setInterval(cb, interval)
+    if (_intId === -1) {
+      _intId = window.setInterval(cb, interval)
+    }
     _timesStarted += 1
   }
 

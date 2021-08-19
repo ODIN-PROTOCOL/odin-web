@@ -2,7 +2,7 @@ import { callers } from '@/api/callers'
 import { isRef, onUnmounted, ref, Ref, unref, watch } from 'vue'
 import debounce from 'lodash-es/debounce'
 import { formatCoin } from '@/helpers/formatters'
-import { bigMath } from '@/helpers/bigMath'
+import { big } from '@/helpers/bigMath'
 import { NumLike } from '@/helpers/casts'
 import { API_CONFIG } from '@/api/api-config'
 
@@ -13,10 +13,10 @@ function _calcToAmount(
   factor: NumLike,
   toDenom: string
 ): string {
-  let approx = bigMath.multiply(fromAmount, factor)
+  let approx = big.multiply(fromAmount, factor)
   let prefix = ''
   if (API_CONFIG.exBridgeFee && API_CONFIG.exBridgeFee !== '0') {
-    approx = bigMath.subtract(approx, API_CONFIG.exBridgeFee)
+    approx = big.subtract(approx, API_CONFIG.exBridgeFee)
     prefix = ` (incl. ${formatCoin(API_CONFIG.exBridgeFee, toDenom)} fee)`
   }
   return formatCoin(approx, toDenom) + prefix
@@ -67,7 +67,7 @@ export function useRateAutoCalc(
     }
 
     _prevPair = pair
-    _prevFactor = bigMath.fromPrecise(response.rate)
+    _prevFactor = big.fromPrecise(response.rate)
     result.value = _calcToAmount(srcAmount, _prevFactor, dst)
     console.debug(`Rate ${src}-${dst}:`, response.rate, _prevFactor.toString())
   }, 1000)

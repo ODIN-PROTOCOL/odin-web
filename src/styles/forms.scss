@@ -58,6 +58,10 @@
   &::placeholder {
     @include input-placeholder;
   }
+  &--disabled {
+    border: 1px solid transparent;
+    color: var(--clr__text-muted)
+  }
 }
 
 .app-form__field-note {
@@ -78,5 +82,17 @@
 
   & > *:not(:first-child) {
     margin-inline-start: 0.8rem;
+  }
+}
+
+.metamask-form {
+  margin-top: 3rem;
+  &__field{
+    background: red;
+    &--centered {
+      display: flex;
+      justify-content: center;
+      text-align: center;
+    }
   }
 }

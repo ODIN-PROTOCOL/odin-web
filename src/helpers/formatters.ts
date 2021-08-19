@@ -1,5 +1,5 @@
 import { Coin } from '@provider/codec/cosmos/base/v1beta1/coin'
-import { bigMath } from './bigMath'
+import { big } from './bigMath'
 import { NumLike, toNum } from './casts'
 import {
   isToday,
@@ -34,8 +34,8 @@ export function abbreviateNumber(value: NumLike): string {
 }
 
 export function preciseAsPercents(amount: string): string {
-  const percents = bigMath
-    .format(bigMath.fromPrecise(amount), { decimals: 2 })
+  const percents = big
+    .format(big.fromPrecise(amount), { decimals: 2 })
     .replace(/.00$/, '')
   return `${percents}%` // TODO: translate
 }
@@ -60,7 +60,7 @@ export function formatCoin(
     amount = in1
     denom = in2 as string
   }
-  const fmt = abbr ? abbreviateNumber(amount) : bigMath.format(amount)
+  const fmt = abbr ? abbreviateNumber(amount) : big.format(amount)
   return `${fmt}${NBSP}${(denom || '').toUpperCase()}`
 }
 

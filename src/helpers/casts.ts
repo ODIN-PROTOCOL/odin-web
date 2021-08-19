@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import Long from 'long'
-import { BigCfg, bigMath } from '@/helpers/bigMath'
+import { BigCfg } from '@/helpers/bigMath'
 
 export type NumLike = string | number | Long | BigNumber
 export const NumLikeTypes = [String, Number, Long, BigNumber]
