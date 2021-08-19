@@ -106,6 +106,20 @@ export function bigMax(maximum: NumLike, suffix?: string): FormFieldValidator {
   }
 }
 
+export function bigMin(
+  minimum: NumLike = 1,
+  suffix?: string
+): FormFieldValidator {
+  return (val: unknown): FormFieldValidatorResult => {
+    const res = big.compare(val as NumLike, minimum)
+    if (res === -1 || res === null)
+      return suffix
+        ? `The value should be larger than ${minimum} ${suffix}`
+        : `The value should be larger than ${minimum}`
+    return null
+  }
+}
+
 export function valueMapper(
   mapper: (val: unknown) => unknown,
   ...validators: FormFieldValidator[]

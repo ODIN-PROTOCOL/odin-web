@@ -87,14 +87,14 @@
 <script lang="ts">
 import { defineComponent, PropType, ref, watch } from 'vue'
 import { memoize, preventIf } from '@/helpers/functions'
-import { dialogs, DialogPayloadHandler, DialogHandler } from '@/helpers/dialogs'
+import { DialogHandler, DialogPayloadHandler, dialogs } from '@/helpers/dialogs'
 import { DecoratedFn } from '@/shared-types'
 import { TransactionReceipt } from 'web3-core/types'
 import { handleError } from '@/helpers/errors'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from '@/components/modals/ModalBase.vue'
 import { useWeb3 } from '@/composables/useWeb3/useWeb3'
-import { bigFromPrecise, big } from '@/helpers/bigMath'
+import { big, bigFromPrecise } from '@/helpers/bigMath'
 import { wallet } from '@/api/wallet'
 import { QueryRateResponse } from '@provider/codec/coinswap/query'
 import { Coin } from '@provider/codec/cosmos/base/v1beta1/coin'
@@ -114,7 +114,6 @@ const MetaMaskFormModal = defineComponent({
     const account = ref<string | null>(null)
     const odinBalanceOnProvider = ref<string | null>()
     const expectedAmount = ref<string>('0')
-    let netAmount = '0'
 
     const { web3, contracts } = useWeb3()
 
@@ -128,12 +127,7 @@ const MetaMaskFormModal = defineComponent({
 
     const _calcExpected = memoize((value: NumLike | null): BigNumber | null => {
       if (!value) return null
-
-      const expected = big.multiply(
-        value,
-        big.fromPrecise(props.odinToLokiRate.rate)
-      )
-      return expected
+      return big.multiply(value, big.fromPrecise(props.odinToLokiRate.rate))
     })
 
     const form = useForm({
@@ -142,6 +136,10 @@ const MetaMaskFormModal = defineComponent({
         validators.required,
         validators.valueMapper(
           (v) => _calcExpected(_calcNet(v as string)),
+          validators.bigMin(
+            undefined,
+            props.maxWithdrawalPerTime?.denom?.toUpperCase()
+          ),
           validators.bigMax(
             props.maxWithdrawalPerTime.amount,
             props.maxWithdrawalPerTime?.denom?.toUpperCase()
@@ -156,20 +154,15 @@ const MetaMaskFormModal = defineComponent({
       const expectedRaw = _calcExpected(netAmountRaw)
       if (!amount || !netAmountRaw || !expectedRaw) {
         expectedAmount.value = '0'
-        netAmount = '0'
         return
       }
 
-      netAmount = big.toStrStrict(netAmountRaw)
       expectedAmount.value = big.toStrStrict(expectedRaw)
     }
 
     watch(() => form.amount.val(), _reCalcNetAndExpected)
 
     const isLoading = ref<boolean>(false)
-    // const onSubmit: DecoratedFn<DialogPayloadHandler> = dialogs.getHandler(
-    //   'onSubmit'
-    // )
     const onClose: DecoratedFn<DialogPayloadHandler> = preventIf(
       dialogs.getHandler('onClose'),
       isLoading

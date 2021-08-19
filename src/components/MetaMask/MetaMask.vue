@@ -62,12 +62,10 @@ export default defineComponent({
       },
     })
 
-    onMounted(
-      async (): Promise<void> => {
-        await getMaxWithdrawalPerTime()
-        await getOdinToLokiRate()
-      }
-    )
+    onMounted(async (): Promise<void> => {
+      await getMaxWithdrawalPerTime()
+      await getOdinToLokiRate()
+    })
 
     return { connectMetaMask, burnFee }
   },
