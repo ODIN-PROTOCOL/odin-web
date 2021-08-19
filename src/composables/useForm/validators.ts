@@ -1,4 +1,4 @@
-import { bigMath } from '@/helpers/bigMath'
+import { big } from '@/helpers/bigMath'
 import { NumLike } from '@/helpers/casts'
 
 export type FormFieldValidator = (...args: unknown[]) => string | null
@@ -94,85 +94,30 @@ export const erc20Address: FormFieldValidator = (val: unknown) => {
   return null
 }
 
-export function bigMathCompare(
-  burnFee: NumLike,
-  maxWithdrawalPerTime: NumLike,
-  odinToLokiRate: NumLike
+export function bigMax(maximum: NumLike, suffix?: string): FormFieldValidator {
+  return (val: unknown): FormFieldValidatorResult => {
+    const res = big.compare(val as NumLike, maximum)
+    if (res === null || res > 0) {
+      return suffix
+        ? `The value should be lower than ${maximum} ${suffix}`
+        : `The value should be lower than ${maximum}`
+    }
+    return null
+  }
+}
+
+export function valueMapper(
+  mapper: (val: unknown) => unknown,
+  ...validators: FormFieldValidator[]
 ): FormFieldValidator {
   return (val: unknown): FormFieldValidatorResult => {
-    const actual_amount = bigMath.subtract(
-      Number(val as number),
-      bigMath.multiply(
-        // TODO: decimals
-        // {decimals: Number(bigMath.toStrStrict(bigMath.pow(10, 18))),}
-        // Error: [BigNumber Error] DECIMAL_PLACES out of range: 1000000000000000000
-        bigMath.divide(burnFee, 10000),
-        Number(val as number)
-      )
-    )
-    const converted_amount = bigMath.multiply(
-      bigMath.toPrecise(actual_amount),
-      bigMath._bn(odinToLokiRate)
-    )
+    const mappedValue = mapper(val)
 
-    console.group('validator')
-    console.log(
-      '%c bigMathCompare ',
-      'padding: 0.3rem;color: white; background-color: #2274A5'
-    )
-    console.table(
-      'input value',
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      val as number
-    )
-    console.table(
-      'input bigMath.toStrStrict(bigMath._bn(val))',
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      bigMath.toStrStrict(bigMath._bn(val)) as number
-    )
-    console.table(
-      'bigMath.divide(burnFee, 10000)',
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      bigMath.divide(burnFee, 10000, { decimals: 10 ** 8 }) as number
-    )
-    console.table(
-      'converted_amount toStrStrict',
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      bigMath.toStrStrict(converted_amount) as number
-    )
-    console.table(
-      'bigMath.toStrStrict(bigMath._bn(maxWithdrawalPerTime))',
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      bigMath.toStrStrict(bigMath._bn(maxWithdrawalPerTime))
-    )
-    console.table(
-      'bigMath.compare:',
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      bigMath.compare(
-        converted_amount,
-        Number(bigMath.toStrStrict(bigMath._bn(maxWithdrawalPerTime))) as number
-      )
-    )
-    console.groupEnd()
-
-    // compare(n: number | string | BigNumber , base : number)
-    // returns:
-    // 1:       If the value of this BigNumber is greater than the value of n
-    // -1:      If the value of this BigNumber is less than the value of n
-    // 0:       If this BigNumber and n have the same value
-    // null:    If the value of either this BigNumber or n is NaN
-
-    if (
-      bigMath.compare(converted_amount, maxWithdrawalPerTime as number) === 1
-    ) {
-      return `The value should be lower than ${maxWithdrawalPerTime}`
+    for (const validator of validators) {
+      const result = validator(mappedValue)
+      if (result !== null) return result
     }
+
     return null
   }
 }

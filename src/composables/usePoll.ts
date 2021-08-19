@@ -11,9 +11,7 @@ export function usePoll(cb: AnyFn, interval: number): PollControls {
 
   const start = (): void => {
     if (_intId === -1) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      _intId = setInterval(cb, interval)
+      _intId = window.setInterval(cb, interval)
     }
     _timesStarted += 1
   }

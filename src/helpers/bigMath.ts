@@ -14,6 +14,12 @@ export enum ROUNDING {
   HALF_FLOOR = 8,
 }
 
+export enum COMPARE_RESULT {
+  bigger = 1,
+  lower = -1,
+  equal = 0,
+}
+
 export interface BigCfg {
   decimals?: number
   rounding?: ROUNDING
@@ -73,18 +79,18 @@ function bigPower(a: NumLike, b: NumLike, cfg?: BigCfg): BigNumber {
   return _bn(a, cfg).pow(_bn(b))
 }
 
-function bigCompare(a: BigNumber, b: number): number {
-  return a.comparedTo(b)
+function bigCompare(a: NumLike, b: NumLike): COMPARE_RESULT | null {
+  return _bn(a).comparedTo(_bn(b))
 }
 
 const TO_FRACTION_PRECISION = bigPower(10, 18)
-export function bigToPrecise(num: NumLike, decimals?: number): BigNumber {
+export function bigToPrecise(num: NumLike, decimals?: NumLike): BigNumber {
   const factor = decimals ? bigPower(10, decimals) : TO_FRACTION_PRECISION
   return bigMultiply(num, factor)
 }
 
 const FROM_FRACTION_PRECISION = bigPower(0.1, 18)
-export function bigFromPrecise(num: NumLike, decimals?: number): BigNumber {
+export function bigFromPrecise(num: NumLike, decimals?: NumLike): BigNumber {
   const factor = decimals ? bigPower(0.1, decimals) : FROM_FRACTION_PRECISION
   return bigMultiply(num, factor)
 }
@@ -97,7 +103,7 @@ export function bigToStrStrict(num: NumLike): string {
   })
 }
 
-export const bigMath = {
+export const big = {
   multiply: bigMultiply,
   divide: bigDivide,
   add: bigAdd,
