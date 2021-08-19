@@ -117,6 +117,12 @@ const MetaMaskFormModal = defineComponent({
 
     const { web3, contracts } = useWeb3()
 
+    const _calcAmount = (value: string | null): BigNumber | null => {
+      if (!value) return null
+      const decimals = big.pow(10, 18)
+      return big.multiply(value, decimals)
+    }
+
     const _calcNet = memoize((value: string | null): BigNumber | null => {
       if (!value) return null
 
@@ -185,7 +191,7 @@ const MetaMaskFormModal = defineComponent({
     }
 
     const sendApprove = async (
-      amount: string
+      amount: string | BigNumber
     ): Promise<TransactionReceipt | void> => {
       return new Promise((resolve, reject) => {
         contracts.odin.methods
@@ -196,7 +202,7 @@ const MetaMaskFormModal = defineComponent({
       })
     }
     const sendDeposit = async (
-      amount: string
+      amount: string | BigNumber
     ): Promise<TransactionReceipt | void> => {
       return new Promise((resolve, reject) => {
         console.log(amount)
@@ -214,8 +220,8 @@ const MetaMaskFormModal = defineComponent({
     const exchange = async (): Promise<void> => {
       isLoading.value = true
       try {
-        await sendApprove(form.amount.val())
-        await sendDeposit(form.amount.val())
+        await sendApprove(_calcAmount(form.amount.val()) as BigNumber)
+        await sendDeposit(_calcAmount(form.amount.val()) as BigNumber)
       } catch (error) {
         handleError(error)
       } finally {
