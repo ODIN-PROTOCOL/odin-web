@@ -167,9 +167,9 @@ const MetaMaskFormModal = defineComponent({
     watch(() => form.amount.val(), _reCalcNetAndExpected)
 
     const isLoading = ref<boolean>(false)
-    const onSubmit: DecoratedFn<DialogPayloadHandler> = dialogs.getHandler(
-      'onSubmit'
-    )
+    // const onSubmit: DecoratedFn<DialogPayloadHandler> = dialogs.getHandler(
+    //   'onSubmit'
+    // )
     const onClose: DecoratedFn<DialogPayloadHandler> = preventIf(
       dialogs.getHandler('onClose'),
       isLoading
@@ -206,6 +206,7 @@ const MetaMaskFormModal = defineComponent({
       amount: string
     ): Promise<TransactionReceipt | void> => {
       return new Promise((resolve, reject) => {
+        console.log(amount)
         contracts.bridge.methods
           .deposit(
             wallet.account.address,
@@ -220,8 +221,8 @@ const MetaMaskFormModal = defineComponent({
     const exchange = async (): Promise<void> => {
       isLoading.value = true
       try {
-        await sendApprove(netAmount)
-        await sendDeposit(netAmount)
+        await sendApprove(form.amount.val())
+        await sendDeposit(form.amount.val())
       } catch (error) {
         handleError(error)
       } finally {
