@@ -3,7 +3,6 @@
     <template #title>
       <img src="~@/assets/brand/metamask-fox.svg" alt="metamask_logo" />
     </template>
-
     <template #main>
       <form
         class="app-form load-fog metamask-form"

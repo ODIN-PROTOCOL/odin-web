@@ -4,6 +4,18 @@
     class="metamask-btn"
     type="submit"
     @click.prevent="connectMetaMask"
+    v-if="errorAbiNet"
+  >
+    <img src="~@/assets/brand/metamask-fox.svg" alt="metamask_logo" />
+    <span>MetaMask</span>
+  </button>
+  <button
+    v-else
+    :disabled="!errorText"
+    class="metamask-btn"
+    type="submit"
+    :title="errorText"
+    @click.prevent="openErrorForm"
   >
     <img src="~@/assets/brand/metamask-fox.svg" alt="metamask_logo" />
     <span>MetaMask</span>
@@ -16,13 +28,16 @@ import { showMetaMaskFormDialog } from './MetaMaskModal.vue'
 import { useWeb3 } from '@/composables/useWeb3/useWeb3'
 import { callers } from '@/api/callers'
 import { handleError } from '@/helpers/errors'
+import { showMetaMaskErrorFormDialog } from '@/components/MetaMask/MetaMaskErrorModal.vue'
 
 export default defineComponent({
   name: 'MetaMask',
   setup() {
     const maxWithdrawalPerTime = ref()
+    const errorText = ref<string | null>()
     const odinToLokiRate = ref()
     const burnFee = ref<number | string | null>(null)
+    const errorAbiNet = ref<boolean>(false)
 
     const connectMetaMask = (): void => {
       if (burnFee.value) {
@@ -35,6 +50,15 @@ export default defineComponent({
           }
         )
       }
+    }
+
+    const openErrorForm = (): void => {
+      showMetaMaskErrorFormDialog(
+        {},
+        {
+          message: errorText.value,
+        }
+      )
     }
 
     const getOdinToLokiRate = async (): Promise<void> => {
@@ -55,9 +79,13 @@ export default defineComponent({
     useWeb3({
       onProviderDetected: async (): Promise<void> => {
         try {
+          errorAbiNet.value = true
           await getBurnFee()
         } catch (error) {
           handleError(error)
+          errorAbiNet.value = false
+          errorText.value =
+            'You need to switch your MetaMask to the BSC network. Recommended RPC: https://bsc-dataseed.binance.org'
         }
       },
     })
@@ -67,9 +95,7 @@ export default defineComponent({
       await getOdinToLokiRate()
     })
 
-    return { connectMetaMask, burnFee }
+    return { connectMetaMask, burnFee, errorText, errorAbiNet, openErrorForm }
   },
 })
 </script>
-
-<style scoped></style>
