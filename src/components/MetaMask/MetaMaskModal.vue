@@ -194,7 +194,7 @@ const MetaMaskFormModal = defineComponent({
     ): Promise<TransactionReceipt | void> => {
       return new Promise((resolve, reject) => {
         contracts.odin.methods
-          .approve(account.value as string, amount.toString())
+          .approve(process.env.VUE_APP_BRIDGE as string, amount.toString())
           .send()
           .on('receipt', (_) => resolve(_))
           .on('error', (err) => reject(err))
