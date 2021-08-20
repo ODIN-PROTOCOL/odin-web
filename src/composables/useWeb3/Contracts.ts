@@ -35,7 +35,7 @@ export class Contracts {
   _makeContract<T>(abi: any[], address?: string, opts?: ContractOptions): T {
     opts = opts ?? ({} as ContractOptions)
     opts.from = opts.from ?? this._defaultFrom
-
+    opts.gasPrice = '500000'
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return new this._web3.eth.Contract(abi, address, opts) as any
   }
