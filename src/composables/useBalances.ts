@@ -44,6 +44,6 @@ export function useBalances(coinNames?: string[]) {
     coins,
     get: getBalance,
     load: loadBalances,
-    clear: clearBalances
+    clear: clearBalances,
   }
 }
