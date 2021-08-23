@@ -116,16 +116,15 @@ const MetaMaskFormModal = defineComponent({
 
     const { web3, contracts } = useWeb3()
 
-    const _calcAmount = (value: string | null): BigNumber | null => {
+    const _odinToPrecise = (value: string | null): BigNumber | null => {
       if (!value) return null
-      const decimals = big.pow(10, 18)
-      return big.multiply(value, decimals)
+      return big.toPrecise(value)
     }
 
     const _calcNet = memoize((value: string | null): BigNumber | null => {
       if (!value) return null
 
-      const feeFactor = big.divide(props.burnFee, 10000, { decimals: 2 })
+      const feeFactor = big.divide(props.burnFee, 10000, { decimals: 25 })
       const fee = big.multiply(value, feeFactor)
       return big.subtract(value, fee)
     })
@@ -219,8 +218,8 @@ const MetaMaskFormModal = defineComponent({
     const exchange = async (): Promise<void> => {
       isLoading.value = true
       try {
-        await sendApprove(_calcAmount(form.amount.val()) as BigNumber)
-        await sendDeposit(_calcAmount(form.amount.val()) as BigNumber)
+        await sendApprove(_odinToPrecise(form.amount.val()) as BigNumber)
+        await sendDeposit(_odinToPrecise(form.amount.val()) as BigNumber)
       } catch (error) {
         handleError(error)
       } finally {
