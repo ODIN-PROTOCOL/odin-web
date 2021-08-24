@@ -193,7 +193,10 @@ const MetaMaskFormModal = defineComponent({
     ): Promise<TransactionReceipt | void> => {
       return new Promise((resolve, reject) => {
         contracts.odin.methods
-          .approve(process.env.VUE_APP_BRIDGE as string, amount.toString())
+          .approve(
+            process.env.VUE_APP_BRIDGE as string,
+            big.toStrStrict(amount)
+          )
           .send()
           .on('receipt', (_) => resolve(_))
           .on('error', (err) => reject(err))
@@ -208,7 +211,7 @@ const MetaMaskFormModal = defineComponent({
           .deposit(
             wallet.account.address,
             contracts.odin.options.address,
-            amount.toString()
+            big.toStrStrict(amount)
           )
           .send()
           .on('receipt', (event) => resolve(event))
