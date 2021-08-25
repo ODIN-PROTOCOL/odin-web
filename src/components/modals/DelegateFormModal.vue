@@ -93,6 +93,7 @@ const DelegateFormDialog = defineComponent({
     const onSubmit = dialogs.getHandler('onSubmit')
 
     const submit = async () => {
+      if (!form.isValid.value) return
       isLoading.value = true
       try {
         await callers.validatorDelegate({
@@ -103,13 +104,14 @@ const DelegateFormDialog = defineComponent({
             denom: 'loki',
           },
         })
-        loadBalances()
+        await loadBalances()
         onSubmit()
         notifySuccess('Successfully delegated')
       } catch (error) {
         handleError(error)
+      } finally {
+        isLoading.value = false
       }
-      isLoading.value = false
     }
 
     return {

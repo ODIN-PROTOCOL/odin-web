@@ -64,33 +64,35 @@ const FaucetFormModal = defineComponent({
     const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
 
     const submit = async () => {
+      if (!form.isValid.value) return
       isLoading.value = true
       try {
         const r = await callers.faucetRequest({
           denom: form.asset.val().toLowerCase(),
         })
-
         console.log(r)
-
         onSubmit()
         notifySuccess('Faucet request created')
       } catch (error) {
         const indTime = error.message.indexOf('time')
-        const errorStr = error.message.slice(10, indTime-3)
+        const errorStr = error.message.slice(10, indTime - 3)
         const timeStr = error.message.slice(indTime + 6, -1)
-        
-        const hours = Math.floor(((+timeStr/60) / 60))
-        let minutes = Math.floor(Math.abs(+hours*60 - (+timeStr/60))).toString()
-        let seconds = Math.floor(Math.abs((+hours*60*60 + (+minutes*60)) - (+timeStr))).toString()
+        const hours = Math.floor(+timeStr / 60 / 60)
+        let minutes = Math.floor(
+          Math.abs(+hours * 60 - +timeStr / 60)
+        ).toString()
+        let seconds = Math.floor(
+          Math.abs(+hours * 60 * 60 + +minutes * 60 - +timeStr)
+        ).toString()
         minutes = +minutes > 9 ? minutes : '0' + minutes
         seconds = +seconds > 9 ? seconds : '0' + seconds
-
-        const newError = new Error(`You ${errorStr} in ${hours}:${minutes}:${seconds}`)
-
+        const newError = new Error(
+          `You ${errorStr} in ${hours}:${minutes}:${seconds}`
+        )
         handleError(newError)
-        // handleError(error)
+      } finally {
+        isLoading.value = false
       }
-      isLoading.value = false
     }
 
     return {

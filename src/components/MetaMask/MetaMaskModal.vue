@@ -206,7 +206,6 @@ const MetaMaskFormModal = defineComponent({
       amount: string | BigNumber
     ): Promise<TransactionReceipt | void> => {
       return new Promise((resolve, reject) => {
-        console.log(amount)
         contracts.bridge.methods
           .deposit(
             wallet.account.address,
@@ -219,7 +218,9 @@ const MetaMaskFormModal = defineComponent({
       })
     }
     const exchange = async (): Promise<void> => {
+      if (!form.isValid.value) return
       isLoading.value = true
+
       try {
         await sendApprove(_odinToPrecise(form.amount.val()) as BigNumber)
         await sendDeposit(_odinToPrecise(form.amount.val()) as BigNumber)

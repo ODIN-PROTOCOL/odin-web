@@ -95,6 +95,8 @@ const UndelegateFormDialog = defineComponent({
     const onSubmit = dialogs.getHandler('onSubmit')
 
     const submit = async () => {
+      if (!form.isValid.value) return
+
       isLoading.value = true
       try {
         console.log({
@@ -118,8 +120,9 @@ const UndelegateFormDialog = defineComponent({
         notifySuccess('Successfully undelegated')
       } catch (error) {
         handleError(error)
+      } finally {
+        isLoading.value = false
       }
-      isLoading.value = false
     }
 
     return {

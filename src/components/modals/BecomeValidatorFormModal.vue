@@ -177,6 +177,7 @@ const BecomeValidatorFormModal = defineComponent({
     const onSubmit = dialogs.getHandler('onSubmit')
 
     const submit = async () => {
+      if (!form.isValid.value) return
       isLoading.value = true
       try {
         await callers.createValidator({
@@ -210,13 +211,13 @@ const BecomeValidatorFormModal = defineComponent({
             amount: form.selfDelegation.val(),
           },
         })
-
         onSubmit()
         notifySuccess('Promoted to validators election')
       } catch (error) {
         handleError(error)
+      } finally {
+        isLoading.value = false
       }
-      isLoading.value = false
     }
 
     // TODO: remove fakeForm
