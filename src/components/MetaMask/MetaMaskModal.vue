@@ -218,17 +218,16 @@ const MetaMaskFormModal = defineComponent({
       })
     }
     const exchange = async (): Promise<void> => {
+      if (!form.isValid.value) return
       isLoading.value = true
 
-      if (form.isValid.value) {
-        try {
-          await sendApprove(_odinToPrecise(form.amount.val()) as BigNumber)
-          await sendDeposit(_odinToPrecise(form.amount.val()) as BigNumber)
-        } catch (error) {
-          handleError(error)
-        } finally {
-          isLoading.value = false
-        }
+      try {
+        await sendApprove(_odinToPrecise(form.amount.val()) as BigNumber)
+        await sendDeposit(_odinToPrecise(form.amount.val()) as BigNumber)
+      } catch (error) {
+        handleError(error)
+      } finally {
+        isLoading.value = false
       }
     }
 

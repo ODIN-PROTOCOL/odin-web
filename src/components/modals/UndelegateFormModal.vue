@@ -95,33 +95,33 @@ const UndelegateFormDialog = defineComponent({
     const onSubmit = dialogs.getHandler('onSubmit')
 
     const submit = async () => {
+      if (!form.isValid.value) return
+
       isLoading.value = true
-      if (form.isValid.value) {
-        try {
-          console.log({
-            delegatorAddress: wallet.account.address,
-            validatorAddress: props.validator.operatorAddress,
-            amount: {
-              amount: form.amount.val(),
-              denom: 'loki',
-            },
-          })
-          await callers.validatorUndelegate({
-            delegatorAddress: wallet.account.address,
-            validatorAddress: props.validator.operatorAddress,
-            amount: {
-              amount: form.amount.val(),
-              denom: 'loki',
-            },
-          })
-          useBalances().load()
-          onSubmit()
-          notifySuccess('Successfully undelegated')
-        } catch (error) {
-          handleError(error)
-        } finally {
-          isLoading.value = false
-        }
+      try {
+        console.log({
+          delegatorAddress: wallet.account.address,
+          validatorAddress: props.validator.operatorAddress,
+          amount: {
+            amount: form.amount.val(),
+            denom: 'loki',
+          },
+        })
+        await callers.validatorUndelegate({
+          delegatorAddress: wallet.account.address,
+          validatorAddress: props.validator.operatorAddress,
+          amount: {
+            amount: form.amount.val(),
+            denom: 'loki',
+          },
+        })
+        useBalances().load()
+        onSubmit()
+        notifySuccess('Successfully undelegated')
+      } catch (error) {
+        handleError(error)
+      } finally {
+        isLoading.value = false
       }
     }
 

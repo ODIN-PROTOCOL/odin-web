@@ -93,29 +93,28 @@ const OracleScriptFormModal = defineComponent({
     const onSubmit = dialogs.getHandler('onSubmit')
 
     const submit = async () => {
+      if (!form.isValid.value) return
       const codeFileParsed = await _parseCodeFile()
       if (!codeFileParsed) return
 
       isLoading.value = true
-      if (form.isValid.value) {
-        try {
-          await callers.createOracleScript({
-            name: form.name.val(),
-            description: form.description.val(),
-            code: codeFileParsed,
-            owner: wallet.account.address,
-            sender: wallet.account.address,
-            schema: '',
-            sourceCodeUrl: '',
-          })
+      try {
+        await callers.createOracleScript({
+          name: form.name.val(),
+          description: form.description.val(),
+          code: codeFileParsed,
+          owner: wallet.account.address,
+          sender: wallet.account.address,
+          schema: '',
+          sourceCodeUrl: '',
+        })
 
-          onSubmit()
-          notifySuccess('Oracle Script created')
-        } catch (error) {
-          handleError(error)
-        } finally {
-          isLoading.value = false
-        }
+        onSubmit()
+        notifySuccess('Oracle Script created')
+      } catch (error) {
+        handleError(error)
+      } finally {
+        isLoading.value = false
       }
     }
 

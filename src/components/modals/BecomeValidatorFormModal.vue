@@ -177,47 +177,46 @@ const BecomeValidatorFormModal = defineComponent({
     const onSubmit = dialogs.getHandler('onSubmit')
 
     const submit = async () => {
+      if (!form.isValid.value) return
       isLoading.value = true
-      if (form.isValid.value) {
-        try {
-          await callers.createValidator({
-            description: {
-              identity: '',
-              website: '',
-              moniker: form.moniker.val(),
-              securityContact: '',
-              details: '',
-            },
-            commission: {
-              rate: big.toPrecise(form.rate.val()).toString(),
-              maxRate: big.toPrecise(form.maxRate.val()).toString(),
-              maxChangeRate: big.toPrecise(form.maxChangeRate.val()).toString(),
-            },
-            minSelfDelegation: form.minDelegation.val(),
-            delegatorAddress: wallet.account.address,
-            validatorAddress: Bech32.encode(
-              'odinvaloper',
-              Bech32.decode(wallet.account.address).data
-            ),
-            pubkey: {
-              // TODO: key of ed25519 cannot be decoded
-              typeUrl: '/cosmos.crypto.secp256k1.PubKey',
-              value: PubKey.encode({
-                key: Buffer.from(fromBase64(form.pubKey.val())),
-              }).finish(),
-            },
-            value: {
-              denom: 'loki',
-              amount: form.selfDelegation.val(),
-            },
-          })
-          onSubmit()
-          notifySuccess('Promoted to validators election')
-        } catch (error) {
-          handleError(error)
-        } finally {
-          isLoading.value = false
-        }
+      try {
+        await callers.createValidator({
+          description: {
+            identity: '',
+            website: '',
+            moniker: form.moniker.val(),
+            securityContact: '',
+            details: '',
+          },
+          commission: {
+            rate: big.toPrecise(form.rate.val()).toString(),
+            maxRate: big.toPrecise(form.maxRate.val()).toString(),
+            maxChangeRate: big.toPrecise(form.maxChangeRate.val()).toString(),
+          },
+          minSelfDelegation: form.minDelegation.val(),
+          delegatorAddress: wallet.account.address,
+          validatorAddress: Bech32.encode(
+            'odinvaloper',
+            Bech32.decode(wallet.account.address).data
+          ),
+          pubkey: {
+            // TODO: key of ed25519 cannot be decoded
+            typeUrl: '/cosmos.crypto.secp256k1.PubKey',
+            value: PubKey.encode({
+              key: Buffer.from(fromBase64(form.pubKey.val())),
+            }).finish(),
+          },
+          value: {
+            denom: 'loki',
+            amount: form.selfDelegation.val(),
+          },
+        })
+        onSubmit()
+        notifySuccess('Promoted to validators election')
+      } catch (error) {
+        handleError(error)
+      } finally {
+        isLoading.value = false
       }
     }
 

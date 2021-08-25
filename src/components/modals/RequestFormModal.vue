@@ -141,33 +141,32 @@ const RequestFormModal = defineComponent({
     const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
 
     const submit = async () => {
+      if (!form.isValid.value) return
       isLoading.value = true
-      if (form.isValid.value) {
-        try {
-          await callers.createRequest({
-            oracleScriptId: Long.fromString(form.oracleScriptId.val()),
-            askCount: Long.fromString(form.askCount.val()),
-            minCount: Long.fromString(form.minCount.val()),
-            // TODO: clarify calldata
-            // calldata: obiPhoneModels(form.calldata.val()),
-            calldata: obiCoin.encode({
-              symbol: 'BTC',
-              multiplier: '1000000000',
-            }),
-            feeLimit: coins(Number.parseInt(form.feeLimit.val()), 'loki'),
-            prepareGas: Long.fromNumber(200000),
-            executeGas: Long.fromNumber(200000),
-            sender: wallet.account.address,
-            clientId: '1',
-          })
+      try {
+        await callers.createRequest({
+          oracleScriptId: Long.fromString(form.oracleScriptId.val()),
+          askCount: Long.fromString(form.askCount.val()),
+          minCount: Long.fromString(form.minCount.val()),
+          // TODO: clarify calldata
+          // calldata: obiPhoneModels(form.calldata.val()),
+          calldata: obiCoin.encode({
+            symbol: 'BTC',
+            multiplier: '1000000000',
+          }),
+          feeLimit: coins(Number.parseInt(form.feeLimit.val()), 'loki'),
+          prepareGas: Long.fromNumber(200000),
+          executeGas: Long.fromNumber(200000),
+          sender: wallet.account.address,
+          clientId: '1',
+        })
 
-          onSubmit()
-          notifySuccess('Oracle Script created')
-        } catch (error) {
-          handleError(error)
-        } finally {
-          isLoading.value = false
-        }
+        onSubmit()
+        notifySuccess('Oracle Script created')
+      } catch (error) {
+        handleError(error)
+      } finally {
+        isLoading.value = false
       }
     }
 

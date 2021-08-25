@@ -95,29 +95,28 @@ const DataSourceFormModal = defineComponent({
     const onSubmit = dialogs.getHandler('onSubmit')
 
     const submit = async () => {
+      if (!form.isValid.value) return
       const executableParsed = await _parseExecutable()
       if (!executableParsed) return
 
       isLoading.value = true
 
-      if (form.isValid.value) {
-        try {
-          await callers.createDataSource({
-            name: form.name.val(),
-            description: form.description.val(),
-            executable: executableParsed,
-            fee: coins(1, 'loki'),
-            owner: wallet.account.address,
-            sender: wallet.account.address,
-          })
+      try {
+        await callers.createDataSource({
+          name: form.name.val(),
+          description: form.description.val(),
+          executable: executableParsed,
+          fee: coins(1, 'loki'),
+          owner: wallet.account.address,
+          sender: wallet.account.address,
+        })
 
-          onSubmit()
-          notifySuccess('Data source created')
-        } catch (error) {
-          handleError(error)
-        } finally {
-          isLoading.value = false
-        }
+        onSubmit()
+        notifySuccess('Data source created')
+      } catch (error) {
+        handleError(error)
+      } finally {
+        isLoading.value = false
       }
     }
 

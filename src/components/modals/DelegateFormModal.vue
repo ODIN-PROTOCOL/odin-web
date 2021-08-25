@@ -93,25 +93,24 @@ const DelegateFormDialog = defineComponent({
     const onSubmit = dialogs.getHandler('onSubmit')
 
     const submit = async () => {
+      if (!form.isValid.value) return
       isLoading.value = true
-      if (form.isValid.value) {
-        try {
-          await callers.validatorDelegate({
-            delegatorAddress: wallet.account.address,
-            validatorAddress: props.validator.operatorAddress,
-            amount: {
-              amount: form.amount.val(),
-              denom: 'loki',
-            },
-          })
-          await loadBalances()
-          onSubmit()
-          notifySuccess('Successfully delegated')
-        } catch (error) {
-          handleError(error)
-        } finally {
-          isLoading.value = false
-        }
+      try {
+        await callers.validatorDelegate({
+          delegatorAddress: wallet.account.address,
+          validatorAddress: props.validator.operatorAddress,
+          amount: {
+            amount: form.amount.val(),
+            denom: 'loki',
+          },
+        })
+        await loadBalances()
+        onSubmit()
+        notifySuccess('Successfully delegated')
+      } catch (error) {
+        handleError(error)
+      } finally {
+        isLoading.value = false
       }
     }
 

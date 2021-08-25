@@ -111,23 +111,23 @@ const ExchangeFormModal = defineComponent({
     const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
 
     const submit = async () => {
-      isLoading.value = true
-      if (form.isValid.value) {
-        try {
-          await callers.createBinanceExchange({
-            binance_address: form.sourceAddress.val(),
-            odin_address: wallet.account.address,
-            amount: form.sourceAmount.val(),
-            denom: form.sourceAsset.val().toLowerCase(),
-          })
+      if (!form.isValid.value) return
 
-          onSubmit()
-          notifySuccess('Exchange created')
-        } catch (error) {
-          handleError(error)
-        } finally {
-          isLoading.value = false
-        }
+      isLoading.value = true
+      try {
+        await callers.createBinanceExchange({
+          binance_address: form.sourceAddress.val(),
+          odin_address: wallet.account.address,
+          amount: form.sourceAmount.val(),
+          denom: form.sourceAsset.val().toLowerCase(),
+        })
+
+        onSubmit()
+        notifySuccess('Exchange created')
+      } catch (error) {
+        handleError(error)
+      } finally {
+        isLoading.value = false
       }
     }
 
