@@ -58,11 +58,9 @@
             type="button"
             @click="submit()"
             :disabled="!form.isValid || isLoading"
-            v-if="form.isValid"
           >
             Create
           </button>
-          <span v-else class="app-btn app-btn--disabled">Create</span>
         </div>
       </form>
     </template>
@@ -101,22 +99,26 @@ const DataSourceFormModal = defineComponent({
       if (!executableParsed) return
 
       isLoading.value = true
-      try {
-        await callers.createDataSource({
-          name: form.name.val(),
-          description: form.description.val(),
-          executable: executableParsed,
-          fee: coins(1, 'loki'),
-          owner: wallet.account.address,
-          sender: wallet.account.address,
-        })
 
-        onSubmit()
-        notifySuccess('Data source created')
-      } catch (error) {
-        handleError(error)
+      if (form.isValid.value) {
+        try {
+          await callers.createDataSource({
+            name: form.name.val(),
+            description: form.description.val(),
+            executable: executableParsed,
+            fee: coins(1, 'loki'),
+            owner: wallet.account.address,
+            sender: wallet.account.address,
+          })
+
+          onSubmit()
+          notifySuccess('Data source created')
+        } catch (error) {
+          handleError(error)
+        } finally {
+          isLoading.value = false
+        }
       }
-      isLoading.value = false
     }
 
     const _parseExecutable = async (): Promise<Uint8Array | null> => {

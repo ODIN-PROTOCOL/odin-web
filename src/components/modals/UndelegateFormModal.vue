@@ -52,11 +52,9 @@
             type="button"
             @click="submit()"
             :disabled="!form.isValid || isLoading"
-            v-if="form.isValid"
           >
             Undelegate
           </button>
-          <span v-else class="app-btn app-btn--disabled">Undelegate</span>
         </div>
       </form>
     </template>
@@ -98,30 +96,33 @@ const UndelegateFormDialog = defineComponent({
 
     const submit = async () => {
       isLoading.value = true
-      try {
-        console.log({
-          delegatorAddress: wallet.account.address,
-          validatorAddress: props.validator.operatorAddress,
-          amount: {
-            amount: form.amount.val(),
-            denom: 'loki',
-          },
-        })
-        await callers.validatorUndelegate({
-          delegatorAddress: wallet.account.address,
-          validatorAddress: props.validator.operatorAddress,
-          amount: {
-            amount: form.amount.val(),
-            denom: 'loki',
-          },
-        })
-        useBalances().load()
-        onSubmit()
-        notifySuccess('Successfully undelegated')
-      } catch (error) {
-        handleError(error)
+      if (form.isValid.value) {
+        try {
+          console.log({
+            delegatorAddress: wallet.account.address,
+            validatorAddress: props.validator.operatorAddress,
+            amount: {
+              amount: form.amount.val(),
+              denom: 'loki',
+            },
+          })
+          await callers.validatorUndelegate({
+            delegatorAddress: wallet.account.address,
+            validatorAddress: props.validator.operatorAddress,
+            amount: {
+              amount: form.amount.val(),
+              denom: 'loki',
+            },
+          })
+          useBalances().load()
+          onSubmit()
+          notifySuccess('Successfully undelegated')
+        } catch (error) {
+          handleError(error)
+        } finally {
+          isLoading.value = false
+        }
       }
-      isLoading.value = false
     }
 
     return {

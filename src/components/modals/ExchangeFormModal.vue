@@ -76,11 +76,9 @@
             type="button"
             @click="submit()"
             :disabled="!form.isValid || isLoading"
-            v-if="form.isValid"
           >
             Exchange
           </button>
-          <span v-else class="app-btn app-btn--disabled">Exchange</span>
         </div>
       </form>
     </template>
@@ -114,20 +112,23 @@ const ExchangeFormModal = defineComponent({
 
     const submit = async () => {
       isLoading.value = true
-      try {
-        await callers.createBinanceExchange({
-          binance_address: form.sourceAddress.val(),
-          odin_address: wallet.account.address,
-          amount: form.sourceAmount.val(),
-          denom: form.sourceAsset.val().toLowerCase(),
-        })
+      if (form.isValid.value) {
+        try {
+          await callers.createBinanceExchange({
+            binance_address: form.sourceAddress.val(),
+            odin_address: wallet.account.address,
+            amount: form.sourceAmount.val(),
+            denom: form.sourceAsset.val().toLowerCase(),
+          })
 
-        onSubmit()
-        notifySuccess('Exchange created')
-      } catch (error) {
-        handleError(error)
+          onSubmit()
+          notifySuccess('Exchange created')
+        } catch (error) {
+          handleError(error)
+        } finally {
+          isLoading.value = false
+        }
       }
-      isLoading.value = false
     }
 
     const approxDestAmount = useRateAutoCalc(

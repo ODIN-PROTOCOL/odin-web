@@ -52,11 +52,9 @@
             type="button"
             @click="submit()"
             :disabled="!form.isValid || isLoading"
-            v-if="form.isValid"
           >
             Delegate
           </button>
-          <span v-else class="app-btn app-btn--disabled">Delegate</span>
         </div>
       </form>
     </template>
@@ -96,22 +94,25 @@ const DelegateFormDialog = defineComponent({
 
     const submit = async () => {
       isLoading.value = true
-      try {
-        await callers.validatorDelegate({
-          delegatorAddress: wallet.account.address,
-          validatorAddress: props.validator.operatorAddress,
-          amount: {
-            amount: form.amount.val(),
-            denom: 'loki',
-          },
-        })
-        await loadBalances()
-        onSubmit()
-        notifySuccess('Successfully delegated')
-      } catch (error) {
-        handleError(error)
+      if (form.isValid.value) {
+        try {
+          await callers.validatorDelegate({
+            delegatorAddress: wallet.account.address,
+            validatorAddress: props.validator.operatorAddress,
+            amount: {
+              amount: form.amount.val(),
+              denom: 'loki',
+            },
+          })
+          await loadBalances()
+          onSubmit()
+          notifySuccess('Successfully delegated')
+        } catch (error) {
+          handleError(error)
+        } finally {
+          isLoading.value = false
+        }
       }
-      isLoading.value = false
     }
 
     return {

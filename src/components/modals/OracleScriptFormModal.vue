@@ -58,11 +58,9 @@
             type="button"
             @click="submit()"
             :disabled="!form.isValid || isLoading"
-            v-if="form.isValid"
           >
             Create
           </button>
-          <span v-else class="app-btn app-btn--disabled">Create</span>
         </div>
       </form>
     </template>
@@ -99,23 +97,26 @@ const OracleScriptFormModal = defineComponent({
       if (!codeFileParsed) return
 
       isLoading.value = true
-      try {
-        await callers.createOracleScript({
-          name: form.name.val(),
-          description: form.description.val(),
-          code: codeFileParsed,
-          owner: wallet.account.address,
-          sender: wallet.account.address,
-          schema: '',
-          sourceCodeUrl: '',
-        })
+      if (form.isValid.value) {
+        try {
+          await callers.createOracleScript({
+            name: form.name.val(),
+            description: form.description.val(),
+            code: codeFileParsed,
+            owner: wallet.account.address,
+            sender: wallet.account.address,
+            schema: '',
+            sourceCodeUrl: '',
+          })
 
-        onSubmit()
-        notifySuccess('Oracle Script created')
-      } catch (error) {
-        handleError(error)
+          onSubmit()
+          notifySuccess('Oracle Script created')
+        } catch (error) {
+          handleError(error)
+        } finally {
+          isLoading.value = false
+        }
       }
-      isLoading.value = false
     }
 
     const _parseCodeFile = async (): Promise<Uint8Array | null> => {

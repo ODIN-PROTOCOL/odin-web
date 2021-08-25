@@ -98,11 +98,9 @@
             type="button"
             @click="submit()"
             :disabled="!form.isValid || isLoading"
-            v-if="form.isValid"
           >
             Create
           </button>
-          <span v-else class="app-btn app-btn--disabled">Create</span>
         </div>
       </form>
     </template>
@@ -144,30 +142,33 @@ const RequestFormModal = defineComponent({
 
     const submit = async () => {
       isLoading.value = true
-      try {
-        await callers.createRequest({
-          oracleScriptId: Long.fromString(form.oracleScriptId.val()),
-          askCount: Long.fromString(form.askCount.val()),
-          minCount: Long.fromString(form.minCount.val()),
-          // TODO: clarify calldata
-          // calldata: obiPhoneModels(form.calldata.val()),
-          calldata: obiCoin.encode({
-            symbol: 'BTC',
-            multiplier: '1000000000',
-          }),
-          feeLimit: coins(Number.parseInt(form.feeLimit.val()), 'loki'),
-          prepareGas: Long.fromNumber(200000),
-          executeGas: Long.fromNumber(200000),
-          sender: wallet.account.address,
-          clientId: '1',
-        })
+      if (form.isValid.value) {
+        try {
+          await callers.createRequest({
+            oracleScriptId: Long.fromString(form.oracleScriptId.val()),
+            askCount: Long.fromString(form.askCount.val()),
+            minCount: Long.fromString(form.minCount.val()),
+            // TODO: clarify calldata
+            // calldata: obiPhoneModels(form.calldata.val()),
+            calldata: obiCoin.encode({
+              symbol: 'BTC',
+              multiplier: '1000000000',
+            }),
+            feeLimit: coins(Number.parseInt(form.feeLimit.val()), 'loki'),
+            prepareGas: Long.fromNumber(200000),
+            executeGas: Long.fromNumber(200000),
+            sender: wallet.account.address,
+            clientId: '1',
+          })
 
-        onSubmit()
-        notifySuccess('Oracle Script created')
-      } catch (error) {
-        handleError(error)
+          onSubmit()
+          notifySuccess('Oracle Script created')
+        } catch (error) {
+          handleError(error)
+        } finally {
+          isLoading.value = false
+        }
       }
-      isLoading.value = false
     }
 
     return {

@@ -72,11 +72,9 @@
                 type="button"
                 @click="exchange"
                 :disabled="!form.isValid || isLoading"
-                v-if="form.isValid"
               >
                 Exchange
               </button>
-              <span v-else class="app-btn app-btn--disabled">Exchange</span>
             </div>
           </template>
         </template>
@@ -208,7 +206,6 @@ const MetaMaskFormModal = defineComponent({
       amount: string | BigNumber
     ): Promise<TransactionReceipt | void> => {
       return new Promise((resolve, reject) => {
-        console.log(amount)
         contracts.bridge.methods
           .deposit(
             wallet.account.address,
@@ -222,13 +219,16 @@ const MetaMaskFormModal = defineComponent({
     }
     const exchange = async (): Promise<void> => {
       isLoading.value = true
-      try {
-        await sendApprove(_odinToPrecise(form.amount.val()) as BigNumber)
-        await sendDeposit(_odinToPrecise(form.amount.val()) as BigNumber)
-      } catch (error) {
-        handleError(error)
-      } finally {
-        isLoading.value = false
+
+      if (form.isValid.value) {
+        try {
+          await sendApprove(_odinToPrecise(form.amount.val()) as BigNumber)
+          await sendDeposit(_odinToPrecise(form.amount.val()) as BigNumber)
+        } catch (error) {
+          handleError(error)
+        } finally {
+          isLoading.value = false
+        }
       }
     }
 
