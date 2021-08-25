@@ -66,11 +66,9 @@
             type="button"
             @click="onClose()"
             :disabled="!form.isValid || isLoading"
-            v-if="form.isValid"
           >
             Cancel
           </button>
-          <span v-else class="app-btn app-btn--disabled">Cancel</span>
           <button
             class="app-btn"
             type="button"
