@@ -133,9 +133,11 @@
             type="button"
             @click="submit()"
             :disabled="!form.isValid || isLoading"
+            v-if="form.isValid"
           >
             Submit
           </button>
+          <span v-else class="app-btn app-btn--disabled">Submit</span>
         </div>
       </form>
     </template>

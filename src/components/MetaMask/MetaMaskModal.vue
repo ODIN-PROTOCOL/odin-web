@@ -72,9 +72,11 @@
                 type="button"
                 @click="exchange"
                 :disabled="!form.isValid || isLoading"
+                v-if="form.isValid"
               >
                 Exchange
               </button>
+              <span v-else class="app-btn app-btn--disabled">Exchange</span>
             </div>
           </template>
         </template>

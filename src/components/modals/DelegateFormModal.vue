@@ -52,9 +52,11 @@
             type="button"
             @click="submit()"
             :disabled="!form.isValid || isLoading"
+            v-if="form.isValid"
           >
             Delegate
           </button>
+          <span v-else class="app-btn app-btn--disabled">Delegate</span>
         </div>
       </form>
     </template>
@@ -103,7 +105,7 @@ const DelegateFormDialog = defineComponent({
             denom: 'loki',
           },
         })
-        loadBalances()
+        await loadBalances()
         onSubmit()
         notifySuccess('Successfully delegated')
       } catch (error) {

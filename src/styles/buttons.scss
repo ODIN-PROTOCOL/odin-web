@@ -9,7 +9,8 @@
 
   @include transition(background);
 
-  &:disabled {
+  &:disabled, &--disabled {
+    cursor: not-allowed;
     background: var(--clr__action-disabled);
   }
 }

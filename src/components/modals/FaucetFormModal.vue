@@ -33,9 +33,11 @@
             type="button"
             @click="submit()"
             :disabled="!form.isValid || isLoading"
+            v-if="form.isValid"
           >
             Request
           </button>
+          <span v-else class="app-btn app-btn--disabled">Request</span>
         </div>
       </form>
     </template>
@@ -78,7 +80,7 @@ const FaucetFormModal = defineComponent({
         const indTime = error.message.indexOf('time')
         const errorStr = error.message.slice(10, indTime-3)
         const timeStr = error.message.slice(indTime + 6, -1)
-        
+
         const hours = Math.floor(((+timeStr/60) / 60))
         let minutes = Math.floor(Math.abs(+hours*60 - (+timeStr/60))).toString()
         let seconds = Math.floor(Math.abs((+hours*60*60 + (+minutes*60)) - (+timeStr))).toString()

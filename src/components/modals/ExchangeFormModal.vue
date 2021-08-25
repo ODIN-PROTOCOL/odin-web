@@ -66,17 +66,21 @@
             type="button"
             @click="onClose()"
             :disabled="!form.isValid || isLoading"
+            v-if="form.isValid"
           >
             Cancel
           </button>
+          <span v-else class="app-btn app-btn--disabled">Cancel</span>
           <button
             class="app-btn"
             type="button"
             @click="submit()"
             :disabled="!form.isValid || isLoading"
+            v-if="form.isValid"
           >
             Exchange
           </button>
+          <span v-else class="app-btn app-btn--disabled">Exchange</span>
         </div>
       </form>
     </template>

@@ -98,9 +98,11 @@
             type="button"
             @click="submit()"
             :disabled="!form.isValid || isLoading"
+            v-if="form.isValid"
           >
             Create
           </button>
+          <span v-else class="app-btn app-btn--disabled">Create</span>
         </div>
       </form>
     </template>

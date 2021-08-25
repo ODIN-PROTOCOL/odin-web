@@ -52,9 +52,11 @@
             type="button"
             @click="submit()"
             :disabled="!form.isValid || isLoading"
+            v-if="form.isValid"
           >
             Undelegate
           </button>
+          <span v-else class="app-btn app-btn--disabled">Undelegate</span>
         </div>
       </form>
     </template>
