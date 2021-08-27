@@ -27,7 +27,6 @@ import { defineComponent, onMounted, ref } from 'vue'
 import { showMetaMaskFormDialog } from './MetaMaskModal.vue'
 import { useWeb3 } from '@/composables/useWeb3/useWeb3'
 import { callers } from '@/api/callers'
-import { handleError } from '@/helpers/errors'
 import { showMetaMaskErrorFormDialog } from '@/components/MetaMask/MetaMaskErrorModal.vue'
 
 export default defineComponent({
