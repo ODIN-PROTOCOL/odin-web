@@ -16,7 +16,7 @@
           alt="ODIN Logo"
         />
 
-        <h2 class="auth__content-title fs-40 mg-b48">Log in</h2>
+        <h2 class="auth__content-title fs-40 mg-b48">Sign in</h2>
 
         <div class="app-form__field">
           <label class="app-form__field-lbl"> Mnemonic </label>

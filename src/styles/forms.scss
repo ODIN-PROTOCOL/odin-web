@@ -4,14 +4,26 @@
 
 .app-form {
   display: block;
-}
-
-.app-form__field,
-.app-form__field-composed {
-  display: block;
-
-  &:not(:first-of-type) {
-    margin-block-start: 1.2rem;
+  &__field {
+    display: block;
+    &:not(:first-of-type) {
+      margin-block-start: 1.2rem;
+    }
+    &-composed{
+      display: block;
+      &:not(:first-of-type) {
+        margin-block-start: 1.2rem;
+      }
+    }
+    &--wait {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 37.8rem;
+      font-size: 3rem;
+      font-weight: 900;
+      color: var(--clr__action);
+    }
   }
 }
 
