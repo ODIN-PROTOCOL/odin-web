@@ -59,7 +59,6 @@ export default defineComponent({
   }
   &__button {
     position: relative;
-    z-index: 1;
     width: 4.8rem;
     height: 4.8rem;
     display: flex;
