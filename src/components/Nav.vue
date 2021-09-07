@@ -28,8 +28,11 @@
         class="nav__dropdown"
         :class="{ 'nav__dropdown-wrapper--open': dropdown.isShown.value }"
       >
-        <span class="nav__dropdown-wrapper">
-          <span class="nav__dropdown-wrapper-name">Validators</span>
+        <span
+          class="nav__dropdown-wrapper"
+          :class="{ 'nav__dropdown-wrapper_active': isDropdownActive }"
+        >
+          <span class="nav__dropdown-wrapper-name"> Validators </span>
           <ArrowIcon
             :className="
               dropdown.isShown.value ? 'nav__dropdown-wrapper-arrow--open' : ''
@@ -42,20 +45,24 @@
             ref="dropdownEl"
             v-show="dropdown.isShown.value"
           >
-            <router-link
-              class="nav__dropdown-link"
-              data-text="Validators and Delegates"
-              :to="{ name: 'Validators' }"
-            >
-              <span>Validators and Delegates</span>
-            </router-link>
-            <router-link
-              class="nav__dropdown-link"
-              data-text="Oracle validators"
-              :to="{ name: 'Validators' }"
-            >
-              <span>Oracle validators</span>
-            </router-link>
+            <div class="nav__dropdown-item">
+              <router-link
+                class="nav__dropdown-link"
+                data-text="Validators and Delegates"
+                :to="{ name: 'Validators' }"
+              >
+                <span>Validators and Delegates</span>
+              </router-link>
+            </div>
+            <div class="nav__dropdown-item">
+              <router-link
+                class="nav__dropdown-link"
+                data-text="Oracle validators"
+                :to="{ name: 'Validators' }"
+              >
+                <span>Oracle validators</span>
+              </router-link>
+            </div>
           </div>
         </transition>
       </div>
@@ -101,12 +108,26 @@ export default defineComponent({
       () => route.path,
       () => {
         emit('changeRoute')
+        handleDropdownActive()
       }
     )
 
+    const isDropdownActive = ref(false)
+    const urls = ['/validators']
+    const handleDropdownActive = () => {
+      isDropdownActive.value = urls.indexOf(route.path) > -1
+    }
+
     const dropdownEl = ref<HTMLElement>()
     const dropdown = useDropdown(dropdownEl)
-    return { exchange, faucet, dropdown, dropdownEl }
+    return {
+      exchange,
+      faucet,
+      dropdown,
+      dropdownEl,
+      isDropdownActive,
+      handleDropdownActive,
+    }
   },
 })
 </script>
@@ -149,29 +170,47 @@ export default defineComponent({
         fill: var(--clr__action);
       }
     }
+    &_active {
+      color: var(--clr__action);
+      font-weight: 900;
+      .nav__dropdown-wrapper-arrow {
+        fill: var(--clr__action);
+      }
+    }
   }
   &-modal {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
+    align-items: flex-start;
     position: absolute;
     top: calc(100% + 1rem);
     left: 0;
-    border-radius: 0.8rem;
+    border-radius: 0 0 0.8rem 0.8rem;
     background: var(--clr__main-bg);
-    padding: 0.8rem;
     z-index: 1;
-    box-shadow: 0 0 1rem 1rem var(--clr__dropdown-shadow);
-    min-width: 16rem;
+    box-shadow: 0px 4px 24px var(--clr__dropdown-shadow);
+    min-width: 20rem;
+  }
+  &-item {
+    width: 100%;
+    padding: 0.8rem 1.2rem;
+    &:hover {
+      background: var(--clr__dropdown-link);
+
+      .nav__dropdown-link {
+        color: var(--clr__action);
+        font-weight: 600;
+      }
+
+      &:last-child {
+        border-radius: 0 0 0.8rem 0.8rem;
+      }
+    }
   }
   &-link {
     margin: 0;
     text-decoration: none;
     color: inherit;
-    &:hover {
-      color: var(--clr__action);
-    }
   }
 }
 

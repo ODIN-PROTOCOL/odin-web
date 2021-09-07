@@ -6,14 +6,14 @@
 }
 
 .header-wrapper {
-  padding: 2.5rem 1rem;
+  padding: 2.5rem 3.2rem;
   width: 100%;
+  max-width: 140rem;
   display: flex;
   align-items: center;
   justify-content: center;
   gap:5.4rem;
-  margin: 0 10.3rem;
-  max-width: 100%;
+  margin: 0 auto;
 }
 
 .view-header {
