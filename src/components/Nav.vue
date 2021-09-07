@@ -28,8 +28,11 @@
         class="nav__dropdown"
         :class="{ 'nav__dropdown-wrapper--open': dropdown.isShown.value }"
       >
-        <span class="nav__dropdown-wrapper">
-          <span class="nav__dropdown-wrapper-name">Validators</span>
+        <span
+          class="nav__dropdown-wrapper"
+          :class="{ active: isDropdownActive }"
+        >
+          <span class="nav__dropdown-wrapper-name"> Validators </span>
           <ArrowIcon
             :className="
               dropdown.isShown.value ? 'nav__dropdown-wrapper-arrow--open' : ''
@@ -105,12 +108,26 @@ export default defineComponent({
       () => route.path,
       () => {
         emit('changeRoute')
+        handleDropdownActive()
       }
     )
 
+    const isDropdownActive = ref(false)
+    const handleDropdownActive = () => {
+      const urls = ['/validators']
+      isDropdownActive.value = urls.indexOf(route.path) > -1
+    }
+
     const dropdownEl = ref<HTMLElement>()
     const dropdown = useDropdown(dropdownEl)
-    return { exchange, faucet, dropdown, dropdownEl }
+    return {
+      exchange,
+      faucet,
+      dropdown,
+      dropdownEl,
+      isDropdownActive,
+      handleDropdownActive,
+    }
   },
 })
 </script>
@@ -150,6 +167,13 @@ export default defineComponent({
       transform: translate(3px, -6px) rotate(270deg);
       &--open {
         transform: translate(-11px, 9px) rotate(90deg);
+        fill: var(--clr__action);
+      }
+    }
+    &.active {
+      color: var(--clr__action);
+      font-weight: 900;
+      .nav__dropdown-wrapper-arrow {
         fill: var(--clr__action);
       }
     }
