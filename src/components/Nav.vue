@@ -30,7 +30,7 @@
       >
         <span
           class="nav__dropdown-wrapper"
-          :class="{ active: isDropdownActive }"
+          :class="{ 'nav__dropdown-wrapper_active': isDropdownActive }"
         >
           <span class="nav__dropdown-wrapper-name"> Validators </span>
           <ArrowIcon
@@ -113,8 +113,8 @@ export default defineComponent({
     )
 
     const isDropdownActive = ref(false)
+    const urls = ['/validators']
     const handleDropdownActive = () => {
-      const urls = ['/validators']
       isDropdownActive.value = urls.indexOf(route.path) > -1
     }
 
@@ -170,7 +170,7 @@ export default defineComponent({
         fill: var(--clr__action);
       }
     }
-    &.active {
+    &_active {
       color: var(--clr__action);
       font-weight: 900;
       .nav__dropdown-wrapper-arrow {
