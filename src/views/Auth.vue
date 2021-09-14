@@ -1,6 +1,6 @@
 <template>
   <div class="auth">
-    <div class="auth__splash fx-end only-sm-above">
+    <div class="auth__splash">
       <img
         class="auth__splash-logo"
         src="~@/assets/brand/odin-logo-white.png"
@@ -16,7 +16,7 @@
           alt="ODIN Logo"
         />
 
-        <h2 class="auth__content-title fs-40 mg-b48">Log in</h2>
+        <h2 class="auth__content-title fs-40 mg-b48">Sign in</h2>
 
         <div class="app-form__field">
           <label class="app-form__field-lbl"> Mnemonic </label>
@@ -121,16 +121,23 @@ export default defineComponent({
 }
 
 .auth__splash {
-  padding: 3.2rem;
-  background: var(--clr__splash-bg);
+  background: url('~@/assets/images/auth_background.png') no-repeat center
+    #031e3a;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .auth__splash-logo {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   width: 100%;
   min-width: 22rem;
   max-width: 25vw;
   max-height: 25rem;
-  margin-inline-end: 8vw;
 }
 
 .auth__content {

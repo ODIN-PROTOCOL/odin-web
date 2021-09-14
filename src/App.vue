@@ -82,6 +82,7 @@ export default defineComponent({
 @import '~@/styles/forms.scss';
 @import '~@/styles/vue-notification.scss';
 @import '~@/styles/shortcuts.scss';
+@import '~@/styles/common.scss';
 
 #app {
   * {
