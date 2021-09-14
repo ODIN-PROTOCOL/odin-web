@@ -2,7 +2,8 @@
   <div class="user-widget fx-row gap-5">
     <BalanceButton />
     <MetaMask />
-    <button class="app-ico-btn mg-l8" type="button" @click="logOutAndLeave()">
+    <button class="app-ico-btn mg-l8 log-out" type="button" @click="logOutAndLeave()">
+      <p v-if="isOpen">Log out</p>
       <img src="~@/assets/icons/exit.svg" alt="Log out" />
     </button>
   </div>
@@ -16,6 +17,9 @@ import MetaMask from '@/components/MetaMask/MetaMask.vue'
 import router from '@/router'
 
 export default defineComponent({
+  props: {
+    isOpen: { type: Boolean, default: false },
+  },
   components: { BalanceButton, MetaMask },
   setup() {
     const auth = useAuthorization()
@@ -55,6 +59,27 @@ export default defineComponent({
     background-color: var(--clr__action-extra-muted);
     box-shadow: 0 0 1rem 1rem var(--clr__action-extra-muted);
     color: var(--clr__action);
+  }
+}
+.user-widget {
+  @media (max-width: 48rem) {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 2rem;
+    margin: 0;
+  }
+}
+.log-out {
+  @media (max-width: 48rem) {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    width: unset;
+    p{
+      display: flex;
+      flex-shrink: 0;
+    }
   }
 }
 </style>
