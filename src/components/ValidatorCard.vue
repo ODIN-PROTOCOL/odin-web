@@ -2,7 +2,7 @@
   <div class="validator-card">
     <div class="validator-card__row fx-row">
       <div class="fx-sfw">
-        <label class="dp-ib mg-b8 fs-14">Moniker</label>
+        <label class="dp-ib mg-b8 fs-14">Validator</label>
         <p>{{ validator.description.moniker }}</p>
       </div>
       <div class="fx-sfw mg-l32">
