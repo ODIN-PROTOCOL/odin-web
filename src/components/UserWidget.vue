@@ -76,7 +76,7 @@ export default defineComponent({
     display: flex;
     align-items: center;
     width: unset;
-    p{
+    p {
       display: flex;
       flex-shrink: 0;
     }
