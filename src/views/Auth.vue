@@ -126,6 +126,9 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   align-items: center;
+  @media (max-width: 76.8rem) {
+    display: none;
+  }
 }
 
 .auth__splash-logo {
@@ -158,8 +161,6 @@ export default defineComponent({
   max-width: 12rem;
   position: absolute;
   top: 4rem;
-  left: 50%;
-  transform: translateX(-50%);
 }
 
 .auth__copy {
