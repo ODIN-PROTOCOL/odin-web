@@ -22,6 +22,15 @@ export const number: FormFieldValidator = (val: unknown) => {
   return null
 }
 
+const INTEGER_RE = /^[0-9]+$/
+export const integer: FormFieldValidator = (val: unknown) => {
+  console.log(val, typeof val)
+  if (typeof val === 'string' && !INTEGER_RE.test(val)) {
+    return 'The value should be integer'
+  }
+  return null
+}
+
 export function num(minimum?: number, maximum?: number): FormFieldValidator[] {
   const validators: FormFieldValidator[] = [number]
 

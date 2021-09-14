@@ -87,7 +87,12 @@ const DelegateFormDialog = defineComponent({
     const lokiBalance = getBalance('loki', 'number')
 
     const form = useForm({
-      amount: ['', validators.required, ...validators.num(1, lokiBalance)],
+      amount: [
+        '',
+        validators.required,
+        validators.integer,
+        ...validators.num(1, lokiBalance),
+      ],
     })
     const isLoading = ref(false)
     const onSubmit = dialogs.getHandler('onSubmit')
