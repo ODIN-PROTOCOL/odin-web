@@ -92,7 +92,6 @@ export default defineComponent({
         hdPaths: [API_CONFIG.hdDeviation],
         prefix: 'odin',
       })
-
       // const newAccount = await newWallet.getAccounts()
       form.mnemonic.val(newWallet.mnemonic)
 
