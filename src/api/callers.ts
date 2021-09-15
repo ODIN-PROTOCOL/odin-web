@@ -23,6 +23,7 @@ const makeCallers = () => {
   const querier = api.makeQueryCaller.bind(api)
 
   return {
+    getCounts: querier((qc) => qc.oracle.unverified.counts),
     createDataSource: broadcaster<MsgCreateDataSource>(
       '/oracle.v1.MsgCreateDataSource',
       MsgCreateDataSource

@@ -21,6 +21,10 @@
   margin-bottom: 3rem;
 }
 
+.page-title {
+  margin-bottom: 3.2rem;
+}
+
 h2.view-title {
   font-size: 3.2rem;
   line-height: 4.8rem;
@@ -34,10 +38,14 @@ h2.view-title {
     margin: 0;
     padding: 2.4rem 1.6rem;
   }
+  .page-title {
+    margin-bottom: 1.6rem;
+  }
   h2.view-title {
     font-size: 2.4rem;
+    line-height: 3.2rem;
   }
   .view-main {
-    padding: 1.6rem;
+    padding: 0 1.6rem 1.6rem;
   }
 }
