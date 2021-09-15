@@ -165,13 +165,49 @@ const BecomeValidatorFormModal = defineComponent({
   components: { ModalBase },
   setup() {
     const form = useForm({
-      moniker: ['', validators.required, validators.withOutSpace, validators.maxCharacters(128)],
-      pubKey: ['', validators.required, validators.erc20Address, validators.withOutSpace, validators.maxCharacters(128)],
-      rate: ['', validators.required, ...validators.num(0), validators.maxCharacters(14)],
-      maxRate: ['', validators.required, ...validators.num(0), validators.maxCharacters(14)],
-      maxChangeRate: ['', validators.required, ...validators.num(0), validators.maxCharacters(14)],
-      minDelegation: ['', validators.required, ...validators.num(1), validators.maxCharacters(1)],
-      selfDelegation: ['', validators.required, ...validators.num(0), validators.maxCharacters(128)],
+      moniker: [
+        '',
+        validators.required,
+        validators.withOutSpace,
+        validators.maxCharacters(128),
+      ],
+      pubKey: [
+        '',
+        validators.required,
+        validators.erc20Address,
+        validators.withOutSpace,
+        validators.maxCharacters(128),
+      ],
+      rate: [
+        '',
+        validators.required,
+        ...validators.num(0),
+        validators.maxCharacters(14),
+      ],
+      maxRate: [
+        '',
+        validators.required,
+        ...validators.num(0),
+        validators.maxCharacters(14),
+      ],
+      maxChangeRate: [
+        '',
+        validators.required,
+        ...validators.num(0),
+        validators.maxCharacters(14),
+      ],
+      minDelegation: [
+        '',
+        validators.required,
+        ...validators.num(1),
+        validators.maxCharacters(128),
+      ],
+      selfDelegation: [
+        '',
+        validators.required,
+        ...validators.num(0),
+        validators.maxCharacters(128),
+      ],
     })
     const isLoading = ref(false)
     const onSubmit = dialogs.getHandler('onSubmit')
