@@ -156,9 +156,6 @@ import ModalBase from './ModalBase.vue'
 import { Bech32, fromBase64 } from '@cosmjs/encoding'
 import { big } from '@/helpers/bigMath'
 import { PubKey } from '@cosmjs/stargate/build/codec/cosmos/crypto/secp256k1/keys'
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { Buffer } from 'buffer'
 
 const BecomeValidatorFormModal = defineComponent({
@@ -168,14 +165,14 @@ const BecomeValidatorFormModal = defineComponent({
       moniker: [
         '',
         validators.required,
-        validators.withOutSpace,
+        validators.withOutSpaceAtStart,
         validators.maxCharacters(128),
       ],
       pubKey: [
         '',
         validators.required,
         validators.erc20Address,
-        validators.withOutSpace,
+        validators.withOutSpaceAtStart,
         validators.maxCharacters(128),
       ],
       rate: [

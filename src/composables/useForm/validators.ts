@@ -11,9 +11,8 @@ export const required: FormFieldValidator = (val: unknown) => {
   return null
 }
 
-const WITHOUTSPACE_RE = /^(?!\d+$)(?:[a-zA-Z0-9][a-zA-Z0-9 @&$\W]*)?$/
-export const withOutSpace: FormFieldValidator = (val: unknown) => {
-  if (typeof val === 'string' && !WITHOUTSPACE_RE.test(val)) {
+export const withOutSpaceAtStart: FormFieldValidator = (val: unknown) => {
+  if (typeof val === 'string' && val.trim().length === 0) {
     return 'The field must contain any characters, including alphanumeric values (A-Z, a-z, 0-9), special characters and spaces (not in first character).'
   }
   return null
