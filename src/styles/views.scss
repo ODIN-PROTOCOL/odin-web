@@ -4,13 +4,37 @@
   max-width: 1280px;
   padding: 0 3.2rem;
   margin: 0 auto;
+  @media (max-width: 48rem) {
+    padding: 0 2rem;
+  }
 }
 
 .view-header {
   padding: 3.2rem 3.2rem 6.4rem;
+  @media (max-width: 48rem) {
+    padding: 0;
+    border-bottom: 0.1rem solid #CCE4FF;
+    margin-bottom: 3rem;
+  }
 }
 
 h2.view-title {
   font-size: 3.2rem;
   line-height: 4.6rem;
+}
+
+.header-wrapper {
+  padding: 2.5rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap:5.4rem;
+  max-width: 100%;
+  width: 100%;
+  position: relative;
+  @media (max-width: 768px) {
+    width: 100%;
+    margin: 0;
+    justify-content: space-between;
+  }
 }

@@ -2,7 +2,7 @@
   <div class="validator-card">
     <div class="validator-card__row fx-row">
       <div class="fx-sfw">
-        <label class="dp-ib mg-b8 fs-14">Moniker</label>
+        <label class="dp-ib mg-b8 fs-14">Validator</label>
         <p>{{ validator.description.moniker }}</p>
       </div>
       <div class="fx-sfw mg-l32">
@@ -102,7 +102,7 @@ export default defineComponent({
     delegation: { type: Object as PropType<DelegationResponse> },
   },
   setup(props, ctx) {
-    const delegate = () => {
+    const delegate = (): void => {
       showDelegateFormDialog(
         {
           onSubmit: (d) => {
@@ -114,7 +114,7 @@ export default defineComponent({
       )
     }
 
-    const undelegate = () => {
+    const undelegate = (): void => {
       if (!props.delegation) return
       showUndelegateFormDialog(
         {
@@ -134,16 +134,31 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .validator-card {
-  border: 1px solid var(--clr__action);
-  border-radius: 8px;
+  border: 0.1rem solid var(--clr__action);
+  border-radius: 0.8rem;
   padding: 0.8rem 3.2rem;
-}
-
-.validator-card__row {
-  padding: 2.4rem 0;
-
-  &:not(:last-of-type) {
-    border-bottom: 1px solid var(--clr__table-border);
+  &__row {
+    padding: 2.4rem 0;
+    @media (max-width: 48rem) {
+      flex-direction: column;
+      gap: 2rem;
+      align-items: baseline;
+      .fx-sfw {
+        margin: 0;
+        width: 100%;
+        border-bottom: 0.1rem solid var(--clr__table-border);
+        padding-bottom: 1rem;
+        &:empty {
+          border-bottom: 0.1rem solid transparent;
+        }
+      }
+    }
+    &:not(:last-of-type) {
+      border-bottom: 0.1rem solid var(--clr__table-border);
+      @media (max-width: 48rem) {
+        border-bottom: 0.1rem solid transparent;
+      }
+    }
   }
 }
 </style>

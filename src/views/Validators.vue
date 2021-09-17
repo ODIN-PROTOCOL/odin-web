@@ -3,7 +3,7 @@
     class="validators view-main load-fog"
     :class="{ 'load-fog_show': isLoading && validators?.length }"
   >
-    <div class="fx-row mg-b32">
+    <div class="fx-row mg-b32 validators-title">
       <h2 class="view-title">Validators</h2>
       <button
         class="app-btn-2nd fx-sae"
@@ -37,22 +37,25 @@ import { showBecomeValidatorFormDialog } from '@/components/modals/BecomeValidat
 import ValidatorCard from '@/components/ValidatorCard.vue'
 import { handleError } from '@/helpers/errors'
 import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
-import { defineComponent, ref } from 'vue'
+import { ComputedRef, defineComponent, ref } from 'vue'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
+import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 
 export default defineComponent({
   components: { ValidatorCard },
   setup() {
-    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+    const [isLoading, lockLoading, releaseLoading]: [
+      isLocked: ComputedRef<boolean>,
+      lockLoading: () => void,
+      releaseLoading: () => void
+    ] = useBooleanSemaphore()
 
-    const validators = ref()
-    const loadValidators = async () => {
+    const validators = ref<Array<ValidatorDecoded>>()
+    const loadValidators = async (): Promise<void> => {
       lockLoading()
       try {
         const response = await callers.getValidators('BOND_STATUS_BONDED')
         validators.value = response.validators
-
-        console.debug('Validators:', response)
       } catch (error) {
         handleError(error)
       }
@@ -61,7 +64,7 @@ export default defineComponent({
     loadValidators()
 
     const delegations = ref<{ [k: string]: DelegationResponse }>({})
-    const loadDelegations = async () => {
+    const loadDelegations = async (): Promise<void> => {
       lockLoading()
       try {
         // TODO: delegations returns invalid delegator's amount?
@@ -82,8 +85,8 @@ export default defineComponent({
     }
     loadDelegations()
 
-    const becomeValidator = async () => {
-      showBecomeValidatorFormDialog({
+    const becomeValidator = async (): Promise<void> => {
+      await showBecomeValidatorFormDialog({
         onSubmit: (d) => {
           d.kill()
           loadValidators()
@@ -104,4 +107,16 @@ export default defineComponent({
 })
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.validators-title {
+  @media (max-width: 48rem) {
+    gap: 2rem;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    .app-btn-2nd {
+      margin: 0;
+    }
+  }
+}
+</style>

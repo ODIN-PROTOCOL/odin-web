@@ -11,6 +11,13 @@ export const required: FormFieldValidator = (val: unknown) => {
   return null
 }
 
+export const withOutSpaceAtStart: FormFieldValidator = (val: unknown) => {
+  if (typeof val === 'string' && val.trim().length === 0) {
+    return 'The field must contain any characters, including alphanumeric values (A-Z, a-z, 0-9), special characters and spaces (not in first character).'
+  }
+  return null
+}
+
 const NUMBER_RE = /^[+-]?\d*\.?\d+(?:[Ee][+-]?\d+)?$/
 export const number: FormFieldValidator = (val: unknown) => {
   if (
@@ -18,6 +25,15 @@ export const number: FormFieldValidator = (val: unknown) => {
     (typeof val === 'number' && Number.isNaN(val))
   ) {
     return 'The value should represent a number'
+  }
+  return null
+}
+
+const INTEGER_RE = /^[0-9]+$/
+export const integer: FormFieldValidator = (val: unknown) => {
+  console.log(val, typeof val)
+  if (typeof val === 'string' && !INTEGER_RE.test(val)) {
+    return 'The value should be integer'
   }
   return null
 }
@@ -52,6 +68,14 @@ export function max(maximum: number): FormFieldValidator {
     const num = Number(val)
     if (!Number.isNaN(num) && num > maximum) {
       return `The value should be lower than ${maximum}`
+    }
+    return null
+  }
+}
+export function maxCharacters(maximum: number): FormFieldValidator {
+  return (val: unknown): FormFieldValidatorResult => {
+    if (String(val).length > maximum) {
+      return `The value should be lower than ${maximum} characters`
     }
     return null
   }
