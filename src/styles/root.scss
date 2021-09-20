@@ -47,4 +47,11 @@
   --clr__progressbar-track: #{$clr-progressbar-track};
   --clr__progressbar-positive: #{$clr-progressbar-positive};
   --clr__progressbar-negative: #{$clr-progressbar-negative};
+  
+  // Status
+  --clr__status-default: #{$clr-status-default};
+  --clr__status-success: #{$clr-status-success};
+  --clr__status-pending: #{$clr-status-pending};
+  --clr__status-failed: #{$clr-status-failed};
+  --clr__status-progress: #{$clr-status-progress};
 }
