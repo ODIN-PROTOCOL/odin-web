@@ -41,6 +41,7 @@
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="item.responsePacketData.requestId.toString()"
+                :to="`/requests/${item.responsePacketData.requestId}`"
               />
             </div>
             <div class="app-table__cell">
