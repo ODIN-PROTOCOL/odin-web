@@ -48,7 +48,7 @@ const makeCallers = () => {
         }
       })
     ),
-
+    getRequest: querier((qc) => qc.oracle.unverified.request),
     getProposals: querier((qc) =>
       mapResponse(qc.gov.unverified.proposals, (response) => {
         return {
