@@ -21,14 +21,14 @@
   &__content {
     background: var(--clr__modal-content-bg);
     border-radius: 0.8rem;
-    padding: 3.2rem 2.2rem 3.2rem 3.2rem;
+    padding: 3.2rem 2.2rem;
     z-index: 1;
     width: 100%;
     max-width: 48rem;
     box-shadow: 0 0.4rem 2.4rem var(--clr__modal-content-shadow);
 
     &-head {
-      padding-right: 1rem;
+      padding: 0 1rem;
     }
   }
 
