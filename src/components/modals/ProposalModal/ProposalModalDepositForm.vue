@@ -4,21 +4,23 @@
     :class="{ 'load-fog_show': isLoading }"
     @submit.prevent
   >
-    <div class="app-form__field">
-      <label class="app-form__field-lbl fs-wb"> Deposit (LOKI) </label>
-      <input
-        class="app-form__field-input"
-        name="deposit-amount"
-        type="number"
-        placeholder="1000"
-        min="1"
-        step="1"
-        v-model="form.amount"
-        :disabled="isLoading || isProcessing"
-      />
-      <p v-if="form.amountErr" class="app-form__field-err">
-        {{ form.amountErr }}
-      </p>
+    <div class="app-form__main">
+      <div class="app-form__field">
+        <label class="app-form__field-lbl fs-wb"> Deposit (LOKI) </label>
+        <input
+          class="app-form__field-input"
+          name="deposit-amount"
+          type="number"
+          placeholder="1000"
+          min="1"
+          step="1"
+          v-model="form.amount"
+          :disabled="isLoading || isProcessing"
+        />
+        <p v-if="form.amountErr" class="app-form__field-err">
+          {{ form.amountErr }}
+        </p>
+      </div>
     </div>
 
     <div class="app-form__footer">

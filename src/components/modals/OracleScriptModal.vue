@@ -85,10 +85,7 @@ const OracleScriptModal = defineComponent({
 
     const toRequestCreation = () => {
       onClose()
-      showRequestFormDialog(
-        { onSubmit: onRequestCreated },
-        { oracleScriptId: props.oracleScript.id }
-      )
+      showRequestFormDialog({ onSubmit: onRequestCreated })
     }
 
     return {

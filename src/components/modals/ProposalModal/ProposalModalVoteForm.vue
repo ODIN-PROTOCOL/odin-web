@@ -4,21 +4,23 @@
     :class="{ 'load-fog_show': isLoading }"
     @submit.prevent
   >
-    <div class="app-form__field">
-      <label class="app-form__field-lbl fs-wb"> Your vote </label>
-      <select
-        class="app-form__field-input"
-        name="vote-option"
-        v-model="form.vote"
-        :disabled="isLoading || isProcessing || isLoadingVote"
-      >
-        <option v-for="opt in voteOptions" :key="opt" :value="opt">
-          {{ $tVote(opt) }}
-        </option>
-      </select>
-      <p v-if="form.amountErr" class="app-form__field-err">
-        {{ form.amountErr }}
-      </p>
+    <div class="app-form__main">
+      <div class="app-form__field">
+        <label class="app-form__field-lbl fs-wb"> Your vote </label>
+        <select
+          class="app-form__field-input"
+          name="vote-option"
+          v-model="form.vote"
+          :disabled="isLoading || isProcessing || isLoadingVote"
+        >
+          <option v-for="opt in voteOptions" :key="opt" :value="opt">
+            {{ $tVote(opt) }}
+          </option>
+        </select>
+        <p v-if="form.amountErr" class="app-form__field-err">
+          {{ form.amountErr }}
+        </p>
+      </div>
     </div>
 
     <div class="app-form__footer">

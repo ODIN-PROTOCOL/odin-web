@@ -1,7 +1,7 @@
 <template>
   <ModalBase class="become-validator-form-modal" @close="onClose()">
     <template #title>
-      <h3>Become a validator</h3>
+      <h3 class="app-form__title">Become a validator</h3>
     </template>
 
     <template #main>
@@ -10,121 +10,123 @@
         :class="{ 'load-fog_show': isLoading }"
         @submit.prevent
       >
-        <div class="app-form__field">
-          <label class="app-form__field-lbl"> Moniker </label>
-          <input
-            class="app-form__field-input"
-            name="become-validator-moniker"
-            type="text"
-            placeholder="validator-x"
-            v-model="form.moniker"
-            :disabled="isLoading"
-          />
-          <p v-if="form.monikerErr" class="app-form__field-err">
-            {{ form.monikerErr }}
-          </p>
-        </div>
-
-        <div class="app-form__field">
-          <label class="app-form__field-lbl"> Public key (base64) </label>
-          <input
-            class="app-form__field-input"
-            name="become-validator-pubkey"
-            type="text"
-            placeholder="odinvalconspub1zcj…"
-            v-model="form.pubKey"
-            :disabled="isLoading"
-          />
-          <p v-if="form.pubKeyErr" class="app-form__field-err">
-            {{ form.pubKeyErr }}
-          </p>
-        </div>
-
-        <div class="app-form__field-composed">
+        <div class="app-form__main">
           <div class="app-form__field">
-            <label class="app-form__field-lbl"> Rate (%) </label>
+            <label class="app-form__field-lbl"> Moniker </label>
             <input
               class="app-form__field-input"
-              name="become-validator-rate"
-              type="number"
-              min="0"
-              step="0.1"
-              placeholder="0.1"
-              v-model="form.rate"
+              name="become-validator-moniker"
+              type="text"
+              placeholder="validator-x"
+              v-model="form.moniker"
               :disabled="isLoading"
             />
-            <p v-if="form.rateErr" class="app-form__field-err">
-              {{ form.rateErr }}
+            <p v-if="form.monikerErr" class="app-form__field-err">
+              {{ form.monikerErr }}
             </p>
           </div>
 
-          <div class="app-form__field mg-l16">
-            <label class="app-form__field-lbl"> Max rate (%) </label>
+          <div class="app-form__field">
+            <label class="app-form__field-lbl"> Public key (base64) </label>
             <input
               class="app-form__field-input"
-              name="become-validator-rate"
-              type="number"
-              min="0"
-              step="0.1"
-              placeholder="0.2"
-              v-model="form.maxRate"
+              name="become-validator-pubkey"
+              type="text"
+              placeholder="odinvalconspub1zcj…"
+              v-model="form.pubKey"
               :disabled="isLoading"
             />
-            <p v-if="form.maxRateErr" class="app-form__field-err">
-              {{ form.maxRateErr }}
+            <p v-if="form.pubKeyErr" class="app-form__field-err">
+              {{ form.pubKeyErr }}
             </p>
           </div>
 
-          <div class="app-form__field mg-l16">
-            <label class="app-form__field-lbl"> Max change (%) </label>
+          <div class="app-form__field-composed">
+            <div class="app-form__field">
+              <label class="app-form__field-lbl"> Rate (%) </label>
+              <input
+                class="app-form__field-input"
+                name="become-validator-rate"
+                type="number"
+                min="0"
+                step="0.1"
+                placeholder="0.1"
+                v-model="form.rate"
+                :disabled="isLoading"
+              />
+              <p v-if="form.rateErr" class="app-form__field-err">
+                {{ form.rateErr }}
+              </p>
+            </div>
+
+            <div class="app-form__field mg-l16">
+              <label class="app-form__field-lbl"> Max rate (%) </label>
+              <input
+                class="app-form__field-input"
+                name="become-validator-rate"
+                type="number"
+                min="0"
+                step="0.1"
+                placeholder="0.2"
+                v-model="form.maxRate"
+                :disabled="isLoading"
+              />
+              <p v-if="form.maxRateErr" class="app-form__field-err">
+                {{ form.maxRateErr }}
+              </p>
+            </div>
+
+            <div class="app-form__field mg-l16">
+              <label class="app-form__field-lbl"> Max change (%) </label>
+              <input
+                class="app-form__field-input"
+                name="become-validator-rate"
+                type="number"
+                min="0"
+                step="0.1"
+                placeholder="0.1"
+                v-model="form.maxChangeRate"
+                :disabled="isLoading"
+              />
+              <p v-if="form.maxChangeRateErr" class="app-form__field-err">
+                {{ form.maxChangeRateErr }}
+              </p>
+            </div>
+          </div>
+
+          <div class="app-form__field">
+            <label class="app-form__field-lbl"> Min delegation (LOKI) </label>
             <input
               class="app-form__field-input"
-              name="become-validator-rate"
+              name="become-validator-min-delegation"
               type="number"
-              min="0"
-              step="0.1"
-              placeholder="0.1"
-              v-model="form.maxChangeRate"
+              min="1"
+              step="1000"
+              placeholder="1000"
+              v-model="form.minDelegation"
               :disabled="isLoading"
             />
-            <p v-if="form.maxChangeRateErr" class="app-form__field-err">
-              {{ form.maxChangeRateErr }}
+            <p v-if="form.minDelegationErr" class="app-form__field-err">
+              {{ form.minDelegationErr }}
             </p>
           </div>
-        </div>
 
-        <div class="app-form__field">
-          <label class="app-form__field-lbl"> Min delegation (LOKI) </label>
-          <input
-            class="app-form__field-input"
-            name="become-validator-min-delegation"
-            type="number"
-            min="1"
-            step="1000"
-            placeholder="1000"
-            v-model="form.minDelegation"
-            :disabled="isLoading"
-          />
-          <p v-if="form.minDelegationErr" class="app-form__field-err">
-            {{ form.minDelegationErr }}
-          </p>
-        </div>
-
-        <div class="app-form__field">
-          <label class="app-form__field-lbl"> Self delegation (LOKI) </label>
-          <input
-            class="app-form__field-input"
-            name="become-validator-self-delegation"
-            type="number"
-            min="1"
-            step="1000"
-            placeholder="1000"
-            v-model="form.selfDelegation"
-            :disabled="isLoading"
-          />
-          <p v-if="form.selfDelegationErr" class="app-form__field-err">
-            {{ form.selfDelegationErr }}
-          </p>
+          <div class="app-form__field">
+            <label class="app-form__field-lbl"> Self delegation (LOKI) </label>
+            <input
+              class="app-form__field-input"
+              name="become-validator-self-delegation"
+              type="number"
+              min="1"
+              step="1000"
+              placeholder="1000"
+              v-model="form.selfDelegation"
+              :disabled="isLoading"
+            />
+            <p v-if="form.selfDelegationErr" class="app-form__field-err">
+              {{ form.selfDelegationErr }}
+            </p>
+          </div>
         </div>
 
         <div class="app-form__footer">

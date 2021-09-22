@@ -1,7 +1,7 @@
 <template>
   <ModalBase class="exchange-form-modal" @close="onClose()">
     <template #title>
-      <h3>Exchange ETH/ERC20</h3>
+      <h3 class="app-form__title">Exchange ETH/ERC20</h3>
     </template>
 
     <template #main>
@@ -10,54 +10,56 @@
         :class="{ 'load-fog_show': isLoading }"
         @submit.prevent
       >
-        <div class="app-form__field">
-          <label class="app-form__field-lbl"> Asset </label>
-          <select
-            class="app-form__field-input"
-            name="exchange-source-asset"
-            v-model="form.sourceAsset"
-            :disabled="isLoading"
-          >
-            <option v-for="asset in assets" :key="asset" :value="asset">
-              {{ asset }}
-            </option>
-          </select>
-          <p v-if="form.sourceAssetErr" class="app-form__field-err">
-            {{ form.sourceAssetErr }}
-          </p>
-        </div>
+        <div class="app-form__main">
+          <div class="app-form__field">
+            <label class="app-form__field-lbl"> Asset </label>
+            <select
+              class="app-form__field-input"
+              name="exchange-source-asset"
+              v-model="form.sourceAsset"
+              :disabled="isLoading"
+            >
+              <option v-for="asset in assets" :key="asset" :value="asset">
+                {{ asset }}
+              </option>
+            </select>
+            <p v-if="form.sourceAssetErr" class="app-form__field-err">
+              {{ form.sourceAssetErr }}
+            </p>
+          </div>
 
-        <div class="app-form__field">
-          <label class="app-form__field-lbl"> Source address </label>
-          <input
-            class="app-form__field-input"
-            name="request-source-address"
-            type="text"
-            placeholder="0x675898…"
-            v-model="form.sourceAddress"
-            :disabled="isLoading"
-          />
-          <p v-if="form.sourceAddressErr" class="app-form__field-err">
-            {{ form.sourceAddressErr }}
-          </p>
-        </div>
+          <div class="app-form__field">
+            <label class="app-form__field-lbl"> Source address </label>
+            <input
+              class="app-form__field-input"
+              name="request-source-address"
+              type="text"
+              placeholder="0x675898…"
+              v-model="form.sourceAddress"
+              :disabled="isLoading"
+            />
+            <p v-if="form.sourceAddressErr" class="app-form__field-err">
+              {{ form.sourceAddressErr }}
+            </p>
+          </div>
 
-        <div class="app-form__field">
-          <label class="app-form__field-lbl"> Amount </label>
-          <input
-            class="app-form__field-input"
-            name="request-source-amount"
-            type="number"
-            min="1"
-            step="1"
-            placeholder="1000"
-            v-model="form.sourceAmount"
-            :disabled="isLoading"
-          />
-          <p v-if="form.sourceAmountErr" class="app-form__field-err">
-            {{ form.sourceAmountErr }}
-          </p>
-          <p class="app-form__field-note">≈ {{ approxDestAmount }}</p>
+          <div class="app-form__field">
+            <label class="app-form__field-lbl"> Amount </label>
+            <input
+              class="app-form__field-input"
+              name="request-source-amount"
+              type="number"
+              min="1"
+              step="1"
+              placeholder="1000"
+              v-model="form.sourceAmount"
+              :disabled="isLoading"
+            />
+            <p v-if="form.sourceAmountErr" class="app-form__field-err">
+              {{ form.sourceAmountErr }}
+            </p>
+            <p class="app-form__field-note">≈ {{ approxDestAmount }}</p>
+          </div>
         </div>
 
         <div class="app-form__footer">
