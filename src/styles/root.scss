@@ -27,4 +27,13 @@
   // Tips
   --clr__tooltip-bg: #{$clr-tooltip-bg};
   --clr__tooltip-text: #{$clr-tooltip-text};
+
+  // Modals
+  --clr__modal-backdrop-bg: #{$clr-modal-backdrop-bg};
+  --clr__modal-content-bg: #{$clr-modal-content-bg};
+  --clr__modal-content-shadow: #{$clr-modal-content-shadow};
+
+  // Scrollbar
+  --clr__scrollbar-thumb: #{$clr-scrollbar-thumb};
+  --clr__scrollbar-track: #{$clr-scrollbar-track};
 }

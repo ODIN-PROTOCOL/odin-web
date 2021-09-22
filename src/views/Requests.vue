@@ -85,6 +85,7 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue'
 import { callers } from '@/api/callers'
+import { showRequestFormDialog } from '@/components/modals/RequestFormModal.vue'
 import TitledLink from '@/components/TitledLink.vue'
 import Pagination from '@/components/pagination/pagination.vue'
 
@@ -110,9 +111,13 @@ export default defineComponent({
       requestsCount.value = res.requestCount.toNumber()
     }
 
-    const createRequest = () => {
-      // TODO create request
-      console.log('create request')
+    const createRequest = async () => {
+      showRequestFormDialog({
+        onSubmit: (d) => {
+          d.kill()
+          getRequests()
+        },
+      })
     }
 
     const paginationHandler = (num: number) => {

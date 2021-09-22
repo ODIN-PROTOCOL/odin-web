@@ -1,7 +1,7 @@
 <template>
   <ModalBase class="exchange-form-modal" @close="onClose()">
     <template #title>
-      <h3>Faucet</h3>
+      <h3 class="app-form__title">Faucet</h3>
     </template>
 
     <template #main>
@@ -10,21 +10,23 @@
         :class="{ 'load-fog_show': isLoading }"
         @submit.prevent
       >
-        <div class="app-form__field">
-          <label class="app-form__field-lbl"> Asset </label>
-          <select
-            class="app-form__field-input"
-            name="exchange-source-asset"
-            v-model="form.asset"
-            :disabled="isLoading"
-          >
-            <option v-for="asset in assets" :key="asset" :value="asset">
-              {{ asset }}
-            </option>
-          </select>
-          <p v-if="form.assetErr" class="app-form__field-err">
-            {{ form.askCountErr }}
-          </p>
+        <div class="app-form__main">
+          <div class="app-form__field">
+            <label class="app-form__field-lbl"> Asset </label>
+            <select
+              class="app-form__field-input"
+              name="exchange-source-asset"
+              v-model="form.asset"
+              :disabled="isLoading"
+            >
+              <option v-for="asset in assets" :key="asset" :value="asset">
+                {{ asset }}
+              </option>
+            </select>
+            <p v-if="form.assetErr" class="app-form__field-err">
+              {{ form.askCountErr }}
+            </p>
+          </div>
         </div>
 
         <div class="app-form__footer">

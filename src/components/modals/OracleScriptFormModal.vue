@@ -1,7 +1,7 @@
 <template>
   <ModalBase class="oracle-script-form-modal" @close="onClose()">
     <template #title>
-      <h3>Create oracle script</h3>
+      <h3 class="app-form__title">Create oracle script</h3>
     </template>
 
     <template #main>
@@ -10,46 +10,48 @@
         :class="{ 'load-fog_show': isLoading }"
         @submit.prevent
       >
-        <div class="app-form__field">
-          <label class="app-form__field-lbl"> Name </label>
-          <input
-            class="app-form__field-input"
-            name="oracle-script-name"
-            type="text"
-            v-model="form.name"
-            :disabled="isLoading"
-          />
-          <p v-if="form.nameErr" class="app-form__field-err">
-            {{ form.nameErr }}
-          </p>
-        </div>
+        <div class="app-form__main">
+          <div class="app-form__field">
+            <label class="app-form__field-lbl"> Name </label>
+            <input
+              class="app-form__field-input"
+              name="oracle-script-name"
+              type="text"
+              v-model="form.name"
+              :disabled="isLoading"
+            />
+            <p v-if="form.nameErr" class="app-form__field-err">
+              {{ form.nameErr }}
+            </p>
+          </div>
 
-        <div class="app-form__field">
-          <label class="app-form__field-lbl"> Description </label>
-          <textarea
-            class="app-form__field-input"
-            name="oracle-script-description"
-            rows="5"
-            v-model="form.description"
-            :disabled="isLoading"
-          ></textarea>
-          <p v-if="form.descriptionErr" class="app-form__field-err">
-            {{ form.descriptionErr }}
-          </p>
-        </div>
+          <div class="app-form__field">
+            <label class="app-form__field-lbl"> Description </label>
+            <textarea
+              class="app-form__field-input"
+              name="oracle-script-description"
+              rows="5"
+              v-model="form.description"
+              :disabled="isLoading"
+            ></textarea>
+            <p v-if="form.descriptionErr" class="app-form__field-err">
+              {{ form.descriptionErr }}
+            </p>
+          </div>
 
-        <div class="app-form__field">
-          <label class="app-form__field-lbl"> Code (.wasm) </label>
-          <InputFile
-            class="app-form__field-input"
-            name="oracle-script-executable"
-            accept=".wasm"
-            v-model="form.codeFile"
-            :disabled="isLoading"
-          />
-          <p v-if="form.codeFileErr" class="app-form__field-err">
-            {{ form.codeFileErr }}
-          </p>
+          <div class="app-form__field">
+            <label class="app-form__field-lbl"> Code (.wasm) </label>
+            <InputFile
+              class="app-form__field-input"
+              name="oracle-script-executable"
+              accept=".wasm"
+              v-model="form.codeFile"
+              :disabled="isLoading"
+            />
+            <p v-if="form.codeFileErr" class="app-form__field-err">
+              {{ form.codeFileErr }}
+            </p>
+          </div>
         </div>
 
         <div class="app-form__footer">

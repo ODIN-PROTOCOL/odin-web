@@ -1,7 +1,7 @@
 <template>
   <ModalBase class="delegate-form-modal" @close="onClose()">
     <template #title>
-      <h3>Delegate</h3>
+      <h3 class="app-form__title">Delegate</h3>
     </template>
 
     <template #main>
@@ -10,40 +10,42 @@
         :class="{ 'load-fog_show': isLoading }"
         @submit.prevent
       >
-        <div class="app-form__field">
-          <label class="app-form__field-lbl"> Operator address </label>
-          <CopyText
-            :text="validator.operatorAddress"
-            :title="validator.operatorAddress"
-            :displayText="$cropAddress(validator.operatorAddress)"
-          />
-        </div>
+        <div class="app-form__main">
+          <div class="app-form__field">
+            <label class="app-form__field-lbl"> Operator address </label>
+            <CopyText
+              :text="validator.operatorAddress"
+              :title="validator.operatorAddress"
+              :displayText="$cropAddress(validator.operatorAddress)"
+            />
+          </div>
 
-        <div class="app-form__field">
-          <label class="app-form__field-lbl"> Min delegation </label>
-          <p>{{ $fCoin(validator.minSelfDelegation, 'LOKI') }}</p>
-        </div>
+          <div class="app-form__field">
+            <label class="app-form__field-lbl"> Min delegation </label>
+            <p>{{ $fCoin(validator.minSelfDelegation, 'LOKI') }}</p>
+          </div>
 
-        <div v-if="delegation && delegation.balance" class="app-form__field">
-          <label class="app-form__field-lbl"> You delegated </label>
-          <p>{{ $fCoin(delegation.balance) }}</p>
-        </div>
+          <div v-if="delegation && delegation.balance" class="app-form__field">
+            <label class="app-form__field-lbl"> You delegated </label>
+            <p>{{ $fCoin(delegation.balance) }}</p>
+          </div>
 
-        <div class="app-form__field">
-          <label class="app-form__field-lbl"> Amount (LOKI) </label>
-          <input
-            class="app-form__field-input"
-            name="delegate-amount"
-            type="number"
-            min="1"
-            :max="lokiBalance"
-            placeholder="1000"
-            v-model="form.amount"
-            :disabled="isLoading"
-          />
-          <p v-if="form.amountErr" class="app-form__field-err">
-            {{ form.amountErr }}
-          </p>
+          <div class="app-form__field">
+            <label class="app-form__field-lbl"> Amount (LOKI) </label>
+            <input
+              class="app-form__field-input"
+              name="delegate-amount"
+              type="number"
+              min="1"
+              :max="lokiBalance"
+              placeholder="1000"
+              v-model="form.amount"
+              :disabled="isLoading"
+            />
+            <p v-if="form.amountErr" class="app-form__field-err">
+              {{ form.amountErr }}
+            </p>
+          </div>
         </div>
 
         <div class="app-form__footer">

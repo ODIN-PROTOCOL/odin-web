@@ -82,19 +82,3 @@ body {
     }
   }
 }
-
-.modal-right {
-  z-index: 2;
-  .modal-base__backdrop {
-    background: rgba(#6C757D, 0.4);
-  }
-  .modal-base__content {
-    z-index: 3;
-    position: absolute;
-    right: 0;
-    top: 0;
-    border-radius: 0;
-    height: 100%;
-    box-shadow: 0 0.4rem 2.4rem rgba(0, 25, 51, 0.08);
-  }
-}
