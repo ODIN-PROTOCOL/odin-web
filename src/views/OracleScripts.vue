@@ -3,7 +3,7 @@
     <div class="fx-row mg-b32">
       <h2 class="view-title">Oracle scripts</h2>
       <button
-        class="app-btn-2nd fx-sae"
+        class="app-btn app-btn_small fx-sae"
         type="button"
         @click="createOracleScript()"
       >

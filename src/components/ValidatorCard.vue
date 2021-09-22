@@ -26,7 +26,7 @@
         </p>
       </div>
       <div class="fx-sfw mg-l32">
-        <button class="app-btn" type="button" @click="delegate">
+        <button class="app-btn app-btn_small" type="button" @click="delegate">
           Delegate
         </button>
       </div>
@@ -75,7 +75,7 @@
       <div class="fx-sfw mg-l32">
         <button
           v-if="delegation"
-          class="app-btn-2nd"
+          class="app-btn app-btn_outlined app-btn_small"
           type="button"
           @click="undelegate"
         >

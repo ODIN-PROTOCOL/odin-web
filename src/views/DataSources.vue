@@ -3,7 +3,11 @@
     <div class="page-title fx-row mg-b32">
       <h2 class="view-title">Data Sources</h2>
       <button
-        class="app-btn create-data-source-btn create-data-source-btn--top fx-sae"
+        class="
+          app-btn app-btn_small
+          create-data-source-btn create-data-source-btn--top
+          fx-sae
+        "
         type="button"
         @click="createDataSource()"
       >
@@ -113,7 +117,11 @@
     </div>
 
     <button
-      class="app-btn create-data-source-btn create-data-source-btn--bottom fx-sae"
+      class="
+        app-btn
+        create-data-source-btn create-data-source-btn--bottom
+        fx-sae
+      "
       type="button"
       @click="createDataSource()"
     >

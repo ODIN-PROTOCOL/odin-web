@@ -3,7 +3,11 @@
     <div class="page-title fx-row">
       <h2 class="view-title">Requests</h2>
       <button
-        class="app-btn create-request-btn create-request-btn_top fx-sae"
+        class="
+          app-btn app-btn_small
+          create-request-btn create-request-btn_top
+          fx-sae
+        "
         type="button"
         @click="createRequest()"
       >

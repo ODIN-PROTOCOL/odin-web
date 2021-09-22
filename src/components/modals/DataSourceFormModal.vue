@@ -70,7 +70,7 @@
 
         <div class="app-form__footer">
           <button
-            class="app-btn-2nd"
+            class="app-btn app-btn_outlined"
             type="button"
             @click="onClose()"
             :disabled="isLoading"
