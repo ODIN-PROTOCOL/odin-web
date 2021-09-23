@@ -9,6 +9,12 @@
   --clr__danger: #{$clr-danger};
   --clr__action-extra-muted: #{$clr-action-extra-muted};
 
+  // Buttons
+  --clr__btn-normal: #{$clr-btn-normal};
+  --clr__btn-hover: #{$clr-btn-hover};
+  --clr__btn-pressed: #{$clr-btn-pressed};
+  --clr__btn-disabled: #{$clr-btn-disabled};
+
   // Inputs
   --clr__input-bg: #{$clr-input-bg};
   --clr__input-bg-disabled: #{$clr-input-bg-disabled};

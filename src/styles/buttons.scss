@@ -1,31 +1,48 @@
 .app-btn {
   display: inline-block;
   font-size: 2rem;
-  background: var(--clr__action);
+  line-height: 2.4rem;
+  background: var(--clr__btn-normal);
   color: var(--clr__text-on-action);
-  border: 1px solid transparent; // to sync position with the 2nd variant
+  border: 1px solid transparent; // to sync position with the outlined btn
   border-radius: 0.4rem;
-  padding: 0.8rem 1.6rem;
+  padding: 1.1rem 2.3rem;
 
   @include transition(background);
 
-  &:disabled {
-    background: var(--clr__action-disabled);
+  &_outlined {
+    background: var(--clr__main-bg);
+    color: var(--clr__action);
+    border: 1px solid var(--clr__btn-normal);
   }
-}
 
-.app-btn-2nd {
-  display: inline-block;
-  font-size: 2rem;
-  color: var(--clr__action);
-  border: 1px solid currentColor;
-  border-radius: 0.4rem;
-  padding: 0.8rem 1.6rem;
+  &_small {
+    font-size: 1.6rem;
+    padding: 0.5rem 2.3rem;
+  }
 
-  @include transition(border-color);
+  &:focus {
+    color: var(--clr__text-on-action);
+    border: 1px solid var(--clr__btn-normal);
+    background: var(--clr__btn-hover);
+  }
+
+  &:hover {
+    color: var(--clr__text-on-action);
+    border: 1px solid transparent;
+    background: var(--clr__btn-hover);
+  }
+
+  &:active {
+    color: var(--clr__text-on-action);
+    border: 1px solid transparent;
+    background: var(--clr__btn-pressed);
+  }
 
   &:disabled {
-    color: var(--clr__action-disabled);
+    color: var(--clr__text-on-action);
+    border: 1px solid transparent;
+    background: var(--clr__btn-disabled);
   }
 }
 
