@@ -8,6 +8,7 @@ import { MsgDeposit, MsgVote } from '@provider/codec/cosmos/gov/v1beta1/tx'
 import { api } from './api'
 import { wallet } from './wallet'
 import { mapResponse, sendPost } from './callersHelpers'
+import { cacheAnswers } from '@/helpers/requests'
 import { decodeRequestResults } from '@/helpers/requestResultDecoders'
 import { decodeProposals } from '@/helpers/proposalDecoders'
 import { decodeValidators } from '@/helpers/validatorDecoders'
@@ -21,6 +22,7 @@ import {
 const makeCallers = () => {
   const broadcaster = api.makeBroadcastCaller.bind(api)
   const querier = api.makeQueryCaller.bind(api)
+  const tmQuerier = api.makeTendermintCaller.bind(api)
 
   return {
     getCounts: querier((qc) => qc.oracle.unverified.counts),
@@ -121,6 +123,7 @@ const makeCallers = () => {
         denom: req.denom,
       })
     },
+    getTxSearch: cacheAnswers(tmQuerier((tc) => tc.txSearch.bind(tc))),
   }
 }
 
