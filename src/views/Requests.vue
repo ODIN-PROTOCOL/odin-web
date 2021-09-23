@@ -119,7 +119,6 @@ export default defineComponent({
         (currentPage.value - 1) * ITEMS_PER_PAGE
       )
       requests.value = res.requests
-      console.log(requests.value)
       await getRequestsCount()
     }
 
