@@ -42,4 +42,9 @@
   // Scrollbar
   --clr__scrollbar-thumb: #{$clr-scrollbar-thumb};
   --clr__scrollbar-track: #{$clr-scrollbar-track};
+
+  // Progressbar
+  --clr__progressbar-track: #{$clr-progressbar-track};
+  --clr__progressbar-positive: #{$clr-progressbar-positive};
+  --clr__progressbar-negative: #{$clr-progressbar-negative};
 }
