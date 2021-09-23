@@ -26,6 +26,7 @@
         <span>Request ID</span>
         <span>Sender</span>
         <span>Oracle Script ID</span>
+        <span>Report Status</span>
         <span>Timestamp</span>
       </div>
       <div class="table__body">
@@ -38,14 +39,14 @@
             <div class="app-table__cell">
               <span class="app-table__title">Request ID</span>
               <TitledLink
-                class="app-table__link"
+                class="app-table__cell-txt app-table__link"
                 :text="item.responsePacketData.requestId.toString()"
               />
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Sender</span>
               <TitledLink
-                class="app-table__link"
+                class="app-table__cell-txt app-table__link"
                 :text="item.requestPacketData.clientId.toString()"
               />
             </div>
@@ -54,6 +55,14 @@
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="item.requestPacketData.oracleScriptId.toString()"
+              />
+            </div>
+            <div class="app-table__cell">
+              <span class="app-table__title">Report Status</span>
+              <Progressbar
+                :min="Number(item.requestPacketData.minCount)"
+                :max="Number(item.requestPacketData.askCount)"
+                :current="Number(item.responsePacketData.ansCount)"
               />
             </div>
             <div class="app-table__cell">
@@ -70,11 +79,13 @@
       </div>
     </div>
 
-    <Pagination
-      @changePageNumber="paginationHandler($event)"
-      :blocksPerPage="ITEMS_PER_PAGE"
-      :total-length="requestsCount"
-    />
+    <template v-if="requestsCount > ITEMS_PER_PAGE">
+      <Pagination
+        @changePageNumber="paginationHandler($event)"
+        :blocksPerPage="ITEMS_PER_PAGE"
+        :total-length="requestsCount"
+      />
+    </template>
 
     <button
       class="app-btn create-request-btn create-request-btn_bottom fx-sae"
@@ -91,10 +102,11 @@ import { defineComponent, ref, onMounted } from 'vue'
 import { callers } from '@/api/callers'
 import { showRequestFormDialog } from '@/components/modals/RequestFormModal.vue'
 import TitledLink from '@/components/TitledLink.vue'
+import Progressbar from '@/components/Progressbar.vue'
 import Pagination from '@/components/pagination/pagination.vue'
 
 export default defineComponent({
-  components: { TitledLink, Pagination },
+  components: { TitledLink, Progressbar, Pagination },
   setup() {
     const ITEMS_PER_PAGE = 5
     const currentPage = ref(1)
@@ -107,6 +119,7 @@ export default defineComponent({
         (currentPage.value - 1) * ITEMS_PER_PAGE
       )
       requests.value = res.requests
+      console.log(requests.value)
       await getRequestsCount()
     }
 
