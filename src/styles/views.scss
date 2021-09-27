@@ -37,6 +37,7 @@ h2.view-title {
 .view-subtitle {
   font-size: 2.4rem;
   line-height: 3.2rem;
+  font-weight: 400;
 }
 
 @media (max-width: 768px) {
@@ -49,7 +50,6 @@ h2.view-title {
   .page-title {
     flex-direction: column;
     align-items: flex-start;
-    margin-bottom: 1.6rem;
   }
   h2.view-title {
     font-size: 2.4rem;
