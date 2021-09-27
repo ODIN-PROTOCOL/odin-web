@@ -3,90 +3,136 @@
     <div class="page-title">
       <BackButton :text="'Requests'" />
       <h2 class="view-title">Request</h2>
-      <span class="view-subtitle">Request name</span>
+      <span class="view-subtitle">
+        #{{ String(requestData?.responsePacketData.requestId) }}
+      </span>
     </div>
 
-    <div class="info-table">
-      <div class="info-table__row">
-        <span class="info-table__title">Oracle Script</span>
-        <TitledLink class="info-table__link" :text="String(reqOracleScript)" />
-        <CopyButton class="mg-l8" :text="String(reqOracleScript)" />
-      </div>
-      <div class="info-table__row">
-        <span class="info-table__title">Transaction Hash</span>
-        <span class="info-table__link">{{ reqTransactionHash }}</span>
-        <CopyButton class="mg-l8" :text="String(reqTransactionHash)" />
-      </div>
-      <div class="info-table__row">
-        <span class="info-table__title">Sender</span>
-        <TitledLink class="info-table__link" :text="String(reqSender)" />
-        <CopyButton class="mg-l8" :text="String(reqSender)" />
-      </div>
-      <div class="info-table__row">
-        <span class="info-table__title">Report status</span>
-        <StatusBlock :status="'success'" :text="'success'" />
-      </div>
-      <div class="info-table__row">
-        <span class="info-table__title">Request to</span>
-        <div class="info-table__list">
-          <div
-            class="info-table__list-item"
-            v-for="item in reqValidators"
-            :key="String(item)"
-          >
-            <TitledLink :text="String(item)" />
-          </div>
+    <h3 class="view-subtitle mg-b24">Request info</h3>
+    <template v-if="requestData">
+      <div class="info-table mg-b32">
+        <div class="info-table__row">
+          <span class="info-table__title">Oracle Script</span>
+          <TitledLink
+            class="info-table__link"
+            :text="String(requestData?.requestPacketData.oracleScriptId)"
+          />
+        </div>
+        <div class="info-table__row">
+          <span class="info-table__title">Sender</span>
+          <TitledLink
+            class="info-table__link"
+            :text="String(requestData?.requestPacketData.clientId)"
+          />
+          <CopyButton
+            class="mg-l8"
+            :text="String(requestData?.requestPacketData.clientId)"
+          />
+        </div>
+        <div class="info-table__row">
+          <span class="info-table__title">Request Time</span>
+          <span>{{ requestTime }} ({{ requestTimeRange }})</span>
+        </div>
+        <div class="info-table__row">
+          <span class="info-table__title">Resolve Time</span>
+          <span>{{ resolveTime }} ({{ resolveTimeRange }})</span>
+        </div>
+        <div class="info-table__row">
+          <span class="info-table__title">Report Status</span>
+          <Progressbar
+            :min="Number(requestData?.requestPacketData.minCount)"
+            :max="Number(requestData?.requestPacketData.askCount)"
+            :current="Number(requestData?.responsePacketData.ansCount)"
+          />
+        </div>
+        <div class="info-table__row">
+          <span class="info-table__title">Resolve Status</span>
+          <StatusBlock
+            :color="String(requestStatusType[requestStatus]?.color)"
+            :text="String(requestStatusType[requestStatus]?.name)"
+          />
         </div>
       </div>
-    </div>
+
+      <h3 class="view-subtitle mg-b24">Calldata</h3>
+      <div class="info-table mg-b32">
+        <div class="info-table__row">
+          <span class="info-table__title">Symbols</span>
+          <span class="info-table__txt">
+            {{ requestCalldata.symbol }}
+          </span>
+        </div>
+        <div class="info-table__row">
+          <span class="info-table__title">Multiplier</span>
+          <span class="info-table__txt">
+            {{ requestCalldata.multiplier }}
+          </span>
+        </div>
+      </div>
+
+      <template v-if="requestRates">
+        <h3 class="view-subtitle mg-b24">Result</h3>
+        <div class="info-table">
+          <div class="info-table__row">
+            <span class="info-table__title">Rates</span>
+            <span class="info-table__txt">
+              {{ requestRates }}
+            </span>
+          </div>
+        </div>
+      </template>
+    </template>
+    <template v-else>
+      <p class="empty-msg">There is no information about request</p>
+    </template>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue'
-import {
-  RouteLocationNormalizedLoaded,
-  Router,
-  useRouter,
-  useRoute,
-} from 'vue-router'
+import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import { callers } from '@/api/callers'
+import { requestStatusType } from '@/helpers/statusTypes'
+import { formatDate, formatDateDifference } from '@/helpers/formatters'
+import { obiCoin, obiRates } from '@/helpers/obi-structures'
 import TitledLink from '@/components/TitledLink.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import BackButton from '@/components/BackButton.vue'
+import Progressbar from '@/components/Progressbar.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
 
 export default defineComponent({
-  components: { TitledLink, CopyButton, BackButton, StatusBlock },
+  components: { TitledLink, CopyButton, BackButton, Progressbar, StatusBlock },
   setup: function () {
-    const router: Router = useRouter()
     const route: RouteLocationNormalizedLoaded = useRoute()
 
-    const reqOracleScript = ref()
-    const reqTransactionHash = ref()
-    const reqSender = ref()
-    const reqReportStatus = ref()
-    const reqValidators = ref()
+    const requestData = ref()
+    const requestStatus = ref()
+    const requestTime = ref()
+    const resolveTime = ref()
+    const requestTimeRange = ref()
+    const resolveTimeRange = ref()
+    const requestCalldata = ref()
+    const requestRates = ref()
 
     const getRequest = async () => {
-      const res = await callers.getRequest(String(route.params.id))
+      const { request } = await callers.getRequest(String(route.params.id))
+      const reqPacketData = request?.requestPacketData
+      const resPacketData = request?.responsePacketData
 
-      // TODO implement logic with real data
-      console.log(res)
-      reqOracleScript.value =
-        '0x34513b2dad6c9aae177f01839be7f44c6866df7f7ecc7110cf9d1349ce16d5d4'
-      reqTransactionHash.value = '0x75efcb5541234aea957e40182603b92822a238c1'
-      reqSender.value = '0x75efcb5541234aea957e40182603b92822a238c1'
-      reqReportStatus.value = 'success'
-      reqValidators.value = [
-        '12540765',
-        '12540765',
-        '12540765',
-        '12540765',
-        '12540765',
-        '12540765',
-        '12540765',
-      ]
+      if (request && reqPacketData && resPacketData) {
+        requestData.value = { ...request }
+        requestStatus.value = resPacketData.resolveStatus
+        requestTime.value = formatDate(resPacketData.requestTime)
+        resolveTime.value = formatDate(resPacketData.resolveTime)
+        requestTimeRange.value = formatDateDifference(resPacketData.requestTime)
+        resolveTimeRange.value = formatDateDifference(resPacketData.resolveTime)
+        requestCalldata.value = obiCoin.decode(reqPacketData.calldata)
+
+        if (requestStatus.value == 1) {
+          requestRates.value = obiRates.decode(resPacketData.result)
+        }
+      }
     }
 
     onMounted(async () => {
@@ -94,12 +140,15 @@ export default defineComponent({
     })
 
     return {
-      router,
-      reqOracleScript,
-      reqTransactionHash,
-      reqSender,
-      reqReportStatus,
-      reqValidators,
+      requestStatusType,
+      requestData,
+      requestStatus,
+      requestTime,
+      resolveTime,
+      requestTimeRange,
+      resolveTimeRange,
+      requestCalldata,
+      requestRates,
     }
   },
 })
@@ -146,6 +195,14 @@ export default defineComponent({
       }
     }
   }
+
+  &__txt {
+    overflow-wrap: anywhere;
+  }
+}
+
+.empty-msg {
+  text-align: center;
 }
 
 @media screen and (max-width: 768px) {
