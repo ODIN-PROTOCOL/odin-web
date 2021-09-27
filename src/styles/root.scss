@@ -47,4 +47,11 @@
   --clr__progressbar-track: #{$clr-progressbar-track};
   --clr__progressbar-positive: #{$clr-progressbar-positive};
   --clr__progressbar-negative: #{$clr-progressbar-negative};
+  
+  // Status
+  --clr__status-default: #{$clr-status-default};
+  --clr__status-green: #{$clr-status-green};
+  --clr__status-yellow: #{$clr-status-yellow};
+  --clr__status-red: #{$clr-status-red};
+  --clr__status-blue: #{$clr-status-blue};
 }
