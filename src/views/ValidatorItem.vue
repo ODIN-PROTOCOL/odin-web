@@ -8,7 +8,11 @@
         <CopyButton class="mg-l8" :text="String(validator?.operatorAddress)" />
       </div>
       <div class="validator__activities validator__activities_top fx-sae">
-        <button class="app-btn app-btn_outlined app-btn_small">
+        <button
+          class="app-btn app-btn_outlined app-btn_small"
+          type="button"
+          @click="withdraw"
+        >
           Withdraw stake
         </button>
         <button
@@ -44,7 +48,9 @@
     </template>
 
     <div class="validator__activities validator__activities_bottom">
-      <button class="app-btn app-btn_outlined">Withdraw stake</button>
+      <button class="app-btn app-btn_outlined" type="button" @click="withdraw">
+        Withdraw stake
+      </button>
       <button class="app-btn mg-l24" type="button" @click="delegate">
         Delegate
       </button>
@@ -68,6 +74,7 @@ import OracleReportsTable from '@/components/tables/OracleReportsTable.vue'
 import DelegatorsTable from '@/components/tables/DelegatorsTable.vue'
 import ProposedBlocksTable from '@/components/tables/ProposedBlocksTable.vue'
 import { showDelegateFormDialog } from '@/components/modals/DelegateFormModal.vue'
+import { showWithdrawFormDialog } from '@/components/modals/WithdrawFormModal.vue'
 
 export default defineComponent({
   components: {
@@ -155,6 +162,14 @@ export default defineComponent({
       )
     }
 
+    const withdraw = () => {
+      showWithdrawFormDialog({
+        onSubmit: (d) => {
+          d.kill()
+        },
+      })
+    }
+
     onMounted(async () => {
       await getValidator()
       await getDelegators()
@@ -168,6 +183,7 @@ export default defineComponent({
       delegators,
       blocks,
       reports,
+      withdraw,
       delegate,
     }
   },

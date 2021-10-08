@@ -24,7 +24,11 @@
         </span>
       </div>
       <div class="validator-card__activities">
-        <button class="app-btn app-btn_outlined app-btn_small">
+        <button
+          class="app-btn app-btn_outlined app-btn_small"
+          type="button"
+          @click="withdraw"
+        >
           Withdraw stake
         </button>
         <button
@@ -94,6 +98,7 @@ import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/
 import { defineComponent, PropType } from 'vue'
 import CopyText from './CopyText.vue'
 import TitledLink from '@/components/TitledLink.vue'
+import { showWithdrawFormDialog } from './modals/WithdrawFormModal.vue'
 import { showDelegateFormDialog } from './modals/DelegateFormModal.vue'
 import { showUndelegateFormDialog } from './modals/UndelegateFormModal.vue'
 
@@ -105,6 +110,14 @@ export default defineComponent({
     delegation: { type: Object as PropType<DelegationResponse> },
   },
   setup(props, ctx) {
+    const withdraw = () => {
+      showWithdrawFormDialog({
+        onSubmit: (d) => {
+          d.kill()
+        },
+      })
+    }
+
     const delegate = () => {
       showDelegateFormDialog(
         {
@@ -130,7 +143,7 @@ export default defineComponent({
       )
     }
 
-    return { delegate, undelegate }
+    return { withdraw, delegate, undelegate }
   },
 })
 </script>
