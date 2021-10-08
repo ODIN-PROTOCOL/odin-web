@@ -15,8 +15,8 @@
       </div>
       <div class="info-card__row">
         <span class="info-card__title">Delegated</span>
-        <span class="info-card__txt" :title="$fCoin(validator.tokens, 'geo')">
-          {{ $fCoin(validator.tokens, 'geo') }}
+        <span class="info-card__txt" :title="$fCoin(validator.tokens, 'loki')">
+          {{ $fCoin(validator.tokens, 'loki') }}
         </span>
       </div>
       <div class="info-card__row">
