@@ -1,78 +1,80 @@
 <template>
   <div class="validator-card">
-    <div class="validator-card__row fx-row">
-      <div class="fx-sfw">
-        <label class="dp-ib mg-b8 fs-14">Moniker</label>
-        <p>{{ validator.description.moniker }}</p>
+    <div class="validator-card__row">
+      <div class="validator-card__cell">
+        <span class="validator-card__title">Moniker</span>
+        <TitledLink
+          class="validator-card__link"
+          :text="validator.description.moniker.toString()"
+          :to="`/validators/${validator.operatorAddress}`"
+        />
       </div>
-      <div class="fx-sfw mg-l32">
-        <label class="dp-ib mg-b8 fs-14">Status</label>
-        <p>{{ $tBondStatus(validator.status) }}</p>
+      <div class="validator-card__cell">
+        <span class="validator-card__title">Status</span>
+        <span>{{ $tBondStatus(validator.status) }}</span>
       </div>
-      <div class="fx-sfw mg-l32">
-        <label class="dp-ib mg-b8 fs-14">Jailed?</label>
-        <p>{{ validator.jailed ? 'Yes' : 'No' }}</p>
+      <div class="validator-card__cell">
+        <span class="validator-card__title">Jailed?</span>
+        <span>{{ validator.jailed ? 'Yes' : 'No' }}</span>
       </div>
-      <div class="fx-sfw mg-l32">
-        <label class="dp-ib mg-b8 fs-14">Delegated</label>
-        <p :title="$fCoin(validator.tokens, 'loki')">
+      <div class="validator-card__cell">
+        <span class="validator-card__title">Delegated</span>
+        <span :title="$fCoin(validator.tokens, 'loki')">
           {{ $fCoin(validator.tokens, 'loki', true) }}
-        </p>
+        </span>
       </div>
-      <div class="fx-sfw mg-l32">
-        <label class="dp-ib mg-b8 fs-14">Delegator shares</label>
-        <p>
-          {{ $preciseAsPercents(validator.delegatorShares) }}
-        </p>
-      </div>
-      <div class="fx-sfw mg-l32">
-        <button class="app-btn app-btn_small" type="button" @click="delegate">
+      <div class="validator-card__activities">
+        <button class="app-btn app-btn_outlined app-btn_small">
+          Withdraw stake
+        </button>
+        <button
+          class="app-btn app-btn_small mg-l24"
+          type="button"
+          @click="delegate"
+        >
           Delegate
         </button>
       </div>
     </div>
 
-    <div class="validator-card__row fx-row">
-      <div class="fx-sfw">
-        <label class="dp-ib mg-b8 fs-14">Rate</label>
-        <p>
+    <div class="validator-card__row">
+      <div class="validator-card__cell">
+        <span class="validator-card__title">Delegator shares</span>
+        <span>{{ $preciseAsPercents(validator.delegatorShares) }}</span>
+      </div>
+      <div class="validator-card__cell">
+        <span class="validator-card__title">Rate</span>
+        <span>
           {{ $preciseAsPercents(validator.commission.commissionRates.rate) }}
-        </p>
+        </span>
       </div>
-      <div class="fx-sfw mg-l32">
-        <label class="dp-ib mg-b8 fs-14">Max rate</label>
-        <p>
+      <div class="validator-card__cell">
+        <span class="validator-card__title">Max rate</span>
+        <span>
           {{ $preciseAsPercents(validator.commission.commissionRates.maxRate) }}
-        </p>
+        </span>
       </div>
-      <div class="fx-sfw mg-l32">
-        <label class="dp-ib mg-b8 fs-14">Max change rate</label>
-        <p>
+      <div class="validator-card__cell">
+        <span class="validator-card__title">Max change rate</span>
+        <span>
           {{
             $preciseAsPercents(
               validator.commission.commissionRates.maxChangeRate
             )
           }}
-        </p>
+        </span>
       </div>
-      <div class="fx-sfw mg-l32">
-        <label class="dp-ib mg-b8 fs-14">Operator</label>
-        <CopyText
-          :text="validator.operatorAddress"
-          :title="validator.operatorAddress"
-          :displayText="$cropAddress(validator.operatorAddress)"
-        />
+      <div class="validator-card__cell">
+        <span class="validator-card__title">Operator</span>
+        <span>
+          <CopyText
+            :text="validator.operatorAddress"
+            :title="validator.operatorAddress"
+            :displayText="$cropAddress(validator.operatorAddress)"
+          />
+        </span>
       </div>
-      <div class="fx-sfw mg-l32">
-        <!-- TODO: uncomment when the pubkey decoding issue resolved -->
-        <!-- <label class="dp-ib mg-b8 fs-14">Public key</label>
-        <CopyText
-          :text="validator.consensusPubkey"
-          :title="validator.consensusPubkey"
-          :displayText="$cropAddress(validator.consensusPubkey)"
-        /> -->
-      </div>
-      <div class="fx-sfw mg-l32">
+      <div class="validator-card__activities">
         <button
           v-if="delegation"
           class="app-btn app-btn_outlined app-btn_small"
@@ -91,12 +93,13 @@ import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
 import { defineComponent, PropType } from 'vue'
 import CopyText from './CopyText.vue'
+import TitledLink from '@/components/TitledLink.vue'
 import { showDelegateFormDialog } from './modals/DelegateFormModal.vue'
 import { showUndelegateFormDialog } from './modals/UndelegateFormModal.vue'
 
 export default defineComponent({
   emits: ['delegationChanged'],
-  components: { CopyText },
+  components: { CopyText, TitledLink },
   props: {
     validator: { type: Object as PropType<ValidatorDecoded>, required: true },
     delegation: { type: Object as PropType<DelegationResponse> },
@@ -137,13 +140,33 @@ export default defineComponent({
   border: 1px solid var(--clr__action);
   border-radius: 8px;
   padding: 0.8rem 3.2rem;
-}
 
-.validator-card__row {
-  padding: 2.4rem 0;
+  &__row {
+    display: flex;
+    flex-direction: row;
+    padding: 2.4rem 0;
 
-  &:not(:last-of-type) {
-    border-bottom: 1px solid var(--clr__table-border);
+    &:not(:last-of-type) {
+      border-bottom: 1px solid var(--clr__table-border);
+    }
   }
+
+  &__cell {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  &__title {
+    font-size: 1.4rem;
+    margin-bottom: 0.8rem;
+  }
+
+  &__link {
+    text-decoration: none;
+    color: var(--clr__action);
+  }
+
+  &__activities {}
 }
 </style>
