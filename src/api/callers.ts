@@ -59,6 +59,7 @@ const makeCallers = () => {
         }
       })
     ),
+    getReports: querier((qc) => qc.oracle.unverified.reporters),
     getProposalVote: querier((qc) => qc.gov.unverified.vote),
     getProposalVotes: querier((qc) => qc.gov.unverified.votes),
     getProposalTally: querier((qc) => qc.gov.unverified.tallyResult),
@@ -102,7 +103,8 @@ const makeCallers = () => {
         }
       })
     ),
-
+    getValidator: querier((qc) => qc.staking.validator),
+    getValidatorDelegations: querier((qc) => qc.staking.validatorDelegations),
     validatorDelegate: broadcaster<MsgDelegate>(
       '/cosmos.staking.v1beta1.MsgDelegate',
       MsgDelegate
@@ -124,6 +126,8 @@ const makeCallers = () => {
       })
     },
     getTxSearch: cacheAnswers(tmQuerier((tc) => tc.txSearch.bind(tc))),
+    getBlockchain: tmQuerier((tc) => tc.blockchain.bind(tc)),
+    getBlock: cacheAnswers(tmQuerier((tc) => tc.block.bind(tc))),
   }
 }
 
