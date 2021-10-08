@@ -67,6 +67,13 @@ const routes: Array<RouteRecordRaw> = [
       import(/* webpackChunkName: "validators" */ '../views/Validators.vue'),
   },
   {
+    path: '/validators/:address',
+    name: 'Validator',
+    beforeEnter: authorizedOnlyGuard,
+    component: () =>
+      import(/* webpackChunkName: "validator" */ '../views/ValidatorItem.vue'),
+  },
+  {
     path: '/wallet',
     name: 'Wallet',
     beforeEnter: authorizedOnlyGuard,
