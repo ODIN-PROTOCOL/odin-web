@@ -10,7 +10,7 @@
         <template v-if="blocks.length">
           <div
             v-for="item in filteredBlocks"
-            :key="item.blockSize"
+            :key="toHex(item.blockId.hash)"
             class="app-table__row"
           >
             <div class="app-table__cell">
