@@ -58,7 +58,7 @@
               <router-link
                 class="nav__dropdown-link"
                 data-text="Oracle validators"
-                :to="{ name: 'Validators' }"
+                :to="{ name: 'OracleValidators' }"
               >
                 <span>Oracle validators</span>
               </router-link>
