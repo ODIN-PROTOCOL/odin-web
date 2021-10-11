@@ -42,18 +42,21 @@
           </div>
 
           <div class="app-form__field">
-            <label class="app-form__field-lbl"> Price (USD)</label>
+            <label class="app-form__field-lbl"> Price</label>
             <input
               class="app-form__field-input"
               name="data-source-price"
+              v-model="form.price"
               type="text"
               :disabled="isLoading"
               placeholder="Data source price"
             />
+            <p v-if="form.priceErr" class="app-form__field-err">
+              {{ form.priceErr }}
+            </p>
           </div>
 
           <div class="app-form__field">
-            <label class="app-form__field-lbl"> Executable (.py) </label>
             <InputFile
               class="app-form__field-input"
               name="data-source-executable"
@@ -113,6 +116,7 @@ const DataSourceFormModal = defineComponent({
     const form = useForm({
       name: ['', validators.required],
       description: ['', validators.required],
+      price: ['', validators.required, ...validators.num(1)],
       executable: [null as File | null, validators.required],
     })
     const isLoading = ref(false)
@@ -128,7 +132,7 @@ const DataSourceFormModal = defineComponent({
           name: form.name.val(),
           description: form.description.val(),
           executable: executableParsed,
-          fee: coins(1, 'loki'),
+          fee: coins(Number(form.price.val()), 'loki'),
           owner: wallet.account.address,
           sender: wallet.account.address,
         })
@@ -156,7 +160,6 @@ const DataSourceFormModal = defineComponent({
 
     // TODO: remove fakeForm
     const _fakeForm = () => {
-      form.name.val('Data source ' + loremIpsum({ units: 'words', count: 3 }))
       form.description.val(loremIpsum({ units: 'sentences', count: 3 }))
     }
 

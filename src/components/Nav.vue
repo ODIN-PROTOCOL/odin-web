@@ -48,10 +48,10 @@
             <div class="nav__dropdown-item">
               <router-link
                 class="nav__dropdown-link"
-                data-text="Validators and Delegates"
+                data-text="Validators"
                 :to="{ name: 'Validators' }"
               >
-                <span>Validators and Delegates</span>
+                <span>Validators</span>
               </router-link>
             </div>
             <div class="nav__dropdown-item">
