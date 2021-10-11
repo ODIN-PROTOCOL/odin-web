@@ -14,22 +14,20 @@
             class="app-table__row"
           >
             <div class="app-table__cell">
-              <span class="app-table__title">Delegator</span>
-              <TitledLink
-                class="app-table__cell-txt app-table__link"
-                :text="String(item.delegation.delegatorAddress)"
-              />
+              <span class="app-table__title">Oracle report</span>
+              <!-- TODO get oracle report id from reports -->
+              <TitledLink class="app-table__cell-txt app-table__link" />
             </div>
             <div class="app-table__cell">
-              <span class="app-table__title">Balance</span>
+              <span class="app-table__title">Oracle script</span>
               <span class="app-table__cell-txt">
-                {{ $fCoin(item.balance.amount, item.balance.denom) }}
+                <!-- TODO get oracle script id from report -->
               </span>
             </div>
             <div class="app-table__cell">
-              <span class="app-table__title">Stake</span>
+              <span class="app-table__title">Tx hash</span>
               <span class="app-table__cell-txt">
-                {{ $fCoin(item.delegation.shares, item.balance.denom) }}
+                <!-- TODO get tx hash from report -->
               </span>
             </div>
           </div>

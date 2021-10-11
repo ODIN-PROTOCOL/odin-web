@@ -124,6 +124,7 @@ export default defineComponent({
       const response = await callers.getTxSearch({
         query: `tx.height>=0 AND report.validator='${validator.value.operatorAddress}'`,
       })
+      // TODO get the necessary reports from transactions
       reports.value = response.txs
     }
 
