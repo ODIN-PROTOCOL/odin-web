@@ -103,7 +103,9 @@ const makeCallers = () => {
         }
       })
     ),
+    getActiveValidators: querier((qc) => qc.oracle.unverified.activeValidators),
     getValidator: querier((qc) => qc.staking.validator),
+    getValidatorStatus: querier((qc) => qc.oracle.unverified.validator),
     getValidatorDelegations: querier((qc) => qc.staking.validatorDelegations),
     validatorDelegate: broadcaster<MsgDelegate>(
       '/cosmos.staking.v1beta1.MsgDelegate',
