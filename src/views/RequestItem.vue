@@ -48,7 +48,7 @@
         <div class="info-table__row">
           <span class="info-table__title">Resolve Status</span>
           <StatusBlock
-            :color="String(requestStatusType[requestStatus]?.color)"
+            :status="String(requestStatusType[requestStatus]?.status)"
             :text="String(requestStatusType[requestStatus]?.name)"
           />
         </div>
