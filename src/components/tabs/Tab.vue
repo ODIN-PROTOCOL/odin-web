@@ -13,10 +13,8 @@ export default defineComponent({
     const selectedTitle = inject('selectedTitle')
 
     return { selectedTitle }
-  }
+  },
 })
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>
