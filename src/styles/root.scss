@@ -50,8 +50,8 @@
   
   // Status
   --clr__status-default: #{$clr-status-default};
-  --clr__status-green: #{$clr-status-green};
-  --clr__status-yellow: #{$clr-status-yellow};
-  --clr__status-red: #{$clr-status-red};
-  --clr__status-blue: #{$clr-status-blue};
+  --clr__status-success: #{$clr-status-success};
+  --clr__status-pending: #{$clr-status-pending};
+  --clr__status-error: #{$clr-status-error};
+  --clr__status-progress: #{$clr-status-progress};
 }

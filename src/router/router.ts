@@ -74,6 +74,15 @@ const routes: Array<RouteRecordRaw> = [
       import(/* webpackChunkName: "validator" */ '../views/ValidatorItem.vue'),
   },
   {
+    path: '/oracle-validators',
+    name: 'OracleValidators',
+    beforeEnter: authorizedOnlyGuard,
+    component: () =>
+      import(
+        /* webpackChunkName: "oracle-validators" */ '../views/OracleValidators.vue'
+      ),
+  },
+  {
     path: '/wallet',
     name: 'Wallet',
     beforeEnter: authorizedOnlyGuard,

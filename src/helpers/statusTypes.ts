@@ -1,5 +1,5 @@
 export const requestStatusType = {
-  1: { name: 'Ok', color: 'green' },
-  2: { name: 'Failure', color: 'red' },
-  3: { name: 'Expired', color: 'yellow' },
+  1: { name: 'Ok', status: 'success' },
+  2: { name: 'Failure', status: 'error' },
+  3: { name: 'Expired', status: 'pending' },
 }

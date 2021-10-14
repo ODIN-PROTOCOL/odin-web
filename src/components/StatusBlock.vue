@@ -1,5 +1,5 @@
 <template>
-  <div class="status-block" :class="`status-block_${color}`">
+  <div class="status-block" :class="`status-block_${status}`">
     {{ displayText }}
   </div>
 </template>
@@ -9,18 +9,16 @@ import { defineComponent, toRef, computed } from 'vue'
 
 export default defineComponent({
   props: {
-    color: { type: String, required: true },
+    status: { type: String, required: true },
     text: { type: String },
   },
   setup: function (props) {
     const _text = toRef(props, 'text')
 
-    const displayText = computed(() =>
-      _text.value
-        ? _text.value.split('')[0].toUpperCase() +
-          _text.value.slice(1).toLowerCase()
-        : 'Default'
-    )
+    const displayText = computed(() => {
+      if (!_text.value) return 'Default'
+      return _text.value
+    })
 
     return { displayText }
   },
@@ -37,20 +35,20 @@ export default defineComponent({
   background: var(--clr__status-default);
   color: var(--clr__text-on-action);
 
-  &_green {
-    background: var(--clr__status-green);
+  &_success {
+    background: var(--clr__status-success);
   }
 
-  &_yellow {
-    background: var(--clr__status-yellow);
+  &_pending {
+    background: var(--clr__status-pending);
   }
 
-  &_red {
-    background: var(--clr__status-red);
+  &_error {
+    background: var(--clr__status-error);
   }
 
-  &_blue {
-    background: var(--clr__status-blue);
+  &_progress {
+    background: var(--clr__status-progress);
   }
 }
 </style>
