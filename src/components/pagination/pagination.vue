@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, watch } from 'vue'
 import paginationButton from '@/components/pagination/paginationButton.vue'
 import paginationArrow from '@/components/pagination/paginationArrow.vue'
 
@@ -37,12 +37,22 @@ export default defineComponent({
   props: {
     totalLength: { type: [String, Number], default: 0 },
     blocksPerPage: { type: Number, required: false, default: 3 },
+    startFrom: { type: Number, default: 1 },
   },
   components: { paginationButton, paginationArrow },
   setup(props, { emit }) {
-    let pageNumber = ref<number>(1)
+    let pageNumber = ref<number>(props.startFrom)
     const pageCount = computed(() =>
       Math.ceil((props.totalLength as number) / props.blocksPerPage)
+    )
+
+    watch(
+      () => props.startFrom,
+      () => {
+        if (props.startFrom === 1) {
+          pageNumber.value = props.startFrom
+        }
+      }
     )
 
     const changePageNumber = (event: changePageNumberEvent) => {
