@@ -3,8 +3,15 @@
     class="validators view-main load-fog"
     :class="{ 'load-fog_show': isLoading && validators?.length }"
   >
-    <div class="fx-row mg-b32">
+    <div class="page-title">
       <h2 class="view-title">All Validators</h2>
+      <button
+        class="app-btn app-btn_small fx-sae"
+        type="button"
+        @click="becomeValidator()"
+      >
+        Become a validator
+      </button>
     </div>
 
     <template v-if="validatorsCount">
@@ -13,16 +20,6 @@
       </div>
     </template>
 
-    <!-- <template v-if="validators?.length">
-      <ValidatorCard
-        v-for="item in filteredValidators"
-        :key="item.operatorAddress"
-        class="mg-b32"
-        :validator="item"
-        :delegation="delegations[item.operatorAddress]"
-        @delegationChanged="getValidators() & getDelegations()"
-      />
-    </template> -->
     <Tabs @changeTab="tabHandler($event)">
       <Tab title="Active" />
       <Tab title="Inactive" />
@@ -31,7 +28,7 @@
     <div class="app-table">
       <div class="app-table__head">
         <span>Rank</span>
-        <span>Validator</span>
+        <span>Moniker</span>
         <span>Delegator Share</span>
         <span>Commission</span>
         <span>Oracle Status</span>
@@ -49,10 +46,10 @@
               <span>{{ item.rank }}</span>
             </div>
             <div class="app-table__cell">
-              <span class="app-table__title">Validator</span>
+              <span class="app-table__title">Moniker</span>
               <TitledLink
                 class="app-table__cell-txt app-table__link"
-                :text="item.operatorAddress"
+                :text="item.description.moniker"
                 :to="`/validators/${item.operatorAddress}`"
               />
             </div>
@@ -107,17 +104,19 @@
           </div>
         </template>
         <template v-else>
-          <p v-if="isLoading">Loading…</p>
-          <p v-else>No items yet</p>
+          <div class="app-table__empty-stub">
+            <p v-if="isLoading">Loading…</p>
+            <p v-else>No items yet</p>
+          </div>
         </template>
       </div>
     </div>
 
-    <template v-if="validatorsCount > ITEMS_PER_PAGE">
+    <template v-if="filteredValidatorsCount > ITEMS_PER_PAGE">
       <Pagination
         @changePageNumber="paginationHandler($event)"
         :blocksPerPage="ITEMS_PER_PAGE"
-        :total-length="validatorsCount"
+        :total-length="filteredValidatorsCount"
         :startFrom="currentPage"
       />
     </template>
@@ -129,7 +128,11 @@ import { defineComponent, ref, onMounted } from 'vue'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 import { handleError } from '@/helpers/errors'
-import { ValidatorDecoded } from '@/helpers/validatorDecoders'
+import {
+  isActiveValidator,
+  isOracleValidator,
+  ValidatorDecoded,
+} from '@/helpers/validatorDecoders'
 import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { showBecomeValidatorFormDialog } from '@/components/modals/BecomeValidatorFormModal.vue'
@@ -150,25 +153,29 @@ export default defineComponent({
     const ITEMS_PER_PAGE = 6
     const currentPage = ref(1)
     const validatorsStatus = ref('Active')
+    const filteredValidatorsCount = ref(0)
     const validatorsCount = ref(0)
     const filteredValidators = ref()
     const validators = ref()
 
+    let activeValidators: ValidatorDecoded[] = []
+    let inactiveValidators: ValidatorDecoded[] = []
+
     const getValidators = async () => {
       lockLoading()
       try {
-        let _validators: ValidatorDecoded[] = []
+        const bonded = await callers.getValidators('BOND_STATUS_BONDED')
+        const unbonding = await callers.getValidators('BOND_STATUS_UNBONDING')
+        const unbonded = await callers.getValidators('BOND_STATUS_UNBONDED')
 
-        if (validatorsStatus.value === 'Active') {
-          const bonded = await callers.getValidators('BOND_STATUS_BONDED')
-          const unbonding = await callers.getValidators('BOND_STATUS_UNBONDING')
-          _validators = [...bonded.validators, ...unbonding.validators]
-        } else if (validatorsStatus.value === 'Inactive') {
-          const unbonded = await callers.getValidators('BOND_STATUS_UNBONDED')
-          _validators = [...unbonded.validators]
-        }
+        const _validators = [
+          ...bonded.validators,
+          ...unbonding.validators,
+          ...unbonded.validators,
+        ]
+        let _updatedValidators: ValidatorDecoded[] = []
 
-        validators.value = await Promise.all(
+        _updatedValidators = await Promise.all(
           _validators.map(async (item, idx) => {
             return {
               ...item,
@@ -178,7 +185,17 @@ export default defineComponent({
           })
         )
 
+        for (let i = 0; i < _updatedValidators.length; i++) {
+          const active = await isActiveValidator(
+            _updatedValidators[i].operatorAddress
+          )
+          if (active) activeValidators.push(_updatedValidators[i])
+          else inactiveValidators.push(_updatedValidators[i])
+        }
+
+        validators.value = [...activeValidators]
         validatorsCount.value = _validators.length
+        filteredValidatorsCount.value = validators.value.length
         filterValidators(currentPage.value)
       } catch (error) {
         handleError(error)
@@ -207,11 +224,6 @@ export default defineComponent({
       releaseLoading()
     }
 
-    const isOracleValidator = async (validatorAddress: string) => {
-      const response = await callers.getReports(validatorAddress)
-      return response.reporter.length ? true : false
-    }
-
     const filterValidators = (newPage: number) => {
       let tempArr = validators.value
 
@@ -233,8 +245,16 @@ export default defineComponent({
     const tabHandler = async (title: string) => {
       if (title !== validatorsStatus.value) {
         validatorsStatus.value = title
+
+        if (validatorsStatus.value === 'Active') {
+          validators.value = [...activeValidators]
+        } else if (validatorsStatus.value === 'Inactive') {
+          validators.value = [...inactiveValidators]
+        }
+
+        filteredValidatorsCount.value = validators.value.length
         currentPage.value = 1
-        await getValidators()
+        filterValidators(currentPage.value)
       }
     }
 
@@ -292,6 +312,7 @@ export default defineComponent({
     return {
       ITEMS_PER_PAGE,
       currentPage,
+      filteredValidatorsCount,
       validatorsCount,
       filteredValidators,
       validators,

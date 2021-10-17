@@ -3,6 +3,7 @@ import { Modify } from '@/shared-types'
 import { PubKey } from '@cosmjs/stargate/build/codec/cosmos/crypto/secp256k1/keys'
 import { Validator } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
 import { toBase64 } from '@cosmjs/encoding'
+import { callers } from '@/api/callers'
 
 export type ValidatorDecoded = Modify<Validator, { consensusPubkey?: string }>
 export function decodeValidators(validators: Validator[]): ValidatorDecoded[] {
@@ -24,4 +25,18 @@ export function decodePubKey(pubKey?: Any): string {
   } else {
     return `Cannot decode ${pubKey.typeUrl}`
   }
+}
+
+export const isOracleValidator = async (
+  validatorAddress: string
+): Promise<boolean> => {
+  const response = await callers.getReports(validatorAddress)
+  return response.reporter.length ? true : false
+}
+
+export const isActiveValidator = async (
+  validatorAddress: string
+): Promise<boolean> => {
+  const response = await callers.getValidatorStatus(validatorAddress)
+  return response.status?.isActive ? true : false
 }
