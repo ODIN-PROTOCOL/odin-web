@@ -116,7 +116,7 @@ const makeCallers = () => {
       MsgUndelegate
     ),
     getDelegations: querier((qc) => qc.staking.delegatorDelegations),
-
+    getParams: querier((qc) => qc.mint.unverified.params),
     faucetRequest: (req: { denom: string }) => {
       console.log({
         address: wallet.account.address,

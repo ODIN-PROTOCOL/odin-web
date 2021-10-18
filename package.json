@@ -15,7 +15,7 @@
     "@cosmjs/proto-signing": "^0.25.4",
     "@cosmjs/stargate": "^0.25.4",
     "@cosmjs/tendermint-rpc": "^0.25.4",
-    "@invisiburu/vue-picker": "^2.0.2",
+    "@invisiburu/vue-picker": "^2.0.3",
     "@kyvg/vue3-notification": "^2.3.0",
     "bignumber.js": "^9.0.1",
     "buffer": "^4.9.2",
@@ -27,7 +27,8 @@
     "lorem-ipsum": "^2.0.3",
     "protobufjs": "^6.10.2",
     "vue": "^3.0.0",
-    "vue-router": "^4.0.0-0"
+    "vue-router": "^4.0.0-0",
+    "web3": "^1.5.1"
   },
   "devDependencies": {
     "@types/lodash-es": "^4.17.4",

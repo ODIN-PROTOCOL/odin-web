@@ -30,7 +30,7 @@ const _loadPowerConst = async () => {
 const _runUpdater = () => {
   _subsCount += 1
   if (_updateInterval === -1) {
-    _updateInterval = setInterval(() => _loadPowerConst(), 10000)
+    _updateInterval = window.setInterval(() => _loadPowerConst(), 10000)
     _loadPowerConst()
   }
 }
