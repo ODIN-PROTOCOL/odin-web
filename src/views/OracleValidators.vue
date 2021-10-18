@@ -6,7 +6,7 @@
 
     <div class="app-table">
       <div class="app-table__head">
-        <span>Validator</span>
+        <span>Moniker</span>
         <span>Is active</span>
         <span>Validator address</span>
         <span>Validator since</span>
@@ -62,6 +62,10 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue'
 import { callers } from '@/api/callers'
+import {
+  isActiveValidator,
+  isOracleValidator,
+} from '@/helpers/validatorHelpers'
 import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import TitledLink from '@/components/TitledLink.vue'
 import CopyButton from '@/components/CopyButton.vue'
@@ -89,21 +93,11 @@ export default defineComponent({
         oracleValidators.map(async (item) => {
           return {
             ...item,
-            isActive: await isActive(item.operatorAddress),
+            isActive: await isActiveValidator(item.operatorAddress),
           }
         })
       )
       filterValidators(currentPage.value)
-    }
-
-    const isOracleValidator = async (validatorAddress: string) => {
-      const response = await callers.getReports(validatorAddress)
-      return response.reporter.length ? true : false
-    }
-
-    const isActive = async (validatorAddress: string) => {
-      const response = await callers.getValidatorStatus(validatorAddress)
-      return response.status?.isActive ? true : false
     }
 
     const filterValidators = (newPage: number) => {

@@ -3,8 +3,15 @@
     class="validators view-main load-fog"
     :class="{ 'load-fog_show': isLoading && validators?.length }"
   >
-    <div class="fx-row mg-b32">
-      <h2 class="view-title">Validators</h2>
+    <div class="page-title">
+      <h2 class="view-title">All Validators</h2>
+      <button
+        class="app-btn app-btn_small fx-sae"
+        type="button"
+        @click="becomeValidator()"
+      >
+        Become a validator
+      </button>
     </div>
 
     <template v-if="validatorsCount">
@@ -13,68 +20,191 @@
       </div>
     </template>
 
-    <template v-if="validators?.length">
-      <ValidatorCard
-        v-for="item in filteredValidators"
-        :key="item.operatorAddress"
-        class="mg-b32"
-        :validator="item"
-        :delegation="delegations[item.operatorAddress]"
-        @delegationChanged="loadValidators() & loadDelegations()"
-      />
-    </template>
-    <template v-else>
-      <p v-if="isLoading">Loading…</p>
-      <p v-else>No items yet</p>
-    </template>
+    <Tabs @changeTab="tabHandler($event)">
+      <Tab title="Active" />
+      <Tab title="Inactive" />
+    </Tabs>
 
-    <template v-if="validatorsCount > ITEMS_PER_PAGE">
+    <div class="app-table">
+      <div class="app-table__head">
+        <span>Rank</span>
+        <span>Moniker</span>
+        <span>Delegator Share</span>
+        <span>Commission</span>
+        <span>Oracle Status</span>
+        <span></span>
+      </div>
+      <div class="app-table__body">
+        <template v-if="validators?.length">
+          <div
+            v-for="item in filteredValidators"
+            :key="item.operatorAddress"
+            class="app-table__row"
+          >
+            <div class="app-table__cell">
+              <span class="app-table__title">Rank</span>
+              <span>{{ item.rank }}</span>
+            </div>
+            <div class="app-table__cell">
+              <span class="app-table__title">Moniker</span>
+              <TitledLink
+                class="app-table__cell-txt app-table__link"
+                :text="item.description.moniker"
+                :to="`/validators/${item.operatorAddress}`"
+              />
+            </div>
+            <div class="app-table__cell">
+              <span class="app-table__title">Delegator Share</span>
+              <span>{{ $preciseAsPercents(item.delegatorShares) }}</span>
+            </div>
+            <div class="app-table__cell">
+              <span class="app-table__title">Commission</span>
+              <span>
+                {{ $preciseAsPercents(item.commission.commissionRates.rate) }}
+              </span>
+            </div>
+            <div class="app-table__cell">
+              <span class="app-table__title">Oracle Status</span>
+              <StatusIcon
+                :status="item.isOracleValidator ? 'success' : 'error'"
+              />
+            </div>
+            <div class="app-table__cell">
+              <div class="app-table__activities">
+                <div class="app-table__activities-item">
+                  <button
+                    class="app-btn app-btn_outlined app-btn_small"
+                    type="button"
+                    @click="withdraw(item)"
+                  >
+                    Withdraw stake
+                  </button>
+                  <button
+                    class="app-btn app-btn_small mg-l24"
+                    type="button"
+                    @click="delegate(item)"
+                  >
+                    Delegate
+                  </button>
+                </div>
+                <div
+                  v-if="delegations[item.operatorAddress]"
+                  class="app-table__activities-item"
+                >
+                  <button
+                    class="app-btn app-btn_outlined app-btn_small"
+                    type="button"
+                    @click="undelegate"
+                  >
+                    Undelegate
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+        <template v-else>
+          <div class="app-table__empty-stub">
+            <p v-if="isLoading">Loading…</p>
+            <p v-else>No items yet</p>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <template v-if="filteredValidatorsCount > ITEMS_PER_PAGE">
       <Pagination
         @changePageNumber="paginationHandler($event)"
         :blocksPerPage="ITEMS_PER_PAGE"
-        :total-length="validatorsCount"
+        :total-length="filteredValidatorsCount"
+        :startFrom="currentPage"
       />
     </template>
   </div>
 </template>
 
 <script lang="ts">
+import { defineComponent, ref, onMounted } from 'vue'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
-import { showBecomeValidatorFormDialog } from '@/components/modals/BecomeValidatorFormModal.vue'
-import ValidatorCard from '@/components/ValidatorCard.vue'
-import Pagination from '@/components/pagination/pagination.vue'
 import { handleError } from '@/helpers/errors'
+import {
+  isActiveValidator,
+  isOracleValidator,
+} from '@/helpers/validatorHelpers'
+import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
-import { defineComponent, ref } from 'vue'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
+import { showBecomeValidatorFormDialog } from '@/components/modals/BecomeValidatorFormModal.vue'
+// import ValidatorCard from '@/components/ValidatorCard.vue'
+import Tabs from '@/components/tabs/Tabs.vue'
+import Tab from '@/components/tabs/Tab.vue'
+import TitledLink from '@/components/TitledLink.vue'
+import StatusIcon from '@/components/StatusIcon.vue'
+import Pagination from '@/components/pagination/pagination.vue'
+import { showWithdrawFormDialog } from '@/components/modals/WithdrawFormModal.vue'
+import { showDelegateFormDialog } from '@/components/modals/DelegateFormModal.vue'
+import { showUndelegateFormDialog } from '@/components/modals/UndelegateFormModal.vue'
 
 export default defineComponent({
-  components: { ValidatorCard, Pagination },
+  components: { Tabs, Tab, TitledLink, StatusIcon, Pagination },
   setup() {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 3
+    const ITEMS_PER_PAGE = 6
     const currentPage = ref(1)
+    const validatorsStatus = ref('Active')
+    const filteredValidatorsCount = ref(0)
     const validatorsCount = ref(0)
     const filteredValidators = ref()
     const validators = ref()
 
-    const loadValidators = async () => {
+    let activeValidators: ValidatorDecoded[] = []
+    let inactiveValidators: ValidatorDecoded[] = []
+
+    const getValidators = async () => {
       lockLoading()
       try {
-        const response = await callers.getValidators('BOND_STATUS_BONDED')
-        validators.value = response.validators
-        validatorsCount.value = response.validators.length
+        const bonded = await callers.getValidators('BOND_STATUS_BONDED')
+        const unbonding = await callers.getValidators('BOND_STATUS_UNBONDING')
+        const unbonded = await callers.getValidators('BOND_STATUS_UNBONDED')
+
+        const _validators = [
+          ...bonded.validators,
+          ...unbonding.validators,
+          ...unbonded.validators,
+        ]
+        let _updatedValidators: ValidatorDecoded[] = []
+
+        _updatedValidators = await Promise.all(
+          _validators.map(async (item, idx) => {
+            return {
+              ...item,
+              rank: idx + 1,
+              isOracleValidator: await isOracleValidator(item.operatorAddress),
+            }
+          })
+        )
+
+        for (let i = 0; i < _updatedValidators.length; i++) {
+          const active = await isActiveValidator(
+            _updatedValidators[i].operatorAddress
+          )
+          if (active) activeValidators.push(_updatedValidators[i])
+          else inactiveValidators.push(_updatedValidators[i])
+        }
+
+        validators.value = [...activeValidators]
+        validatorsCount.value = _validators.length
+        filteredValidatorsCount.value = validators.value.length
         filterValidators(currentPage.value)
       } catch (error) {
         handleError(error)
       }
       releaseLoading()
     }
-    loadValidators()
 
     const delegations = ref<{ [k: string]: DelegationResponse }>({})
-    const loadDelegations = async () => {
+    const getDelegations = async () => {
       lockLoading()
       try {
         // TODO: delegations returns invalid delegator's amount?
@@ -93,7 +223,6 @@ export default defineComponent({
       }
       releaseLoading()
     }
-    loadDelegations()
 
     const filterValidators = (newPage: number) => {
       let tempArr = validators.value
@@ -113,27 +242,90 @@ export default defineComponent({
       filterValidators(num)
     }
 
+    const tabHandler = async (title: string) => {
+      if (title !== validatorsStatus.value) {
+        validatorsStatus.value = title
+
+        if (validatorsStatus.value === 'Active') {
+          validators.value = [...activeValidators]
+        } else if (validatorsStatus.value === 'Inactive') {
+          validators.value = [...inactiveValidators]
+        }
+
+        filteredValidatorsCount.value = validators.value.length
+        currentPage.value = 1
+        filterValidators(currentPage.value)
+      }
+    }
+
     const becomeValidator = async () => {
       showBecomeValidatorFormDialog({
         onSubmit: (d) => {
           d.kill()
-          loadValidators()
-          loadDelegations()
+          getValidators()
+          getDelegations()
         },
       })
     }
 
+    const withdraw = (validator: ValidatorDecoded) => {
+      showWithdrawFormDialog({
+        onSubmit: (d) => {
+          d.kill()
+          console.log(validator)
+        },
+      })
+    }
+
+    const delegate = (validator: ValidatorDecoded) => {
+      showDelegateFormDialog(
+        {
+          onSubmit: (d) => {
+            d.kill()
+            getValidators()
+            getDelegations()
+          },
+        },
+        { validator, delegation: delegations.value[validator.operatorAddress] }
+      )
+    }
+
+    const undelegate = (validator: ValidatorDecoded) => {
+      if (!delegations.value[validator.operatorAddress]) return
+      showUndelegateFormDialog(
+        {
+          onSubmit: (d) => {
+            d.kill()
+            getValidators()
+            getDelegations()
+          },
+        },
+        { validator, delegation: delegations.value[validator.operatorAddress] }
+      )
+    }
+
+    onMounted(async () => {
+      await getValidators()
+      await getDelegations()
+    })
+
     return {
       ITEMS_PER_PAGE,
+      currentPage,
+      filteredValidatorsCount,
       validatorsCount,
       filteredValidators,
       validators,
       delegations,
       isLoading,
-      becomeValidator,
-      loadValidators,
-      loadDelegations,
+      getValidators,
+      getDelegations,
       paginationHandler,
+      tabHandler,
+      becomeValidator,
+      withdraw,
+      delegate,
+      undelegate,
     }
   },
 })
@@ -145,6 +337,42 @@ export default defineComponent({
 
   @media screen and (max-width: 768px) {
     margin-bottom: 0;
+  }
+}
+
+.app-table__head,
+.app-table__row {
+  grid:
+    auto /
+    minmax(3rem, 1fr)
+    minmax(8rem, 4fr)
+    minmax(8rem, 4fr)
+    minmax(8rem, 4fr)
+    minmax(8rem, 4fr)
+    minmax(28.5rem, 4fr);
+}
+
+.app-table__activities {
+  & > *:not(:last-child) {
+    margin-bottom: 2.4rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .app-table__row {
+    grid: none;
+  }
+
+  .app-table__activities {
+    width: 100%;
+
+    &-item {
+      display: flex;
+
+      & > * {
+        flex: 1;
+      }
+    }
   }
 }
 </style>

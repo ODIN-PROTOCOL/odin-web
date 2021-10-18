@@ -5,7 +5,7 @@
         v-for="title in tabTitles"
         :key="title"
         :class="{ selected: title == selectedTitle }"
-        @click="selectedTitle = title"
+        @click="clickHandler(title)"
       >
         {{ title }}
       </li>
@@ -18,7 +18,8 @@
 import { defineComponent, ref, provide } from 'vue'
 
 export default defineComponent({
-  setup: function (props, { slots }) {
+  emits: ['changeTab'],
+  setup: function (props, { slots, emit }) {
     const tabTitles = ref(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (slots as any)
@@ -27,12 +28,19 @@ export default defineComponent({
     )
     const selectedTitle = ref(tabTitles.value[0])
 
+    const clickHandler = (title: string) => {
+      selectedTitle.value = title
+      emit('changeTab', title)
+    }
+
     provide('selectedTitle', selectedTitle)
+
     return {
       selectedTitle,
       tabTitles,
+      clickHandler,
     }
-  }
+  },
 })
 </script>
 
