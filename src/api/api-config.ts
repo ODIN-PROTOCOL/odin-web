@@ -1,14 +1,9 @@
 import { stringToPath } from '@cosmjs/crypto'
 
 export const API_CONFIG = {
-  mnemonic:
-    'prize weapon virus foot mandate finger add strong world physical token castle knee bracket armed quit brand physical neglect film tip okay view broken',
-  // api: 'http://35.195.150.105:1317',
-  // rpc: 'http://35.195.150.105:26657',
-  rpc: 'http://192.168.1.37:26657',
-  // rpc: 'https://node.testnet.odinprotocol.io/a/',
-  faucet: 'https://node.testnet.odinprotocol.io/faucet',
-  exBridge: 'https://node.testnet.odinprotocol.io/bridge/',
-  exBridgeFee: '10',
-  hdDeviation: stringToPath("m/44'/494'/0'/0/0"),
+  rpc: process.env.VUE_APP_RPC_URL as string,
+  faucet: process.env.VUE_APP_FAUCET_URL as string,
+  exBridge: process.env.VUE_APP_EX_BRIDGE_URL as string,
+  exBridgeFee: process.env.VUE_APP_EX_BRIDGE_FEE as string,
+  hdDeviation: stringToPath(process.env.VUE_APP_DEVIATION as string),
 }
