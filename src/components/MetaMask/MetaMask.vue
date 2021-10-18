@@ -7,7 +7,6 @@
     v-if="errorAbiNet"
   >
     <img src="~@/assets/brand/metamask-fox.svg" alt="metamask_logo" />
-    <span>MetaMask</span>
   </button>
   <button
     v-else
@@ -18,7 +17,6 @@
     @click.prevent="openErrorForm"
   >
     <img src="~@/assets/brand/metamask-fox.svg" alt="metamask_logo" />
-    <span>MetaMask</span>
   </button>
 </template>
 
@@ -87,3 +85,32 @@ export default defineComponent({
   },
 })
 </script>
+
+<style lang="scss" scoped>
+.metamask-btn {
+  padding: 0.8rem;
+  width: 4.8rem;
+  height: 4.8rem;
+  border: 1px solid var(--clr__action);
+  border-radius: 4px;
+
+  &:hover {
+    background: var(--clr__action);
+  }
+
+  &:focus {
+    border: 1px solid var(--clr__btn-normal);
+    background: var(--clr__btn-hover);
+  }
+
+  &:hover {
+    border: 1px solid transparent;
+    background: var(--clr__action);
+  }
+
+  &:active {
+    border: 1px solid transparent;
+    background: var(--clr__btn-pressed);
+  }
+}
+</style>
