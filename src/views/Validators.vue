@@ -131,8 +131,8 @@ import { handleError } from '@/helpers/errors'
 import {
   isActiveValidator,
   isOracleValidator,
-  ValidatorDecoded,
-} from '@/helpers/validatorDecoders'
+} from '@/helpers/validatorHelpers'
+import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { showBecomeValidatorFormDialog } from '@/components/modals/BecomeValidatorFormModal.vue'

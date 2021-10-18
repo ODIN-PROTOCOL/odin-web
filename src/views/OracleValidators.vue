@@ -65,8 +65,8 @@ import { callers } from '@/api/callers'
 import {
   isActiveValidator,
   isOracleValidator,
-  ValidatorDecoded,
-} from '@/helpers/validatorDecoders'
+} from '@/helpers/validatorHelpers'
+import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import TitledLink from '@/components/TitledLink.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
