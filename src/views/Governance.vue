@@ -7,8 +7,9 @@
       </button>
     </div>
 
-    <div class="chart-block mg-b40">
-      <h3>Total number of proposals in ODIN</h3>
+    <div class="info-card mg-b40">
+      <h3 class="info-card__title mg-b40">Total number of proposals in ODIN</h3>
+      <CustomDoughnutChart />
     </div>
 
     <div class="app-table">
@@ -59,11 +60,12 @@
 import { defineComponent, ref, onMounted } from 'vue'
 import { callers } from '@/api/callers'
 import TitledLink from '@/components/TitledLink.vue'
+import CustomDoughnutChart from '@/components/charts/CustomDoughnutChart.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
 import Pagination from '@/components/pagination/pagination.vue'
 
 export default defineComponent({
-  components: { TitledLink, StatusBlock, Pagination },
+  components: { CustomDoughnutChart, TitledLink, StatusBlock, Pagination },
   setup: function () {
     const ITEMS_PER_PAGE = 5
     // const currentPage = ref(1)
@@ -71,8 +73,21 @@ export default defineComponent({
     const proposals = ref()
 
     const getProposals = async () => {
-      const response = await callers.getProposals(0, 'test', 'test')
-      console.log(response)
+      const depositPeriodProposals = await callers.getProposals(1, '', '')
+      const votingPeriodProposals = await callers.getProposals(2, '', '')
+      const passedProposals = await callers.getProposals(3, '', '')
+      const rejectedProposals = await callers.getProposals(4, '', '')
+
+      const approvedCount = 10
+      const rejectedCount = 2
+      const pendingCount = 4
+      const progressCount = 2
+
+
+      console.log('deposit', depositPeriodProposals)
+      console.log('voting', votingPeriodProposals)
+      console.log('passed', passedProposals)
+      console.log('rejected', rejectedProposals)
     }
 
     const paginationHandler = (num: number) => {
@@ -94,6 +109,19 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.info-card {
+  width: 60rem;
+  padding: 3.2rem 2.4rem;
+  border: 1px solid var(--clr__action);
+  border-radius: 0.8rem;
+
+  &__title {
+    font-weight: 400;
+    font-size: 2.4rem;
+    line-height: 2.9rem;
+  }
+}
+
 .app-table__head,
 .app-table__row {
   grid:
