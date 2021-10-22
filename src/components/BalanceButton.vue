@@ -10,11 +10,11 @@
       Balance: <strong>{{ $fCoin(lokiCoins) }}</strong>
     </button>
     -->
-    <button class="balance-button__balance-btn--icon">
-      <router-link :to="{ name: 'Wallet' }">
+    <router-link :to="{ name: 'Wallet' }" v-slot="{ href, navigate }">
+      <button class="app-nav-btn" :href="href" @click="navigate">
         <WalletIcon />
-      </router-link>
-    </button>
+      </button>
+    </router-link>
 
     <div
       v-show="dropdown.isShown.value"
@@ -91,20 +91,6 @@ export default defineComponent({
   border-radius: 1.2rem;
   border: 1px solid var(--clr__action);
   padding: 1.5rem 1.4rem;
-  &--icon {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 0.4rem;
-    background: var(--clr__action);
-    white-space: nowrap;
-    padding: 1.5rem 1.4rem;
-    a {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-  }
 }
 
 .balance-button__dropdown {

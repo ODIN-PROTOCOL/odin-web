@@ -1,7 +1,7 @@
 <template>
   <button
     :disabled="!burnFee"
-    class="metamask-btn"
+    class="app-nav-btn app-nav-btn_white"
     type="submit"
     @click.prevent="connectMetaMask"
     v-if="errorAbiNet"
@@ -11,7 +11,7 @@
   <button
     v-else
     :disabled="!errorText"
-    class="metamask-btn"
+    class="app-nav-btn app-nav-btn_white"
     type="submit"
     :title="errorText"
     @click.prevent="openErrorForm"
@@ -86,31 +86,4 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped>
-.metamask-btn {
-  padding: 0.8rem;
-  width: 4.8rem;
-  height: 4.8rem;
-  border: 1px solid var(--clr__action);
-  border-radius: 4px;
-
-  &:hover {
-    background: var(--clr__action);
-  }
-
-  &:focus {
-    border: 1px solid var(--clr__btn-normal);
-    background: var(--clr__btn-hover);
-  }
-
-  &:hover {
-    border: 1px solid transparent;
-    background: var(--clr__action);
-  }
-
-  &:active {
-    border: 1px solid transparent;
-    background: var(--clr__btn-pressed);
-  }
-}
-</style>
+<style lang="scss" scoped></style>
