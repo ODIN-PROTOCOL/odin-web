@@ -9,7 +9,7 @@
     </div>
 
     <div class="auth__content fx-start">
-      <form class="auth__form app-form" @submit.prevent="submit()">
+      <form class="auth__form" @submit.prevent="submit()">
         <img
           class="only-sm auth__form-logo"
           src="~@/assets/brand/odin-logo-black.png"
@@ -41,11 +41,8 @@
           >
             Generate mnemonic key
           </button>
-        </div>
-
-        <div class="app-form__footer mg-t32">
           <button
-            class="app-btn w-full"
+            class="app-btn w-full mg-t32"
             type="submit"
             :disabled="!form.isValid || isLoading"
           >
@@ -143,6 +140,10 @@ export default defineComponent({
 .auth__content {
   padding: 3.2rem;
   position: relative;
+
+  &-title {
+    font-weight: 400;
+  }
 }
 
 .auth__form {
@@ -151,7 +152,7 @@ export default defineComponent({
   margin-inline-start: 8vw;
 
   @include respond-to(sm) {
-    margin: auto;
+    margin: 0 auto;
   }
 }
 
