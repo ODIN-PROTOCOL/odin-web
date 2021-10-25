@@ -1,7 +1,10 @@
 <template>
   <template v-if="isAppReady">
     <template v-if="isLoggedIn">
-      <header class="view-header fx-row">
+      <header
+        class="view-header fx-row"
+        :class="{ 'view-header_mobile': isOpen }"
+      >
         <div class="header-wrapper">
           <img
             class="logo"
@@ -100,6 +103,12 @@ export default defineComponent({
 }
 
 @media (max-width: 768px) {
+  .view-header_mobile {
+    position: fixed;
+    width: 100%;
+    z-index: 1;
+    background: #fff;
+  }
   .header-wrapper {
     gap: 0.4rem;
   }

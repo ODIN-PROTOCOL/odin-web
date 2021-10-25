@@ -34,22 +34,29 @@
       <!--        Voting-->
       <!--      </router-link>-->
     </div>
-    <button class="app-btn log-out-btn" type="button" @click="logOutAndLeave()">
-      <span>Sign out</span>
-      <img src="@/assets/icons/exit.svg" alt="logout" />
-    </button>
+    <div class="nav__activities">
+      <button
+        class="app-btn log-out-btn"
+        type="button"
+        @click="logOutAndLeave()"
+      >
+        <ExitIcon />
+        <span>Sign out</span>
+      </button>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import LinksDropdown from '@/components/LinksDropdown.vue'
 import { useAuthorization } from '@/composables/useAuthorization'
 import router from '@/router'
+import LinksDropdown from '@/components/LinksDropdown.vue'
+import ExitIcon from '@/components/icons/ExitIcon.vue'
 
 export default defineComponent({
-  components: { LinksDropdown },
+  components: { LinksDropdown, ExitIcon },
   emits: ['changeRoute'],
   props: {
     isOpen: { type: Boolean, default: false },
@@ -158,12 +165,12 @@ export default defineComponent({
     position: absolute;
     top: calc(100% + 0.1rem);
     width: 100%;
+    padding: 0 1.6rem 1.6rem 1.6rem;
     z-index: 9999;
-    height: 100vh;
+    height: calc(100vh - 9.6rem);
 
     &__wrap-cont {
       flex-direction: column;
-      padding: 0 1.6rem;
       gap: 0;
     }
 
@@ -187,10 +194,17 @@ export default defineComponent({
 
   .log-out-btn {
     display: flex;
+    justify-content: center;
+    gap: 1.1rem;
   }
 
   .nav-mob {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: fixed;
+    top: 9.7rem;
+    left: 0;
   }
 }
 </style>
