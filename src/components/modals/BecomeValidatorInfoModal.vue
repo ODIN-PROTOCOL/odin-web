@@ -5,8 +5,12 @@
     </template>
 
     <template #main>
-      <div class="info-modal__text">
-        <span>Some text</span>
+      <div class="info-modal__info">
+        <p class="mg-b24">
+          To become a validator, please follow the instructions on the Github
+          link below
+        </p>
+        <a class="info-modal__link" :href="githubLink">{{ githubLink }}</a>
       </div>
     </template>
   </ModalBase>
@@ -22,14 +26,18 @@ const InfoModal = defineComponent({
   components: { ModalBase },
   setup: function () {
     const isLoading = ref(false)
+    const githubLink = ref(
+      `https://github.com/GeoDB-Limited/odin-testnet-public-tools#sending-transaction-to-become-a-validator`
+    )
     return {
+      githubLink,
       onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
     }
   },
 })
 
 export default InfoModal
-export function showInfoModal(callbacks: {
+export function showBecomeValidatorInfoModal(callbacks: {
   onClose?: DialogHandler
 }): Promise<unknown | null> {
   return dialogs.show(InfoModal, callbacks)
@@ -37,7 +45,14 @@ export function showInfoModal(callbacks: {
 </script>
 
 <style lang="scss" scoped>
-.info-modal__text {
-  padding: 0 1rem;
+.info-modal {
+  &__info {
+    padding: 0 1rem;
+  }
+
+  &__link {
+    text-decoration: none;
+    color: var(--clr__action);
+  }
 }
 </style>

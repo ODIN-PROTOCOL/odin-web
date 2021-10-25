@@ -156,7 +156,7 @@ import Pagination from '@/components/pagination/pagination.vue'
 import { showWithdrawFormDialog } from '@/components/modals/WithdrawFormModal.vue'
 import { showDelegateFormDialog } from '@/components/modals/DelegateFormModal.vue'
 import { showUndelegateFormDialog } from '@/components/modals/UndelegateFormModal.vue'
-import { showInfoModal } from '@/components/modals/InfoModal.vue'
+import { showBecomeValidatorInfoModal } from '@/components/modals/BecomeValidatorInfoModal.vue'
 
 export default defineComponent({
   components: { Tabs, Tab, TitledLink, StatusIcon, Pagination },
@@ -260,7 +260,7 @@ export default defineComponent({
     }
 
     const becomeValidator = () => {
-      showInfoModal({})
+      showBecomeValidatorInfoModal({})
     }
 
     // Problem with becoming a validator (panic message)
