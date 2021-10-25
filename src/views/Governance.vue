@@ -20,7 +20,7 @@
       </div>
       <div class="app-table__body">
         <template v-if="true">
-          <div v-for="item in 5" :key="item" class="app-table__row">
+          <div v-for="item in 1" :key="item" class="app-table__row">
             <div class="app-table__cell">
               <span class="app-table__title">Proposal</span>
               <span class="app-table__cell-txt">Proposal name</span>
@@ -69,7 +69,7 @@ export default defineComponent({
   setup: function () {
     const ITEMS_PER_PAGE = 5
     // const currentPage = ref(1)
-    const proposalsCount = ref(6)
+    const proposalsCount = ref(1)
     const proposals = ref()
 
     const getProposals = async () => {

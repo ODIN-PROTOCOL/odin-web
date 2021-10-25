@@ -23,34 +23,18 @@ Chart.register(...registerables)
 export default defineComponent({
   components: { DoughnutChart },
   setup: function () {
-    const dataValues = ref([10, 2, 3, 2])
-    const labels = ref(['Approved', 'Rejected', 'Pending', 'In progress'])
-    const colors = ref(['#00D097', '#F65160', '#FDC748', '#007BFF'])
+    const dataValues = ref([1])
+    // const labels = ref(['Approved', 'Rejected', 'Pending', 'In progress'])
+    // const colors = ref(['#00D097', '#F65160', '#FDC748', '#007BFF'])
+    const labels = ref(['In progress'])
+    const colors = ref(['#007BFF'])
 
     const data = ref([
       {
-        label: 'Approved',
-        color: '#00D097',
-        count: 10,
-        persentage: '60%',
-      },
-      {
-        label: 'Rejected',
-        color: '#F65160',
-        count: 2,
-        persentage: '10%',
-      },
-      {
-        label: 'Pending',
-        color: '#FDC748',
-        count: 3,
-        persentage: '20%',
-      },
-      {
         label: 'In progress',
         color: '#007BFF',
-        count: 2,
-        persentage: '10%',
+        count: 1,
+        persentage: '100%',
       },
     ])
 
