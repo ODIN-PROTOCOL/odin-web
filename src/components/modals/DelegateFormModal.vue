@@ -12,17 +12,17 @@
       >
         <div class="app-form__main">
           <div class="app-form__field">
+            <label class="app-form__field-lbl"> Min delegation </label>
+            <p>{{ $fCoin(validator.minSelfDelegation, 'LOKI') }}</p>
+          </div>
+
+          <div class="app-form__field">
             <label class="app-form__field-lbl"> Operator address </label>
             <!-- Temp. this field can be removed -->
             <div class="fx-row" style="width: 50%">
               <span class="fs-cut">{{ validator.operatorAddress }}</span>
               <CopyButton :text="validator.operatorAddress" />
             </div>
-          </div>
-
-          <div class="app-form__field">
-            <label class="app-form__field-lbl"> Min delegation </label>
-            <p>{{ $fCoin(validator.minSelfDelegation, 'LOKI') }}</p>
           </div>
 
           <div v-if="delegation && delegation.balance" class="app-form__field">
