@@ -33,6 +33,10 @@
       <!--      <router-link class="nav__link" :to="{ name: 'Voting' }">-->
       <!--        Voting-->
       <!--      </router-link>-->
+      <button class="log-out-btn" type="button" @click="logOutAndLeave()">
+        <span>Log out</span>
+        <img src="@/assets/icons/exit.svg" alt="logout" />
+      </button>
     </div>
   </div>
 </template>
@@ -41,6 +45,8 @@
 import { defineComponent, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import LinksDropdown from '@/components/LinksDropdown.vue'
+import { useAuthorization } from '@/composables/useAuthorization'
+import router from '@/router'
 
 export default defineComponent({
   components: { LinksDropdown },
@@ -63,6 +69,12 @@ export default defineComponent({
       ],
     }
 
+    const auth = useAuthorization()
+    const logOutAndLeave = () => {
+      auth.logOut()
+      router.push({ name: 'Auth' })
+    }
+
     const route = useRoute()
     watch(
       () => route.path,
@@ -80,6 +92,7 @@ export default defineComponent({
 
     return {
       isDropdownActive,
+      logOutAndLeave,
       handleDropdownActive,
       ValidatorsList,
     }
@@ -132,6 +145,20 @@ export default defineComponent({
   }
 }
 
+.log-out-btn {
+  display: none;
+  gap: 1.2rem;
+  margin-top: 4rem;
+  padding: 1.2rem;
+  border: 1px solid var(--clr__splash-bg);
+  border-radius: 0.8rem;
+  color: var(--clr__splash-bg);
+
+  &:hover {
+    background: var(--clr__action-disabled);
+  }
+}
+
 @media (max-width: 768px) {
   .nav {
     display: none;
@@ -164,6 +191,10 @@ export default defineComponent({
         padding: 2.4rem 1.2rem;
       }
     }
+  }
+
+  .log-out-btn {
+    display: flex;
   }
 
   .nav-mob {

@@ -297,8 +297,16 @@ export default defineComponent({
       }
     }
 
+    @include respond-to(sm) {
+      width: 100%;
+    }
+
     // TODO uncomment when activities will be ready
     // &-activities {}
+  }
+
+  @include respond-to(sm) {
+    flex-direction: column;
   }
 }
 
