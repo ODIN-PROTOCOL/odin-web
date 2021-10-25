@@ -6,7 +6,7 @@
 
     <div class="app-table">
       <div class="app-table__head">
-        <span>Moniker</span>
+        <span>Validator</span>
         <span>Is active</span>
         <span>Validator address</span>
         <span>Validator since</span>

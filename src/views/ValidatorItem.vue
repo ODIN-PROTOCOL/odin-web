@@ -204,6 +204,8 @@ export default defineComponent({
 
 .validator__address {
   display: flex;
+  min-width: 30%;
+  margin-right: 1rem;
 }
 
 .validator__activities {
@@ -233,6 +235,7 @@ export default defineComponent({
 
   .validator__address {
     width: 100%;
+    margin: 0;
   }
 }
 </style>

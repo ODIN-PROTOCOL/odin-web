@@ -6,7 +6,11 @@
     <div class="page-title">
       <h2 class="view-title">All Validators</h2>
       <button
-        class="app-btn app-btn_small fx-sae"
+        class="
+          app-btn app-btn_small
+          become-validator-btn become-validator-btn_top
+          fx-sae
+        "
         type="button"
         @click="becomeValidator()"
       >
@@ -28,7 +32,7 @@
     <div class="app-table">
       <div class="app-table__head">
         <span>Rank</span>
-        <span>Moniker</span>
+        <span>Validator</span>
         <span>Delegator Share</span>
         <span>Commission</span>
         <span>Oracle Status</span>
@@ -46,7 +50,7 @@
               <span>{{ item.rank }}</span>
             </div>
             <div class="app-table__cell">
-              <span class="app-table__title">Moniker</span>
+              <span class="app-table__title">Validator</span>
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="item.description.moniker"
@@ -120,6 +124,18 @@
         :startFrom="currentPage"
       />
     </template>
+
+    <button
+      class="
+        app-btn app-btn_small
+        become-validator-btn become-validator-btn_bottom
+        fx-sae
+      "
+      type="button"
+      @click="becomeValidator()"
+    >
+      Become a validator
+    </button>
   </div>
 </template>
 
@@ -128,15 +144,10 @@ import { defineComponent, ref, onMounted } from 'vue'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 import { handleError } from '@/helpers/errors'
-import {
-  isActiveValidator,
-  isOracleValidator,
-} from '@/helpers/validatorHelpers'
+import { getTransformedValidators } from '@/helpers/validatorHelpers'
 import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
-import { showBecomeValidatorFormDialog } from '@/components/modals/BecomeValidatorFormModal.vue'
-// import ValidatorCard from '@/components/ValidatorCard.vue'
 import Tabs from '@/components/tabs/Tabs.vue'
 import Tab from '@/components/tabs/Tab.vue'
 import TitledLink from '@/components/TitledLink.vue'
@@ -145,6 +156,7 @@ import Pagination from '@/components/pagination/pagination.vue'
 import { showWithdrawFormDialog } from '@/components/modals/WithdrawFormModal.vue'
 import { showDelegateFormDialog } from '@/components/modals/DelegateFormModal.vue'
 import { showUndelegateFormDialog } from '@/components/modals/UndelegateFormModal.vue'
+import { showBecomeValidatorInfoModal } from '@/components/modals/BecomeValidatorInfoModal.vue'
 
 export default defineComponent({
   components: { Tabs, Tab, TitledLink, StatusIcon, Pagination },
@@ -168,33 +180,22 @@ export default defineComponent({
         const unbonding = await callers.getValidators('BOND_STATUS_UNBONDING')
         const unbonded = await callers.getValidators('BOND_STATUS_UNBONDED')
 
-        const _validators = [
+        activeValidators = await getTransformedValidators([
           ...bonded.validators,
           ...unbonding.validators,
+        ])
+        inactiveValidators = await getTransformedValidators([
           ...unbonded.validators,
-        ]
-        let _updatedValidators: ValidatorDecoded[] = []
+        ])
 
-        _updatedValidators = await Promise.all(
-          _validators.map(async (item, idx) => {
-            return {
-              ...item,
-              rank: idx + 1,
-              isOracleValidator: await isOracleValidator(item.operatorAddress),
-            }
-          })
-        )
-
-        for (let i = 0; i < _updatedValidators.length; i++) {
-          const active = await isActiveValidator(
-            _updatedValidators[i].operatorAddress
-          )
-          if (active) activeValidators.push(_updatedValidators[i])
-          else inactiveValidators.push(_updatedValidators[i])
+        if (validatorsStatus.value === 'Active') {
+          validators.value = [...activeValidators]
+        } else if (validatorsStatus.value === 'Inactive') {
+          validators.value = [...inactiveValidators]
         }
 
-        validators.value = [...activeValidators]
-        validatorsCount.value = _validators.length
+        validatorsCount.value =
+          activeValidators.length + inactiveValidators.length
         filteredValidatorsCount.value = validators.value.length
         filterValidators(currentPage.value)
       } catch (error) {
@@ -258,15 +259,20 @@ export default defineComponent({
       }
     }
 
-    const becomeValidator = async () => {
-      showBecomeValidatorFormDialog({
-        onSubmit: (d) => {
-          d.kill()
-          getValidators()
-          getDelegations()
-        },
-      })
+    const becomeValidator = () => {
+      showBecomeValidatorInfoModal({})
     }
+
+    // Problem with becoming a validator (panic message)
+    // const becomeValidator = async () => {
+    //   showBecomeValidatorFormDialog({
+    //     onSubmit: (d) => {
+    //       d.kill()
+    //       getValidators()
+    //       getDelegations()
+    //     },
+    //   })
+    // }
 
     const withdraw = (validator: ValidatorDecoded) => {
       showWithdrawFormDialog({
@@ -355,6 +361,22 @@ export default defineComponent({
 .app-table__activities {
   & > *:not(:last-child) {
     margin-bottom: 2.4rem;
+  }
+}
+
+.become-validator-btn {
+  &_bottom {
+    display: none;
+    width: 100%;
+    @media screen and (max-width: 768px) {
+      display: block;
+    }
+  }
+  &_top {
+    display: block;
+    @media screen and (max-width: 768px) {
+      display: none;
+    }
   }
 }
 
