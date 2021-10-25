@@ -11,7 +11,7 @@
     <div class="auth__content fx-start">
       <form class="auth__form" @submit.prevent="submit()">
         <img
-          class="only-sm auth__form-logo"
+          class="auth__form-logo"
           src="~@/assets/brand/odin-logo-black.png"
           alt="ODIN Logo"
         />
@@ -109,7 +109,7 @@ export default defineComponent({
   grid: 100% / 1fr 0.85fr;
   flex: 1;
 
-  @include respond-to(sm) {
+  @media (max-width: 768px) {
     grid: 100% / 1fr;
   }
 }
@@ -121,7 +121,8 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   align-items: center;
-  @media (max-width: 76.8rem) {
+
+  @media (max-width: 768px) {
     display: none;
   }
 }
@@ -151,15 +152,21 @@ export default defineComponent({
   max-width: 30rem;
   margin-inline-start: 8vw;
 
-  @include respond-to(sm) {
+  @media (max-width: 768px) {
     margin: 0 auto;
   }
 }
 
 .auth__form-logo {
+  display: none;
   max-width: 12rem;
   position: absolute;
   top: 4rem;
+
+  @media (max-width: 768px) {
+    display: block;
+    margin: 0 auto;
+  }
 }
 
 .auth__copy {
