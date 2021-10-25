@@ -33,11 +33,11 @@
       <!--      <router-link class="nav__link" :to="{ name: 'Voting' }">-->
       <!--        Voting-->
       <!--      </router-link>-->
-      <button class="log-out-btn" type="button" @click="logOutAndLeave()">
-        <span>Log out</span>
-        <img src="@/assets/icons/exit.svg" alt="logout" />
-      </button>
     </div>
+    <button class="app-btn log-out-btn" type="button" @click="logOutAndLeave()">
+      <span>Sign out</span>
+      <img src="@/assets/icons/exit.svg" alt="logout" />
+    </button>
   </div>
 </template>
 
@@ -147,16 +147,8 @@ export default defineComponent({
 
 .log-out-btn {
   display: none;
-  gap: 1.2rem;
-  margin-top: 4rem;
-  padding: 1.2rem;
-  border: 1px solid var(--clr__splash-bg);
-  border-radius: 0.8rem;
-  color: var(--clr__splash-bg);
-
-  &:hover {
-    background: var(--clr__action-disabled);
-  }
+  margin-top: auto;
+  width: 100%;
 }
 
 @media (max-width: 768px) {
