@@ -78,6 +78,7 @@ import CopyButton from '@/components/CopyButton.vue'
 import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { useBalances } from '@/composables/useBalances'
 import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
+import { coin } from '@cosmjs/amino'
 
 const DelegateFormDialog = defineComponent({
   props: {
@@ -90,7 +91,7 @@ const DelegateFormDialog = defineComponent({
     const lokiBalance = getBalance('loki', 'number')
 
     const form = useForm({
-      amount: ['', validators.required, ...validators.num(1, lokiBalance)],
+      amount: [1, validators.required, ...validators.num(1, lokiBalance)],
     })
     const isLoading = ref(false)
     const onSubmit = dialogs.getHandler('onSubmit')
@@ -101,10 +102,7 @@ const DelegateFormDialog = defineComponent({
         await callers.validatorDelegate({
           delegatorAddress: wallet.account.address,
           validatorAddress: props.validator.operatorAddress,
-          amount: {
-            amount: form.amount.val(),
-            denom: 'loki',
-          },
+          amount: coin(form.amount.val(), 'loki'),
         })
         loadBalances()
         onSubmit()
