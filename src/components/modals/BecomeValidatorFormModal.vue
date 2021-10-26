@@ -158,7 +158,7 @@ import ModalBase from './ModalBase.vue'
 import { Bech32, fromBase64 } from '@cosmjs/encoding'
 import { bigMath } from '@/helpers/bigMath'
 import { PubKey } from '@cosmjs/stargate/build/codec/cosmos/crypto/secp256k1/keys'
-
+import { coin } from '@cosmjs/amino'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { Buffer } from 'buffer'
@@ -167,13 +167,49 @@ const BecomeValidatorFormModal = defineComponent({
   components: { ModalBase },
   setup() {
     const form = useForm({
-      moniker: ['', validators.required],
-      pubKey: ['', validators.required, validators.erc20Address],
-      rate: ['', validators.required, ...validators.num(0)],
-      maxRate: ['', validators.required, ...validators.num(0)],
-      maxChangeRate: ['', validators.required, ...validators.num(0)],
-      minDelegation: ['', validators.required, ...validators.num(1)],
-      selfDelegation: ['', validators.required, ...validators.num(0)],
+      moniker: [
+        '',
+        validators.required,
+        validators.withOutSpaceAtStart,
+        validators.maxCharacters(128),
+      ],
+      pubKey: [
+        '',
+        validators.required,
+        validators.erc20Address,
+        validators.withOutSpaceAtStart,
+        validators.maxCharacters(128),
+      ],
+      rate: [
+        '',
+        validators.required,
+        ...validators.num(0),
+        validators.maxCharacters(14),
+      ],
+      maxRate: [
+        '',
+        validators.required,
+        ...validators.num(0),
+        validators.maxCharacters(14),
+      ],
+      maxChangeRate: [
+        '',
+        validators.required,
+        ...validators.num(0),
+        validators.maxCharacters(14),
+      ],
+      minDelegation: [
+        '',
+        validators.required,
+        ...validators.num(1),
+        validators.maxCharacters(128),
+      ],
+      selfDelegation: [
+        0,
+        validators.required,
+        ...validators.num(0),
+        validators.maxCharacters(128),
+      ],
     })
     const isLoading = ref(false)
     const onSubmit = dialogs.getHandler('onSubmit')
@@ -209,10 +245,7 @@ const BecomeValidatorFormModal = defineComponent({
               key: Buffer.from(fromBase64(form.pubKey.val())),
             }).finish(),
           },
-          value: {
-            denom: 'loki',
-            amount: form.selfDelegation.val(),
-          },
+          value: coin(form.selfDelegation.val(), 'loki'),
         })
 
         onSubmit()
@@ -233,7 +266,7 @@ const BecomeValidatorFormModal = defineComponent({
       )
       form.pubKey.val('YVo5TzlCK5Y5C+7lnOKMlHZKoGfLrEKhmpci3xNs5HA=')
       form.minDelegation.val('1')
-      form.selfDelegation.val('10000000')
+      form.selfDelegation.val(10000000)
     }
 
     _fakeForm()
