@@ -26,13 +26,13 @@ export default defineComponent({
     const dataValues = ref([1])
     // const labels = ref(['Approved', 'Rejected', 'Pending', 'In progress'])
     // const colors = ref(['#00D097', '#F65160', '#FDC748', '#007BFF'])
-    const labels = ref(['In progress'])
-    const colors = ref(['#007BFF'])
+    const labels = ref(['Approved'])
+    const colors = ref(['#00D097'])
 
     const data = ref([
       {
-        label: 'In progress',
-        color: '#007BFF',
+        label: 'Approved',
+        color: '#00D097',
         count: 1,
         persentage: '100%',
       },

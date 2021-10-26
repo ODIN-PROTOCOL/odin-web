@@ -19,11 +19,18 @@
         <span>Proposal status</span>
       </div>
       <div class="app-table__body">
-        <template v-if="true">
-          <div v-for="item in 1" :key="item" class="app-table__row">
+        <template v-if="proposals?.length">
+          <div
+            v-for="item in filteredProposals"
+            :key="item.proposalId.toString()"
+            class="app-table__row"
+          >
             <div class="app-table__cell">
               <span class="app-table__title">Proposal</span>
-              <span class="app-table__cell-txt">Proposal name</span>
+              <TitledLink
+                class="app-table__cell-txt app-table__link"
+                :text="item.content.title"
+              />
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Proposer’s account ID</span>
@@ -34,7 +41,10 @@
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Proposal status</span>
-              <StatusBlock :status="'progress'" :text="'In progress'" />
+              <StatusBlock
+                :status="proposalStatusType[item.status].status"
+                :text="proposalStatusType[item.status].name"
+              />
             </div>
           </div>
         </template>
@@ -59,6 +69,8 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue'
 import { callers } from '@/api/callers'
+import { prepareProposalsData } from '@/helpers/proposalHelpers'
+import { proposalStatusType } from '@/helpers/statusTypes'
 import TitledLink from '@/components/TitledLink.vue'
 import CustomDoughnutChart from '@/components/charts/CustomDoughnutChart.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
@@ -68,30 +80,36 @@ export default defineComponent({
   components: { CustomDoughnutChart, TitledLink, StatusBlock, Pagination },
   setup: function () {
     const ITEMS_PER_PAGE = 5
-    // const currentPage = ref(1)
-    const proposalsCount = ref(1)
+    const currentPage = ref(1)
+    const proposalsCount = ref(0)
     const proposals = ref()
+    const filteredProposals = ref()
 
     const getProposals = async () => {
-      const depositPeriodProposals = await callers.getProposals(1, '', '')
-      const votingPeriodProposals = await callers.getProposals(2, '', '')
-      const passedProposals = await callers.getProposals(3, '', '')
-      const rejectedProposals = await callers.getProposals(4, '', '')
+      const response = await callers.getProposals(0, '', '')
+      
+      prepareProposalsData(response.proposals)
+      proposalsCount.value = response.proposals.length
+      proposals.value = response.proposals
+      filterProposals(currentPage.value)
+    }
 
-      const approvedCount = 10
-      const rejectedCount = 2
-      const pendingCount = 4
-      const progressCount = 2
+    const filterProposals = (newPage: number) => {
+      let tempArr = proposals.value
 
-
-      console.log('deposit', depositPeriodProposals)
-      console.log('voting', votingPeriodProposals)
-      console.log('passed', passedProposals)
-      console.log('rejected', rejectedProposals)
+      if (newPage === 1) {
+        filteredProposals.value = tempArr.slice(0, newPage * ITEMS_PER_PAGE)
+      } else {
+        filteredProposals.value = tempArr.slice(
+          (newPage - 1) * ITEMS_PER_PAGE,
+          (newPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE
+        )
+      }
+      currentPage.value = newPage
     }
 
     const paginationHandler = (num: number) => {
-      console.log(num)
+      filterProposals(num)
     }
 
     onMounted(async () => {
@@ -99,12 +117,14 @@ export default defineComponent({
     })
 
     return {
+      proposalStatusType,
       ITEMS_PER_PAGE,
       proposalsCount,
       proposals,
+      filteredProposals,
       paginationHandler,
     }
-  }
+  },
 })
 </script>
 
