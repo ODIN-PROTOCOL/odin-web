@@ -1,8 +1,12 @@
 import { MsgWithdrawCoinsToAccFromTreasury } from '@provider/codec/mint/tx'
-import { MsgVote } from '@provider/codec/cosmos/gov/v1beta1/tx'
+import {
+  MsgSubmitProposal,
+  MsgVote,
+} from '@provider/codec/cosmos/gov/v1beta1/tx'
 import {
   MsgCreateValidator,
   MsgDelegate,
+  MsgEditValidator,
   MsgUndelegate,
 } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/tx'
 import { MsgWithdrawDelegatorReward } from '@cosmjs/stargate/build/codec/cosmos/distribution/v1beta1/tx'
@@ -39,8 +43,14 @@ export function humanizeMessageType(type: string): string {
     case '/cosmos.gov.v1beta1.MsgVote':
       return 'Vote'
 
+    case '/cosmos.gov.v1beta1.MsgSubmitProposal':
+      return 'Submit proposal'
+
     case '/cosmos.staking.v1beta1.MsgCreateValidator':
       return 'Create Validator'
+
+    case '/cosmos.staking.v1beta1.MsgEditValidator':
+      return 'Edit Validator'
 
     case '/cosmos.staking.v1beta1.MsgDelegate':
       return 'Delegate'
@@ -77,10 +87,12 @@ function decodeMessage(obj: {
 }):
   | MsgWithdrawCoinsToAccFromTreasury
   | MsgCreateValidator
+  | MsgEditValidator
   | MsgDelegate
   | MsgUndelegate
   | MsgSend
   | MsgVote
+  | MsgSubmitProposal
   | MsgAddReporter
   | MsgActivate
   | MsgCreateOracleScript
@@ -92,6 +104,9 @@ function decodeMessage(obj: {
     case '/cosmos.staking.v1beta1.MsgCreateValidator':
       return MsgCreateValidator.decode(obj.value)
 
+    case '/cosmos.staking.v1beta1.MsgEditValidator':
+      return MsgEditValidator.decode(obj.value)
+
     case '/cosmos.staking.v1beta1.MsgDelegate':
       return MsgDelegate.decode(obj.value)
 
@@ -100,6 +115,9 @@ function decodeMessage(obj: {
 
     case '/cosmos.gov.v1beta1.MsgVote':
       return MsgVote.decode(obj.value)
+
+    case '/cosmos.gov.v1beta1.MsgSubmitProposal':
+      return MsgSubmitProposal.decode(obj.value)
 
     case '/cosmos.bank.v1beta1.MsgSend':
       return MsgSend.decode(obj.value)
