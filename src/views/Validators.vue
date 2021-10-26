@@ -156,7 +156,8 @@ import Pagination from '@/components/pagination/pagination.vue'
 import { showWithdrawFormDialog } from '@/components/modals/WithdrawFormModal.vue'
 import { showDelegateFormDialog } from '@/components/modals/DelegateFormModal.vue'
 import { showUndelegateFormDialog } from '@/components/modals/UndelegateFormModal.vue'
-import { showBecomeValidatorInfoModal } from '@/components/modals/BecomeValidatorInfoModal.vue'
+import { showBecomeValidatorFormDialog } from '@/components/modals/BecomeValidatorFormModal.vue'
+// import { showBecomeValidatorInfoModal } from '@/components/modals/BecomeValidatorInfoModal.vue'
 
 export default defineComponent({
   components: { Tabs, Tab, TitledLink, StatusIcon, Pagination },
@@ -259,20 +260,20 @@ export default defineComponent({
       }
     }
 
-    const becomeValidator = () => {
-      showBecomeValidatorInfoModal({})
-    }
-
-    // Problem with becoming a validator (panic message)
-    // const becomeValidator = async () => {
-    //   showBecomeValidatorFormDialog({
-    //     onSubmit: (d) => {
-    //       d.kill()
-    //       getValidators()
-    //       getDelegations()
-    //     },
-    //   })
+    // TODO: delete if become a validator modal works fine
+    // const becomeValidator = () => {
+    //   showBecomeValidatorInfoModal({})
     // }
+
+    const becomeValidator = async () => {
+      showBecomeValidatorFormDialog({
+        onSubmit: (d) => {
+          d.kill()
+          getValidators()
+          getDelegations()
+        },
+      })
+    }
 
     const withdraw = (validator: ValidatorDecoded) => {
       showWithdrawFormDialog({
