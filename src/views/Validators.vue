@@ -84,7 +84,7 @@
                     Withdraw stake
                   </button>
                   <button
-                    class="app-btn app-btn_small mg-l24"
+                    class="app-btn app-btn_small"
                     type="button"
                     @click="delegate(item)"
                   >
@@ -98,7 +98,7 @@
                   <button
                     class="app-btn app-btn_outlined app-btn_small"
                     type="button"
-                    @click="undelegate"
+                    @click="undelegate(item)"
                   >
                     Undelegate
                   </button>
@@ -360,6 +360,11 @@ export default defineComponent({
 }
 
 .app-table__activities {
+  &-item {
+    display: flex;
+    justify-content: flex-end;
+  }
+
   & > *:not(:last-child) {
     margin-bottom: 2.4rem;
   }
@@ -390,8 +395,6 @@ export default defineComponent({
     width: 100%;
 
     &-item {
-      display: flex;
-
       & > * {
         flex: 1;
       }
