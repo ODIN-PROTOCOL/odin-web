@@ -90,6 +90,13 @@ const routes: Array<RouteRecordRaw> = [
       import(/* webpackChunkName: "governance" */ '../views/Governance.vue'),
   },
   {
+    path: '/proposal/:id',
+    name: 'Proposal',
+    beforeEnter: authorizedOnlyGuard,
+    component: () =>
+      import(/* webpackChunkName: "proposal" */ '../views/Proposal.vue'),
+  },
+  {
     path: '/wallet',
     name: 'Wallet',
     beforeEnter: authorizedOnlyGuard,
