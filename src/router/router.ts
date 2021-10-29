@@ -83,6 +83,13 @@ const routes: Array<RouteRecordRaw> = [
       ),
   },
   {
+    path: '/governance',
+    name: 'Governance',
+    beforeEnter: authorizedOnlyGuard,
+    component: () =>
+      import(/* webpackChunkName: "governance" */ '../views/Governance.vue'),
+  },
+  {
     path: '/wallet',
     name: 'Wallet',
     beforeEnter: authorizedOnlyGuard,

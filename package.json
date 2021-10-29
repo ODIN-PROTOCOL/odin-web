@@ -19,6 +19,7 @@
     "@kyvg/vue3-notification": "^2.3.0",
     "bignumber.js": "^9.0.1",
     "buffer": "^4.9.2",
+    "chart.js": "^3.5.1",
     "core-js": "^3.6.5",
     "date-fns": "^2.21.3",
     "firebase-tools": "^9.12.1",
@@ -27,6 +28,7 @@
     "lorem-ipsum": "^2.0.3",
     "protobufjs": "^6.10.2",
     "vue": "^3.0.0",
+    "vue-chart-3": "^0.5.8",
     "vue-router": "^4.0.0-0",
     "web3": "^1.5.1"
   },

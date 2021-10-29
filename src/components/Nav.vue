@@ -26,7 +26,11 @@
       <router-link class="nav__link" data-text="Rewards" to="/">
         <span>Rewards</span>
       </router-link>
-      <router-link class="nav__link" data-text="Governance" to="/">
+      <router-link
+        class="nav__link"
+        data-text="Governance"
+        :to="{ name: 'Governance' }"
+      >
         <span>Governance</span>
       </router-link>
       <!-- Voting page not ready -->
