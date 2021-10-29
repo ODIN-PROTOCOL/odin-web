@@ -1,6 +1,6 @@
 <template>
   <div class="chart-block">
-    <div style="height: 158px; width: 158px">
+    <div class="chart-block__chart">
       <DoughnutChart v-bind="doughnutChartProps" />
     </div>
     <template v-if="data">
@@ -140,6 +140,11 @@ export default defineComponent({
   align-items: center;
   gap: 3.2rem;
 
+  &__chart {
+    height: 15.8rem;
+    width: 15.8rem;
+  }
+
   .legend {
     &__item {
       display: flex;
@@ -169,5 +174,13 @@ export default defineComponent({
     color: var(--clr__chart-default);
     font-weight: 600;
   }
+}
+
+@media screen and (max-width: 480px) {
+  .chart-block__chart {
+    height: 10.8rem;
+    width: 10.8rem;
+  }
+
 }
 </style>

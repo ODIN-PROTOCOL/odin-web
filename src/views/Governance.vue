@@ -174,6 +174,10 @@ export default defineComponent({
 }
 
 @media screen and (max-width: 768px) {
+  .info-card {
+    width: 100%;
+  }
+
   .app-table__row {
     grid: none;
   }
