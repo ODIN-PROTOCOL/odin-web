@@ -7,11 +7,12 @@ import { MsgExchange } from '@provider/codec/coinswap/tx'
 import { MsgDeposit, MsgVote } from '@provider/codec/cosmos/gov/v1beta1/tx'
 import { api } from './api'
 import { wallet } from './wallet'
-import { mapResponse, sendPost } from './callersHelpers'
+import { mapResponse, sendPost, sendGet } from './callersHelpers'
 import { cacheAnswers } from '@/helpers/requests'
 import { decodeRequestResults } from '@/helpers/requestResultDecoders'
 import { decodeProposals } from '@/helpers/proposalDecoders'
 import { decodeValidators } from '@/helpers/validatorDecoders'
+import { NumLike } from '@/helpers/casts'
 import { API_CONFIG } from './api-config'
 import {
   MsgCreateValidator,
@@ -63,6 +64,9 @@ const makeCallers = () => {
     getProposalVote: querier((qc) => qc.gov.unverified.vote),
     getProposalVotes: querier((qc) => qc.gov.unverified.votes),
     getProposalTally: querier((qc) => qc.gov.unverified.tallyResult),
+    getProposer: (proposalId: NumLike) => {
+      return sendGet(`${API_CONFIG.api}/gov/proposals/${proposalId}/proposer`)
+    },
     proposalDeposit: broadcaster<MsgDeposit>(
       '/cosmos.gov.v1beta1.MsgDeposit',
       MsgDeposit

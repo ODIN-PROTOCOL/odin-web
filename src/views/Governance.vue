@@ -9,7 +9,7 @@
 
     <div class="info-card mg-b40">
       <h3 class="info-card__title mg-b40">Total number of proposals in ODIN</h3>
-      <CustomDoughnutChart />
+      <CustomDoughnutChart :data="proposalsDataForChart" />
     </div>
 
     <div class="app-table">
@@ -34,10 +34,12 @@
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Proposer’s account ID</span>
-              <TitledLink
+              <a
                 class="app-table__cell-txt app-table__link"
-                :text="`0x34513b2dad6c9aae177f01839be7f44c6866df7f7ecc7110cf9d1349ce16d5d4`"
-              />
+                :href="`${API_CONFIG.odinScan}/account/${item.proposerAddress}`"
+              >
+                {{ item.proposerAddress }}
+              </a>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Proposal status</span>
@@ -50,7 +52,8 @@
         </template>
         <template v-else>
           <div class="app-table__empty-stub">
-            <p>No items yet</p>
+            <p v-if="isLoading">Loading…</p>
+            <p v-else>No items yet</p>
           </div>
         </template>
       </div>
@@ -69,8 +72,14 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue'
 import { callers } from '@/api/callers'
-import { prepareProposalsData } from '@/helpers/proposalHelpers'
+import { API_CONFIG } from '@/api/api-config'
+import {
+  getTransformedProposals,
+  getProposalsCountByStatus,
+} from '@/helpers/proposalHelpers'
 import { proposalStatusType } from '@/helpers/statusTypes'
+import { handleError } from '@/helpers/errors'
+import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import TitledLink from '@/components/TitledLink.vue'
 import CustomDoughnutChart from '@/components/charts/CustomDoughnutChart.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
@@ -79,19 +88,31 @@ import Pagination from '@/components/pagination/pagination.vue'
 export default defineComponent({
   components: { CustomDoughnutChart, TitledLink, StatusBlock, Pagination },
   setup: function () {
+    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 5
     const currentPage = ref(1)
     const proposalsCount = ref(0)
     const proposals = ref()
     const filteredProposals = ref()
+    let proposalsDataForChart = ref()
 
     const getProposals = async () => {
-      const response = await callers.getProposals(0, '', '')
-      
-      prepareProposalsData(response.proposals)
-      proposalsCount.value = response.proposals.length
-      proposals.value = response.proposals
-      filterProposals(currentPage.value)
+      lockLoading()
+      try {
+        const response = await callers.getProposals(0, '', '')
+        const transformedProposals = await getTransformedProposals(
+          response.proposals
+        )
+
+        proposalsDataForChart.value =
+          getProposalsCountByStatus(transformedProposals)
+        proposalsCount.value = response.proposals.length
+        proposals.value = transformedProposals
+        filterProposals(currentPage.value)
+      } catch (error) {
+        handleError(error as Error)
+      }
+      releaseLoading()
     }
 
     const filterProposals = (newPage: number) => {
@@ -117,7 +138,10 @@ export default defineComponent({
     })
 
     return {
+      API_CONFIG,
+      isLoading,
       proposalStatusType,
+      proposalsDataForChart,
       ITEMS_PER_PAGE,
       proposalsCount,
       proposals,
