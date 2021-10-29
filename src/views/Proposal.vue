@@ -3,11 +3,18 @@
     <div class="page-title">
       <BackButton :text="'Governance'" />
       <h2 class="view-title">Proposal</h2>
-      <span class="view-subtitle"> Proposal name </span>
-      <router-link class="fx-sae" to="#" v-slot="{ href, navigate }">
+      <span class="view-subtitle" v-if="proposal">
+        {{ proposal.content.title }}
+      </span>
+      <router-link
+        class="fx-sae vote-btn vote-btn_top"
+        to="#"
+        v-slot="{ href, navigate }"
+      >
         <button
-          class="app-btn app-btn_small vote-btn vote-btn_top"
+          class="app-btn app-btn_small"
           :href="href"
+          :disabled="!proposal"
           @click="navigate"
         >
           Vote
@@ -15,39 +22,70 @@
       </router-link>
     </div>
 
-    <div class="info-block">
-      <div class="info-block__row">
-        <span class="info-block__row-title">Proposer's account ID</span>
-        <div class="info-block__row-value info-block__row-value_flex">
-          <a class="info-block__row-link" :href="`${API_CONFIG.odinScan}/account/1`">
-            0x34513b2dad6c9aae177f01839be7f44c6866df7f7ecc7110cf9d1349ce16d5d4
-          </a>
-          <CopyButton :text="'0x34513b2dad6c9aae177f'" />
+    <template v-if="proposal">
+      <div class="info-block mg-b40">
+        <div class="info-block__row">
+          <span class="info-block__row-title">Proposer's account ID</span>
+          <div class="info-block__row-value info-block__row-value_flex">
+            <a
+              class="info-block__row-link"
+              :href="`${API_CONFIG.odinScan}/account/1`"
+            >
+              {{ proposal.proposerAddress }}
+            </a>
+            <CopyButton :text="'0x34513b2dad6c9aae177f'" />
+          </div>
+        </div>
+        <div class="info-block__row">
+          <span class="info-block__row-title">Description</span>
+          <span class="info-block__row-value">
+            {{ proposal.content.description }}
+          </span>
+        </div>
+        <div class="info-block__row">
+          <span class="info-block__row-title">Status</span>
+          <StatusBlock
+            :text="proposalStatusType[proposal.status].name"
+            :status="proposalStatusType[proposal.status].status"
+          />
+        </div>
+        <div class="info-block__row">
+          <span class="info-block__row-title">"Support" votes</span>
+          <span class="info-block__row-value">60%</span>
         </div>
       </div>
-      <div class="info-block__row">
-        <span class="info-block__row-title">Description</span>
-        <span class="info-block__row-value">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent
-          lectus ipsum, ultrices a libero ut, facilisis consectetur justo. Sed
-          eget.
-        </span>
-      </div>
-      <div class="info-block__row">
-        <span class="info-block__row-title">Status</span>
-        <StatusBlock :text="'Approved'" :status="'success'" />
-      </div>
-      <div class="info-block__row">
-        <span class="info-block__row-title">"Support" votes</span>
-        <span class="info-block__row-value">60%</span>
-      </div>
-    </div>
+    </template>
+    <template v-else>
+      <span v-if="isLoading" class="view-subtitle">Loading...</span>
+      <span v-else class="view-subtitle">Proposal not found</span>
+    </template>
+
+    <router-link
+      class="fx-sae vote-btn vote-btn_bottom"
+      to="#"
+      v-slot="{ href, navigate }"
+    >
+      <button
+        class="app-btn app-btn_small w-full"
+        :href="href"
+        :disabled="!proposal"
+        @click="navigate"
+      >
+        Vote
+      </button>
+    </router-link>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref, onMounted } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
+import { callers } from '@/api/callers'
+import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
+import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
+import { handleError } from '@/helpers/errors'
+import { getTransformedProposals } from '@/helpers/proposalHelpers'
+import { proposalStatusType } from '@/helpers/statusTypes'
 import BackButton from '@/components/BackButton.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
 import CopyButton from '@/components/CopyButton.vue'
@@ -55,7 +93,31 @@ import CopyButton from '@/components/CopyButton.vue'
 export default defineComponent({
   components: { BackButton, StatusBlock, CopyButton },
   setup: function () {
-    return { API_CONFIG }
+    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+    const route: RouteLocationNormalizedLoaded = useRoute()
+    const proposal = ref()
+
+    const getProposal = async () => {
+      lockLoading()
+      try {
+        const response = await callers.getProposal(String(route.params.id))
+        const transformedProposals = await getTransformedProposals([
+          response.proposal,
+        ])
+
+        proposal.value = transformedProposals[0]
+        console.log(proposal.value)
+      } catch (error) {
+        handleError(error as Error)
+      }
+      releaseLoading()
+    }
+
+    onMounted(async () => {
+      await getProposal()
+    })
+
+    return { API_CONFIG, isLoading, proposalStatusType, proposal }
   }
 })
 </script>
@@ -87,6 +149,22 @@ export default defineComponent({
       @include ellipsis(inline-block);
       color: var(--clr__action);
       text-decoration: none;
+    }
+  }
+}
+
+.vote-btn {
+  &_bottom {
+    display: none;
+    width: 100%;
+    @media screen and (max-width: 768px) {
+      display: block;
+    }
+  }
+  &_top {
+    display: block;
+    @media screen and (max-width: 768px) {
+      display: none;
     }
   }
 }
