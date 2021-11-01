@@ -88,7 +88,7 @@ import ExtendedProgressbar from '@/components/ExtendedProgressbar.vue'
 export default defineComponent({
   components: { ExtendedProgressbar },
   props: {
-    validator: { type: Object as PropType<ValidatorDecoded>, required: true }
+    validator: { type: Object as PropType<ValidatorDecoded>, required: true },
   },
 })
 </script>
