@@ -1,157 +1,175 @@
 <template>
-  <div class="proposals view-main">
-    <div class="fx-row mg-b32">
-      <h2 class="view-title">Voting</h2>
+  <div class="voting view-main">
+    <div class="page-title">
+      <BackButton :text="'Proposal'" />
+      <h2 class="view-title">Vote for proposal</h2>
+      <span class="view-subtitle"> Proposal Name </span>
     </div>
-    <div class="app-table">
-      <div class="proposals__table-head app-table__head">
-        <div class="app-table__cell">
-          <span class="app-table__cell-txt"> ID </span>
-        </div>
-        <div class="app-table__cell">
-          <span class="app-table__cell-txt"> Title </span>
-        </div>
-        <div class="app-table__cell">
-          <span class="app-table__cell-txt"> Tally </span>
-        </div>
-        <div class="app-table__cell">
-          <span class="app-table__cell-txt"> Deposit </span>
-        </div>
-        <div class="app-table__cell">
-          <span class="app-table__cell-txt"> Status </span>
-        </div>
-      </div>
-      <template v-if="proposals?.length">
-        <button
-          v-for="(item, idx) in proposals"
-          :key="item.id"
-          class="app-table__row-btn"
-          type="button"
-          @click="showProposal(item, tallies[idx])"
-        >
-          <div class="proposals__table-row app-table__row">
-            <div class="app-table__cell">
-              <TitledSpan
-                class="app-table__cell-txt"
-                :text="item.proposalId.toString()"
-              />
-            </div>
-            <div class="app-table__cell">
-              <TitledSpan
-                class="app-table__cell-txt"
-                :text="item.content.title"
-              />
-            </div>
-            <div class="app-table__cell">
-              <Tally
-                v-if="tallies?.[idx]"
-                class="app-table__cell-txt"
-                :tally="tallies[idx]"
-                :isShort="true"
-                :isTitled="true"
-              />
-              <span v-else></span>
-            </div>
-            <div class="app-table__cell">
-              <TitledSpan
-                class="app-table__cell-txt"
-                :text="$fCoin(item.totalDeposit[0])"
-              />
-            </div>
-            <div class="app-table__cell">
-              <TitledSpan
-                class="app-table__cell-txt"
-                :text="$tProposalStatusDated(item)"
-              />
-            </div>
+
+    <div class="content-block">
+      <div class="content-block__voting">
+        <div class="content-block__voting-choice mg-b24">
+          <div>
+            <input
+              type="radio"
+              id="support"
+              value="Support"
+              checked
+              v-model="picked"
+            />
+            <label for="support">Support</label>
           </div>
-        </button>
-      </template>
-      <template v-else>
-        <div class="app-table__row">
-          <p class="app-table__empty-stub">No items yet</p>
+          <div>
+            <input type="radio" id="reject" value="Reject" v-model="picked" />
+            <label for="reject">Reject</label>
+          </div>
+          <div>
+            <input type="radio" id="veto" value="Veto" v-model="picked" />
+            <label for="veto">Veto</label>
+          </div>
+          <div>
+            <input type="radio" id="abstain" value="Abstain" v-model="picked" />
+            <label for="abstain">Abstain</label>
+          </div>
         </div>
-      </template>
+        <button
+          class="app-btn app-btn_small voting__btn"
+          @click="confirmation()"
+        >
+          Vote
+        </button>
+      </div>
+      <div class="content-block__chart">
+        <h3 class="content-block__chart-title mg-b40">Results of voting</h3>
+        <CustomDoughnutChart :data="votesDataForChart" />
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
+import { defineComponent, onMounted, ref } from 'vue'
+import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import { callers } from '@/api/callers'
-import { showProposalDialog } from '@/components/modals/ProposalModal'
-import TitledSpan from '@/components/TitledSpan.vue'
-import Tally from '@/components/Tally.vue'
-import { ProposalDecoded } from '@/helpers/proposalDecoders'
-import {
-  ProposalStatus,
-  TallyResult,
-} from '@provider/codec/cosmos/gov/v1beta1/gov'
-import { defineComponent, ref } from 'vue'
+import { wallet } from '@/api/wallet'
+import Long from 'long'
+import { handleError } from '@/helpers/errors'
+import BackButton from '@/components/BackButton.vue'
+import CustomDoughnutChart from '@/components/charts/CustomDoughnutChart.vue'
+import { showConfirmationDialog } from '@/components/modals/ConfirmationModal.vue'
 
 export default defineComponent({
-  components: { TitledSpan, Tally },
-  setup() {
-    const proposals = ref()
-    const tallies = ref()
-    const loadProposals = async () => {
-      const response = await callers.getProposals(
-        ProposalStatus.UNRECOGNIZED,
-        '',
-        ''
-      )
-      _loadTallies(response.proposals)
-      proposals.value = response.proposals
+  components: { BackButton, CustomDoughnutChart },
+  setup: function () {
+    const route: RouteLocationNormalizedLoaded = useRoute()
 
-      console.debug('Proposals:', response)
-      _test(response.proposals)
-    }
-    loadProposals()
+    const votesDataForChart = ref()
+    const picked = ref('Support')
 
-    const _loadTallies = async (proposals: ProposalDecoded[]) => {
-      const _tallies = await Promise.all(
-        proposals.map((el) =>
-          el.status === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
-            ? callers
-                .getProposalTally(el.proposalId)
-                .then((r) => r.tally)
-                .catch(() => el.finalTallyResult)
-            : el.finalTallyResult
-        )
-      )
-      tallies.value = _tallies
-      console.debug('Tallies', _tallies)
+    const getProposal = async () => {
+      const response = await callers.getProposals(0, '', '')
+      const response1 = await callers.getProposalVotes(1)
+
+      console.log(response)
+      console.log(response1)
     }
 
-    // TODO: remove
-    const _test = async (proposals: ProposalDecoded[]) => {
-      for (const proposal of proposals) {
-        const votes = await callers.getProposalVotes(proposal.proposalId)
-        const tally = await callers.getProposalTally(proposal.proposalId)
-        console.log(proposal, votes, tally)
+    const vote = async () => {
+      try {
+        await callers.proposalVote({
+          proposalId: new Long(1),
+          voter: wallet.account.address,
+          option: 2,
+        })
+      } catch (error) {
+        handleError(error as Error)
       }
     }
 
-    const showProposal = (proposal: ProposalDecoded, tally: TallyResult) => {
-      showProposalDialog(
+    const confirmation = () => {
+      showConfirmationDialog(
         {
           onSubmit: (d) => {
             d.kill()
-            loadProposals()
+            vote()
+            console.log(picked.value)
           },
         },
-        { proposal, tally }
+        {
+          text: `You have chosen to vote for "${picked.value}"`,
+        }
       )
     }
 
-    return { proposals, tallies, showProposal }
+    onMounted(async () => {
+      await getProposal()
+      votesDataForChart.value = [
+        { name: 'Support', count: 10, color: '#00D097' },
+        { name: 'Reject', count: 1, color: '#F65160' },
+        { name: 'Veto', count: 3, color: '#FDC748' },
+        { name: 'Abstained votes', count: 0, color: '#007BFF' },
+      ]
+    })
+
+    return { picked, votesDataForChart, confirmation, vote }
   },
 })
 </script>
 
-<style scoped>
-.proposals__table-head,
-.proposals__table-row {
-  /* prettier-ignore */
-  grid: auto / minmax(2rem, 0.1fr) minmax(8rem, 1fr) minmax(4rem, 1fr) minmax(4rem, 1fr) minmax(4rem, 1fr);
+<style lang="scss" scoped>
+.view-title {
+  margin: 0 1.6rem 0 2rem;
+}
+
+.content-block {
+  display: flex;
+  gap: 12.8rem;
+  align-items: flex-start;
+  flex-direction: row;
+
+  &__voting,
+  &__chart {
+    width: 100%;
+    padding: 3.2rem 2.4rem;
+    border-radius: 0.8rem;
+  }
+
+  &__voting {
+    background: var(--clr__grey-bg);
+  }
+
+  &__voting-choice {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+
+    label {
+      margin-left: 0.8rem;
+    }
+  }
+
+  &__chart {
+    border: 1px solid var(--clr__action);
+  }
+
+  &__chart-title {
+    font-size: 2.4rem;
+    font-weight: 400;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .view-title {
+    margin: 0.8rem 0 0.4rem 0;
+  }
+
+  .content-block {
+    flex-direction: column-reverse;
+    gap: 4rem;
+
+    .voting__btn {
+      width: 100%;
+    }
+  }
 }
 </style>

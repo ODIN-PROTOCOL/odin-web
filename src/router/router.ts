@@ -70,13 +70,13 @@ const routes: Array<RouteRecordRaw> = [
     component: () =>
       import(/* webpackChunkName: "request" */ '../views/RequestItem.vue'),
   },
-  {
-    path: '/voting',
-    name: 'Voting',
-    beforeEnter: authorizedOnlyGuard,
-    component: () =>
-      import(/* webpackChunkName: "voting" */ '../views/Voting.vue'),
-  },
+  // {
+  //   path: '/voting',
+  //   name: 'Voting',
+  //   beforeEnter: authorizedOnlyGuard,
+  //   component: () =>
+  //     import(/* webpackChunkName: "voting" */ '../views/Voting.vue'),
+  // },
   {
     path: '/validators',
     name: 'Validators',
@@ -113,6 +113,13 @@ const routes: Array<RouteRecordRaw> = [
     beforeEnter: authorizedOnlyGuard,
     component: () =>
       import(/* webpackChunkName: "proposal" */ '../views/Proposal.vue'),
+  },
+  {
+    path: '/proposal/:id/voting',
+    name: 'Voting',
+    beforeEnter: authorizedOnlyGuard,
+    component: () =>
+      import(/* webpackChunkName: "voting" */ '../views/Voting.vue'),
   },
   {
     path: '/wallet',
