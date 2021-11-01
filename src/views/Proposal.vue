@@ -14,7 +14,10 @@
         <button
           class="app-btn app-btn_small"
           :href="href"
-          :disabled="!proposal"
+          :disabled="
+            !proposal ||
+            proposal?.status !== ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
+          "
           @click="navigate"
         >
           Vote
@@ -51,7 +54,14 @@
         </div>
         <div class="info-block__row">
           <span class="info-block__row-title">"Support" votes</span>
-          <span class="info-block__row-value">60%</span>
+          <Tally
+            v-if="tally"
+            class="app-table__cell-txt"
+            :tally="tally"
+            :onlyYes="true"
+            :isShort="true"
+            :isTitled="true"
+          />
         </div>
       </div>
     </template>
@@ -68,7 +78,10 @@
       <button
         class="app-btn app-btn_small w-full"
         :href="href"
-        :disabled="!proposal"
+        :disabled="
+          !proposal ||
+          proposal?.status !== ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
+        "
         @click="navigate"
       >
         Vote
@@ -82,20 +95,24 @@ import { defineComponent, ref, onMounted } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
+import { ProposalDecoded } from '@/helpers/proposalDecoders'
+import { ProposalStatus } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
 import { getTransformedProposals } from '@/helpers/proposalHelpers'
 import { proposalStatusType } from '@/helpers/statusTypes'
+import Tally from '@/components/Tally.vue'
 import BackButton from '@/components/BackButton.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
 import CopyButton from '@/components/CopyButton.vue'
 
 export default defineComponent({
-  components: { BackButton, StatusBlock, CopyButton },
+  components: { Tally, BackButton, StatusBlock, CopyButton },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const route: RouteLocationNormalizedLoaded = useRoute()
     const proposal = ref()
+    const tally = ref()
 
     const getProposal = async () => {
       lockLoading()
@@ -106,19 +123,41 @@ export default defineComponent({
         ])
 
         proposal.value = transformedProposals[0]
-        console.log(proposal.value)
+        await getTally(proposal.value)
+        console.log(tally.value)
       } catch (error) {
         handleError(error as Error)
       }
       releaseLoading()
     }
 
+    const getTally = async (proposal: ProposalDecoded) => {
+      let _tally = null
+      if (proposal.status === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD) {
+        _tally = await callers
+          .getProposalTally(proposal.proposalId)
+          .then((r) => r.tally)
+          .catch(() => proposal.finalTallyResult)
+      } else {
+        _tally = proposal.finalTallyResult
+      }
+
+      tally.value = _tally
+    }
+
     onMounted(async () => {
       await getProposal()
     })
 
-    return { API_CONFIG, isLoading, proposalStatusType, proposal }
-  }
+    return {
+      API_CONFIG,
+      ProposalStatus,
+      isLoading,
+      proposalStatusType,
+      proposal,
+      tally,
+    }
+  },
 })
 </script>
 
