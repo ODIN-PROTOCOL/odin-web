@@ -6,23 +6,16 @@
       <span class="view-subtitle" v-if="proposal">
         {{ proposal.content.title }}
       </span>
-      <router-link
-        class="fx-sae vote-btn vote-btn_top"
-        to="#"
-        v-slot="{ href, navigate }"
+      <button
+        class="app-btn app-btn_small fx-sae vote-btn vote-btn_top"
+        :disabled="
+          !proposal ||
+          proposal?.status !== ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
+        "
+        @click="router.push({ name: 'Voting' })"
       >
-        <button
-          class="app-btn app-btn_small"
-          :href="href"
-          :disabled="
-            !proposal ||
-            proposal?.status !== ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
-          "
-          @click="navigate"
-        >
-          Vote
-        </button>
-      </router-link>
+        Vote
+      </button>
     </div>
 
     <template v-if="proposal">
@@ -32,7 +25,7 @@
           <div class="info-block__row-value info-block__row-value_flex">
             <a
               class="info-block__row-link"
-              :href="`${API_CONFIG.odinScan}/account/1`"
+              :href="`${API_CONFIG.odinScan}/account/${proposal.proposerAddress}`"
             >
               {{ proposal.proposerAddress }}
             </a>
@@ -70,23 +63,16 @@
       <span v-else class="view-subtitle">Proposal not found</span>
     </template>
 
-    <router-link
-      class="fx-sae vote-btn vote-btn_bottom"
-      to="#"
-      v-slot="{ href, navigate }"
+    <button
+      class="app-btn app-btn_small vote-btn vote-btn_bottom w-full"
+      :disabled="
+        !proposal ||
+        proposal?.status !== ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
+      "
+      @click="router.push({ name: 'Voting' })"
     >
-      <button
-        class="app-btn app-btn_small w-full"
-        :href="href"
-        :disabled="
-          !proposal ||
-          proposal?.status !== ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
-        "
-        @click="navigate"
-      >
-        Vote
-      </button>
-    </router-link>
+      Vote
+    </button>
   </div>
 </template>
 
@@ -94,7 +80,12 @@
 import { defineComponent, ref, onMounted } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
-import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
+import {
+  RouteLocationNormalizedLoaded,
+  Router,
+  useRoute,
+  useRouter,
+} from 'vue-router'
 import { ProposalDecoded } from '@/helpers/proposalDecoders'
 import { ProposalStatus } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
@@ -110,6 +101,7 @@ export default defineComponent({
   components: { Tally, BackButton, StatusBlock, CopyButton },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+    const router: Router = useRouter()
     const route: RouteLocationNormalizedLoaded = useRoute()
     const proposal = ref()
     const tally = ref()
@@ -151,6 +143,7 @@ export default defineComponent({
 
     return {
       API_CONFIG,
+      router,
       ProposalStatus,
       isLoading,
       proposalStatusType,
