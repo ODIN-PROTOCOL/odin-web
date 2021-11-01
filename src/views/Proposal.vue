@@ -116,7 +116,6 @@ export default defineComponent({
 
         proposal.value = transformedProposals[0]
         await getTally(proposal.value)
-        console.log(tally.value)
       } catch (error) {
         handleError(error as Error)
       }
