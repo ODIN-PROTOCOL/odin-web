@@ -7,7 +7,7 @@
     <div class="info mg-b40">
       <div class="info__card">
         <span class="info__card-title">Balance</span>
-        <div class="info__card-balance">
+        <div class="info__card-balance mg-b40">
           <div class="info__card-row">
             <span class="info__card-row-title">LOKI</span>
             <span class="info__card-row-value">
@@ -15,13 +15,16 @@
             </span>
           </div>
         </div>
-        <!-- TODO uncomment when the Receive&Send will be ready -->
-        <!-- <div class="info__card-activities">
-          <button class="app-btn app-btn_outlined app-btn_small">
+        <div class="info__card-activities">
+          <button
+            class="app-btn app-btn_outlined app-btn_small"
+            @click="receive()"
+          >
             Receive
           </button>
-          <button class="app-btn app-btn_small">Send</button>
-        </div> -->
+          <!-- TODO uncomment when the Send will be ready -->
+          <!-- <button class="app-btn app-btn_small">Send</button> -->
+        </div>
       </div>
       <div class="info__card">
         <span class="info__card-title">Current rate</span>
@@ -151,6 +154,7 @@ import { useBalances } from '@/composables/useBalances'
 import { adjustedData } from '@/helpers/Types'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
+import { showReceiveDialog } from '@/components/modals/ReceiveModal.vue'
 
 export default defineComponent({
   components: { TitledLink, Pagination },
@@ -236,6 +240,15 @@ export default defineComponent({
       filterTransactions(num)
     }
 
+    const receive = () => {
+      showReceiveDialog({
+        onSubmit: (d) => {
+          d.kill()
+          console.log('Share')
+        },
+      })
+    }
+
     onMounted(async () => {
       await getRate()
       await getTransactions()
@@ -257,6 +270,7 @@ export default defineComponent({
       isLoading,
       lokiCoins,
       paginationHandler,
+      receive,
     }
   },
 })
