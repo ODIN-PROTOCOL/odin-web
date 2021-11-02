@@ -188,7 +188,7 @@ export default defineComponent({
         transactionsCount.value = transactions.value.length
         filterTransactions(currentPage.value)
       } catch (error) {
-        handleError(error)
+        handleError(error as Error)
       }
       releaseLoading()
     }

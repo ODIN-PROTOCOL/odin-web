@@ -5,23 +5,23 @@
     </template>
 
     <template #main>
-      <div class="app-form">
-        <div class="app-form__main">
+      <div class="receive-modal">
+        <div class="receive-modal__main">
           <QrcodeVue
             class="mg-b16"
             :value="address"
             :size="200"
             render-as="svg"
           />
-          <div class="app-form__info">
-            <span class="app-form__info-title">Address</span>
-            <div class="app-form__info-address">
+          <div class="receive-modal__info">
+            <span class="receive-modal__info-title">Address</span>
+            <div class="receive-modal__info-address">
               <span>{{ address }}</span>
               <CopyButton :text="address" />
             </div>
           </div>
         </div>
-        <div class="app-form__footer">
+        <div class="receive-modal__footer">
           <button class="app-btn" type="button" @click="onSubmit()">
             Share
           </button>
@@ -62,11 +62,13 @@ export function showReceiveDialog(callbacks: {
 </script>
 
 <style lang="scss" scoped>
-.app-form {
+.receive-modal {
   &__main {
     display: flex;
+    flex-direction: column;
     align-items: center;
     padding: 2.4rem 1rem;
+    overflow: none;
   }
 
   &__info {
@@ -79,6 +81,15 @@ export function showReceiveDialog(callbacks: {
         font-weight: 300;
         word-break: break-all;
       }
+    }
+  }
+
+  &__footer {
+    display: flex;
+    margin-top: 3.2rem;
+
+    & > * {
+      flex: 1;
     }
   }
 }
