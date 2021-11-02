@@ -22,9 +22,7 @@
           </div>
         </div>
         <div class="receive-modal__footer">
-          <button class="app-btn" type="button" @click="onSubmit()">
-            Share
-          </button>
+          <button class="app-btn" type="button" @click="onClose()">OK</button>
         </div>
       </div>
     </template>
