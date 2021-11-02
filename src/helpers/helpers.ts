@@ -23,23 +23,21 @@ export const copyValue = (text: string): void => {
 export const prepareTransaction = async (
   txs: readonly TxResponse[]
 ): Promise<Array<adjustedData>> => {
-  let tempArr: Array<adjustedData> = []
-  for (const tx of txs) {
-    const { receiver, sender, type, amount, time, fee } =
-      await getDateFromMessage(tx)
-    tempArr = [
-      ...tempArr,
-      {
+  const transformedTxs = await Promise.all(
+    txs.map(async (item) => {
+      const { receiver, sender, type, amount, time, fee } =
+        await getDateFromMessage(item)
+      return {
         type: type ? type : '-',
-        hash: tx.hash ? toHexFunc(tx.hash) : '-',
-        block: tx.height ? tx.height : '-',
+        hash: item.hash ? toHexFunc(item.hash) : '-',
+        block: item.height ? item.height : '-',
         time: time ? time : null,
         sender: sender ? sender : '',
         receiver: receiver ? receiver : '',
         amount: amount ? amount : '',
         fee: fee ? fee : '-',
-      },
-    ].filter((item) => _allowedTypes.includes(item.type))
-  }
-  return tempArr
+      }
+    })
+  )
+  return transformedTxs.filter((item) => _allowedTypes.includes(item.type))
 }

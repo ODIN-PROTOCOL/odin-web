@@ -97,7 +97,7 @@ export default defineComponent({
       filteredReports,
       paginationHandler,
     }
-  }
+  },
 })
 </script>
 

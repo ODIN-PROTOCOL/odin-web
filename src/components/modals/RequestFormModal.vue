@@ -136,7 +136,6 @@ import ModalBase from './ModalBase.vue'
 import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 import { coins } from '@cosmjs/launchpad'
 import phones from '@/assets/phones.json'
-import { NumLike, NumLikeTypes, toStr } from '@/helpers/casts'
 
 const RequestFormModal = defineComponent({
   components: { ModalBase, VuePicker, VuePickerOption },

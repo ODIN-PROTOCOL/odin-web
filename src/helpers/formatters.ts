@@ -139,7 +139,7 @@ export function formatDateDifference(
 function _getDateDifference(dateLeft: Date | number): string {
   const hourRange = Math.abs(differenceInHours(dateLeft, new Date()))
 
-  if (hourRange <= 1){
+  if (hourRange <= 1) {
     return `${hourRange} hour ago`
   } else if (hourRange < 48) {
     return `${hourRange} hours ago`

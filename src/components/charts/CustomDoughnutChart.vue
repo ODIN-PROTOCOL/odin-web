@@ -181,6 +181,5 @@ export default defineComponent({
     height: 10.8rem;
     width: 10.8rem;
   }
-
 }
 </style>

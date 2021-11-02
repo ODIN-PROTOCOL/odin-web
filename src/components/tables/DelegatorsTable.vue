@@ -99,7 +99,7 @@ export default defineComponent({
       filteredDelegators,
       paginationHandler,
     }
-  }
+  },
 })
 </script>
 
