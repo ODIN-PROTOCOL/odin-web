@@ -29,7 +29,7 @@
             >
               {{ proposal.proposerAddress }}
             </a>
-            <CopyButton :text="'0x34513b2dad6c9aae177f'" />
+            <CopyButton :text="proposal.proposerAddress" />
           </div>
         </div>
         <div class="info-block__row">
