@@ -28,7 +28,7 @@
       </div>
       <div class="info__card">
         <span class="info__card-title">Current rate</span>
-        <div class="info__card-balance">
+        <div class="info__card-balance mg-b40">
           <div class="info__card-row">
             <span class="info__card-row-title">1 ODIN</span>
             <span class="info__card-row-value">
@@ -43,9 +43,11 @@
           </div>
         </div>
         <!-- TODO uncomment when the exchange will be ready -->
-        <!-- <div class="info__card-activities">
-          <button class="app-btn app-btn_small">Exchange</button>
-        </div> -->
+        <div class="info__card-activities">
+          <button class="app-btn app-btn_small" @click="exchange()">
+            Exchange
+          </button>
+        </div>
       </div>
     </div>
 
@@ -155,6 +157,7 @@ import { adjustedData } from '@/helpers/Types'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
 import { showReceiveDialog } from '@/components/modals/ReceiveModal.vue'
+import { showExchangeFormDialog } from '@/components/modals/ExchangeFormModalWallet.vue'
 
 export default defineComponent({
   components: { TitledLink, Pagination },
@@ -249,6 +252,15 @@ export default defineComponent({
       })
     }
 
+    const exchange = () => {
+      showExchangeFormDialog({
+        onSubmit: (d) => {
+          d.kill()
+          console.log('exchange')
+        },
+      })
+    }
+
     onMounted(async () => {
       await getRate()
       await getTransactions()
@@ -271,6 +283,7 @@ export default defineComponent({
       lokiCoins,
       paginationHandler,
       receive,
+      exchange,
     }
   },
 })
