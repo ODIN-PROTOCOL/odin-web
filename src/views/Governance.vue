@@ -30,6 +30,7 @@
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="item.content.title"
+                :to="`/proposal/${item.proposalId}`"
               />
             </div>
             <div class="app-table__cell">

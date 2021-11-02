@@ -10,7 +10,7 @@ import { wallet } from './wallet'
 import { mapResponse, sendPost, sendGet } from './callersHelpers'
 import { cacheAnswers } from '@/helpers/requests'
 import { decodeRequestResults } from '@/helpers/requestResultDecoders'
-import { decodeProposals } from '@/helpers/proposalDecoders'
+import { decodeProposal, decodeProposals } from '@/helpers/proposalDecoders'
 import { decodeValidators } from '@/helpers/validatorDecoders'
 import { NumLike } from '@/helpers/casts'
 import { API_CONFIG } from './api-config'
@@ -19,6 +19,7 @@ import {
   MsgDelegate,
   MsgUndelegate,
 } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/tx'
+import { Proposal } from '@provider/codec/cosmos/gov/v1beta1/gov'
 
 const makeCallers = () => {
   const broadcaster = api.makeBroadcastCaller.bind(api)
@@ -57,6 +58,13 @@ const makeCallers = () => {
         return {
           ...response,
           proposals: decodeProposals(response.proposals),
+        }
+      })
+    ),
+    getProposal: querier((qc) =>
+      mapResponse(qc.gov.unverified.proposal, (response) => {
+        return {
+          proposal: decodeProposal(response.proposal as Proposal),
         }
       })
     ),
