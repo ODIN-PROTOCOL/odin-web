@@ -110,7 +110,7 @@ const DelegateFormDialog = defineComponent({
           validatorAddress: props.validator.operatorAddress,
           amount: coin(form.amount.val(), 'loki'),
         })
-        loadBalances()
+        await loadBalances()
         onSubmit()
         notifySuccess('Successfully delegated')
       } catch (error) {

@@ -27,7 +27,7 @@ const MetaMaskErrorFormModal = defineComponent({
     message: { type: String, required: true },
   },
   setup() {
-    const isLoading = ref<boolean>(false)
+    const isLoading = ref(false)
     const onClose: DecoratedFn<DialogPayloadHandler> = preventIf(
       dialogs.getHandler('onClose'),
       isLoading

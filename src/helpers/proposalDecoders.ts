@@ -11,7 +11,7 @@ export type ProposalDecoded = Modify<
 export function decodeProposal(proposal: Proposal): ProposalDecoded {
   return {
     ...proposal,
-    content: decodeProposalContent(proposal.content)
+    content: decodeProposalContent(proposal.content),
   }
 }
 

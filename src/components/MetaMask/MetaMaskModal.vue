@@ -29,7 +29,11 @@
                 class="app-form__field app-form__field--wait"
               >
                 <transition name="fade" mode="out-in">
-                  <span :key="metaLoadingText">
+                  <span
+                    class="app-form__field--wait-text"
+                    :key="metaLoadingText"
+                  >
+                    <span class="empty-loading loading"></span>
                     {{ metaLoadingText }}
                   </span>
                 </transition>
@@ -195,7 +199,7 @@ const MetaMaskFormModal = defineComponent({
 
     watch(() => form.amount.val(), _reCalcNetAndExpected)
 
-    const isLoading = ref<boolean>(false)
+    const isLoading = ref(false)
     const onClose: DecoratedFn<DialogPayloadHandler> = preventIf(
       dialogs.getHandler('onClose'),
       isLoading
