@@ -180,6 +180,7 @@ export default defineComponent({
     color: var(--clr__action);
   }
 
-  &__activities {}
+  &__activities {
+  }
 }
 </style>

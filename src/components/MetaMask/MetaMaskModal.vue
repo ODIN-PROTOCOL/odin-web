@@ -33,7 +33,7 @@
                     class="app-form__field--wait-text"
                     :key="metaLoadingText"
                   >
-                    <span id="loading" class="empty-loading"></span>
+                    <span class="empty-loading loading"></span>
                     {{ metaLoadingText }}
                   </span>
                 </transition>
@@ -112,7 +112,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType, ref, watch } from 'vue'
-import { ConditionArg, memoize, preventIf } from '@/helpers/functions'
+import { memoize, preventIf } from '@/helpers/functions'
 import { DialogHandler, DialogPayloadHandler, dialogs } from '@/helpers/dialogs'
 import { DecoratedFn } from '@/shared-types'
 import { TransactionReceipt } from 'web3-core/types'
@@ -202,7 +202,7 @@ const MetaMaskFormModal = defineComponent({
     const isLoading = ref(false)
     const onClose: DecoratedFn<DialogPayloadHandler> = preventIf(
       dialogs.getHandler('onClose'),
-      isLoading as unknown as ConditionArg
+      isLoading
     )
 
     const isNeedAuth = async () => {

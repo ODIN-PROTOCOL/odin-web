@@ -69,7 +69,7 @@ import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
-import { ConditionArg, preventIf } from '@/helpers/functions'
+import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
@@ -124,10 +124,7 @@ const DelegateFormDialog = defineComponent({
       lokiBalance,
       isLoading,
       submit,
-      onClose: preventIf(
-        dialogs.getHandler('onClose'),
-        isLoading as unknown as ConditionArg
-      ),
+      onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
     }
   },
 })

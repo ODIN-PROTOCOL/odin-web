@@ -19,7 +19,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
-import { ConditionArg, preventIf } from '@/helpers/functions'
+import { preventIf } from '@/helpers/functions'
 import ModalBase from './ModalBase.vue'
 
 const InfoModal = defineComponent({
@@ -31,10 +31,7 @@ const InfoModal = defineComponent({
     )
     return {
       githubLink,
-      onClose: preventIf(
-        dialogs.getHandler('onClose'),
-        isLoading as unknown as ConditionArg
-      ),
+      onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
     }
   },
 })

@@ -61,7 +61,7 @@
 <script lang="ts">
 import { defineComponent, PropType, ref } from 'vue'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
-import { ConditionArg, preventIf } from '@/helpers/functions'
+import { preventIf } from '@/helpers/functions'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import InputFile from '@/components/inputs/InputFile.vue'
@@ -81,10 +81,7 @@ const OracleScriptModal = defineComponent({
     })
     const isLoading = ref(false)
     const onRequestCreated = dialogs.getHandler('onRequestCreated')
-    const onClose = preventIf(
-      dialogs.getHandler('onClose'),
-      isLoading as unknown as ConditionArg
-    )
+    const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
 
     const toRequestCreation = () => {
       onClose()

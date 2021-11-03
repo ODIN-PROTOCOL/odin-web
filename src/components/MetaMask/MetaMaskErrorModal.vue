@@ -19,7 +19,7 @@ import { defineComponent, ref } from 'vue'
 import { DialogHandler, DialogPayloadHandler, dialogs } from '@/helpers/dialogs'
 import ModalBase from '@/components/modals/ModalBase.vue'
 import { DecoratedFn } from '@/shared-types'
-import { ConditionArg, preventIf } from '@/helpers/functions'
+import { preventIf } from '@/helpers/functions'
 const MetaMaskErrorFormModal = defineComponent({
   name: 'MetaMaskErrorModal',
   components: { ModalBase },
@@ -30,7 +30,7 @@ const MetaMaskErrorFormModal = defineComponent({
     const isLoading = ref(false)
     const onClose: DecoratedFn<DialogPayloadHandler> = preventIf(
       dialogs.getHandler('onClose'),
-      isLoading as unknown as ConditionArg
+      isLoading
     )
     return {
       onClose,

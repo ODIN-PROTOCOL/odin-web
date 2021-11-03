@@ -1,4 +1,4 @@
-import { Modify } from '@/shared-types';
+import { Modify } from '@/shared-types'
 import { ProposalDecoded } from '@/helpers/proposalDecoders'
 
 export type adjustedData = {

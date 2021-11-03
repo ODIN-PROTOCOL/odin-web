@@ -80,7 +80,7 @@
 
 import { defineComponent, PropType, ref } from 'vue'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
-import { ConditionArg, preventIf } from '@/helpers/functions'
+import { preventIf } from '@/helpers/functions'
 import {
   ProposalStatus,
   TallyResult,
@@ -117,10 +117,7 @@ const ProposalModal = defineComponent({
       props.proposal.status === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
     )
     const onSubmit = dialogs.getHandler('onSubmit')
-    const onClose = preventIf(
-      dialogs.getHandler('onClose'),
-      isLoading as unknown as ConditionArg
-    )
+    const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
 
     return {
       isLoading,
