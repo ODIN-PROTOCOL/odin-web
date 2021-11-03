@@ -91,7 +91,7 @@ import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
-import { preventIf } from '@/helpers/functions'
+import { ConditionArg, preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import { useRateAutoCalc } from '@/composables/useRateAutoCalc'
@@ -108,7 +108,10 @@ const ExchangeFormModal = defineComponent({
     })
     const isLoading = ref(false)
     const onSubmit = dialogs.getHandler('onSubmit')
-    const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
+    const onClose = preventIf(
+      dialogs.getHandler('onClose'),
+      isLoading as unknown as ConditionArg
+    )
 
     const submit = async () => {
       isLoading.value = true

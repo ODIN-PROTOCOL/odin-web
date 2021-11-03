@@ -103,7 +103,7 @@ import { callers } from '@/api/callers'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { readFile } from '@/helpers/files'
 import { handleError } from '@/helpers/errors'
-import { preventIf } from '@/helpers/functions'
+import { ConditionArg, preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
@@ -169,7 +169,10 @@ const DataSourceFormModal = defineComponent({
       form: form.flatten(),
       isLoading,
       submit,
-      onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
+      onClose: preventIf(
+        dialogs.getHandler('onClose'),
+        isLoading as unknown as ConditionArg
+      ),
     }
   },
 })

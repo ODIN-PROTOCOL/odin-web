@@ -69,12 +69,13 @@ import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
-import { preventIf } from '@/helpers/functions'
+import { ConditionArg, preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import CopyText from '@/components/CopyText.vue'
 import { ValidatorDecoded } from '@/helpers/validatorDecoders'
+import { coin } from '@cosmjs/amino'
 import { useBalances } from '@/composables/useBalances'
 import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
 
@@ -110,12 +111,9 @@ const UndelegateFormDialog = defineComponent({
         await callers.validatorUndelegate({
           delegatorAddress: wallet.account.address,
           validatorAddress: props.validator.operatorAddress,
-          amount: {
-            amount: form.amount.val(),
-            denom: 'loki',
-          },
+          amount: coin(Number(form.amount.val()), 'loki'),
         })
-        useBalances().load()
+        await useBalances().load()
         onSubmit()
         notifySuccess('Successfully undelegated')
       } catch (error) {
@@ -129,7 +127,10 @@ const UndelegateFormDialog = defineComponent({
       delegated,
       isLoading,
       submit,
-      onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
+      onClose: preventIf(
+        dialogs.getHandler('onClose'),
+        isLoading as unknown as ConditionArg
+      ),
     }
   },
 })

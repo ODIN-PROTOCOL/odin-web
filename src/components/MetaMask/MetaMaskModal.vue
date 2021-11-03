@@ -29,7 +29,11 @@
                 class="app-form__field app-form__field--wait"
               >
                 <transition name="fade" mode="out-in">
-                  <span :key="metaLoadingText">
+                  <span
+                    class="app-form__field--wait-text"
+                    :key="metaLoadingText"
+                  >
+                    <span id="loading" class="empty-loading"></span>
                     {{ metaLoadingText }}
                   </span>
                 </transition>
@@ -108,7 +112,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType, ref, watch } from 'vue'
-import { memoize, preventIf } from '@/helpers/functions'
+import { ConditionArg, memoize, preventIf } from '@/helpers/functions'
 import { DialogHandler, DialogPayloadHandler, dialogs } from '@/helpers/dialogs'
 import { DecoratedFn } from '@/shared-types'
 import { TransactionReceipt } from 'web3-core/types'
@@ -195,10 +199,10 @@ const MetaMaskFormModal = defineComponent({
 
     watch(() => form.amount.val(), _reCalcNetAndExpected)
 
-    const isLoading = ref<boolean>(false)
+    const isLoading = ref(false)
     const onClose: DecoratedFn<DialogPayloadHandler> = preventIf(
       dialogs.getHandler('onClose'),
-      isLoading
+      isLoading as unknown as ConditionArg
     )
 
     const isNeedAuth = async () => {
