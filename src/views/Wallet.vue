@@ -15,15 +15,14 @@
             </span>
           </div>
         </div>
-        <div class="info__card-activities">
+        <div class="info__card-activities info__card-activities_full">
           <button
             class="app-btn app-btn_outlined app-btn_small"
             @click="receive()"
           >
             Receive
           </button>
-          <!-- TODO uncomment when the Send will be ready -->
-          <!-- <button class="app-btn app-btn_small">Send</button> -->
+          <button class="app-btn app-btn_small" @click="send()">Send</button>
         </div>
       </div>
       <div class="info__card">
@@ -158,6 +157,7 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
 import { showReceiveDialog } from '@/components/modals/ReceiveModal.vue'
 import { showExchangeFormDialog } from '@/components/modals/ExchangeFormModalWallet.vue'
+import { showSendFormDialog } from '@/components/modals/SendFormModal.vue'
 
 export default defineComponent({
   components: { TitledLink, Pagination },
@@ -261,6 +261,15 @@ export default defineComponent({
       })
     }
 
+    const send = () => {
+      showSendFormDialog({
+        onSubmit: (d) => {
+          d.kill()
+          console.log('Send')
+        },
+      })
+    }
+
     onMounted(async () => {
       await getRate()
       await getTransactions()
@@ -284,6 +293,7 @@ export default defineComponent({
       paginationHandler,
       receive,
       exchange,
+      send,
     }
   },
 })
@@ -328,8 +338,16 @@ export default defineComponent({
       width: 100%;
     }
 
-    // TODO uncomment when activities will be ready
-    // &-activities {}
+    &-activities {
+      display: flex;
+
+      &_full {
+        gap: 2.4rem;
+        & > * {
+          flex: 1;
+        }
+      }
+    }
   }
 
   @include respond-to(sm) {
