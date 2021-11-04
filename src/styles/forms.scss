@@ -3,108 +3,135 @@
 }
 
 .app-form {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: calc(100% - 4.8rem);
+
+  &__title {
+    font-weight: normal;
+    font-size: 2.4rem;
+    line-height: 3.2rem;
+  }
+
+  &__main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0 1rem;
+    max-height: 100%;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 0.8rem;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--clr__scrollbar-thumb);
+      border-radius: 0.5rem;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: var(--clr__scrollbar-track);
+      border-radius: 0.5rem;
+    }
+
+    ._vue-picker {
+      width: 100%;
+      border: 1px solid var(--clr__input-border);
+      border-radius: 0.4rem;
+    }
+  }
   &__field {
+    &--wait {
+      &-text {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        font-size: 1.8rem;
+        font-weight: 900;
+      }
+    }
+  }
+
+  &__field,
+  &__field-composed {
     display: block;
+
     &:not(:first-of-type) {
       margin-block-start: 1.2rem;
     }
-    &-composed{
-      display: block;
-      &:not(:first-of-type) {
-        margin-block-start: 1.2rem;
-      }
-    }
-    &--wait {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 37.8rem;
-      font-size: 3rem;
-      font-weight: 900;
-      color: var(--clr__action);
+  }
+
+  &__field-composed {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+
+    & > .app-form__field:not(:first-of-type) {
+      margin-block-start: 0;
+      margin-inline-start: 1.6rem;
     }
   }
-}
 
-.app-form__field-composed {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-
-  & > .app-form__field:not(:first-of-type) {
-    margin-block-start: 0;
-    margin-inline-start: 1.6rem;
-  }
-}
-
-.app-form__field-lbl {
-  display: block;
-  margin-block-end: 0.8rem;
-}
-
-.app-form__field-input {
-  display: block;
-  width: 100%;
-  padding: 0.8rem 1.2rem;
-  text-overflow: ellipsis;
-  border: 1px solid var(--clr__input-border);
-  border-radius: 0.4rem;
-
-  &::-webkit-input-placeholder {
-    @include input-placeholder;
+  &__field-lbl {
+    display: block;
+    margin-block-end: 0.8rem;
   }
 
-  &::-moz-placeholder {
-    @include input-placeholder;
+  &__field-input {
+    display: block;
+    width: 100%;
+    padding: 0.8rem 1.2rem;
+    text-overflow: ellipsis;
+    border: 1px solid var(--clr__input-border);
+    border-radius: 0.4rem;
+
+    &::-webkit-input-placeholder {
+      @include input-placeholder;
+    }
+
+    &::-moz-placeholder {
+      @include input-placeholder;
+    }
+
+    &:-moz-placeholder {
+      @include input-placeholder;
+    }
+
+    &:-ms-input-placeholder {
+      @include input-placeholder;
+    }
+
+    &::placeholder {
+      @include input-placeholder;
+    }
   }
 
-  &:-moz-placeholder {
-    @include input-placeholder;
+  &__field-note {
+    display: block;
+    color: var(--clr__text-muted);
+    margin-block-start: 0.8rem;
   }
 
-  &:-ms-input-placeholder {
-    @include input-placeholder;
+  &__field-err {
+    display: block;
+    color: var(--clr__danger);
+    margin-block-start: 0.8rem;
   }
 
-  &::placeholder {
-    @include input-placeholder;
-  }
-  &--disabled {
-    border: 1px solid transparent;
-    color: var(--clr__text-muted)
-  }
-}
+  &__footer {
+    display: flex;
+    margin-block-start: 3.2rem;
+    padding: 0 1rem;
 
-.app-form__field-note {
-  display: block;
-  color: var(--clr__text-muted);
-  margin-block-start: 0.8rem;
-}
+    & > * {
+      flex: 1;
+    }
 
-.app-form__field-err {
-  display: block;
-  color: var(--clr__danger);
-  margin-block-start: 0.8rem;
-}
-
-.app-form__footer {
-  display: block;
-  margin-block-start: 1.6rem;
-
-  & > *:not(:first-child) {
-    margin-inline-start: 0.8rem;
-  }
-}
-
-.metamask-form {
-  margin-top: 3rem;
-  &__field{
-    background: red;
-    &--centered {
-      display: flex;
-      justify-content: center;
-      text-align: center;
+    & > *:not(:first-child) {
+      margin-inline-start: 2.4rem;
     }
   }
 }

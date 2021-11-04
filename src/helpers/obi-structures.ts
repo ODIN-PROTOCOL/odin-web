@@ -11,6 +11,20 @@ export function obiPhoneModels(models: string[]): Uint8Array {
   return new ObiStruct('{models:[string]}').encode({ models })
 }
 
+export interface ObiRates {
+  rates: string[]
+}
+
+export const obiRates = _makeEncoder<ObiRates>(
+  '{rates:[string]}',
+  (input) => ({
+    rates: [...input.rates],
+  }),
+  (output) => ({
+    rates: output.rates as Array<string>,
+  })
+)
+
 export interface ObiCoin {
   symbol: string
   multiplier: string // u64

@@ -1,7 +1,7 @@
 <template>
   <ModalBase class="exchange-form-modal" @close="onClose()">
     <template #title>
-      <h3>Faucet</h3>
+      <h3 class="app-form__title">Faucet</h3>
     </template>
 
     <template #main>
@@ -10,21 +10,23 @@
         :class="{ 'load-fog_show': isLoading }"
         @submit.prevent
       >
-        <div class="app-form__field">
-          <label class="app-form__field-lbl"> Asset </label>
-          <select
-            class="app-form__field-input"
-            name="exchange-source-asset"
-            v-model="form.asset"
-            :disabled="isLoading"
-          >
-            <option v-for="asset in assets" :key="asset" :value="asset">
-              {{ asset }}
-            </option>
-          </select>
-          <p v-if="form.assetErr" class="app-form__field-err">
-            {{ form.askCountErr }}
-          </p>
+        <div class="app-form__main">
+          <div class="app-form__field">
+            <label class="app-form__field-lbl"> Asset </label>
+            <select
+              class="app-form__field-input"
+              name="exchange-source-asset"
+              v-model="form.asset"
+              :disabled="isLoading"
+            >
+              <option v-for="asset in assets" :key="asset" :value="asset">
+                {{ asset }}
+              </option>
+            </select>
+            <p v-if="form.assetErr" class="app-form__field-err">
+              {{ form.askCountErr }}
+            </p>
+          </div>
         </div>
 
         <div class="app-form__footer">
@@ -64,19 +66,21 @@ const FaucetFormModal = defineComponent({
     const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
 
     const submit = async () => {
-      if (!form.isValid.value) return
       isLoading.value = true
       try {
         const r = await callers.faucetRequest({
           denom: form.asset.val().toLowerCase(),
         })
+
         console.log(r)
+
         onSubmit()
         notifySuccess('Faucet request created')
       } catch (error) {
         const indTime = error.message.indexOf('time')
         const errorStr = error.message.slice(10, indTime - 3)
         const timeStr = error.message.slice(indTime + 6, -1)
+
         const hours = Math.floor(+timeStr / 60 / 60)
         let minutes = Math.floor(
           Math.abs(+hours * 60 - +timeStr / 60)
@@ -86,13 +90,15 @@ const FaucetFormModal = defineComponent({
         ).toString()
         minutes = +minutes > 9 ? minutes : '0' + minutes
         seconds = +seconds > 9 ? seconds : '0' + seconds
+
         const newError = new Error(
           `You ${errorStr} in ${hours}:${minutes}:${seconds}`
         )
+
         handleError(newError)
-      } finally {
-        isLoading.value = false
+        // handleError(error)
       }
+      isLoading.value = false
     }
 
     return {

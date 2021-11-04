@@ -1,43 +1,118 @@
 <template>
   <div class="nav" :class="{ 'nav-mob': isOpen }">
     <div class="nav__wrap-cont">
-      <!-- TODO: temp. hidden all but validators -->
-      <!-- <router-link class="nav__link" :to="{ name: 'DataSources' }">
-        Data Sources
+      <router-link
+        class="nav__link"
+        data-text="Data Sources"
+        :to="{ name: 'DataSources' }"
+      >
+        <span>Data Sources</span>
       </router-link>
-      <router-link class="nav__link" :to="{ name: 'OracleScripts' }">
-        Oracle Scripts
+      <router-link
+        class="nav__link"
+        data-text="Oracle Scripts"
+        :to="{ name: 'OracleScripts' }"
+      >
+        <span>Oracle Scripts</span>
       </router-link>
-      <router-link class="nav__link" :to="{ name: 'Requests' }">
-        Requests
+      <router-link
+        class="nav__link"
+        data-text="Requests"
+        :to="{ name: 'Requests' }"
+      >
+        <span>Requests</span>
       </router-link>
-      <router-link class="nav__link" :to="{ name: 'Voting' }">
-        Voting
-      </router-link> -->
-      <router-link class="nav__link" :to="{ name: 'Validators' }">
-        Validators
+      <LinksDropdown :isActive="isDropdownActive" :list="ValidatorsList" />
+      <router-link class="nav__link" data-text="Rewards" to="/">
+        <span>Rewards</span>
       </router-link>
-      <UserWidget :isOpen="isOpen" class="fx-sae" />
+      <router-link
+        class="nav__link"
+        data-text="Governance"
+        :to="{ name: 'Governance' }"
+      >
+        <span>Governance</span>
+      </router-link>
+      <!-- Voting page not ready -->
+      <!--      <router-link class="nav__link" :to="{ name: 'Voting' }">-->
+      <!--        Voting-->
+      <!--      </router-link>-->
+    </div>
+    <div class="nav__activities">
+      <button
+        class="app-btn log-out-btn"
+        type="button"
+        @click="logOutAndLeave()"
+      >
+        <ExitIcon />
+        <span>Sign out</span>
+      </button>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import UserWidget from '@/components/UserWidget.vue'
+import { defineComponent, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { useAuthorization } from '@/composables/useAuthorization'
+import router from '@/router'
+import LinksDropdown from '@/components/LinksDropdown.vue'
+import ExitIcon from '@/components/icons/ExitIcon.vue'
 
 export default defineComponent({
-  name: 'Nav',
-  components: { UserWidget },
+  components: { LinksDropdown, ExitIcon },
+  emits: ['changeRoute'],
   props: {
     isOpen: { type: Boolean, default: false },
+  },
+  setup(props, { emit }) {
+    const ValidatorsList = {
+      name: 'Validators',
+      links: [
+        {
+          to: 'Validators',
+          text: 'Validators',
+        },
+        {
+          to: 'OracleValidators',
+          text: 'Oracle validators',
+        },
+      ],
+    }
+
+    const auth = useAuthorization()
+    const logOutAndLeave = () => {
+      auth.logOut()
+      router.push({ name: 'Auth' })
+    }
+
+    const route = useRoute()
+    watch(
+      () => route.path,
+      () => {
+        emit('changeRoute')
+        handleDropdownActive()
+      }
+    )
+
+    const isDropdownActive = ref(false)
+    const urls = ['/validators', '/oracle-validators']
+    const handleDropdownActive = () => {
+      isDropdownActive.value = urls.indexOf(route.path) > -1
+    }
+
+    return {
+      isDropdownActive,
+      logOutAndLeave,
+      handleDropdownActive,
+      ValidatorsList,
+    }
   },
 })
 </script>
 
 <style scoped lang="scss">
 .nav {
-  width: 100%;
   &__wrap-cont {
     display: flex;
     flex-wrap: wrap;
@@ -45,61 +120,7 @@ export default defineComponent({
     align-items: center;
     gap: 2.4rem;
   }
-  &__dropdown {
-    position: relative;
-    display: grid;
-    grid-template-columns: 100%;
-    text-decoration: none;
-    white-space: nowrap;
-    color: inherit;
-    font-weight: 400;
-    line-height: 2.4rem;
-    font-size: 1.6rem;
-    cursor: pointer;
-    &-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      &--open {
-        .nav__dropdown-wrapper-name {
-          color: var(--clr__action);
-          font-weight: 900;
-        }
-      }
-      &-arrow {
-        fill: #212529;
-        transform: translate(3px, -6px) rotate(270deg);
-        &--open {
-          transform: translate(-11px, 9px) rotate(90deg);
-          fill: var(--clr__action);
-        }
-      }
-    }
-    &-modal {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      position: absolute;
-      top: calc(100% + 1rem);
-      left: 0;
-      border-radius: 0.8rem;
-      background: var(--clr__main-bg);
-      z-index: 1;
-      box-shadow: 0 0.4rem 2.4rem rgba(8, 87, 172, 0.12);
-      min-width: 16rem;
-    }
-    &-link {
-      margin: 0;
-      text-decoration: none;
-      color: inherit;
-      width: 100%;
-      padding: 0.8rem 1.2rem;
-      &:hover {
-        background: rgba(204, 228, 255, 0.4);
-        color: var(--clr__action);
-      }
-    }
-  }
+
   &__link {
     display: grid;
     grid-template-columns: 100%;
@@ -108,7 +129,7 @@ export default defineComponent({
     color: inherit;
     font-weight: 400;
     line-height: 2.4rem;
-    font-size: 1.6rem;
+    font-size: 16px;
     cursor: pointer;
 
     &:hover {
@@ -135,49 +156,28 @@ export default defineComponent({
   }
 }
 
+.log-out-btn {
+  display: none;
+  margin-top: auto;
+  width: 100%;
+}
+
 @media (max-width: 768px) {
   .nav {
     display: none;
     background: #fff;
     position: absolute;
-    left: 0;
     top: calc(100% + 0.1rem);
     width: 100%;
+    padding: 0 1.6rem 1.6rem 1.6rem;
     z-index: 9999;
-    height: 100vh;
+    height: calc(100vh - 9.6rem);
+
     &__wrap-cont {
       flex-direction: column;
-      padding: 0 1.6rem;
       gap: 0;
     }
-    &__dropdown {
-      width: 100%;
-    }
-    &__dropdown-modal {
-      position: relative;
-      box-shadow: none;
-      top: initial;
-      padding: 0;
-      gap: 0;
-    }
-    &__dropdown-link {
-      width: 100%;
-      padding: 2.4rem 1.2rem;
-      border-bottom: 0.1rem solid #ced4da;
-      &:hover {
-        background: rgba(204, 228, 255, 0.4);
-      }
-      &:first-child {
-        padding: 2.4rem 1.2rem;
-      }
-    }
-    &__dropdown-wrapper {
-      text-align: center;
-      justify-content: space-between;
-      width: 100%;
-      padding: 2.4rem 1.2rem;
-      border-bottom: 0.1rem solid #ced4da;
-    }
+
     &__link {
       width: 100%;
       padding: 2.4rem 1.2rem;
@@ -185,21 +185,30 @@ export default defineComponent({
       > span {
         text-align: left;
       }
+
       &:hover {
         background: rgba(204, 228, 255, 0.4);
       }
+
       &:first-child {
         padding: 2.4rem 1.2rem;
       }
     }
   }
-  .nav-mob {
-    display: block;
+
+  .log-out-btn {
+    display: flex;
+    justify-content: center;
+    gap: 1.1rem;
   }
-}
-@media (max-width: 48rem) {
-  .nav__wrap-cont {
-    gap: 2rem;
+
+  .nav-mob {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: fixed;
+    top: 9.7rem;
+    left: 0;
   }
 }
 </style>

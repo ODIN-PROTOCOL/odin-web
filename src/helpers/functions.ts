@@ -1,7 +1,7 @@
 import { AnyFn, DecoratedFn } from '@/shared-types'
 import { Ref } from '@vue/reactivity'
 
-type ConditionArg = Ref<boolean> | AnyFn<boolean>
+export type ConditionArg = Ref<boolean> | AnyFn<boolean>
 
 export function preventIf<F extends AnyFn>(
   fn: F,

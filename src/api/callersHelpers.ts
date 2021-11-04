@@ -33,3 +33,22 @@ export async function sendPost(url: string, data: AnyObj): Promise<Response> {
     throw new Error(JSON.stringify(await response.json()))
   }
 }
+
+export async function sendGet(url: string): Promise<Response> {
+  const response = await fetch(url, {
+    method: 'GET',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    redirect: 'follow',
+    referrerPolicy: 'no-referrer',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+    },
+    mode: 'cors',
+  })
+  if (response.ok) {
+    return response
+  } else {
+    throw new Error(JSON.stringify(await response.json()))
+  }
+}

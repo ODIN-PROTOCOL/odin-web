@@ -1,4 +1,11 @@
+html,
+body {
+  ::-webkit-scrollbar {
+    width: 0;
+  }
+}
 
+// transition for <transition> START
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s ease;
@@ -7,4 +14,90 @@
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+.slide-fade-enter-active {
+  transition: all .3s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(2rem);
+  opacity: 0;
+}
+// transition for <transition> END
+
+._vue-picker {
+  width: 140px;
+  font-weight: 400;
+  .vue-picker__opener,
+  .vue-picker__opener:focus {
+    // "Properties may be safely replaced with 'border' shorthand"
+    // this words is lie! I need to reset the css rules with a separate rule
+    border-color: transparent;
+    border: none;
+    box-shadow: inset 0 0 0 1px transparent;
+  }
+  .vue-picker__dropdown {
+    box-shadow: 0 0.4rem 2.4rem rgba(8, 87, 172, 0.08);
+    border-radius: 0.4rem;
+    border: none;
+    padding: 0;
+  }
+  .vue-picker__opener-txt,
+  .vue-picker-option {
+    transition: all 0.5s ease;
+  }
+  .vue-picker__opener-ico {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    &:after {
+      transition: all 0.5s ease;
+    }
+  }
+  &.vue-picker_open {
+    .vue-picker__opener-ico {
+      &:after {
+        border: solid #007bff;
+        border-width: 0 2px 2px 0;
+        transform: rotate(225deg);
+      }
+    }
+    .vue-picker__opener-txt {
+      color: #007bff;
+      font-weight: bold;
+    }
+  }
+  &__dropdown-custom {
+    .vue-picker-option:hover:not(:disabled),
+    .vue-picker-option_cur {
+      font-weight: 600;
+      color: #007bff;
+      background: rgba(#cce4ff, 0.4);
+    }
+  }
+}
+
+.loading {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgba($clr-action, .3);
+  border-radius: 50%;
+  border-top-color: var(--clr__action);
+  animation: spin 1s ease-in-out infinite;
+  -webkit-animation: spin 1s ease-in-out infinite;
+  z-index: 1;
+}
+
+@keyframes spin {
+  to { -webkit-transform: rotate(360deg); }
+}
+@-webkit-keyframes spin {
+  to { -webkit-transform: rotate(360deg); }
 }

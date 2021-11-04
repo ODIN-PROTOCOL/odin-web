@@ -1,47 +1,69 @@
 .app-table {
   display: block;
-}
 
-.app-table__head,
-.app-table__row {
-  display: grid;
-  grid: auto / auto-flow minmax(0, 1fr);
-  gap: 0.8rem;
-}
+  &__title {
+    display: none;
+    font-size: 1.4rem;
+  }
 
-.app-table__head {
-  font-size: 1.4rem;
-  padding-bottom: 0.8rem;
-}
+  &__head,
+  &__row {
+    display: grid;
+    grid: auto / auto-flow minmax(0, 1fr);
+    gap: 2.4rem;
+  }
 
-.app-table__row {
-  padding: 1.6rem 0 1.2rem;
-  border-bottom: 1px solid var(--clr__table-border);
-}
+  &__head {
+    font-size: 1.4rem;
+    padding-bottom: 0.8rem;
+  }
 
-.app-table__row-btn {
-  display: block;
-  cursor: pointer;
-  text-align: start;
-  width: 100%;
+  &__row {
+    align-items: flex-start;
+    padding: 3.6rem 0 2rem;
+    border-bottom: 1px solid var(--clr__table-border);
+  }
 
-  @include transition(background-color);
+  &__cell {
+    display: flex;
+    min-width: 0;
 
-  &:hover {
-    background-color: var(--clr__table-row-hover);
+    &-txt {
+      @include ellipsis(inline-block);
+    }
+  }
+
+  &__link {
+    text-decoration: none;
+    color: var(--clr__action);
+  }
+
+  &__time {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__empty-stub {
+    margin: 1.5rem 0;
+    text-align: center;
   }
 }
 
-.app-table__cell {
-  display: flex;
-  min-width: 0;
-}
+@media screen and (max-width: 768px) {
+  .app-table {
+    &__head {
+      display: none;
+    }
 
-.app-table__cell-txt {
-  @include ellipsis(inline-block);
-}
+    &__title {
+      display: inline-block;
+      min-width: 170px;
+      margin-right: 2.4rem;
+    }
 
-.app-table__empty-stub {
-  // TODO: list loading stubs
-  text-align: center;
+    &__row {
+      grid: none;
+      padding: 3.4rem 0 1.6rem;
+    }
+  }
 }

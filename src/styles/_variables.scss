@@ -8,6 +8,12 @@ $clr-action-disabled: #bfdefb;
 $clr-danger: #a30000;
 $clr-action-extra-muted: #e4f2fc;
 
+// Buttons
+$clr-btn-normal: #007BFF;
+$clr-btn-hover: #66B0FF;
+$clr-btn-pressed: #053F7D;
+$clr-btn-disabled: #CCE4FF;
+
 // Inputs
 $clr-input-bg: #fff;
 $clr-input-bg-disabled: #fafafa;
@@ -18,8 +24,33 @@ $clr-table-border: #cce4ff;
 $clr-table-row-hover: #cce4ff;
 
 // Dropdowns
-$clr-dropdown-shadow: #0000001a;
+$clr-dropdown-shadow: #0857AC14;
+$clr-dropdown-link: #CCE4FF66;
 
 // Tips
-$clr-tooltip-bg: #000000;
+$clr-tooltip-bg: #053F7D;
 $clr-tooltip-text: #fff;
+
+// Modals
+$clr-modal-backdrop-bg: #6c757d;
+$clr-modal-content-bg: #fff;
+$clr-modal-content-shadow: #00193314;
+
+// Scrollbar
+$clr-scrollbar-thumb: #D8E0F0;
+$clr-scrollbar-track: #f5f8ff;
+
+// Progressbar
+$clr-progressbar-track: #EDF5FF;
+$clr-progressbar-positive: #007BFF;
+$clr-progressbar-negative: #F65160;
+
+// Status
+$clr-status-default: #6c757d;
+$clr-status-success: #00D097;
+$clr-status-pending: #FDC748;
+$clr-status-error: #F65160;
+$clr-status-progress: #66B0FF;
+
+// Chart
+$clr-chart-default: #CED4DA;
