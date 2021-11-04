@@ -7,16 +7,17 @@
         <p class="view-subtitle">{{ validator?.operatorAddress }}</p>
         <CopyButton class="mg-l8" :text="String(validator?.operatorAddress)" />
       </div>
-      <div class="validator__activities validator__activities_top fx-sae">
-        <button
+      <div class="validator__activities validator__activities_top fx-sae" style="display: flex">
+        <!--TEMP. Hide all unnecessary -->
+        <!-- <button
           class="app-btn app-btn_outlined app-btn_small"
           type="button"
           @click="withdraw"
         >
           Withdraw stake
-        </button>
+        </button> -->
         <button
-          class="app-btn app-btn_small mg-l24"
+          class="app-btn app-btn_small fx-sae"
           type="button"
           @click="delegate"
         >

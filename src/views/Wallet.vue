@@ -7,7 +7,7 @@
     <div class="info mg-b40">
       <div class="info__card">
         <span class="info__card-title">Balance</span>
-        <div class="info__card-balance mg-b40">
+        <div class="info__card-balance">
           <div class="info__card-row">
             <span class="info__card-row-title">LOKI</span>
             <span class="info__card-row-value">
@@ -16,19 +16,20 @@
           </div>
         </div>
         <div class="info__card-activities">
-          <button
+          <!--TEMP. Hide all unnecessary -->
+          <!-- <button
             class="app-btn app-btn_outlined app-btn_small"
             @click="receive()"
           >
             Receive
-          </button>
+          </button> -->
           <!-- TODO uncomment when the Send will be ready -->
           <!-- <button class="app-btn app-btn_small">Send</button> -->
         </div>
       </div>
       <div class="info__card">
         <span class="info__card-title">Current rate</span>
-        <div class="info__card-balance mg-b40">
+        <div class="info__card-balance">
           <div class="info__card-row">
             <span class="info__card-row-title">1 ODIN</span>
             <span class="info__card-row-value">
@@ -44,9 +45,9 @@
         </div>
         <!-- TODO uncomment when the exchange will be ready -->
         <div class="info__card-activities">
-          <button class="app-btn app-btn_small" @click="exchange()">
+          <!-- <button class="app-btn app-btn_small" @click="exchange()">
             Exchange
-          </button>
+          </button> -->
         </div>
       </div>
     </div>

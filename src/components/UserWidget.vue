@@ -1,6 +1,7 @@
 <template>
   <div class="user-widget fx-row">
-    <Search />
+    <!--TEMP. Hide all unnecessary -->
+    <!-- <Search /> -->
     <!-- <button class="nav-btn">
       <img src="~@/assets/icons/metamask.svg" alt="metamask" />
     </button> -->
@@ -21,11 +22,11 @@ import { defineComponent } from 'vue'
 import { useAuthorization } from '@/composables/useAuthorization'
 import BalanceButton from '@/components/BalanceButton.vue'
 import MetaMask from '@/components/MetaMask/MetaMask.vue'
-import Search from '@/components/Search.vue'
+// import Search from '@/components/Search.vue'
 import router from '@/router'
 
 export default defineComponent({
-  components: { BalanceButton, Search, MetaMask },
+  components: { BalanceButton, MetaMask },
   setup() {
     const auth = useAuthorization()
     const logOutAndLeave = () => {

@@ -73,16 +73,17 @@
                 :status="item.isOracleValidator ? 'success' : 'error'"
               />
             </div>
-            <div class="app-table__cell">
+            <div class="app-table__cell" style="display: flex; justify-content: flex-end;">
               <div class="app-table__activities">
                 <div class="app-table__activities-item">
-                  <button
+                  <!--TEMP. Hide all unnecessary -->
+                  <!-- <button
                     class="app-btn app-btn_outlined app-btn_small"
                     type="button"
                     @click="withdraw(item)"
                   >
                     Withdraw stake
-                  </button>
+                  </button> -->
                   <button
                     class="app-btn app-btn_small"
                     type="button"

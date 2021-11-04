@@ -6,7 +6,7 @@ import {
 } from './guards'
 
 const rootRedirector = makeRootRedirector(
-  { name: 'DataSources' },
+  { name: 'Validators' },
   { name: 'Auth' }
 )
 const authorizedOnlyGuard = makeAuthorizedOnlyGuard({ name: 'Auth' })
@@ -22,43 +22,43 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import(/* webpackChunkName: "auth" */ '../views/Auth.vue'),
   },
   // TODO: temp. hidden all but validators
-  {
-    path: '/data-sources',
-    name: 'DataSources',
-    beforeEnter: authorizedOnlyGuard,
-    component: () =>
-      import(/* webpackChunkName: "data-sources" */ '../views/DataSources.vue'),
-  },
-  {
-    path: '/oracle-scripts',
-    name: 'OracleScripts',
-    beforeEnter: authorizedOnlyGuard,
-    component: () =>
-      import(
-        /* webpackChunkName: "oracle-scripts" */ '../views/OracleScripts.vue'
-      ),
-  },
-  {
-    path: '/requests',
-    name: 'Requests',
-    beforeEnter: authorizedOnlyGuard,
-    component: () =>
-      import(/* webpackChunkName: "requests" */ '../views/Requests.vue'),
-  },
-  {
-    path: '/requests/:id',
-    name: 'Request',
-    beforeEnter: authorizedOnlyGuard,
-    component: () =>
-      import(/* webpackChunkName: "request" */ '../views/RequestItem.vue'),
-  },
-  {
-    path: '/voting',
-    name: 'Voting',
-    beforeEnter: authorizedOnlyGuard,
-    component: () =>
-      import(/* webpackChunkName: "voting" */ '../views/Voting.vue'),
-  },
+  // {
+  //   path: '/data-sources',
+  //   name: 'DataSources',
+  //   beforeEnter: authorizedOnlyGuard,
+  //   component: () =>
+  //     import(/* webpackChunkName: "data-sources" */ '../views/DataSources.vue'),
+  // },
+  // {
+  //   path: '/oracle-scripts',
+  //   name: 'OracleScripts',
+  //   beforeEnter: authorizedOnlyGuard,
+  //   component: () =>
+  //     import(
+  //       /* webpackChunkName: "oracle-scripts" */ '../views/OracleScripts.vue'
+  //     ),
+  // },
+  // {
+  //   path: '/requests',
+  //   name: 'Requests',
+  //   beforeEnter: authorizedOnlyGuard,
+  //   component: () =>
+  //     import(/* webpackChunkName: "requests" */ '../views/Requests.vue'),
+  // },
+  // {
+  //   path: '/requests/:id',
+  //   name: 'Request',
+  //   beforeEnter: authorizedOnlyGuard,
+  //   component: () =>
+  //     import(/* webpackChunkName: "request" */ '../views/RequestItem.vue'),
+  // },
+  // {
+  //   path: '/voting',
+  //   name: 'Voting',
+  //   beforeEnter: authorizedOnlyGuard,
+  //   component: () =>
+  //     import(/* webpackChunkName: "voting" */ '../views/Voting.vue'),
+  // },
   {
     path: '/validators',
     name: 'Validators',
@@ -82,20 +82,20 @@ const routes: Array<RouteRecordRaw> = [
         /* webpackChunkName: "oracle-validators" */ '../views/OracleValidators.vue'
       ),
   },
-  {
-    path: '/governance',
-    name: 'Governance',
-    beforeEnter: authorizedOnlyGuard,
-    component: () =>
-      import(/* webpackChunkName: "governance" */ '../views/Governance.vue'),
-  },
-  {
-    path: '/proposal/:id',
-    name: 'Proposal',
-    beforeEnter: authorizedOnlyGuard,
-    component: () =>
-      import(/* webpackChunkName: "proposal" */ '../views/Proposal.vue'),
-  },
+  // {
+  //   path: '/governance',
+  //   name: 'Governance',
+  //   beforeEnter: authorizedOnlyGuard,
+  //   component: () =>
+  //     import(/* webpackChunkName: "governance" */ '../views/Governance.vue'),
+  // },
+  // {
+  //   path: '/proposal/:id',
+  //   name: 'Proposal',
+  //   beforeEnter: authorizedOnlyGuard,
+  //   component: () =>
+  //     import(/* webpackChunkName: "proposal" */ '../views/Proposal.vue'),
+  // },
   {
     path: '/wallet',
     name: 'Wallet',
