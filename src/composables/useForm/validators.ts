@@ -1,4 +1,4 @@
-import { bigMath } from '@/helpers/bigMath'
+import { big } from '@/helpers/bigMath'
 import { NumLike } from '@/helpers/casts'
 
 export type FormFieldValidator = (...args: unknown[]) => string | null
@@ -120,7 +120,7 @@ export const erc20Address: FormFieldValidator = (val: unknown) => {
 
 export function bigMax(maximum: NumLike, suffix?: string): FormFieldValidator {
   return (val: unknown): FormFieldValidatorResult => {
-    const res = bigMath.compare(val as NumLike, maximum)
+    const res = big.compare(val as NumLike, maximum)
     if (res === null || res > 0) {
       return suffix
         ? `The value should be lower than ${maximum} ${suffix}`
@@ -135,7 +135,7 @@ export function bigMin(
   suffix?: string
 ): FormFieldValidator {
   return (val: unknown): FormFieldValidatorResult => {
-    const res = bigMath.compare(val as NumLike, minimum)
+    const res = big.compare(val as NumLike, minimum)
     if (res === -1 || res === null)
       return suffix
         ? `The value should be larger than ${minimum} ${suffix}`

@@ -156,7 +156,7 @@ import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import { Bech32, fromBase64 } from '@cosmjs/encoding'
-import { bigMath } from '@/helpers/bigMath'
+import { big } from '@/helpers/bigMath'
 import { PubKey } from '@cosmjs/stargate/build/codec/cosmos/crypto/secp256k1/keys'
 import { coin } from '@cosmjs/amino'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -226,11 +226,9 @@ const BecomeValidatorFormModal = defineComponent({
             details: '',
           },
           commission: {
-            rate: bigMath.toPrecise(form.rate.val()).toString(),
-            maxRate: bigMath.toPrecise(form.maxRate.val()).toString(),
-            maxChangeRate: bigMath
-              .toPrecise(form.maxChangeRate.val())
-              .toString(),
+            rate: big.toPrecise(form.rate.val()).toString(),
+            maxRate: big.toPrecise(form.maxRate.val()).toString(),
+            maxChangeRate: big.toPrecise(form.maxChangeRate.val()).toString(),
           },
           minSelfDelegation: form.minDelegation.val(),
           delegatorAddress: wallet.account.address,
@@ -259,11 +257,9 @@ const BecomeValidatorFormModal = defineComponent({
     // TODO: remove fakeForm
     const _fakeForm = () => {
       form.moniker.val('validator-' + loremIpsum({ units: 'words', count: 1 }))
-      form.rate.val(bigMath.fromPrecise('100000000000000000').toString())
-      form.maxRate.val(bigMath.fromPrecise('200000000000000000').toString())
-      form.maxChangeRate.val(
-        bigMath.fromPrecise('100000000000000000').toString()
-      )
+      form.rate.val(big.fromPrecise('100000000000000000').toString())
+      form.maxRate.val(big.fromPrecise('200000000000000000').toString())
+      form.maxChangeRate.val(big.fromPrecise('100000000000000000').toString())
       form.pubKey.val('YVo5TzlCK5Y5C+7lnOKMlHZKoGfLrEKhmpci3xNs5HA=')
       form.minDelegation.val('1')
       form.selfDelegation.val(10000000)

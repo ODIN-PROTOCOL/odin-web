@@ -117,7 +117,7 @@ import { notifySuccess } from '@/helpers/notifications'
 import { handleError } from '@/helpers/errors'
 import { useForm, validators } from '@/composables/useForm'
 import { NumLike } from '@/helpers/casts'
-import { bigMath } from '@/helpers/bigMath'
+import { big } from '@/helpers/bigMath'
 import BigNumber from 'bignumber.js'
 import ModalBase from '@/components/modals/ModalBase.vue'
 import ExchangeIcon from '@/components/icons/ExchangeIcon.vue'
@@ -164,7 +164,7 @@ const ExchangeFormDialog = defineComponent({
 
     const _calcExpected = (value: NumLike | null): BigNumber | null => {
       if (!value) return null
-      return bigMath.multiply(value, bigMath.fromPrecise(rate.value.rate))
+      return big.multiply(value, big.fromPrecise(rate.value.rate))
     }
 
     const _reCalcExpected = async () => {
@@ -175,7 +175,7 @@ const ExchangeFormDialog = defineComponent({
         return
       }
 
-      expectedAmount.value = bigMath.toStrStrict(expectedRaw)
+      expectedAmount.value = big.toStrStrict(expectedRaw)
     }
 
     const changeHandler = async () => {
