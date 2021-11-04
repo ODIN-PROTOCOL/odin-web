@@ -121,6 +121,7 @@ import { bigMath } from '@/helpers/bigMath'
 import BigNumber from 'bignumber.js'
 import ModalBase from '@/components/modals/ModalBase.vue'
 import ExchangeIcon from '@/components/icons/ExchangeIcon.vue'
+import { preventIf } from '@/helpers/functions'
 
 const ExchangeFormDialog = defineComponent({
   components: { ModalBase, ExchangeIcon, VuePicker, VuePickerOption },
@@ -223,7 +224,7 @@ const ExchangeFormDialog = defineComponent({
       changeHandler,
       isLoading,
       submit,
-      onClose: dialogs.getHandler('onClose'),
+      onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
     }
   },
 })
