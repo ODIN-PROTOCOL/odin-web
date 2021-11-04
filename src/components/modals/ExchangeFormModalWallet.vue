@@ -40,11 +40,9 @@
                 class="app-form__field-input"
                 name="exchange-from-amount"
                 type="number"
-                min="1"
-                :max="100"
                 placeholder="0"
                 v-model="form.amount"
-                :disabled="isLoading"
+                :disabled="isLoading || exchangeFrom === exchangeTo"
               />
               <p v-if="form.amountErr" class="app-form__field-err">
                 {{ form.amountErr }}
@@ -53,10 +51,10 @@
           </div>
 
           <div class="app-form__row app-form__row_center mg-b16 mg-t16">
-            <button class="app-form__exchange-btn" @click="changeValues()">
+            <button class="app-form__exchange-btn" @click="changeHandler()">
               <ExchangeIcon />
             </button>
-            <span class="app-form__exchange-rate">1 ODIN = 1000 LOKI</span>
+            <span class="app-form__exchange-rate">{{ rateText }}</span>
           </div>
 
           <div class="app-form__row">
@@ -114,13 +112,12 @@ import { QueryRateResponse } from '@provider/codec/coinswap/query'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
-import { memoize, preventIf } from '@/helpers/functions'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { notifySuccess } from '@/helpers/notifications'
 import { handleError } from '@/helpers/errors'
 import { useForm, validators } from '@/composables/useForm'
 import { NumLike } from '@/helpers/casts'
-import { bigMath, bigFromPrecise } from '@/helpers/bigMath'
+import { bigMath } from '@/helpers/bigMath'
 import BigNumber from 'bignumber.js'
 import ModalBase from '@/components/modals/ModalBase.vue'
 import ExchangeIcon from '@/components/icons/ExchangeIcon.vue'
@@ -140,13 +137,34 @@ const ExchangeFormDialog = defineComponent({
     const exchangeTo = ref<string>('odin')
     const expectedAmount = ref<string>('0')
     const rate = ref()
+    const rateText = ref()
+
     const isLoading = ref(false)
     const onSubmit = dialogs.getHandler('onSubmit')
 
-    const _calcExpected = memoize((value: NumLike | null): BigNumber | null => {
+    const getRate = async (from: string, to: string) => {
+      isLoading.value = true
+      try {
+        rate.value = await callers.getRate(from, to)
+      } catch (error) {
+        handleError(error as Error)
+      }
+      isLoading.value = false
+    }
+
+    const setRateText = () => {
+      if (exchangeFrom.value === exchangeTo.value) {
+        rateText.value = 'N/A'
+      } else {
+        rateText.value = `1 ${exchangeFrom.value.toUpperCase()} =
+         ${_calcExpected(1)} ${exchangeTo.value.toUpperCase()}`
+      }
+    }
+
+    const _calcExpected = (value: NumLike | null): BigNumber | null => {
       if (!value) return null
       return bigMath.multiply(value, bigMath.fromPrecise(rate.value.rate))
-    })
+    }
 
     const _reCalcExpected = async () => {
       const amount = form.amount.val()
@@ -159,15 +177,20 @@ const ExchangeFormDialog = defineComponent({
       expectedAmount.value = bigMath.toStrStrict(expectedRaw)
     }
 
-    const getRate = async (from: string, to: string) => {
-      rate.value = await callers.getRate(from, to)
-    }
-
-    const changeValues = async () => {
+    const changeHandler = async () => {
       let tempValue = exchangeFrom.value
       exchangeFrom.value = exchangeTo.value
       exchangeTo.value = tempValue
     }
+
+    watch(() => form.amount.val(), _reCalcExpected)
+    watch([exchangeFrom, exchangeTo], async () => {
+      if (exchangeFrom.value !== exchangeTo.value) {
+        await getRate(exchangeFrom.value, exchangeTo.value)
+        _reCalcExpected()
+      }
+      setRateText()
+    })
 
     const submit = async () => {
       isLoading.value = true
@@ -186,11 +209,9 @@ const ExchangeFormDialog = defineComponent({
       isLoading.value = false
     }
 
-    watch(() => form.amount.val(), _reCalcExpected)
-
     onMounted(async () => {
       await getRate(exchangeFrom.value, exchangeTo.value)
-      await changeValues()
+      setRateText()
     })
 
     return {
@@ -198,7 +219,8 @@ const ExchangeFormDialog = defineComponent({
       exchangeFrom,
       exchangeTo,
       expectedAmount,
-      changeValues,
+      rateText,
+      changeHandler,
       isLoading,
       submit,
       onClose: dialogs.getHandler('onClose'),
