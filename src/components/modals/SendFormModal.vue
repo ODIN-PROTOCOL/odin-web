@@ -71,8 +71,6 @@
                   <VuePickerOption value="loki" text="LOKI">
                     LOKI
                   </VuePickerOption>
-                </div>
-                <div class="_vue-picker__dropdown-custom">
                   <VuePickerOption value="odin" text="ODIN">
                     ODIN
                   </VuePickerOption>
