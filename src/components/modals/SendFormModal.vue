@@ -11,12 +11,47 @@
         @submit.prevent
       >
         <div class="app-form__main">
+          <div class="app-form__info mg-b16">
+            <label class="app-form__info-title">Balance</label>
+            <div class="app-form__info-content">
+              <div
+                class="app-form__info-row"
+                v-for="item in balance"
+                :key="item.denom"
+              >
+                <span class="app-form__info-row-title">
+                  {{ item.denom.toUpperCase() }}
+                </span>
+                <span class="app-form__info-row-value">{{ $fCoin(item) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="app-form__info mg-b32">
+            <label class="app-form__info-title">Current rate</label>
+            <div class="app-form__info-content">
+              <div class="app-form__info-row">
+                <span class="app-form__info-row-title">1 ODIN</span>
+                <span class="app-form__info-row-value">
+                  ${{ String(rate['odin-protocol']?.usd) }}
+                </span>
+              </div>
+              <div class="app-form__info-row">
+                <span class="app-form__info-row-title">1 GEO</span>
+                <span class="app-form__info-row-value">
+                  ${{ String(rate.geodb?.usd) }}
+                </span>
+              </div>
+            </div>
+          </div>
+
           <div class="app-form__field">
             <label class="app-form__field-lbl">Receiver</label>
             <input
               class="app-form__field-input"
               name="send-receiver"
               type="text"
+              placeholder="Receiver's address"
               v-model="form.receiver"
               :disabled="isLoading"
             />
@@ -25,17 +60,51 @@
             </p>
           </div>
           <div class="app-form__field">
+            <label class="app-form__field-lbl">Asset</label>
+            <VuePicker
+              class="_vue-picker"
+              placeholder="ODIN"
+              v-model="sendAsset"
+            >
+              <template #dropdownInner>
+                <div class="_vue-picker__dropdown-custom">
+                  <VuePickerOption value="loki" text="LOKI">
+                    LOKI
+                  </VuePickerOption>
+                </div>
+                <div class="_vue-picker__dropdown-custom">
+                  <VuePickerOption value="odin" text="ODIN">
+                    ODIN
+                  </VuePickerOption>
+                </div>
+              </template>
+            </VuePicker>
+          </div>
+          <div class="app-form__field mg-b32">
             <label class="app-form__field-lbl">Amount</label>
             <input
               class="app-form__field-input"
               name="send-amount"
               type="text"
+              placeholder="0"
               v-model="form.amount"
               :disabled="isLoading"
             />
             <p v-if="form.amountErr" class="app-form__field-err">
               {{ form.amountErr }}
             </p>
+          </div>
+
+          <div class="app-form__info">
+            <label class="app-form__info-title">Fee amount</label>
+            <div class="app-form__info-content">
+              <div class="app-form__info-row">
+                <span class="app-form__info-row-value">
+                  {{ fee }}
+                  {{ sendAsset.toUpperCase() }}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -63,21 +132,47 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, PropType } from 'vue'
+import { callers } from '@/api/callers'
+import { coin } from '@cosmjs/amino'
+import { wallet } from '@/api/wallet'
 import { useForm, validators } from '@/composables/useForm'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { preventIf } from '@/helpers/functions'
 import { handleError } from '@/helpers/errors'
 import { notifySuccess } from '@/helpers/notifications'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 import ModalBase from '@/components/modals/ModalBase.vue'
+import { Coin } from '@cosmjs/amino'
+import { WalletRate } from '@/helpers/Types'
 
 const SendFormModal = defineComponent({
-  components: { ModalBase },
+  name: 'SendFormModal',
+  components: { ModalBase, VuePicker, VuePickerOption },
+  props: {
+    rate: { type: Object as PropType<WalletRate>, required: true },
+    balance: { type: Array as PropType<Coin[]>, required: true },
+  },
   setup: function () {
     const form = useForm({
-      receiver: ['', validators.required],
-      amount: [0, validators.required, ...validators.num(1, 10)],
+      receiver: [
+        '',
+        validators.required,
+        validators.withOutSpaceAtStart,
+        validators.maxCharacters(128),
+      ],
+      amount: [
+        0,
+        validators.required,
+        validators.integer,
+        ...validators.num(0),
+        validators.maxCharacters(128),
+      ],
     })
+    const sendAsset = ref('loki')
+    const fee = ref(0)
     const isLoading = ref(false)
     const onSubmit = dialogs.getHandler('onSubmit')
     const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
@@ -85,9 +180,13 @@ const SendFormModal = defineComponent({
     const submit = async () => {
       isLoading.value = true
       try {
-        console.log('sended')
+        await callers.createSend({
+          fromAddress: wallet.account.address,
+          toAddress: form.receiver.val(),
+          amount: [coin(Number(form.amount.val()), sendAsset.value)],
+        })
         onSubmit()
-        notifySuccess('Successfuly sended')
+        notifySuccess('Successfully sended')
       } catch (error) {
         handleError(error as Error)
       }
@@ -96,6 +195,8 @@ const SendFormModal = defineComponent({
 
     return {
       form: form.flatten(),
+      sendAsset,
+      fee,
       isLoading,
       submit,
       onClose,
@@ -104,12 +205,49 @@ const SendFormModal = defineComponent({
 })
 
 export default SendFormModal
-export function showSendFormDialog(callbacks: {
-  onSubmit?: DialogHandler
-  onClose?: DialogHandler
-}): Promise<unknown | null> {
-  return dialogs.show(SendFormModal, callbacks)
+export function showSendFormDialog(
+  callbacks: {
+    onSubmit?: DialogHandler
+    onClose?: DialogHandler
+  },
+  props?: {
+    rate?: WalletRate
+    balance?: Coin[]
+  }
+): Promise<unknown | null> {
+  return dialogs.show(SendFormModal, callbacks, { props })
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.app-form__info {
+  padding: 1.6rem 1.2rem;
+  border: 1px solid var(--clr__action);
+  border-radius: 0.8rem;
+
+  &-title {
+    display: block;
+    margin-bottom: 1.6rem;
+  }
+
+  &-content {
+    & > *:not(:last-child) {
+      margin-bottom: 0.8rem;
+    }
+  }
+
+  &-row {
+    display: flex;
+    flex-direction: row;
+    gap: 2.4rem;
+
+    &-title {
+      min-width: 10rem;
+    }
+
+    &-value {
+      font-weight: 600;
+    }
+  }
+}
+</style>

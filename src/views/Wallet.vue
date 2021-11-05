@@ -155,6 +155,8 @@ import { useBalances } from '@/composables/useBalances'
 import { adjustedData } from '@/helpers/Types'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
+import { WalletRate } from '@/helpers/Types'
+import { Coin } from '@cosmjs/amino'
 import { showReceiveDialog } from '@/components/modals/ReceiveModal.vue'
 import { showExchangeFormDialog } from '@/components/modals/ExchangeFormModalWallet.vue'
 import { showSendFormDialog } from '@/components/modals/SendFormModal.vue'
@@ -262,12 +264,18 @@ export default defineComponent({
     }
 
     const send = () => {
-      showSendFormDialog({
-        onSubmit: (d) => {
-          d.kill()
-          console.log('Send')
+      showSendFormDialog(
+        {
+          onSubmit: (d) => {
+            d.kill()
+            console.log('Send')
+          },
         },
-      })
+        {
+          rate: rate.value as WalletRate,
+          balance: [lokiCoins.value as Coin],
+        }
+      )
     }
 
     onMounted(async () => {
@@ -306,6 +314,8 @@ export default defineComponent({
   gap: 2.4rem;
 
   &__card {
+    display: flex;
+    flex-direction: column;
     width: 39rem;
     padding: 3.2rem 2.4rem;
     border: 1px solid var(--clr__action);
@@ -340,6 +350,7 @@ export default defineComponent({
 
     &-activities {
       display: flex;
+      margin-top: auto;
 
       &_full {
         gap: 2.4rem;
