@@ -186,7 +186,7 @@ const SendFormModal = defineComponent({
           amount: [coin(Number(form.amount.val()), sendAsset.value)],
         })
         onSubmit()
-        notifySuccess('Successfully sended')
+        notifySuccess('Successfully sent')
       } catch (error) {
         handleError(error as Error)
       }
