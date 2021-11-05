@@ -12,16 +12,19 @@
       >
         <div class="app-form__main">
           <div class="app-form__field">
-            <label class="app-form__field-lbl"> Amount (ODIN) </label>
-            <input
-              class="app-form__field-input"
-              name="delegate-amount"
-              type="number"
-              min="1"
-              placeholder="1000"
-              v-model="form.amount"
-              :disabled="isLoading"
-            />
+            <label class="app-form__field-lbl">Amount</label>
+            <div class="app-form__field-input-wrapper">
+              <span>LOKI</span>
+              <input
+                class="app-form__field-input"
+                name="delegate-amount"
+                type="number"
+                min="1"
+                placeholder="1000"
+                v-model="form.amount"
+                :disabled="isLoading"
+              />
+            </div>
             <p v-if="form.amountErr" class="app-form__field-err">
               {{ form.amountErr }}
             </p>
@@ -56,7 +59,13 @@ const WithdrawFormDialog = defineComponent({
   components: { ModalBase },
   setup() {
     const form = useForm({
-      amount: ['', validators.required, ...validators.num(1)],
+      amount: [
+        1,
+        validators.required,
+        validators.integer,
+        ...validators.num(1),
+        validators.maxCharacters(128),
+      ],
     })
     const isLoading = ref(false)
     const onSubmit = dialogs.getHandler('onSubmit')
@@ -66,9 +75,9 @@ const WithdrawFormDialog = defineComponent({
       try {
         // TODO submit withdraw stake
         onSubmit()
-        notifySuccess('Successfully delegated')
+        notifySuccess('Successfully withdrawn')
       } catch (error) {
-        handleError(error)
+        handleError(error as Error)
       }
       isLoading.value = false
     }

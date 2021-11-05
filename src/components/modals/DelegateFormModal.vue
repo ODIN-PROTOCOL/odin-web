@@ -31,17 +31,20 @@
           </div>
 
           <div class="app-form__field">
-            <label class="app-form__field-lbl"> Amount (LOKI) </label>
-            <input
-              class="app-form__field-input"
-              name="delegate-amount"
-              type="number"
-              min="1"
-              :max="lokiBalance"
-              placeholder="1000"
-              v-model="form.amount"
-              :disabled="isLoading"
-            />
+            <label class="app-form__field-lbl">Amount</label>
+            <div class="app-form__field-input-wrapper">
+              <span>LOKI</span>
+              <input
+                class="app-form__field-input"
+                name="delegate-amount"
+                type="number"
+                min="1"
+                :max="lokiBalance"
+                placeholder="1000"
+                v-model="form.amount"
+                :disabled="isLoading"
+              />
+            </div>
             <p v-if="form.amountErr" class="app-form__field-err">
               {{ form.amountErr }}
             </p>
