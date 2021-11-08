@@ -11,20 +11,6 @@
         @submit.prevent
       >
         <div class="app-form__main">
-          <div class="app-form__field">
-            <label class="app-form__field-lbl"> Min delegation </label>
-            <p>{{ $fCoin(validator.minSelfDelegation, 'LOKI') }}</p>
-          </div>
-
-          <div class="app-form__field">
-            <label class="app-form__field-lbl"> Operator address </label>
-            <!-- Temp. this field can be removed -->
-            <div class="fx-row" style="width: 50%">
-              <span class="fs-cut">{{ validator.operatorAddress }}</span>
-              <CopyButton :text="validator.operatorAddress" />
-            </div>
-          </div>
-
           <div v-if="delegation && delegation.balance" class="app-form__field">
             <label class="app-form__field-lbl"> You delegated </label>
             <p>{{ $fCoin(delegation.balance) }}</p>
@@ -76,8 +62,6 @@ import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
-// import CopyText from '@/components/CopyText.vue'
-import CopyButton from '@/components/CopyButton.vue'
 import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { useBalances } from '@/composables/useBalances'
 import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
@@ -88,7 +72,7 @@ const DelegateFormDialog = defineComponent({
     validator: { type: Object as PropType<ValidatorDecoded>, required: true },
     delegation: { type: Object as PropType<DelegationResponse> },
   },
-  components: { ModalBase, CopyButton },
+  components: { ModalBase },
   setup(props) {
     const { get: getBalance, load: loadBalances } = useBalances()
     const lokiBalance = getBalance('loki', 'number')
@@ -117,7 +101,7 @@ const DelegateFormDialog = defineComponent({
         onSubmit()
         notifySuccess('Successfully delegated')
       } catch (error) {
-        handleError(error)
+        handleError(error as Error)
       }
       isLoading.value = false
     }

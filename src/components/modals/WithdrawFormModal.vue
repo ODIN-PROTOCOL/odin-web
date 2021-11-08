@@ -47,17 +47,24 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, PropType, ref } from 'vue'
+import { wallet } from '@/api/wallet'
+import { callers } from '@/api/callers'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
+import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { useForm, validators } from '@/composables/useForm'
+import { coin } from '@cosmjs/amino'
 import ModalBase from './ModalBase.vue'
 
 const WithdrawFormDialog = defineComponent({
+  props: {
+    validator: { type: Object as PropType<ValidatorDecoded>, required: true },
+  },
   components: { ModalBase },
-  setup() {
+  setup(props) {
     const form = useForm({
       amount: [
         1,
@@ -73,7 +80,11 @@ const WithdrawFormDialog = defineComponent({
     const submit = async () => {
       isLoading.value = true
       try {
-        // TODO submit withdraw stake
+        await callers.withdrawCoinsToAcc({
+          sender: wallet.account.address,
+          receiver: props.validator.operatorAddress,
+          amount: [coin(form.amount.val(), 'loki')],
+        })
         onSubmit()
         notifySuccess('Successfully withdrawn')
       } catch (error) {
@@ -92,11 +103,14 @@ const WithdrawFormDialog = defineComponent({
 })
 
 export default WithdrawFormDialog
-export function showWithdrawFormDialog(callbacks: {
-  onSubmit?: DialogHandler
-  onClose?: DialogHandler
-}): Promise<unknown | null> {
-  return dialogs.show(WithdrawFormDialog, callbacks)
+export function showWithdrawFormDialog(
+  callbacks: {
+    onSubmit?: DialogHandler
+    onClose?: DialogHandler
+  },
+  props: { validator: ValidatorDecoded }
+): Promise<unknown | null> {
+  return dialogs.show(WithdrawFormDialog, callbacks, { props })
 }
 </script>
 

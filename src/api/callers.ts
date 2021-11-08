@@ -1,3 +1,4 @@
+import { MsgWithdrawCoinsToAccFromTreasury } from '@provider/codec/mint/tx'
 import { MsgSend } from '@cosmjs/stargate/build/codec/cosmos/bank/v1beta1/tx'
 import {
   MsgCreateDataSource,
@@ -130,6 +131,10 @@ const makeCallers = () => {
       MsgUndelegate
     ),
     getDelegations: querier((qc) => qc.staking.delegatorDelegations),
+    withdrawCoinsToAcc: broadcaster<MsgWithdrawCoinsToAccFromTreasury>(
+      '/mint.MsgWithdrawCoinsToAccFromTreasury',
+      MsgWithdrawCoinsToAccFromTreasury
+    ),
     getParams: querier((qc) => qc.mint.unverified.params),
     faucetRequest: (req: { denom: string }) => {
       console.log({

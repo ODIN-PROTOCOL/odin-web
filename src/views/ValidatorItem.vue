@@ -164,11 +164,19 @@ export default defineComponent({
     }
 
     const withdraw = () => {
-      showWithdrawFormDialog({
-        onSubmit: (d) => {
-          d.kill()
+      showWithdrawFormDialog(
+        {
+          onSubmit: (d) => {
+            d.kill()
+            getValidator()
+            getDelegators()
+            getBlocks()
+            getReports()
+            getDelegations()
+          },
         },
-      })
+        { validator: validator.value }
+      )
     }
 
     onMounted(async () => {
