@@ -7,6 +7,14 @@ export type ProposalDecoded = Modify<
   Proposal,
   { content?: ProposalContentDecoded }
 >
+
+export function decodeProposal(proposal: Proposal): ProposalDecoded {
+  return {
+    ...proposal,
+    content: decodeProposalContent(proposal.content),
+  }
+}
+
 export function decodeProposals(proposals: Proposal[]): ProposalDecoded[] {
   return proposals.map((proposal) => {
     return {

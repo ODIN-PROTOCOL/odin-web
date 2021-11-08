@@ -1,7 +1,7 @@
 <template>
-  <ModalBase class="data-source-form-modal" @close="onClose()">
+  <ModalBase class="data-source-form-modal modal-base_right" @close="onClose()">
     <template #title>
-      <h3>Create data source</h3>
+      <h3 class="app-form__title">Data source creating</h3>
     </template>
 
     <template #main>
@@ -10,49 +10,76 @@
         :class="{ 'load-fog_show': isLoading }"
         @submit.prevent
       >
-        <div class="app-form__field">
-          <label class="app-form__field-lbl"> Name </label>
-          <input
-            class="app-form__field-input"
-            name="data-source-name"
-            type="text"
-            v-model="form.name"
-            :disabled="isLoading"
-          />
-          <p v-if="form.nameErr" class="app-form__field-err">
-            {{ form.nameErr }}
-          </p>
-        </div>
+        <div class="app-form__main">
+          <div class="app-form__field">
+            <label class="app-form__field-lbl"> Name </label>
+            <input
+              class="app-form__field-input"
+              name="data-source-name"
+              type="text"
+              v-model="form.name"
+              :disabled="isLoading"
+              placeholder="Data Source name"
+            />
+            <p v-if="form.nameErr" class="app-form__field-err">
+              {{ form.nameErr }}
+            </p>
+          </div>
 
-        <div class="app-form__field">
-          <label class="app-form__field-lbl"> Description </label>
-          <textarea
-            class="app-form__field-input"
-            name="data-source-description"
-            rows="5"
-            v-model="form.description"
-            :disabled="isLoading"
-          ></textarea>
-          <p v-if="form.descriptionErr" class="app-form__field-err">
-            {{ form.descriptionErr }}
-          </p>
-        </div>
+          <div class="app-form__field">
+            <label class="app-form__field-lbl"> Description </label>
+            <textarea
+              class="app-form__field-input"
+              name="data-source-description"
+              rows="5"
+              v-model="form.description"
+              :disabled="isLoading"
+              placeholder="Data Source Description"
+            ></textarea>
+            <p v-if="form.descriptionErr" class="app-form__field-err">
+              {{ form.descriptionErr }}
+            </p>
+          </div>
 
-        <div class="app-form__field">
-          <label class="app-form__field-lbl"> Executable (.py) </label>
-          <InputFile
-            class="app-form__field-input"
-            name="data-source-executable"
-            accept=".py"
-            v-model="form.executable"
-            :disabled="isLoading"
-          />
-          <p v-if="form.executableErr" class="app-form__field-err">
-            {{ form.executableErr }}
-          </p>
+          <div class="app-form__field">
+            <label class="app-form__field-lbl"> Price</label>
+            <input
+              class="app-form__field-input"
+              name="data-source-price"
+              v-model="form.price"
+              type="text"
+              :disabled="isLoading"
+              placeholder="Data source price"
+            />
+            <p v-if="form.priceErr" class="app-form__field-err">
+              {{ form.priceErr }}
+            </p>
+          </div>
+
+          <div class="app-form__field">
+            <InputFile
+              class="app-form__field-input"
+              name="data-source-executable"
+              accept=".py"
+              v-model="form.executable"
+              :disabled="isLoading"
+              :drag="true"
+            />
+            <p v-if="form.executableErr" class="app-form__field-err">
+              {{ form.executableErr }}
+            </p>
+          </div>
         </div>
 
         <div class="app-form__footer">
+          <button
+            class="app-btn app-btn_outlined"
+            type="button"
+            @click="onClose()"
+            :disabled="isLoading"
+          >
+            Cancel
+          </button>
           <button
             class="app-btn"
             type="button"
@@ -89,6 +116,7 @@ const DataSourceFormModal = defineComponent({
     const form = useForm({
       name: ['', validators.required],
       description: ['', validators.required],
+      price: ['', validators.required, ...validators.num(1)],
       executable: [null as File | null, validators.required],
     })
     const isLoading = ref(false)
@@ -106,7 +134,7 @@ const DataSourceFormModal = defineComponent({
           name: form.name.val(),
           description: form.description.val(),
           executable: executableParsed,
-          fee: coins(1, 'loki'),
+          fee: coins(Number(form.price.val()), 'loki'),
           owner: wallet.account.address,
           sender: wallet.account.address,
         })
@@ -135,7 +163,6 @@ const DataSourceFormModal = defineComponent({
 
     // TODO: remove fakeForm
     const _fakeForm = () => {
-      form.name.val('Data source ' + loremIpsum({ units: 'words', count: 3 }))
       form.description.val(loremIpsum({ units: 'sentences', count: 3 }))
     }
 

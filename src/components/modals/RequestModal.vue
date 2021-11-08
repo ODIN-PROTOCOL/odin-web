@@ -1,7 +1,7 @@
 <template>
   <ModalBase class="request-modal" @close="onClose()">
     <template #title>
-      <h3>
+      <h3 class="app-form__title">
         View request #{{ request.responsePacketData.requestId.toString() }}
       </h3>
     </template>

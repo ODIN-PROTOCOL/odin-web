@@ -9,6 +9,12 @@
   --clr__danger: #{$clr-danger};
   --clr__action-extra-muted: #{$clr-action-extra-muted};
 
+  // Buttons
+  --clr__btn-normal: #{$clr-btn-normal};
+  --clr__btn-hover: #{$clr-btn-hover};
+  --clr__btn-pressed: #{$clr-btn-pressed};
+  --clr__btn-disabled: #{$clr-btn-disabled};
+
   // Inputs
   --clr__input-bg: #{$clr-input-bg};
   --clr__input-bg-disabled: #{$clr-input-bg-disabled};
@@ -18,10 +24,37 @@
   --clr__table-border: #{$clr-table-border};
   --clr__table-row-hover: #{$clr-table-row-hover};
 
+  // Dropdown
+
   // Shadows
   --clr__dropdown-shadow: #{$clr-dropdown-shadow};
+  --clr__dropdown-link: #{$clr-dropdown-link};
 
   // Tips
   --clr__tooltip-bg: #{$clr-tooltip-bg};
   --clr__tooltip-text: #{$clr-tooltip-text};
+
+  // Modals
+  --clr__modal-backdrop-bg: #{$clr-modal-backdrop-bg};
+  --clr__modal-content-bg: #{$clr-modal-content-bg};
+  --clr__modal-content-shadow: #{$clr-modal-content-shadow};
+
+  // Scrollbar
+  --clr__scrollbar-thumb: #{$clr-scrollbar-thumb};
+  --clr__scrollbar-track: #{$clr-scrollbar-track};
+
+  // Progressbar
+  --clr__progressbar-track: #{$clr-progressbar-track};
+  --clr__progressbar-positive: #{$clr-progressbar-positive};
+  --clr__progressbar-negative: #{$clr-progressbar-negative};
+  
+  // Status
+  --clr__status-default: #{$clr-status-default};
+  --clr__status-success: #{$clr-status-success};
+  --clr__status-pending: #{$clr-status-pending};
+  --clr__status-error: #{$clr-status-error};
+  --clr__status-progress: #{$clr-status-progress};
+
+  // Chart
+  --clr__chart-default: #{$clr-chart-default};
 }

@@ -7,22 +7,27 @@ import { MsgExchange } from '@provider/codec/coinswap/tx'
 import { MsgDeposit, MsgVote } from '@provider/codec/cosmos/gov/v1beta1/tx'
 import { api } from './api'
 import { wallet } from './wallet'
-import { mapResponse, sendPost } from './callersHelpers'
+import { mapResponse, sendPost, sendGet } from './callersHelpers'
+import { cacheAnswers } from '@/helpers/requests'
 import { decodeRequestResults } from '@/helpers/requestResultDecoders'
-import { decodeProposals } from '@/helpers/proposalDecoders'
+import { decodeProposal, decodeProposals } from '@/helpers/proposalDecoders'
 import { decodeValidators } from '@/helpers/validatorDecoders'
+import { NumLike } from '@/helpers/casts'
 import { API_CONFIG } from './api-config'
 import {
   MsgCreateValidator,
   MsgDelegate,
   MsgUndelegate,
 } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/tx'
+import { Proposal } from '@provider/codec/cosmos/gov/v1beta1/gov'
 
 const makeCallers = () => {
   const broadcaster = api.makeBroadcastCaller.bind(api)
   const querier = api.makeQueryCaller.bind(api)
+  const tmQuerier = api.makeTendermintCaller.bind(api)
 
   return {
+    getCounts: querier((qc) => qc.oracle.unverified.counts),
     createDataSource: broadcaster<MsgCreateDataSource>(
       '/oracle.v1.MsgCreateDataSource',
       MsgCreateDataSource
@@ -47,7 +52,7 @@ const makeCallers = () => {
         }
       })
     ),
-
+    getRequest: querier((qc) => qc.oracle.unverified.request),
     getProposals: querier((qc) =>
       mapResponse(qc.gov.unverified.proposals, (response) => {
         return {
@@ -56,9 +61,20 @@ const makeCallers = () => {
         }
       })
     ),
+    getProposal: querier((qc) =>
+      mapResponse(qc.gov.unverified.proposal, (response) => {
+        return {
+          proposal: decodeProposal(response.proposal as Proposal),
+        }
+      })
+    ),
+    getReports: querier((qc) => qc.oracle.unverified.reporters),
     getProposalVote: querier((qc) => qc.gov.unverified.vote),
     getProposalVotes: querier((qc) => qc.gov.unverified.votes),
     getProposalTally: querier((qc) => qc.gov.unverified.tallyResult),
+    getProposer: (proposalId: NumLike) => {
+      return sendGet(`${API_CONFIG.api}/gov/proposals/${proposalId}/proposer`)
+    },
     proposalDeposit: broadcaster<MsgDeposit>(
       '/cosmos.gov.v1beta1.MsgDeposit',
       MsgDeposit
@@ -98,7 +114,10 @@ const makeCallers = () => {
         }
       })
     ),
-
+    getActiveValidators: querier((qc) => qc.oracle.unverified.activeValidators),
+    getValidator: querier((qc) => qc.staking.validator),
+    getValidatorStatus: querier((qc) => qc.oracle.unverified.validator),
+    getValidatorDelegations: querier((qc) => qc.staking.validatorDelegations),
     validatorDelegate: broadcaster<MsgDelegate>(
       '/cosmos.staking.v1beta1.MsgDelegate',
       MsgDelegate
@@ -119,6 +138,9 @@ const makeCallers = () => {
         denom: req.denom,
       })
     },
+    getTxSearch: cacheAnswers(tmQuerier((tc) => tc.txSearch.bind(tc))),
+    getBlockchain: tmQuerier((tc) => tc.blockchain.bind(tc)),
+    getBlock: cacheAnswers(tmQuerier((tc) => tc.block.bind(tc))),
   }
 }
 

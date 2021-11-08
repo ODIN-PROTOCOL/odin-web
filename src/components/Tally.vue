@@ -14,6 +14,7 @@ export default defineComponent({
     tally: { type: Object as PropType<TallyResult>, required: true },
     isTitled: { type: Boolean, default: false },
     isShort: { type: Boolean, default: false },
+    onlyYes: { type: Boolean, default: false },
   },
   setup(props) {
     const tally = toRef(props, 'tally')
@@ -33,6 +34,7 @@ export default defineComponent({
 
     const translated = computed(() => {
       if (!props.tally) return 'N/A'
+      if (props.onlyYes) return _getTallyProgress().yes
       return props.isShort ? _getShort() : _getLong()
     })
 

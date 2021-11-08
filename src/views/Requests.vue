@@ -1,112 +1,184 @@
 <template>
   <div class="requests view-main">
-    <div class="fx-row mg-b32">
+    <div class="page-title fx-row">
       <h2 class="view-title">Requests</h2>
+      <button
+        class="
+          app-btn app-btn_small
+          create-request-btn create-request-btn_top
+          fx-sae
+        "
+        type="button"
+        @click="createRequest()"
+      >
+        Create Request
+      </button>
     </div>
 
-    <div class="app-table">
-      <div class="requests__table-head app-table__head">
-        <div class="app-table__cell">
-          <span class="app-table__cell-txt"> ID </span>
-        </div>
-        <div class="app-table__cell">
-          <span class="app-table__cell-txt"> Script ID </span>
-        </div>
-        <div class="app-table__cell">
-          <span class="app-table__cell-txt"> Ans. Count </span>
-        </div>
-        <div class="app-table__cell">
-          <span class="app-table__cell-txt"> Requested at</span>
-        </div>
-        <div class="app-table__cell">
-          <span class="app-table__cell-txt"> Resolved at</span>
-        </div>
-        <div class="app-table__cell">
-          <span class="app-table__cell-txt"> Status </span>
-        </div>
+    <template v-if="requestsCount">
+      <div class="requests__count-info fx-row">
+        <p>{{ requestsCount }} requests found</p>
       </div>
-      <template v-if="requests?.length">
-        <button
-          v-for="item in requests"
-          :key="item.responsePacketData.requestId.toString()"
-          class="app-table__row-btn"
-          type="button"
-          @click="showRequest(item)"
-        >
-          <div class="requests__table-row app-table__row">
+    </template>
+
+    <div class="app-table">
+      <div class="app-table__head">
+        <span>Request ID</span>
+        <span>Sender</span>
+        <span>Oracle Script ID</span>
+        <span>Report Status</span>
+        <span>Timestamp</span>
+      </div>
+      <div class="table__body">
+        <template v-if="requests?.length">
+          <div
+            v-for="item in requests"
+            :key="item.responsePacketData.requestId.toString()"
+            class="app-table__row"
+          >
             <div class="app-table__cell">
-              <TitledSpan
-                class="app-table__cell-txt"
+              <span class="app-table__title">Request ID</span>
+              <TitledLink
+                class="app-table__cell-txt app-table__link"
                 :text="item.responsePacketData.requestId.toString()"
+                :to="`/requests/${item.responsePacketData.requestId}`"
               />
             </div>
             <div class="app-table__cell">
-              <TitledSpan
-                class="app-table__cell-txt"
+              <span class="app-table__title">Sender</span>
+              <TitledLink
+                class="app-table__cell-txt app-table__link"
+                :text="item.requestPacketData.clientId.toString()"
+              />
+            </div>
+            <div class="app-table__cell">
+              <span class="app-table__title">Oracle Script ID</span>
+              <TitledLink
+                class="app-table__cell-txt app-table__link"
                 :text="item.requestPacketData.oracleScriptId.toString()"
               />
             </div>
             <div class="app-table__cell">
-              <TitledSpan
-                class="app-table__cell-txt"
-                :text="item.responsePacketData.ansCount.toString()"
+              <span class="app-table__title">Report Status</span>
+              <Progressbar
+                :min="Number(item.requestPacketData.minCount)"
+                :max="Number(item.requestPacketData.askCount)"
+                :current="Number(item.responsePacketData.ansCount)"
               />
             </div>
             <div class="app-table__cell">
-              <TitledSpan
-                class="app-table__cell-txt"
-                :text="$fDate(item.responsePacketData.requestTime)"
-              />
-            </div>
-            <div class="app-table__cell">
-              <TitledSpan
-                class="app-table__cell-txt"
-                :text="$fDate(item.responsePacketData.resolveTime)"
-              />
-            </div>
-            <div class="app-table__cell">
-              <TitledSpan
-                class="app-table__cell-txt"
-                :text="$tRequestStatus(item.responsePacketData.resolveStatus)"
-              />
+              <span class="app-table__title">Timestamp</span>
+              <span>{{ $fDate(item.responsePacketData.requestTime) }}</span>
             </div>
           </div>
-        </button>
-      </template>
-      <template v-else>
-        <div class="app-table__row">
-          <p class="app-table__empty-stub">No items yet</p>
-        </div>
-      </template>
+        </template>
+        <template v-else>
+          <div class="app-table__empty-stub">
+            <p>No items yet</p>
+          </div>
+        </template>
+      </div>
     </div>
+
+    <template v-if="requestsCount > ITEMS_PER_PAGE">
+      <Pagination
+        @changePageNumber="paginationHandler($event)"
+        :blocksPerPage="ITEMS_PER_PAGE"
+        :total-length="requestsCount"
+      />
+    </template>
+
+    <button
+      class="app-btn create-request-btn create-request-btn_bottom fx-sae"
+      type="button"
+      @click="createRequest()"
+    >
+      Create Request
+    </button>
   </div>
 </template>
 
 <script lang="ts">
+import { defineComponent, ref, onMounted } from 'vue'
 import { callers } from '@/api/callers'
-import { showRequestDialog } from '@/components/modals/RequestModal.vue'
-import TitledSpan from '@/components/TitledSpan.vue'
-import { RequestResultDecoded } from '@/helpers/requestResultDecoders'
-import { defineComponent, ref } from 'vue'
+import { showRequestFormDialog } from '@/components/modals/RequestFormModal.vue'
+import TitledLink from '@/components/TitledLink.vue'
+import Progressbar from '@/components/Progressbar.vue'
+import Pagination from '@/components/pagination/pagination.vue'
 
 export default defineComponent({
-  components: { TitledSpan },
+  components: { TitledLink, Progressbar, Pagination },
   setup() {
+    const ITEMS_PER_PAGE = 5
+    const currentPage = ref(1)
     const requests = ref()
-    const loadRequests = async () => {
-      const response = await callers.getRequests(100)
-      console.debug('Requests:', response)
-      requests.value = response.requests
-    }
-    loadRequests()
+    const requestsCount = ref()
 
-    const showRequest = (request: RequestResultDecoded) => {
-      showRequestDialog({}, { request })
+    const getRequests = async () => {
+      const res = await callers.getRequests(
+        ITEMS_PER_PAGE,
+        (currentPage.value - 1) * ITEMS_PER_PAGE
+      )
+      requests.value = res.requests
+      await getRequestsCount()
     }
 
-    return { requests, showRequest }
+    const getRequestsCount = async () => {
+      const res = await callers.getCounts()
+      requestsCount.value = res.requestCount.toNumber()
+    }
+
+    const createRequest = async () => {
+      showRequestFormDialog({
+        onSubmit: (d) => {
+          d.kill()
+          getRequests()
+        },
+      })
+    }
+
+    const paginationHandler = (num: number) => {
+      currentPage.value = num
+      getRequests()
+    }
+
+    onMounted(async () => {
+      await getRequests()
+    })
+
+    return {
+      ITEMS_PER_PAGE,
+      requests,
+      requestsCount,
+      createRequest,
+      paginationHandler,
+    }
   },
 })
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.requests__count-info {
+  margin-bottom: 3.2rem;
+
+  @media screen and (max-width: 768px) {
+    margin-bottom: 0;
+  }
+}
+
+.create-request-btn {
+  &_bottom {
+    display: none;
+    width: 100%;
+    @media screen and (max-width: 768px) {
+      display: block;
+    }
+  }
+  &_top {
+    display: block;
+    @media screen and (max-width: 768px) {
+      display: none;
+    }
+  }
+}
+</style>

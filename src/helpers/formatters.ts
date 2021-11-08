@@ -8,7 +8,11 @@ import {
   isThisMonth,
   isThisYear,
 } from './dates'
-import { format as _formatDate } from 'date-fns'
+import {
+  format as _formatDate,
+  differenceInHours,
+  differenceInDays,
+} from 'date-fns'
 import Long from 'long'
 
 const NBSP = '\u00A0'
@@ -75,7 +79,7 @@ export function formatDate(
   input: Long.Long | Date | number,
   format: string | DateFormatObject = {
     default: 'MMM d, yyyy, HH:mm',
-    thisYear: 'MMM d, HH:mm',
+    thisYear: 'HH:mm dd.MM.yy',
   }
 ): string {
   try {
@@ -118,4 +122,29 @@ function _tryInsertToday(input: Date | number, format: string): string {
   // TODO: currently matches only en format
   const dayTokenRe = /M{1,}\s?d[od]?,/
   return format.replace(dayTokenRe, relDay)
+}
+
+export function formatDateDifference(
+  dateLeft: Long.Long | Date | number
+): string {
+  try {
+    if (Long.isLong(dateLeft)) dateLeft = dateLeft.toNumber() * 1000
+    return _getDateDifference(dateLeft)
+  } catch (err) {
+    console.error(err)
+    return '—'
+  }
+}
+
+function _getDateDifference(dateLeft: Date | number): string {
+  const hourRange = Math.abs(differenceInHours(dateLeft, new Date()))
+
+  if (hourRange <= 1) {
+    return `${hourRange} hour ago`
+  } else if (hourRange < 48) {
+    return `${hourRange} hours ago`
+  } else {
+    const dayRange = Math.abs(differenceInDays(dateLeft, new Date()))
+    return `${dayRange} days ago`
+  }
 }

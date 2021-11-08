@@ -38,6 +38,7 @@ async function _main() {
     /* webpackChunkName: "app-entry" */ './App.vue'
   )
   const app = createApp(appModule.default)
+  app.config.performance = true
   app.config.globalProperties.$cropAddress = cropAddress
   app.config.globalProperties.$fCoin = formatCoin
   app.config.globalProperties.$preciseAsPercents = preciseAsPercents
@@ -45,7 +46,8 @@ async function _main() {
   app.config.globalProperties.$fDate = formatDate
   app.config.globalProperties.$tRequestStatus = translateRequestStatus
   app.config.globalProperties.$tProposalStatus = translateProposalStatus
-  app.config.globalProperties.$tProposalStatusDated = translateProposalStatusDated
+  app.config.globalProperties.$tProposalStatusDated =
+    translateProposalStatusDated
   app.config.globalProperties.$tTally = translateTally
   app.config.globalProperties.$tTallyShort = translateTallyShort
   app.config.globalProperties.$tVote = translateVote

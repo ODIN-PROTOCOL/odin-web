@@ -29,7 +29,11 @@
                 class="app-form__field app-form__field--wait"
               >
                 <transition name="fade" mode="out-in">
-                  <span :key="metaLoadingText">
+                  <span
+                    class="app-form__field--wait-text"
+                    :key="metaLoadingText"
+                  >
+                    <span class="empty-loading loading"></span>
                     {{ metaLoadingText }}
                   </span>
                 </transition>
@@ -40,7 +44,9 @@
                     You Balance (ODIN)
                   </label>
                   <input
-                    class="app-form__field-input app-form__field-input--disabled"
+                    class="
+                      app-form__field-input app-form__field-input--disabled
+                    "
                     type="text"
                     v-model="odinBalanceOnProvider"
                     disabled
@@ -53,7 +59,9 @@
                     }})
                   </label>
                   <input
-                    class="app-form__field-input app-form__field-input--disabled"
+                    class="
+                      app-form__field-input app-form__field-input--disabled
+                    "
                     type="text"
                     :value="maxWithdrawalPerTime.amount"
                     disabled
@@ -75,7 +83,9 @@
                     Expected amount (LOKI)
                   </label>
                   <input
-                    class="app-form__field-input app-form__field-input--disabled"
+                    class="
+                      app-form__field-input app-form__field-input--disabled
+                    "
                     type="text"
                     :value="expectedAmount"
                     disabled
@@ -151,7 +161,10 @@ const MetaMaskFormModal = defineComponent({
 
     const _calcExpected = memoize((value: NumLike | null): BigNumber | null => {
       if (!value) return null
-      return big.multiply(value, big.fromPrecise(props.odinToLokiRate.rate))
+      return big.multiply(
+        value,
+        big.fromPrecise(props.odinToLokiRate.rate)
+      )
     })
 
     const form = useForm({
@@ -186,7 +199,7 @@ const MetaMaskFormModal = defineComponent({
 
     watch(() => form.amount.val(), _reCalcNetAndExpected)
 
-    const isLoading = ref<boolean>(false)
+    const isLoading = ref(false)
     const onClose: DecoratedFn<DialogPayloadHandler> = preventIf(
       dialogs.getHandler('onClose'),
       isLoading

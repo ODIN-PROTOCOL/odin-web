@@ -42,11 +42,13 @@ type OdinQueryClient = QueryClient &
 
 class Api {
   private _query: OdinQueryClient = stub('Query not initialized!')
+  private _tendermint: Tendermint34Client = stub('Tendermint not initialized!')
   private _wallet: OdinWallet = stub('Wallet not initialized!')
   private _stargate: SigningStargateClient = stub('Stargate not initialized!')
   private _stargateRegistry = new Registry()
 
   async init() {
+    await this._initTendermint()
     await this._initQueryClient()
   }
 
@@ -84,9 +86,21 @@ class Api {
     return make(this._query)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  makeTendermintCaller<T extends (...args: any) => any>(
+    make: (tc: Tendermint34Client) => T
+  ): T {
+    return make(this._tendermint)
+  }
+
+  private async _initTendermint(): Promise<void> {
+    this._tendermint = await Tendermint34Client.connect(API_CONFIG.rpc)
+  }
+
   private async _initQueryClient(): Promise<void> {
     this._query = QueryClient.withExtensions(
-      await Tendermint34Client.connect(API_CONFIG.rpc),
+      this._tendermint,
+      // await Tendermint34Client.connect(API_CONFIG.rpc),
       setupCoinswapExt,
       setupGovExt,
       setupMintExt,
