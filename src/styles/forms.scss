@@ -109,6 +109,23 @@
     }
   }
 
+  &__field-input-wrapper {
+    position: relative;
+
+    .app-form__field-input {
+      padding: 0.8rem 5rem 0.8rem 1.2rem;
+    }
+
+    span {
+      position: absolute;
+      top: 50%;
+      right: 1rem;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: var(--clr__text-muted);
+    }
+  }
+
   &__field-note {
     display: block;
     color: var(--clr__text-muted);

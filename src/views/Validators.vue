@@ -84,7 +84,7 @@
                     Withdraw stake
                   </button>
                   <button
-                    class="app-btn app-btn_small"
+                    class="app-btn app-btn_small mg-l24"
                     type="button"
                     @click="delegate(item)"
                   >
@@ -200,7 +200,7 @@ export default defineComponent({
         filteredValidatorsCount.value = validators.value.length
         filterValidators(currentPage.value)
       } catch (error) {
-        handleError(error)
+        handleError(error as Error)
       }
       releaseLoading()
     }
@@ -276,12 +276,16 @@ export default defineComponent({
     }
 
     const withdraw = (validator: ValidatorDecoded) => {
-      showWithdrawFormDialog({
-        onSubmit: (d) => {
-          d.kill()
-          console.log(validator)
+      showWithdrawFormDialog(
+        {
+          onSubmit: (d) => {
+            d.kill()
+            getValidators()
+            getDelegations()
+          },
         },
-      })
+        { validator }
+      )
     }
 
     const delegate = (validator: ValidatorDecoded) => {

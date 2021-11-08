@@ -12,16 +12,19 @@
       >
         <div class="app-form__main">
           <div class="app-form__field">
-            <label class="app-form__field-lbl"> Amount (ODIN) </label>
-            <input
-              class="app-form__field-input"
-              name="delegate-amount"
-              type="number"
-              min="1"
-              placeholder="1000"
-              v-model="form.amount"
-              :disabled="isLoading"
-            />
+            <label class="app-form__field-lbl">Amount</label>
+            <div class="app-form__field-input-wrapper">
+              <span>LOKI</span>
+              <input
+                class="app-form__field-input"
+                name="delegate-amount"
+                type="number"
+                min="1"
+                placeholder="1000"
+                v-model="form.amount"
+                :disabled="isLoading"
+              />
+            </div>
             <p v-if="form.amountErr" class="app-form__field-err">
               {{ form.amountErr }}
             </p>
@@ -44,19 +47,33 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, PropType, ref } from 'vue'
+import { wallet } from '@/api/wallet'
+import { callers } from '@/api/callers'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
+import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { useForm, validators } from '@/composables/useForm'
+import { coins } from '@cosmjs/amino'
 import ModalBase from './ModalBase.vue'
+import { Bech32 } from '@cosmjs/encoding'
 
 const WithdrawFormDialog = defineComponent({
+  props: {
+    validator: { type: Object as PropType<ValidatorDecoded>, required: true },
+  },
   components: { ModalBase },
-  setup() {
+  setup(props) {
     const form = useForm({
-      amount: ['', validators.required, ...validators.num(1)],
+      amount: [
+        1,
+        validators.required,
+        validators.integer,
+        ...validators.num(1),
+        validators.maxCharacters(128),
+      ],
     })
     const isLoading = ref(false)
     const onSubmit = dialogs.getHandler('onSubmit')
@@ -64,11 +81,16 @@ const WithdrawFormDialog = defineComponent({
     const submit = async () => {
       isLoading.value = true
       try {
-        // TODO submit withdraw stake
+        const encodedAddress = Bech32.decode(props.validator.operatorAddress)
+        await callers.withdrawCoinsToAcc({
+          sender: wallet.account.address,
+          receiver: Bech32.encode('odin', encodedAddress.data),
+          amount: coins(form.amount.val(), 'loki'),
+        })
         onSubmit()
-        notifySuccess('Successfully delegated')
+        notifySuccess('Successfully withdrawn')
       } catch (error) {
-        handleError(error)
+        handleError(error as Error)
       }
       isLoading.value = false
     }
@@ -83,11 +105,14 @@ const WithdrawFormDialog = defineComponent({
 })
 
 export default WithdrawFormDialog
-export function showWithdrawFormDialog(callbacks: {
-  onSubmit?: DialogHandler
-  onClose?: DialogHandler
-}): Promise<unknown | null> {
-  return dialogs.show(WithdrawFormDialog, callbacks)
+export function showWithdrawFormDialog(
+  callbacks: {
+    onSubmit?: DialogHandler
+    onClose?: DialogHandler
+  },
+  props: { validator: ValidatorDecoded }
+): Promise<unknown | null> {
+  return dialogs.show(WithdrawFormDialog, callbacks, { props })
 }
 </script>
 
