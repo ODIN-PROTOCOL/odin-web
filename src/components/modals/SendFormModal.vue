@@ -132,7 +132,7 @@
 <script lang="ts">
 import { defineComponent, ref, PropType } from 'vue'
 import { callers } from '@/api/callers'
-import { coin } from '@cosmjs/amino'
+import { coins } from '@cosmjs/amino'
 import { wallet } from '@/api/wallet'
 import { useForm, validators } from '@/composables/useForm'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
@@ -181,7 +181,7 @@ const SendFormModal = defineComponent({
         await callers.createSend({
           fromAddress: wallet.account.address,
           toAddress: form.receiver.val(),
-          amount: [coin(Number(form.amount.val()), sendAsset.value)],
+          amount: coins(Number(form.amount.val()), sendAsset.value),
         })
         onSubmit()
         notifySuccess('Successfully sent')

@@ -56,8 +56,9 @@ import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
 import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { useForm, validators } from '@/composables/useForm'
-import { coin } from '@cosmjs/amino'
+import { coins } from '@cosmjs/amino'
 import ModalBase from './ModalBase.vue'
+import { Bech32 } from '@cosmjs/encoding'
 
 const WithdrawFormDialog = defineComponent({
   props: {
@@ -80,10 +81,11 @@ const WithdrawFormDialog = defineComponent({
     const submit = async () => {
       isLoading.value = true
       try {
+        const encodedAddress = Bech32.decode(props.validator.operatorAddress)
         await callers.withdrawCoinsToAcc({
           sender: wallet.account.address,
-          receiver: props.validator.operatorAddress,
-          amount: [coin(form.amount.val(), 'loki')],
+          receiver: Bech32.encode('odin', encodedAddress.data),
+          amount: coins(form.amount.val(), 'loki'),
         })
         onSubmit()
         notifySuccess('Successfully withdrawn')
