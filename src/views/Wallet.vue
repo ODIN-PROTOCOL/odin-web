@@ -52,10 +52,6 @@
       </div>
     </div>
 
-    <!-- <h3 class="view-subtitle mg-b24">
-      Transaction list
-      <span class="tooltip">Based on last 500 transactions in system</span>
-    </h3> -->
     <div class="view-subtitle mg-b24">
       <span class="subtitle">Transaction list</span>
       <span class="tooltip">Based on last 100 transactions in system</span>
@@ -80,10 +76,12 @@
           >
             <div class="app-table__cell">
               <span class="app-table__title">Transaction hash</span>
-              <TitledLink
+              <a
                 class="app-table__cell-txt app-table__link"
-                :text="`0x${item.hash}`"
-              />
+                :href="`${API_CONFIG.odinScan}/transactions/${item.block}/${item.hash}`"
+              >
+                {{ `0x${item.hash}` }}
+              </a>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Type</span>
@@ -91,10 +89,12 @@
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Block</span>
-              <TitledLink
+              <a
                 class="app-table__cell-txt app-table__link"
-                :text="item.block.toString()"
-              />
+                :href="`${API_CONFIG.odinScan}/blocks/${item.block}`"
+              >
+                {{ item.block.toString() }}
+              </a>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Date and time</span>
@@ -102,17 +102,25 @@
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Sender</span>
-              <TitledLink
+              <a
                 class="app-table__cell-txt app-table__link"
-                :text="item.sender"
-              />
+                :href="`${API_CONFIG.odinScan}/${generateAddrLink(
+                  item.sender
+                )}`"
+              >
+                {{ item.sender }}
+              </a>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Receiver</span>
-              <TitledLink
+              <a
                 class="app-table__cell-txt app-table__link"
-                :text="item.receiver"
-              />
+                :href="`${API_CONFIG.odinScan}/${generateAddrLink(
+                  item.receiver
+                )}`"
+              >
+                {{ item.receiver }}
+              </a>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Amount</span>
@@ -148,7 +156,6 @@
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from 'vue'
 import { callers } from '@/api/callers'
-import TitledLink from '@/components/TitledLink.vue'
 import Pagination from '@/components/pagination/pagination.vue'
 import { wallet } from '@/api/wallet'
 import { prepareTransaction } from '@/helpers/helpers'
@@ -157,11 +164,14 @@ import { useBalances } from '@/composables/useBalances'
 import { adjustedData } from '@/helpers/Types'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
+import { WalletRate } from '@/helpers/Types'
+import { Coin } from '@cosmjs/amino'
 import { showReceiveDialog } from '@/components/modals/ReceiveModal.vue'
 import { showExchangeFormDialog } from '@/components/modals/ExchangeFormModalWallet.vue'
+import { showSendFormDialog } from '@/components/modals/SendFormModal.vue'
 
 export default defineComponent({
-  components: { TitledLink, Pagination },
+  components: { Pagination },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 5
@@ -244,6 +254,14 @@ export default defineComponent({
       filterTransactions(num)
     }
 
+    const generateAddrLink = (addr: string) => {
+      if (addr.includes('odinvaloper')) {
+        return `validators/${addr}`
+      } else {
+        return `account/${addr}`
+      }
+    }
+
     const receive = () => {
       showReceiveDialog({
         onSubmit: (d) => {
@@ -260,6 +278,21 @@ export default defineComponent({
           console.log('exchange')
         },
       })
+    }
+
+    const send = () => {
+      showSendFormDialog(
+        {
+          onSubmit: (d) => {
+            d.kill()
+            console.log('Send')
+          },
+        },
+        {
+          rate: rate.value as WalletRate,
+          balance: [lokiCoins.value as Coin],
+        }
+      )
     }
 
     onMounted(async () => {
@@ -283,8 +316,10 @@ export default defineComponent({
       isLoading,
       lokiCoins,
       paginationHandler,
+      generateAddrLink,
       receive,
       exchange,
+      send,
     }
   },
 })
@@ -297,6 +332,8 @@ export default defineComponent({
   gap: 2.4rem;
 
   &__card {
+    display: flex;
+    flex-direction: column;
     width: 39rem;
     padding: 3.2rem 2.4rem;
     border: 1px solid var(--clr__action);
@@ -329,8 +366,17 @@ export default defineComponent({
       width: 100%;
     }
 
-    // TODO uncomment when activities will be ready
-    // &-activities {}
+    &-activities {
+      display: flex;
+      margin-top: auto;
+
+      &_full {
+        gap: 2.4rem;
+        & > * {
+          flex: 1;
+        }
+      }
+    }
   }
 
   @include respond-to(sm) {
