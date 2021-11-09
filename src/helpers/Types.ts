@@ -28,3 +28,12 @@ export type ChartDataItem = {
   count: number
   color: string
 }
+
+type USD = {
+  usd: number
+}
+
+export type WalletRate = {
+  geodb: USD
+  'odin-protocol': USD
+}

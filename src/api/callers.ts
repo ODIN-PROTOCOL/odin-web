@@ -1,3 +1,5 @@
+import { MsgWithdrawCoinsToAccFromTreasury } from '@provider/codec/mint/tx'
+import { MsgSend } from '@cosmjs/stargate/build/codec/cosmos/bank/v1beta1/tx'
 import {
   MsgCreateDataSource,
   MsgCreateOracleScript,
@@ -98,6 +100,7 @@ const makeCallers = () => {
     }) => {
       return sendPost(`${API_CONFIG.exBridge}/bsc/exchange`, req)
     },
+    createSend: broadcaster<MsgSend>('/cosmos.bank.v1beta1.MsgSend', MsgSend),
     getRate: querier((qc) => qc.coinswap.unverified.rate),
     getTreasuryPool: querier((qc) => qc.mint.unverified.treasuryPool),
     getTotalSupply: querier((qc) => qc.bank.totalSupply),
@@ -127,6 +130,10 @@ const makeCallers = () => {
       MsgUndelegate
     ),
     getDelegations: querier((qc) => qc.staking.delegatorDelegations),
+    withdrawCoinsToAcc: broadcaster<MsgWithdrawCoinsToAccFromTreasury>(
+      '/mint.MsgWithdrawCoinsToAccFromTreasury',
+      MsgWithdrawCoinsToAccFromTreasury
+    ),
     getParams: querier((qc) => qc.mint.unverified.params),
     faucetRequest: (req: { denom: string }) => {
       console.log({
