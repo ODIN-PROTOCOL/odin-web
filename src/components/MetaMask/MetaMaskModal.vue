@@ -45,7 +45,9 @@
                   </label>
                   <input
                     class="
-                      app-form__field-input app-form__field-input--disabled
+                      app-form__field-input
+                      app-form__field-input--disabled
+                      app-form__field-input--disabled-no_border
                     "
                     type="text"
                     v-model="odinBalanceOnProvider"
@@ -161,10 +163,7 @@ const MetaMaskFormModal = defineComponent({
 
     const _calcExpected = memoize((value: NumLike | null): BigNumber | null => {
       if (!value) return null
-      return big.multiply(
-        value,
-        big.fromPrecise(props.odinToLokiRate.rate)
-      )
+      return big.multiply(value, big.fromPrecise(props.odinToLokiRate.rate))
     })
 
     const form = useForm({
@@ -226,7 +225,7 @@ const MetaMaskFormModal = defineComponent({
     ): Promise<TransactionReceipt> => {
       return new Promise((resolve, reject) => {
         contracts.odin.methods
-          .approve(account.value as string, amount.toString())
+          .approve(account.value as string, big.toStrStrict(amount))
           .send()
           .on('receipt', (_) => resolve(_))
           .on('error', (err) => reject(err))
@@ -240,7 +239,7 @@ const MetaMaskFormModal = defineComponent({
           .deposit(
             wallet.account.address,
             contracts.odin.options.address,
-            amount.toString()
+            big.toStrStrict(amount)
           )
           .send()
           .on('receipt', (event) => resolve(event))
@@ -300,7 +299,7 @@ const MetaMaskFormModal = defineComponent({
         }
       },
       onProviderUndetected: async (): Promise<void> => {
-        console.log('onProviderUndetected')
+        console.debug('onProviderUndetected')
       },
     })
 

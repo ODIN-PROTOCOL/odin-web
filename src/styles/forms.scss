@@ -107,6 +107,11 @@
     &::placeholder {
       @include input-placeholder;
     }
+    &--disabled {
+      &-no_border {
+        border: 1px solid transparent;
+      }
+    }
   }
 
   &__field-input-wrapper {
