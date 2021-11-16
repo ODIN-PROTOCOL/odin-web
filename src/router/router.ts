@@ -30,6 +30,15 @@ const routes: Array<RouteRecordRaw> = [
       import(/* webpackChunkName: "data-sources" */ '../views/DataSources.vue'),
   },
   {
+    path: '/data-sources/:id',
+    name: 'DataSource',
+    beforeEnter: authorizedOnlyGuard,
+    component: () =>
+      import(
+        /* webpackChunkName: "data-source" */ '../views/DataSourcesItem.vue'
+      ),
+  },
+  {
     path: '/oracle-scripts',
     name: 'OracleScripts',
     beforeEnter: authorizedOnlyGuard,

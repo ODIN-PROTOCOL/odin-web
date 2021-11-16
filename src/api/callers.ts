@@ -35,7 +35,7 @@ const makeCallers = () => {
       MsgCreateDataSource
     ),
     getDataSources: querier((qc) => qc.oracle.unverified.dataSources),
-
+    getDataSource: querier((qc) => qc.oracle.unverified.dataSource),
     createOracleScript: broadcaster<MsgCreateOracleScript>(
       '/oracle.v1.MsgCreateOracleScript',
       MsgCreateOracleScript
