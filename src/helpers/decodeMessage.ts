@@ -1,4 +1,5 @@
 import { MsgWithdrawCoinsToAccFromTreasury } from '@provider/codec/mint/tx'
+import { MsgExchange } from '@provider/codec/coinswap/tx'
 import {
   MsgSubmitProposal,
   MsgVote,
@@ -16,6 +17,8 @@ import {
   MsgAddReporter,
   MsgCreateDataSource,
   MsgCreateOracleScript,
+  MsgReportData,
+  MsgRequestData,
 } from '@provider/codec/oracle/v1/tx'
 import { callers } from '@/api/callers'
 import { Tx } from '@cosmjs/stargate/build/codec/cosmos/tx/v1beta1/tx'
@@ -58,6 +61,9 @@ export function humanizeMessageType(type: string): string {
     case '/cosmos.bank.v1beta1.MsgSend':
       return 'Send'
 
+    case '/coinswap.MsgExchange':
+      return 'Exchange'
+
     case '/cosmos.staking.v1beta1.MsgUndelegate':
       return 'Undelegate'
 
@@ -72,6 +78,12 @@ export function humanizeMessageType(type: string): string {
 
     case '/oracle.v1.MsgAddReporter':
       return 'Add Reporter'
+
+    case '/oracle.v1.MsgRequestData':
+      return 'Request data'
+
+    case '/oracle.v1.MsgReportData':
+      return 'Report data'
 
     case '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward':
       return 'Withdraw delegator reward'
@@ -91,9 +103,12 @@ function decodeMessage(obj: {
   | MsgDelegate
   | MsgUndelegate
   | MsgSend
+  | MsgExchange
   | MsgVote
   | MsgSubmitProposal
   | MsgAddReporter
+  | MsgRequestData
+  | MsgReportData
   | MsgActivate
   | MsgCreateOracleScript
   | MsgCreateDataSource {
@@ -122,6 +137,9 @@ function decodeMessage(obj: {
     case '/cosmos.bank.v1beta1.MsgSend':
       return MsgSend.decode(obj.value)
 
+    case '/coinswap.MsgExchange':
+      return MsgExchange.decode(obj.value)
+
     case '/oracle.v1.MsgActivate':
       return MsgActivate.decode(obj.value)
 
@@ -133,6 +151,12 @@ function decodeMessage(obj: {
 
     case '/oracle.v1.MsgAddReporter':
       return MsgAddReporter.decode(obj.value)
+
+    case '/oracle.v1.MsgRequestData':
+      return MsgRequestData.decode(obj.value)
+
+    case '/oracle.v1.MsgReportData':
+      return MsgReportData.decode(obj.value)
 
     case '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward':
       return MsgWithdrawDelegatorReward.decode(obj.value)
