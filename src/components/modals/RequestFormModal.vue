@@ -31,9 +31,6 @@
               class="app-form__field-input"
               name="request-ask-count"
               type="number"
-              min="1"
-              max="10"
-              step="1"
               v-model="form.askCount"
               :disabled="isLoading"
             />
@@ -48,9 +45,6 @@
               class="app-form__field-input"
               name="request-min-count"
               type="number"
-              min="1"
-              max="10"
-              step="1"
               v-model="form.minCount"
               :disabled="isLoading"
             />
@@ -138,12 +132,23 @@ import { coins } from '@cosmjs/launchpad'
 import phones from '@/assets/phones.json'
 
 const RequestFormModal = defineComponent({
+  props: {
+    maxAskCount: { type: Number, required: true },
+  },
   components: { ModalBase, VuePicker, VuePickerOption },
-  setup() {
+  setup(props) {
     const form = useForm({
       oracleScriptId: ['', validators.required],
-      askCount: ['1', validators.required, ...validators.num(1, 10)],
-      minCount: ['1', validators.required, ...validators.num(1, 10)],
+      askCount: [
+        1,
+        validators.required,
+        ...validators.num(1, props.maxAskCount),
+      ],
+      minCount: [
+        1,
+        validators.required,
+        ...validators.num(1, props.maxAskCount),
+      ],
       calldata: ['', validators.required],
       feeLimit: ['1', validators.required, ...validators.num(1)],
     })
@@ -156,8 +161,8 @@ const RequestFormModal = defineComponent({
       try {
         await callers.createRequest({
           oracleScriptId: Long.fromString(form.oracleScriptId.val()),
-          askCount: Long.fromString(form.askCount.val()),
-          minCount: Long.fromString(form.minCount.val()),
+          askCount: Long.fromNumber(form.askCount.val()),
+          minCount: Long.fromNumber(form.minCount.val()),
           // TODO: clarify calldata
           // calldata: obiPhoneModels(form.calldata.val()),
           calldata: obiCoin.encode({
@@ -172,9 +177,9 @@ const RequestFormModal = defineComponent({
         })
 
         onSubmit()
-        notifySuccess('Oracle Script created')
+        notifySuccess('Request created')
       } catch (error) {
-        handleError(error)
+        handleError(error as Error)
       }
       isLoading.value = false
     }
@@ -190,11 +195,14 @@ const RequestFormModal = defineComponent({
 })
 
 export default RequestFormModal
-export function showRequestFormDialog(callbacks: {
-  onSubmit?: DialogHandler
-  onClose?: DialogHandler
-}): Promise<unknown | null> {
-  return dialogs.show(RequestFormModal, callbacks)
+export function showRequestFormDialog(
+  callbacks: {
+    onSubmit?: DialogHandler
+    onClose?: DialogHandler
+  },
+  props: { maxAskCount: number }
+): Promise<unknown | null> {
+  return dialogs.show(RequestFormModal, callbacks, { props })
 }
 </script>
 

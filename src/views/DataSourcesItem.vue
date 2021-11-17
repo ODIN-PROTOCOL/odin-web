@@ -89,45 +89,6 @@ export default defineComponent({
   margin: 0 1.6rem 0 2rem;
 }
 
-.info-card {
-  display: flex;
-  flex-direction: column;
-  width: 70.5rem;
-  padding: 3.2rem 2.4rem;
-  border: 1px solid var(--clr__action);
-  border-radius: 0.8rem;
-
-  &__content {
-    & > *:not(:last-child) {
-      margin-bottom: 2.4rem;
-    }
-  }
-
-  &__row {
-    display: flex;
-    flex-direction: row;
-    gap: 2.4rem;
-
-    &-title {
-      display: inline-block;
-      min-width: 10rem;
-    }
-
-    &-value {
-      font-weight: 600;
-
-      &_txt {
-        @include ellipsis();
-      }
-    }
-
-    &-link {
-      text-decoration: none;
-      color: var(--clr__action);
-    }
-  }
-}
-
 .empty-msg {
   text-align: center;
 }
@@ -135,10 +96,6 @@ export default defineComponent({
 @media screen and (max-width: 768px) {
   .view-title {
     margin: 0.8rem 0 0.4rem 0;
-  }
-
-  .info-card {
-    width: 100%;
   }
 }
 </style>
