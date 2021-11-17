@@ -41,7 +41,7 @@ const makeCallers = () => {
       MsgCreateOracleScript
     ),
     getOracleScripts: querier((qc) => qc.oracle.unverified.oracleScripts),
-
+    getOracleScript: querier((qc) => qc.oracle.unverified.oracleScript),
     createRequest: broadcaster<MsgRequestData>(
       '/oracle.v1.MsgRequestData',
       MsgRequestData
@@ -55,6 +55,7 @@ const makeCallers = () => {
       })
     ),
     getRequest: querier((qc) => qc.oracle.unverified.request),
+    getOracleParams: querier((qc) => qc.oracle.unverified.params),
     getProposals: querier((qc) =>
       mapResponse(qc.gov.unverified.proposals, (response) => {
         return {
