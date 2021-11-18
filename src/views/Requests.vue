@@ -24,7 +24,7 @@
     <div class="app-table">
       <div class="app-table__head">
         <span>Request ID</span>
-        <span>Sender</span>
+        <span>Client ID</span>
         <span>Oracle Script ID</span>
         <span>Report Status</span>
         <span>Timestamp</span>
@@ -45,17 +45,20 @@
               />
             </div>
             <div class="app-table__cell">
-              <span class="app-table__title">Sender</span>
-              <TitledLink
-                class="app-table__cell-txt app-table__link"
-                :text="item.requestPacketData.clientId.toString()"
-              />
+              <span class="app-table__title">Client ID</span>
+              <span
+                class="app-table__cell-txt"
+                :title="item.requestPacketData.clientId.toString()"
+              >
+                {{ item.requestPacketData.clientId.toString() }}
+              </span>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Oracle Script ID</span>
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="item.requestPacketData.oracleScriptId.toString()"
+                :to="`/oracle-scripts/${item.requestPacketData.oracleScriptId}`"
               />
             </div>
             <div class="app-table__cell">
@@ -113,6 +116,7 @@ export default defineComponent({
     const currentPage = ref(1)
     const requests = ref()
     const requestsCount = ref()
+    const maxAskCount = ref()
 
     const getRequests = async () => {
       const res = await callers.getRequests(
@@ -128,13 +132,21 @@ export default defineComponent({
       requestsCount.value = res.requestCount.toNumber()
     }
 
+    const getParams = async () => {
+      const response = await callers.getOracleParams()
+      maxAskCount.value = response.params?.maxAskCount.toNumber()
+    }
+
     const createRequest = async () => {
-      showRequestFormDialog({
-        onSubmit: (d) => {
-          d.kill()
-          getRequests()
+      showRequestFormDialog(
+        {
+          onSubmit: (d) => {
+            d.kill()
+            getRequests()
+          },
         },
-      })
+        { maxAskCount: maxAskCount.value }
+      )
     }
 
     const paginationHandler = (num: number) => {
@@ -143,6 +155,7 @@ export default defineComponent({
     }
 
     onMounted(async () => {
+      await getParams()
       await getRequests()
     })
 

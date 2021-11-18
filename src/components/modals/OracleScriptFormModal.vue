@@ -1,7 +1,10 @@
 <template>
-  <ModalBase class="oracle-script-form-modal" @close="onClose()">
+  <ModalBase
+    class="oracle-script-form-modal modal-base_right"
+    @close="onClose()"
+  >
     <template #title>
-      <h3 class="app-form__title">Create oracle script</h3>
+      <h3 class="app-form__title">Oracle script creating</h3>
     </template>
 
     <template #main>
@@ -47,6 +50,7 @@
               accept=".wasm"
               v-model="form.codeFile"
               :disabled="isLoading"
+              :drag="true"
             />
             <p v-if="form.codeFileErr" class="app-form__field-err">
               {{ form.codeFileErr }}
@@ -55,6 +59,14 @@
         </div>
 
         <div class="app-form__footer">
+          <button
+            class="app-btn app-btn_outlined"
+            type="button"
+            @click="onClose()"
+            :disabled="isLoading"
+          >
+            Cancel
+          </button>
           <button
             class="app-btn"
             type="button"
@@ -113,7 +125,7 @@ const OracleScriptFormModal = defineComponent({
         onSubmit()
         notifySuccess('Oracle Script created')
       } catch (error) {
-        handleError(error)
+        handleError(error as Error)
       }
       isLoading.value = false
     }

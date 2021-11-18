@@ -77,7 +77,9 @@
             </div>
 
             <div class="app-form__field mg-l16">
-              <label class="app-form__field-lbl"> Max change (%) </label>
+              <label class="app-form__field-lbl" style="white-space: nowrap">
+                Max change (%)
+              </label>
               <input
                 class="app-form__field-input"
                 name="become-validator-rate"

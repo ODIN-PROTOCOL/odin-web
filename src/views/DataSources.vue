@@ -117,7 +117,6 @@ export default defineComponent({
 
         dataSources.value = [...response.dataSources]
         await getDataSourcesCount()
-        console.log(dataSources.value)
       } catch (error) {
         handleError(error as Error)
       }

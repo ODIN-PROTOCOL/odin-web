@@ -222,6 +222,7 @@ export default defineComponent({
         console.debug('Delegations:', response)
       } catch (error) {
         // error is ignored, since no delegations also throws the error
+        delegations.value = {}
       }
       releaseLoading()
     }
@@ -269,8 +270,8 @@ export default defineComponent({
       showBecomeValidatorFormDialog({
         onSubmit: (d) => {
           d.kill()
-          getValidators()
           getDelegations()
+          getValidators()
         },
       })
     }

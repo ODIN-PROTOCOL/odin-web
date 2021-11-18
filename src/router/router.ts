@@ -48,6 +48,15 @@ const routes: Array<RouteRecordRaw> = [
       ),
   },
   {
+    path: '/oracle-scripts/:id',
+    name: 'OracleScript',
+    beforeEnter: authorizedOnlyGuard,
+    component: () =>
+      import(
+        /* webpackChunkName: "oracle-script" */ '../views/OracleScriptsItem.vue'
+      ),
+  },
+  {
     path: '/requests',
     name: 'Requests',
     beforeEnter: authorizedOnlyGuard,

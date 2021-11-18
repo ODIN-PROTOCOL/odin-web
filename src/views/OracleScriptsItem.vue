@@ -1,14 +1,14 @@
 <template>
-  <div class="data-source view-main">
+  <div class="oracle-script view-main">
     <div class="page-title">
-      <BackButton :text="'Data Sources'" />
-      <h2 class="view-title">Data Source</h2>
+      <BackButton :text="'Oracle Scripts'" />
+      <h2 class="view-title">Oracle Script</h2>
       <span class="view-subtitle">
-        {{ String(dataSourceData?.name) }}
+        {{ String(oracleScriptData?.name) }}
       </span>
     </div>
 
-    <template v-if="dataSourceData">
+    <template v-if="oracleScriptData">
       <div class="info-card">
         <div class="info-card__content">
           <div class="info-card__row">
@@ -19,16 +19,16 @@
                 info-card__row-value_txt
                 info-card__row-link
               "
-              :href="`${API_CONFIG.odinScan}/account/${dataSourceData.owner}`"
-              :title="dataSourceData.owner"
+              :href="`${API_CONFIG.odinScan}/account/${oracleScriptData.owner}`"
+              :title="oracleScriptData.owner"
             >
-              {{ dataSourceData.owner }}
+              {{ oracleScriptData.owner }}
             </a>
           </div>
           <div class="info-card__row">
             <span class="info-card__row-title">Description</span>
             <span class="info-card__row-value">
-              {{ dataSourceData.description }}
+              {{ oracleScriptData.description }}
             </span>
           </div>
         </div>
@@ -57,14 +57,14 @@ export default defineComponent({
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const route: RouteLocationNormalizedLoaded = useRoute()
-    const dataSourceData = ref()
+    const oracleScriptData = ref()
 
-    const getDataSource = async () => {
+    const getOracleScript = async () => {
       lockLoading()
       try {
-        const response = await callers.getDataSource(String(route.params.id))
+        const response = await callers.getOracleScript(String(route.params.id))
 
-        dataSourceData.value = response.dataSource
+        oracleScriptData.value = response.oracleScript
       } catch (error) {
         handleError(error as Error)
       }
@@ -72,13 +72,13 @@ export default defineComponent({
     }
 
     onMounted(async () => {
-      await getDataSource()
+      await getOracleScript()
     })
 
     return {
       API_CONFIG,
       isLoading,
-      dataSourceData,
+      oracleScriptData,
     }
   },
 })

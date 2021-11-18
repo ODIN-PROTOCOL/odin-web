@@ -85,6 +85,7 @@ export default defineComponent({
 @import '~@/styles/root.scss';
 @import '~@/styles/common.scss';
 @import '~@/styles/buttons.scss';
+@import '~@/styles/cards.scss';
 @import '~@/styles/tables.scss';
 @import '~@/styles/views.scss';
 @import '~@/styles/load-fog.scss';
