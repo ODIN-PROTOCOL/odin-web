@@ -7,7 +7,7 @@
     <div class="info mg-b40">
       <div class="info__card">
         <span class="info__card-title">Balance</span>
-        <div class="info__card-balance">
+        <div class="info__card-balance mg-b40">
           <div class="info__card-row">
             <span class="info__card-row-title">LOKI</span>
             <span class="info__card-row-value">
@@ -15,16 +15,14 @@
             </span>
           </div>
         </div>
-        <div class="info__card-activities">
-          <!--TEMP. Hide all unnecessary -->
-          <!-- <button
+        <div class="info__card-activities info__card-activities_full">
+          <button
             class="app-btn app-btn_outlined app-btn_small"
             @click="receive()"
           >
             Receive
-          </button> -->
-          <!-- TODO uncomment when the Send will be ready -->
-          <!-- <button class="app-btn app-btn_small">Send</button> -->
+          </button>
+          <button class="app-btn app-btn_small" @click="send()">Send</button>
         </div>
       </div>
       <div class="info__card">
@@ -155,6 +153,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from 'vue'
+import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
 import Pagination from '@/components/pagination/pagination.vue'
 import { wallet } from '@/api/wallet'
@@ -308,6 +307,7 @@ export default defineComponent({
     })
 
     return {
+      API_CONFIG,
       ITEMS_PER_PAGE,
       transactionsCount,
       transactions,

@@ -21,7 +21,7 @@ const routes: Array<RouteRecordRaw> = [
     beforeEnter: unauthorizedOnlyGuard,
     component: () => import(/* webpackChunkName: "auth" */ '../views/Auth.vue'),
   },
-  // TODO: temp. hidden all but validators
+  // Temp. hidden all but validators and wallet page
   // {
   //   path: '/data-sources',
   //   name: 'DataSources',
@@ -30,12 +30,30 @@ const routes: Array<RouteRecordRaw> = [
   //     import(/* webpackChunkName: "data-sources" */ '../views/DataSources.vue'),
   // },
   // {
+  //   path: '/data-sources/:id',
+  //   name: 'DataSource',
+  //   beforeEnter: authorizedOnlyGuard,
+  //   component: () =>
+  //     import(
+  //       /* webpackChunkName: "data-source" */ '../views/DataSourcesItem.vue'
+  //     ),
+  // },
+  // {
   //   path: '/oracle-scripts',
   //   name: 'OracleScripts',
   //   beforeEnter: authorizedOnlyGuard,
   //   component: () =>
   //     import(
   //       /* webpackChunkName: "oracle-scripts" */ '../views/OracleScripts.vue'
+  //     ),
+  // },
+  // {
+  //   path: '/oracle-scripts/:id',
+  //   name: 'OracleScript',
+  //   beforeEnter: authorizedOnlyGuard,
+  //   component: () =>
+  //     import(
+  //       /* webpackChunkName: "oracle-script" */ '../views/OracleScriptsItem.vue'
   //     ),
   // },
   // {
@@ -82,6 +100,7 @@ const routes: Array<RouteRecordRaw> = [
         /* webpackChunkName: "oracle-validators" */ '../views/OracleValidators.vue'
       ),
   },
+  // Temp. hidden all but validators and wallet page
   // {
   //   path: '/governance',
   //   name: 'Governance',

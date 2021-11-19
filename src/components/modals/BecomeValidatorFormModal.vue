@@ -77,7 +77,9 @@
             </div>
 
             <div class="app-form__field mg-l16">
-              <label class="app-form__field-lbl"> Max change (%) </label>
+              <label class="app-form__field-lbl">
+                Max change (%)
+              </label>
               <input
                 class="app-form__field-input"
                 name="become-validator-rate"
@@ -285,4 +287,8 @@ export function showBecomeValidatorFormDialog(callbacks: {
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.app-form__field-lbl {
+  white-space: nowrap;
+}
+</style>
