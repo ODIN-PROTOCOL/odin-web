@@ -224,8 +224,12 @@ const MetaMaskFormModal = defineComponent({
       amount: string | BigNumber
     ): Promise<TransactionReceipt> => {
       return new Promise((resolve, reject) => {
+        // use bridge address instead of account address for approve
         contracts.odin.methods
-          .approve(account.value as string, big.toStrStrict(amount))
+          .approve(
+            process.env.VUE_APP_BRIDGE as string,
+            big.toStrStrict(amount)
+          )
           .send()
           .on('receipt', (_) => resolve(_))
           .on('error', (err) => reject(err))

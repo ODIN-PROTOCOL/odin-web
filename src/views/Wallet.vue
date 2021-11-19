@@ -155,6 +155,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from 'vue'
+import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
 import Pagination from '@/components/pagination/pagination.vue'
 import { wallet } from '@/api/wallet'
@@ -308,6 +309,7 @@ export default defineComponent({
     })
 
     return {
+      API_CONFIG,
       ITEMS_PER_PAGE,
       transactionsCount,
       transactions,

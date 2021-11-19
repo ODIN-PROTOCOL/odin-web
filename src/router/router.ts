@@ -30,12 +30,30 @@ const routes: Array<RouteRecordRaw> = [
   //     import(/* webpackChunkName: "data-sources" */ '../views/DataSources.vue'),
   // },
   // {
+  //   path: '/data-sources/:id',
+  //   name: 'DataSource',
+  //   beforeEnter: authorizedOnlyGuard,
+  //   component: () =>
+  //     import(
+  //       /* webpackChunkName: "data-source" */ '../views/DataSourcesItem.vue'
+  //     ),
+  // },
+  // {
   //   path: '/oracle-scripts',
   //   name: 'OracleScripts',
   //   beforeEnter: authorizedOnlyGuard,
   //   component: () =>
   //     import(
   //       /* webpackChunkName: "oracle-scripts" */ '../views/OracleScripts.vue'
+  //     ),
+  // },
+  // {
+  //   path: '/oracle-scripts/:id',
+  //   name: 'OracleScript',
+  //   beforeEnter: authorizedOnlyGuard,
+  //   component: () =>
+  //     import(
+  //       /* webpackChunkName: "oracle-script" */ '../views/OracleScriptsItem.vue'
   //     ),
   // },
   // {
