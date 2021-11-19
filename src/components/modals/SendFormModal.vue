@@ -71,9 +71,9 @@
                   <VuePickerOption value="loki" text="LOKI">
                     LOKI
                   </VuePickerOption>
-                  <VuePickerOption value="odin" text="ODIN">
+                  <!-- <VuePickerOption value="odin" text="ODIN">
                     ODIN
-                  </VuePickerOption>
+                  </VuePickerOption> -->
                 </div>
               </template>
             </VuePicker>
