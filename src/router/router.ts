@@ -21,7 +21,7 @@ const routes: Array<RouteRecordRaw> = [
     beforeEnter: unauthorizedOnlyGuard,
     component: () => import(/* webpackChunkName: "auth" */ '../views/Auth.vue'),
   },
-  // TODO: temp. hidden all but validators
+  // Temp. hidden all but validators and wallet page
   // {
   //   path: '/data-sources',
   //   name: 'DataSources',
@@ -100,6 +100,7 @@ const routes: Array<RouteRecordRaw> = [
         /* webpackChunkName: "oracle-validators" */ '../views/OracleValidators.vue'
       ),
   },
+  // Temp. hidden all but validators and wallet page
   // {
   //   path: '/governance',
   //   name: 'Governance',

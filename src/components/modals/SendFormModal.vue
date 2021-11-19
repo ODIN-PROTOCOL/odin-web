@@ -71,6 +71,7 @@
                   <VuePickerOption value="loki" text="LOKI">
                     LOKI
                   </VuePickerOption>
+                  <!-- while only LOKI can be sent, in time it will be possible to send ODIN -->
                   <!-- <VuePickerOption value="odin" text="ODIN">
                     ODIN
                   </VuePickerOption> -->

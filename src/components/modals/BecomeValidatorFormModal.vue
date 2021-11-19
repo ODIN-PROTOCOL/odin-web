@@ -77,7 +77,7 @@
             </div>
 
             <div class="app-form__field mg-l16">
-              <label class="app-form__field-lbl" style="white-space: nowrap">
+              <label class="app-form__field-lbl">
                 Max change (%)
               </label>
               <input
@@ -287,4 +287,8 @@ export function showBecomeValidatorFormDialog(callbacks: {
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.app-form__field-lbl {
+  white-space: nowrap;
+}
+</style>
