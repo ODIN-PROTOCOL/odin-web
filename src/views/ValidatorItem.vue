@@ -8,13 +8,22 @@
         <CopyButton class="mg-l8" :text="String(validator?.operatorAddress)" />
       </div>
       <div class="validator__activities validator__activities_top fx-sae">
-        <button
-          class="app-btn app-btn_outlined app-btn_small"
-          type="button"
-          @click="withdraw"
-        >
-          Withdraw stake
-        </button>
+        <template v-if="delegations[validator?.operatorAddress]">
+          <button
+            class="app-btn app-btn_outlined app-btn_small"
+            type="button"
+            @click="withdrawRewards"
+          >
+            Claim rewards
+          </button>
+          <button
+            class="app-btn app-btn_outlined app-btn_small mg-l24"
+            type="button"
+            @click="undelegate"
+          >
+            Undelegate
+          </button>
+        </template>
         <button
           class="app-btn app-btn_small mg-l24"
           type="button"
@@ -47,13 +56,33 @@
       </Tabs>
     </template>
 
-    <div class="validator__activities validator__activities_bottom">
-      <button class="app-btn app-btn_outlined" type="button" @click="withdraw">
-        Withdraw stake
-      </button>
-      <button class="app-btn mg-l24" type="button" @click="delegate">
-        Delegate
-      </button>
+    <div class="page-mobile-activities">
+      <div class="validator__activities">
+        <div
+          class="validator__activities-item"
+          v-if="delegations[validator?.operatorAddress]"
+        >
+          <button
+            class="app-btn app-btn_outlined"
+            type="button"
+            @click="withdrawRewards"
+          >
+            Claim rewards
+          </button>
+          <button
+            class="app-btn app-btn_outlined"
+            type="button"
+            @click="undelegate"
+          >
+            Undelegate
+          </button>
+        </div>
+        <div class="validator__activities-item">
+          <button class="app-btn" type="button" @click="delegate">
+            Delegate
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -74,7 +103,8 @@ import OracleReportsTable from '@/components/tables/OracleReportsTable.vue'
 import DelegatorsTable from '@/components/tables/DelegatorsTable.vue'
 import ProposedBlocksTable from '@/components/tables/ProposedBlocksTable.vue'
 import { showDelegateFormDialog } from '@/components/modals/DelegateFormModal.vue'
-import { showWithdrawFormDialog } from '@/components/modals/WithdrawFormModal.vue'
+import { showUndelegateFormDialog } from '@/components/modals/UndelegateFormModal.vue'
+import { showWithdrawRewardsFormDialog } from '@/components/modals/WithdrawRewardsFormModal.vue'
 
 export default defineComponent({
   components: {
@@ -163,8 +193,29 @@ export default defineComponent({
       )
     }
 
-    const withdraw = () => {
-      showWithdrawFormDialog(
+    const undelegate = () => {
+      if (!delegations.value[validator.value.operatorAddress]) return
+      showUndelegateFormDialog(
+        {
+          onSubmit: (d) => {
+            d.kill()
+            getValidator()
+            getDelegators()
+            getBlocks()
+            getReports()
+            getDelegations()
+          },
+        },
+        {
+          validator: validator.value,
+          delegation: delegations.value[validator.value.operatorAddress],
+        }
+      )
+    }
+
+    const withdrawRewards = () => {
+      if (!delegations.value[validator.value.operatorAddress]) return
+      showWithdrawRewardsFormDialog(
         {
           onSubmit: (d) => {
             d.kill()
@@ -190,10 +241,12 @@ export default defineComponent({
     return {
       validator,
       delegators,
+      delegations,
       blocks,
       reports,
-      withdraw,
+      withdrawRewards,
       delegate,
+      undelegate,
     }
   },
 })
@@ -217,23 +270,7 @@ export default defineComponent({
 }
 
 .validator__activities {
-  &_bottom {
-    display: none;
-
-    & > * {
-      flex: 1;
-    }
-    @media screen and (max-width: 768px) {
-      display: flex;
-    }
-  }
-  &_top {
-    display: block;
-    min-width: 281px;
-    @media screen and (max-width: 768px) {
-      display: none;
-    }
-  }
+  display: flex;
 }
 
 @media screen and (max-width: 768px) {
@@ -244,6 +281,33 @@ export default defineComponent({
   .validator__address {
     width: 100%;
     margin: 0;
+  }
+
+  .validator__activities {
+    flex-direction: column;
+    gap: 2.4rem;
+
+    &-item {
+      display: flex;
+      flex-direction: row;
+      gap: 2.4rem;
+
+      & > * {
+        flex: 1;
+      }
+    }
+
+    &_top {
+      display: none;
+    }
+  }
+}
+
+@media screen and (max-width: 390px) {
+  .validator__activities-item {
+    button {
+      font-size: 1.6rem;
+    }
   }
 }
 </style>

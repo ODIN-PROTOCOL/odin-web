@@ -51,12 +51,14 @@ export default defineComponent({
     padding: 0;
     margin: 0 0 2.4rem 0;
     list-style: none;
+    overflow: auto;
 
     li {
       padding: 1.2rem 2.4rem;
       font-size: 2rem;
       box-shadow: inset 0px -2px 0px rgba(0, 123, 255, 0.16);
       cursor: pointer;
+      white-space: nowrap;
 
       &.selected {
         font-weight: 600;

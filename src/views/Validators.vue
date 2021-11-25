@@ -77,14 +77,7 @@
               <div class="app-table__activities">
                 <div class="app-table__activities-item">
                   <button
-                    class="app-btn app-btn_outlined app-btn_small"
-                    type="button"
-                    @click="withdraw(item)"
-                  >
-                    Withdraw stake
-                  </button>
-                  <button
-                    class="app-btn app-btn_small mg-l24 w-min150"
+                    class="app-btn app-btn_small w-min150"
                     type="button"
                     @click="delegate(item)"
                   >
@@ -95,6 +88,13 @@
                   v-if="delegations[item.operatorAddress]"
                   class="app-table__activities-item"
                 >
+                  <button
+                    class="app-btn app-btn_outlined app-btn_small"
+                    type="button"
+                    @click="withdrawRewards(item)"
+                  >
+                    Claim rewards
+                  </button>
                   <button
                     class="app-btn app-btn_outlined app-btn_small w-min150"
                     type="button"
@@ -153,7 +153,7 @@ import Tab from '@/components/tabs/Tab.vue'
 import TitledLink from '@/components/TitledLink.vue'
 import StatusIcon from '@/components/StatusIcon.vue'
 import Pagination from '@/components/pagination/pagination.vue'
-import { showWithdrawFormDialog } from '@/components/modals/WithdrawFormModal.vue'
+import { showWithdrawRewardsFormDialog } from '@/components/modals/WithdrawRewardsFormModal.vue'
 import { showDelegateFormDialog } from '@/components/modals/DelegateFormModal.vue'
 import { showUndelegateFormDialog } from '@/components/modals/UndelegateFormModal.vue'
 import { showBecomeValidatorFormDialog } from '@/components/modals/BecomeValidatorFormModal.vue'
@@ -276,8 +276,9 @@ export default defineComponent({
       })
     }
 
-    const withdraw = (validator: ValidatorDecoded) => {
-      showWithdrawFormDialog(
+    const withdrawRewards = (validator: ValidatorDecoded) => {
+      if (!delegations.value[validator.operatorAddress]) return
+      showWithdrawRewardsFormDialog(
         {
           onSubmit: (d) => {
             d.kill()
@@ -335,7 +336,7 @@ export default defineComponent({
       paginationHandler,
       tabHandler,
       becomeValidator,
-      withdraw,
+      withdrawRewards,
       delegate,
       undelegate,
     }
@@ -365,9 +366,12 @@ export default defineComponent({
 }
 
 .app-table__activities {
+  width: 100%;
+
   &-item {
     display: flex;
     justify-content: flex-end;
+    gap: 2.4rem;
   }
 
   & > *:not(:last-child) {
