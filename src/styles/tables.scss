@@ -49,6 +49,36 @@
   }
 }
 
+.info-table {
+  &__row {
+    display: flex;
+    padding: 1.6rem 0;
+    border-bottom: 1px solid var(--clr__table-border);
+
+    &-title {
+      display: inline-block;
+      min-width: 18.4rem;
+    }
+
+    &-value {
+      &_flex {
+        display: flex;
+        min-width: 0;
+      }
+    }
+
+    &-link {
+      @include ellipsis(inline-block);
+      color: var(--clr__action);
+      text-decoration: none;
+    }
+
+    &__txt {
+      overflow-wrap: anywhere;
+    }
+  }
+}
+
 @media screen and (max-width: 768px) {
   .app-table {
     &__head {

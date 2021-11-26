@@ -125,17 +125,11 @@
       />
     </template>
 
-    <button
-      class="
-        app-btn app-btn_small
-        become-validator-btn become-validator-btn_bottom
-        fx-sae
-      "
-      type="button"
-      @click="becomeValidator()"
-    >
-      Become a validator
-    </button>
+    <div class="page-mobile-activities">
+      <button class="app-btn w-full" type="button" @click="becomeValidator()">
+        Become a validator
+      </button>
+    </div>
   </div>
 </template>
 
@@ -379,23 +373,11 @@ export default defineComponent({
   }
 }
 
-.become-validator-btn {
-  &_bottom {
-    display: none;
-    width: 100%;
-    @media screen and (max-width: 768px) {
-      display: block;
-    }
-  }
-  &_top {
-    display: block;
-    @media screen and (max-width: 768px) {
-      display: none;
-    }
-  }
-}
-
 @media screen and (max-width: 768px) {
+  .view-main {
+    padding-bottom: 10rem;
+  }
+
   .app-table__row {
     grid: none;
   }
@@ -408,6 +390,10 @@ export default defineComponent({
         flex: 1;
       }
     }
+  }
+
+  .become-validator-btn_top {
+    display: none;
   }
 }
 </style>

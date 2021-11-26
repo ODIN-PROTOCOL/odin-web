@@ -1,10 +1,17 @@
 <template>
-  <div class="validator view-main">
+  <div
+    class="validator view-main"
+    :class="
+      delegations[validator?.operatorAddress] ? 'view-main_large-padding' : ''
+    "
+  >
     <div class="page-title">
       <BackButton :text="'Validators'" />
       <h2 class="view-title">Validator</h2>
       <div class="validator__address">
-        <p class="view-subtitle">{{ validator?.operatorAddress }}</p>
+        <p :title="validator?.operatorAddress" class="view-subtitle">
+          {{ validator?.operatorAddress }}
+        </p>
         <CopyButton class="mg-l8" :text="String(validator?.operatorAddress)" />
       </div>
       <div class="validator__activities validator__activities_top fx-sae">
@@ -265,7 +272,7 @@ export default defineComponent({
 
 .validator__address {
   display: flex;
-  min-width: 30%;
+  min-width: 10%;
   margin-right: 1rem;
 }
 
@@ -274,6 +281,14 @@ export default defineComponent({
 }
 
 @media screen and (max-width: 768px) {
+  .view-main {
+    padding-bottom: 10rem;
+
+    &_large-padding {
+      padding-bottom: 17rem;
+    }
+  }
+
   .view-title {
     margin: 0.8rem 0 0.4rem 0;
   }
