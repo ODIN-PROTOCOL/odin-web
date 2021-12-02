@@ -298,11 +298,17 @@ export default defineComponent({
     margin: 0;
   }
 
-  .validator__activities {
-    flex-direction: column;
-    gap: 2.4rem;
+  .validator {
+    &__activities {
+      flex-direction: column;
+      gap: 2.4rem;
 
-    &-item {
+      &_top {
+        display: none;
+      }
+    }
+
+    &__activities-item {
       display: flex;
       flex-direction: row;
       gap: 2.4rem;
@@ -310,10 +316,6 @@ export default defineComponent({
       & > * {
         flex: 1;
       }
-    }
-
-    &_top {
-      display: none;
     }
   }
 }

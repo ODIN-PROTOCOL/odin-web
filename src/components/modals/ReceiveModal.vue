@@ -69,16 +69,14 @@ export function showReceiveDialog(callbacks: {
     overflow: none;
   }
 
-  &__info {
-    &-address {
-      display: flex;
-      width: 100%;
-      flex-direction: row;
+  &__info-address {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
 
-      span {
-        font-weight: 300;
-        word-break: break-all;
-      }
+    span {
+      font-weight: 300;
+      word-break: break-all;
     }
   }
 

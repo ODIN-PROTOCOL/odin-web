@@ -151,17 +151,17 @@ export default defineComponent({
       align-items: center;
       gap: 0.8rem;
       font-size: 1.4rem;
+    }
 
-      &-percentage {
-        min-width: 3.6rem;
-        font-weight: 600;
-      }
+    &__item-percentage {
+      min-width: 3.6rem;
+      font-weight: 600;
+    }
 
-      &-color {
-        display: block;
-        width: 0.4rem;
-        height: 1.4rem;
-      }
+    &__item-color {
+      display: block;
+      width: 0.4rem;
+      height: 1.4rem;
     }
 
     & > *:not(:last-child) {

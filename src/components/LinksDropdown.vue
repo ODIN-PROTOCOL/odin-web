@@ -49,18 +49,36 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.nav__dropdown {
-  position: relative;
-  display: grid;
-  grid-template-columns: 100%;
-  text-decoration: none;
-  white-space: nowrap;
-  color: inherit;
-  font-weight: 400;
-  line-height: 2.4rem;
-  font-size: 1.6rem;
-  cursor: pointer;
-  &-wrapper {
+.nav {
+  &__dropdown {
+    position: relative;
+    display: grid;
+    grid-template-columns: 100%;
+    text-decoration: none;
+    white-space: nowrap;
+    color: inherit;
+    font-weight: 400;
+    line-height: 2.4rem;
+    font-size: 1.6rem;
+    cursor: pointer;
+
+    :last-child {
+      border-end-start-radius: 0.8rem;
+      border-end-end-radius: 0.8rem;
+    }
+    &:hover {
+      .nav {
+        &__dropdown-modal {
+          display: flex;
+        }
+        &__dropdown-wrapper-arrow {
+          transform: translate(-11px, 9px) rotate(90deg);
+        }
+      }
+    }
+  }
+
+  &__dropdown-wrapper {
     display: flex;
     align-items: center;
     gap: 0.4rem;
@@ -70,15 +88,15 @@ export default defineComponent({
         font-weight: bold;
       }
     }
-    &-arrow {
-      fill: #212529;
-      transform: translate(3px, -6px) rotate(270deg);
-      &_active {
-        fill: var(--clr__action);
-      }
+  }
+  &__dropdown-wrapper-arrow {
+    fill: #212529;
+    transform: translate(3px, -6px) rotate(270deg);
+    &_active {
+      fill: var(--clr__action);
     }
   }
-  &-modal {
+  &__dropdown-modal {
     display: none;
     flex-direction: column;
     align-items: flex-start;
@@ -92,7 +110,7 @@ export default defineComponent({
     box-shadow: 0 0.4rem 2.4rem rgba(8, 87, 172, 0.12);
     min-width: 16rem;
   }
-  &-link {
+  &__dropdown-link {
     margin: 0;
     text-decoration: none;
     color: inherit;
@@ -101,22 +119,6 @@ export default defineComponent({
     &:hover {
       background: rgba(204, 228, 255, 0.4);
       color: var(--clr__action);
-    }
-  }
-  :last-child {
-    border-end-start-radius: 0.8rem;
-    border-end-end-radius: 0.8rem;
-  }
-  &:hover {
-    .nav__dropdown {
-      &-modal {
-        display: flex;
-      }
-      &-wrapper {
-        &-arrow {
-          transform: translate(-11px, 9px) rotate(90deg);
-        }
-      }
     }
   }
 }

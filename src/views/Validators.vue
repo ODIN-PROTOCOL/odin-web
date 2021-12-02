@@ -347,29 +347,31 @@ export default defineComponent({
   }
 }
 
-.app-table__head,
-.app-table__row {
-  grid:
-    auto /
-    minmax(3rem, 1fr)
-    minmax(8rem, 4fr)
-    minmax(8rem, 4fr)
-    minmax(8rem, 2fr)
-    minmax(8rem, 2fr)
-    minmax(32.5rem, 4fr);
-}
+.app-table {
+  &__head,
+  &__row {
+    grid:
+      auto /
+      minmax(3rem, 1fr)
+      minmax(8rem, 4fr)
+      minmax(8rem, 4fr)
+      minmax(8rem, 2fr)
+      minmax(8rem, 2fr)
+      minmax(32.5rem, 4fr);
+  }
 
-.app-table__activities {
-  width: 100%;
+  &__activities {
+    width: 100%;
 
-  &-item {
+    & > *:not(:last-child) {
+      margin-bottom: 2.4rem;
+    }
+  }
+
+  &__activities-item {
     display: flex;
     justify-content: flex-end;
     gap: 2.4rem;
-  }
-
-  & > *:not(:last-child) {
-    margin-bottom: 2.4rem;
   }
 }
 
@@ -378,14 +380,16 @@ export default defineComponent({
     padding-bottom: 10rem;
   }
 
-  .app-table__row {
-    grid: none;
-  }
+  .app-table {
+    &__row {
+      grid: none;
+    }
 
-  .app-table__activities {
-    width: 100%;
+    &__activities {
+      width: 100%;
+    }
 
-    &-item {
+    &__activities-item {
       & > * {
         flex: 1;
       }

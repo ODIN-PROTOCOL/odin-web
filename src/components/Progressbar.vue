@@ -52,12 +52,12 @@ export default defineComponent({
   &__info {
     display: flex;
     justify-content: space-between;
+  }
 
-    &-item {
-      font-size: 1.2rem;
-      line-height: 1.6rem;
-      text-transform: uppercase;
-    }
+  &__info-item {
+    font-size: 1.2rem;
+    line-height: 1.6rem;
+    text-transform: uppercase;
   }
 
   &__track {

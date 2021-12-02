@@ -53,15 +53,15 @@ export default defineComponent({
   &__info {
     display: flex;
     justify-content: space-between;
+  }
 
-    &-value {
-      font-weight: 600;
-      text-transform: uppercase;
-    }
+  &__info-value {
+    font-weight: 600;
+    text-transform: uppercase;
+  }
 
-    &-records {
-      font-size: 1.2rem;
-    }
+  &__info-records {
+    font-size: 1.2rem;
   }
 
   &__track {
