@@ -1,5 +1,9 @@
 import { ProposalDecoded } from '@/helpers/proposalDecoders'
-import { TransformedProposal, ChartDataItem } from '@/helpers/Types'
+import {
+  TransformedProposal,
+  defaultProposalBlank,
+  ChartDataItem,
+} from '@/helpers/Types'
 import { proposalStatusType } from '@/helpers/statusTypes'
 import { callers } from '@/api/callers'
 
@@ -21,18 +25,20 @@ export const getTransformedProposals = async (
   return transformedProposals
 }
 
-const defaultProposalsCount: ChartDataItem[] = [
-  { name: 'Approved', count: 0, color: '#00D097' },
-  { name: 'Rejected', count: 0, color: '#F65160' },
-  { name: 'Pending', count: 0, color: '#FDC748' },
-  { name: 'In progress', count: 0, color: '#007BFF' },
-  { name: 'Unspecified', count: 0, color: '#CCE4FF' },
+const defaultProposalsCountBlank: defaultProposalBlank[] = [
+  { name: 'Approved', color: '#00D097' },
+  { name: 'Rejected', color: '#F65160' },
+  { name: 'Pending', color: '#FDC748' },
+  { name: 'In progress', color: '#007BFF' },
+  { name: 'Unspecified', color: '#CCE4FF' },
 ]
 
 export const getProposalsCountByStatus = (
   proposals: TransformedProposal[]
 ): ChartDataItem[] => {
-  const counts: ChartDataItem[] = [...defaultProposalsCount]
+  const counts: ChartDataItem[] = [
+    ...defaultProposalsCountBlank.map((item) => ({ ...item, count: 0 })),
+  ]
 
   proposals.forEach((p) => {
     counts.forEach((c: ChartDataItem) => {
