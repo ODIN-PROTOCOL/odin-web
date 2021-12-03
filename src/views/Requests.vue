@@ -91,13 +91,11 @@
       />
     </template>
 
-    <button
-      class="app-btn create-request-btn create-request-btn_bottom fx-sae"
-      type="button"
-      @click="createRequest()"
-    >
-      Create Request
-    </button>
+    <div class="page-mobile-activities">
+      <button class="app-btn w-full" type="button" @click="createRequest()">
+        Create Request
+      </button>
+    </div>
   </div>
 </template>
 
@@ -179,19 +177,13 @@ export default defineComponent({
   }
 }
 
-.create-request-btn {
-  &_bottom {
-    display: none;
-    width: 100%;
-    @media screen and (max-width: 768px) {
-      display: block;
-    }
+@media screen and (max-width: 768px) {
+  .view-main {
+    padding-bottom: 10rem;
   }
-  &_top {
-    display: block;
-    @media screen and (max-width: 768px) {
-      display: none;
-    }
+
+  .create-request-btn_top {
+    display: none;
   }
 }
 </style>

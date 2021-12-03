@@ -1,47 +1,47 @@
 <template>
-  <div class="info-card mg-b40">
-    <div class="info-card__item">
-      <div class="info-card__row">
-        <span class="info-card__title">Status</span>
-        <span class="info-card__txt">
+  <div class="card mg-b40">
+    <div class="card__item">
+      <div class="card__row">
+        <span class="card__title">Status</span>
+        <span class="card__txt">
           {{ $tBondStatus(validator.status) }}
         </span>
       </div>
-      <div class="info-card__row">
-        <span class="info-card__title">Jailed?</span>
-        <span class="info-card__txt">
+      <div class="card__row">
+        <span class="card__title">Jailed?</span>
+        <span class="card__txt">
           {{ validator.jailed ? 'Yes' : 'No' }}
         </span>
       </div>
-      <div class="info-card__row">
-        <span class="info-card__title">Delegated</span>
-        <span class="info-card__txt" :title="$fCoin(validator.tokens, 'loki')">
+      <div class="card__row">
+        <span class="card__title">Delegated</span>
+        <span class="card__txt" :title="$fCoin(validator.tokens, 'loki')">
           {{ $fCoin(validator.tokens, 'loki') }}
         </span>
       </div>
-      <div class="info-card__row">
-        <span class="info-card__title">Delegator shares</span>
-        <span class="info-card__txt">
+      <div class="card__row">
+        <span class="card__title">Delegator shares</span>
+        <span class="card__txt">
           {{ $preciseAsPercents(validator.delegatorShares) }}
         </span>
       </div>
     </div>
-    <div class="info-card__item">
-      <div class="info-card__row">
-        <span class="info-card__title">Rate</span>
-        <span class="info-card__txt">
+    <div class="card__item">
+      <div class="card__row">
+        <span class="card__title">Rate</span>
+        <span class="card__txt">
           {{ $preciseAsPercents(validator.commission.commissionRates.rate) }}
         </span>
       </div>
-      <div class="info-card__row">
-        <span class="info-card__title">Max rate</span>
-        <span class="info-card__txt">
+      <div class="card__row">
+        <span class="card__title">Max rate</span>
+        <span class="card__txt">
           {{ $preciseAsPercents(validator.commission.commissionRates.maxRate) }}
         </span>
       </div>
-      <div class="info-card__row">
-        <span class="info-card__title">Max change rate</span>
-        <span class="info-card__txt">
+      <div class="card__row">
+        <span class="card__title">Max change rate</span>
+        <span class="card__txt">
           {{
             $preciseAsPercents(
               validator.commission.commissionRates.maxChangeRate
@@ -49,12 +49,12 @@
           }}
         </span>
       </div>
-      <div class="info-card__row">
-        <span class="info-card__title">Operator</span>
-        <span class="info-card__txt">{{ validator.operatorAddress }}</span>
+      <div class="card__row">
+        <span class="card__title">Operator</span>
+        <span class="card__txt">{{ validator.operatorAddress }}</span>
       </div>
     </div>
-    <div class="info-card__item">
+    <div class="card__item">
       <ExtendedProgressbar
         :color="'#007BFF'"
         :value="'RAM'"
@@ -94,7 +94,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.info-card {
+.card {
   display: flex;
   flex-direction: row;
   padding: 3.2rem 2.4rem;
@@ -131,7 +131,7 @@ export default defineComponent({
 }
 
 @media screen and (max-width: 768px) {
-  .info-card {
+  .card {
     flex-direction: column;
 
     &__item {

@@ -22,6 +22,7 @@ import {
   MsgUndelegate,
 } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/tx'
 import { Proposal } from '@provider/codec/cosmos/gov/v1beta1/gov'
+import { MsgWithdrawDelegatorReward } from '@cosmjs/stargate/build/codec/cosmos/distribution/v1beta1/tx'
 
 const makeCallers = () => {
   const broadcaster = api.makeBroadcastCaller.bind(api)
@@ -134,6 +135,16 @@ const makeCallers = () => {
     withdrawCoinsToAcc: broadcaster<MsgWithdrawCoinsToAccFromTreasury>(
       '/mint.MsgWithdrawCoinsToAccFromTreasury',
       MsgWithdrawCoinsToAccFromTreasury
+    ),
+    withdrawDelegatorRewards: broadcaster<MsgWithdrawDelegatorReward>(
+      '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward',
+      MsgWithdrawDelegatorReward
+    ),
+    getDelegationDelegatorReward: querier(
+      (qc) => qc.distribution.delegationRewards
+    ),
+    getDelegationRewards: querier(
+      (qc) => qc.distribution.delegationTotalRewards
     ),
     getParams: querier((qc) => qc.mint.unverified.params),
     faucetRequest: (req: { denom: string }) => {

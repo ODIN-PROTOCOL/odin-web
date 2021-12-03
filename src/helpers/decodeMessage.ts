@@ -11,7 +11,10 @@ import {
   MsgUndelegate,
 } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/tx'
 import { MsgWithdrawDelegatorReward } from '@cosmjs/stargate/build/codec/cosmos/distribution/v1beta1/tx'
-import { MsgSend } from '@cosmjs/stargate/build/codec/cosmos/bank/v1beta1/tx'
+import {
+  MsgSend,
+  MsgMultiSend,
+} from '@cosmjs/stargate/build/codec/cosmos/bank/v1beta1/tx'
 import {
   MsgActivate,
   MsgAddReporter,
@@ -61,6 +64,9 @@ export function humanizeMessageType(type: string): string {
     case '/cosmos.bank.v1beta1.MsgSend':
       return 'Send'
 
+    case '/cosmos.bank.v1beta1.MsgMultiSend':
+      return 'Multi Send'
+
     case '/coinswap.MsgExchange':
       return 'Exchange'
 
@@ -103,6 +109,7 @@ function decodeMessage(obj: {
   | MsgDelegate
   | MsgUndelegate
   | MsgSend
+  | MsgMultiSend
   | MsgExchange
   | MsgVote
   | MsgSubmitProposal
@@ -136,6 +143,9 @@ function decodeMessage(obj: {
 
     case '/cosmos.bank.v1beta1.MsgSend':
       return MsgSend.decode(obj.value)
+
+    case '/cosmos.bank.v1beta1.MsgMultiSend':
+      return MsgMultiSend.decode(obj.value)
 
     case '/coinswap.MsgExchange':
       return MsgExchange.decode(obj.value)

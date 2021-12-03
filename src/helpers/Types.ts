@@ -23,6 +23,11 @@ export type TransformedProposal = Modify<
   }
 >
 
+export type defaultProposalBlank = {
+  name: string
+  color: string
+}
+
 export type ChartDataItem = {
   name: string
   count: number

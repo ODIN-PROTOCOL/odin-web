@@ -16,24 +16,24 @@
     display: flex;
     flex-direction: row;
     gap: 2.4rem;
+  }
 
-    &-title {
-      display: inline-block;
-      min-width: 10rem;
+  &__row-title {
+    display: inline-block;
+    min-width: 10rem;
+  }
+
+  &__row-value {
+    font-weight: 600;
+
+    &_txt {
+      @include ellipsis();
     }
+  }
 
-    &-value {
-      font-weight: 600;
-
-      &_txt {
-        @include ellipsis();
-      }
-    }
-
-    &-link {
-      text-decoration: none;
-      color: var(--clr__action);
-    }
+  &__row-link {
+    text-decoration: none;
+    color: var(--clr__action);
   }
 
   @media screen and (max-width: 768px) {

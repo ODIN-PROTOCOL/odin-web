@@ -2,7 +2,14 @@
   <div class="governance view-main">
     <div class="page-title">
       <h2 class="view-title">Governance</h2>
-      <button class="app-btn app-btn_small fx-sae" type="button">
+      <button
+        class="
+          app-btn app-btn_small
+          create-proposal-btn create-proposal-btn_top
+          fx-sae
+        "
+        type="button"
+      >
         Create a proposal
       </button>
     </div>
@@ -67,6 +74,10 @@
         :total-length="proposalsCount"
       />
     </template>
+
+    <div class="page-mobile-activities">
+      <button class="app-btn w-full" type="button">Create a proposal</button>
+    </div>
   </div>
 </template>
 
@@ -175,12 +186,20 @@ export default defineComponent({
 }
 
 @media screen and (max-width: 768px) {
+  .view-main {
+    padding-bottom: 10rem;
+  }
+
   .info-card {
     width: 100%;
   }
 
   .app-table__row {
     grid: none;
+  }
+
+  .create-proposal-btn_top {
+    display: none;
   }
 }
 </style>

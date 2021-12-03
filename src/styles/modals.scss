@@ -26,10 +26,10 @@
     width: 100%;
     max-width: 39.2rem;
     box-shadow: 0 0.4rem 2.4rem var(--clr__modal-content-shadow);
+  }
 
-    &-head {
-      padding: 0 1rem;
-    }
+  &__content-head {
+    padding: 0 1rem;
   }
 
   &_right {
