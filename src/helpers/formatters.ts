@@ -45,7 +45,7 @@ export function preciseAsPercents(amount: string): string {
 }
 
 export function preciseAsFormatedCoin(coin: Coin): string {
-  const amount = bigMath.format(bigMath.fromPrecise(coin.amount))
+  const amount = big.format(big.fromPrecise(coin.amount))
   return `${amount} ${coin.denom.toUpperCase()}`
 }
 
