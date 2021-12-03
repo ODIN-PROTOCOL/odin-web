@@ -7,6 +7,7 @@
   border: 1px solid transparent; // to sync position with the outlined btn
   border-radius: 0.4rem;
   padding: 1.1rem 2.3rem;
+  white-space: nowrap;
 
   @include transition(background);
 

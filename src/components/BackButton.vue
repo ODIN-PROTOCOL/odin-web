@@ -35,6 +35,7 @@ export default defineComponent({
   &__wrapper {
     display: flex;
     align-items: center;
+    min-width: 1.6rem;
   }
 
   @media screen and (max-width: 768px) {

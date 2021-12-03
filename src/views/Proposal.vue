@@ -19,12 +19,12 @@
     </div>
 
     <template v-if="proposal">
-      <div class="info-block mg-b40">
-        <div class="info-block__row">
-          <span class="info-block__row-title">Proposer's account ID</span>
-          <div class="info-block__row-value info-block__row-value_flex">
+      <div class="info-table mg-b40">
+        <div class="info-table__row">
+          <span class="info-table__row-title">Proposer's account ID</span>
+          <div class="info-table__row-value info-table__row-value_flex">
             <a
-              class="info-block__row-link"
+              class="info-table__row-link"
               :href="`${API_CONFIG.odinScan}/account/${proposal.proposerAddress}`"
             >
               {{ proposal.proposerAddress }}
@@ -32,21 +32,21 @@
             <CopyButton :text="proposal.proposerAddress" />
           </div>
         </div>
-        <div class="info-block__row">
-          <span class="info-block__row-title">Description</span>
-          <span class="info-block__row-value">
+        <div class="info-table__row">
+          <span class="info-table__row-title">Description</span>
+          <span class="info-table__row-value">
             {{ proposal.content.description }}
           </span>
         </div>
-        <div class="info-block__row">
-          <span class="info-block__row-title">Status</span>
+        <div class="info-table__row">
+          <span class="info-table__row-title">Status</span>
           <StatusBlock
             :text="proposalStatusType[proposal.status].name"
             :status="proposalStatusType[proposal.status].status"
           />
         </div>
-        <div class="info-block__row">
-          <span class="info-block__row-title">"Support" votes</span>
+        <div class="info-table__row">
+          <span class="info-table__row-title">"Support" votes</span>
           <Tally
             v-if="tally"
             class="app-table__cell-txt"
@@ -63,16 +63,18 @@
       <span v-else class="view-subtitle">Proposal not found</span>
     </template>
 
-    <button
-      class="app-btn app-btn_small vote-btn vote-btn_bottom w-full"
-      :disabled="
-        !proposal ||
-        proposal?.status !== ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
-      "
-      @click="router.push({ name: 'Voting' })"
-    >
-      Vote
-    </button>
+    <div class="page-mobile-activities">
+      <button
+        class="app-btn w-full"
+        :disabled="
+          !proposal ||
+          proposal?.status !== ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
+        "
+        @click="router.push({ name: 'Voting' })"
+      >
+        Vote
+      </button>
+    </div>
   </div>
 </template>
 
@@ -158,51 +160,17 @@ export default defineComponent({
   margin: 0 1.6rem 0 2rem;
 }
 
-.info-block {
-  &__row {
-    display: flex;
-    padding: 1.6rem;
-    border-bottom: 1px solid var(--clr__table-border);
-
-    &-title {
-      display: inline-block;
-      min-width: 18.4rem;
-    }
-
-    &-value {
-      &_flex {
-        display: flex;
-        min-width: 0;
-      }
-    }
-
-    &-link {
-      @include ellipsis(inline-block);
-      color: var(--clr__action);
-      text-decoration: none;
-    }
-  }
-}
-
-.vote-btn {
-  &_bottom {
-    display: none;
-    width: 100%;
-    @media screen and (max-width: 768px) {
-      display: block;
-    }
-  }
-  &_top {
-    display: block;
-    @media screen and (max-width: 768px) {
-      display: none;
-    }
-  }
-}
-
 @media screen and (max-width: 768px) {
+  .view-main {
+    padding-bottom: 10rem;
+  }
+
   .view-title {
     margin: 0.8rem 0 0.4rem 0;
+  }
+
+  .vote-btn_top {
+    display: none;
   }
 }
 </style>

@@ -12,16 +12,16 @@
     <template v-if="requestData">
       <div class="info-table mg-b32">
         <div class="info-table__row">
-          <span class="info-table__title">Oracle Script</span>
+          <span class="info-table__row-title">Oracle Script</span>
           <TitledLink
-            class="info-table__link"
+            class="info-table__row-link"
             :text="String(requestData?.requestPacketData.oracleScriptId)"
           />
         </div>
         <div class="info-table__row">
-          <span class="info-table__title">Sender</span>
+          <span class="info-table__row-title">Sender</span>
           <TitledLink
-            class="info-table__link"
+            class="info-table__row-link"
             :text="String(requestData?.requestPacketData.clientId)"
           />
           <CopyButton
@@ -30,15 +30,15 @@
           />
         </div>
         <div class="info-table__row">
-          <span class="info-table__title">Request Time</span>
+          <span class="info-table__row-title">Request Time</span>
           <span>{{ requestTime }} ({{ requestTimeRange }})</span>
         </div>
         <div class="info-table__row">
-          <span class="info-table__title">Resolve Time</span>
+          <span class="info-table__row-title">Resolve Time</span>
           <span>{{ resolveTime }} ({{ resolveTimeRange }})</span>
         </div>
         <div class="info-table__row">
-          <span class="info-table__title">Report Status</span>
+          <span class="info-table__row-title">Report Status</span>
           <Progressbar
             :min="Number(requestData?.requestPacketData.minCount)"
             :max="Number(requestData?.requestPacketData.askCount)"
@@ -46,7 +46,7 @@
           />
         </div>
         <div class="info-table__row">
-          <span class="info-table__title">Resolve Status</span>
+          <span class="info-table__row-title">Resolve Status</span>
           <StatusBlock
             :status="String(requestStatusType[requestStatus]?.status)"
             :text="String(requestStatusType[requestStatus]?.name)"
@@ -57,14 +57,14 @@
       <h3 class="view-subtitle mg-b24">Calldata</h3>
       <div class="info-table mg-b32">
         <div class="info-table__row">
-          <span class="info-table__title">Symbols</span>
-          <span class="info-table__txt">
+          <span class="info-table__row-title">Symbols</span>
+          <span class="info-table__row-txt">
             {{ requestCalldata.symbol }}
           </span>
         </div>
         <div class="info-table__row">
-          <span class="info-table__title">Multiplier</span>
-          <span class="info-table__txt">
+          <span class="info-table__row-title">Multiplier</span>
+          <span class="info-table__row-txt">
             {{ requestCalldata.multiplier }}
           </span>
         </div>
@@ -74,8 +74,8 @@
         <h3 class="view-subtitle mg-b24">Result</h3>
         <div class="info-table">
           <div class="info-table__row">
-            <span class="info-table__title">Rates</span>
-            <span class="info-table__txt">
+            <span class="info-table__row-title">Rates</span>
+            <span class="info-table__row-txt">
               {{ requestRates }}
             </span>
           </div>
@@ -159,48 +159,6 @@ export default defineComponent({
   margin: 0 1.6rem 0 2rem;
 }
 
-.info-table {
-  &__row {
-    display: flex;
-    flex-direction: row;
-    padding: 1.6rem 0;
-    border-bottom: 1px solid var(--clr__table-border);
-  }
-
-  &__title {
-    display: inline-block;
-    min-width: 18.5rem;
-  }
-
-  &__link {
-    @include ellipsis();
-    text-decoration: none;
-    color: var(--clr__action);
-  }
-
-  &__list {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    width: 100%;
-    gap: 2.4rem;
-
-    &-item {
-      @include ellipsis();
-      width: 18.5rem;
-
-      a {
-        text-decoration: none;
-        color: var(--clr__action);
-      }
-    }
-  }
-
-  &__txt {
-    overflow-wrap: anywhere;
-  }
-}
-
 .empty-msg {
   text-align: center;
 }
@@ -208,16 +166,6 @@ export default defineComponent({
 @media screen and (max-width: 768px) {
   .view-title {
     margin: 0.8rem 0 0.4rem 0;
-  }
-
-  .info-table {
-    &__title {
-      min-width: 16rem;
-    }
-
-    &__list {
-      flex-direction: column;
-    }
   }
 }
 </style>

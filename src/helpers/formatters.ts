@@ -44,6 +44,11 @@ export function preciseAsPercents(amount: string): string {
   return `${percents}%` // TODO: translate
 }
 
+export function preciseAsFormatedCoin(coin: Coin): string {
+  const amount = big.format(big.fromPrecise(coin.amount))
+  return `${amount} ${coin.denom.toUpperCase()}`
+}
+
 export function formatCoin(coin: Coin, abbr?: boolean): string
 export function formatCoin(
   amount: NumLike,

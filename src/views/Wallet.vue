@@ -339,42 +339,40 @@ export default defineComponent({
     border: 1px solid var(--clr__action);
     border-radius: 0.8rem;
 
-    &-title {
-      display: inline-block;
-      font-size: 2.4rem;
-      margin-bottom: 4rem;
-    }
-
-    &-balance {
-      & > *:not(:last-child) {
-        margin-bottom: 2.4rem;
-      }
-    }
-
-    &-row {
-      &-title {
-        display: inline-block;
-        min-width: 10rem;
-      }
-
-      &-value {
-        font-weight: 600;
-      }
-    }
-
     @include respond-to(sm) {
       width: 100%;
     }
+  }
 
-    &-activities {
-      display: flex;
-      margin-top: auto;
+  &__card-title {
+    display: inline-block;
+    font-size: 2.4rem;
+    margin-bottom: 4rem;
+  }
 
-      &_full {
-        gap: 2.4rem;
-        & > * {
-          flex: 1;
-        }
+  &__card-balance {
+    & > *:not(:last-child) {
+      margin-bottom: 2.4rem;
+    }
+  }
+
+  &__card-row-title {
+    display: inline-block;
+    min-width: 10rem;
+  }
+
+  &__card-row-value {
+    font-weight: 600;
+  }
+
+  &__card-activities {
+    display: flex;
+    margin-top: auto;
+
+    &_full {
+      gap: 2.4rem;
+      & > * {
+        flex: 1;
       }
     }
   }

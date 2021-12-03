@@ -98,7 +98,7 @@ import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/
 import { defineComponent, PropType } from 'vue'
 import CopyText from './CopyText.vue'
 import TitledLink from '@/components/TitledLink.vue'
-import { showWithdrawFormDialog } from './modals/WithdrawFormModal.vue'
+import { showWithdrawRewardsFormDialog } from './modals/WithdrawRewardsFormModal.vue'
 import { showDelegateFormDialog } from './modals/DelegateFormModal.vue'
 import { showUndelegateFormDialog } from './modals/UndelegateFormModal.vue'
 
@@ -111,11 +111,14 @@ export default defineComponent({
   },
   setup(props, ctx) {
     const withdraw = () => {
-      showWithdrawFormDialog({
-        onSubmit: (d) => {
-          d.kill()
+      showWithdrawRewardsFormDialog(
+        {
+          onSubmit: (d) => {
+            d.kill()
+          },
         },
-      })
+        { validator: props.validator }
+      )
     }
 
     const delegate = () => {

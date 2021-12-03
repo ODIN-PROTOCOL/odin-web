@@ -219,34 +219,36 @@ export function showSendFormDialog(
 </script>
 
 <style lang="scss" scoped>
-.app-form__info {
-  padding: 1.6rem 1.2rem;
-  border: 1px solid var(--clr__action);
-  border-radius: 0.8rem;
+.app-form {
+  &__info {
+    padding: 1.6rem 1.2rem;
+    border: 1px solid var(--clr__action);
+    border-radius: 0.8rem;
+  }
 
-  &-title {
+  &__info-title {
     display: block;
     margin-bottom: 1.6rem;
   }
 
-  &-content {
+  &__info-content {
     & > *:not(:last-child) {
       margin-bottom: 0.8rem;
     }
   }
 
-  &-row {
+  &__info-row {
     display: flex;
     flex-direction: row;
     gap: 2.4rem;
+  }
 
-    &-title {
-      min-width: 10rem;
-    }
+  &__info-row-title {
+    min-width: 10rem;
+  }
 
-    &-value {
-      font-weight: 600;
-    }
+  &__info-row-value {
+    font-weight: 600;
   }
 }
 </style>
