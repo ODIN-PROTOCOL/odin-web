@@ -27,10 +27,10 @@
   &__cell {
     display: flex;
     min-width: 0;
+  }
 
-    &-txt {
-      @include ellipsis(inline-block);
-    }
+  &__cell-txt {
+    @include ellipsis(inline-block);
   }
 
   &__link {
@@ -46,6 +46,36 @@
   &__empty-stub {
     margin: 1.5rem 0;
     text-align: center;
+  }
+}
+
+.info-table {
+  &__row {
+    display: flex;
+    padding: 1.6rem 0;
+    border-bottom: 1px solid var(--clr__table-border);
+  }
+
+  &__row-title {
+    display: inline-block;
+    min-width: 18.4rem;
+  }
+
+  &__row-value {
+    &_flex {
+      display: flex;
+      min-width: 0;
+    }
+  }
+
+  &__row-link {
+    @include ellipsis(inline-block);
+    color: var(--clr__action);
+    text-decoration: none;
+  }
+
+  &__row-txt {
+    overflow-wrap: anywhere;
   }
 }
 

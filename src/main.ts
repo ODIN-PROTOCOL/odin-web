@@ -5,6 +5,7 @@ import {
   formatCoin,
   formatDate,
   preciseAsPercents,
+  preciseAsFormatedCoin,
 } from './helpers/formatters'
 import Notifications from '@kyvg/vue3-notification'
 import { api } from './api/api'
@@ -42,6 +43,7 @@ async function _main() {
   app.config.globalProperties.$cropAddress = cropAddress
   app.config.globalProperties.$fCoin = formatCoin
   app.config.globalProperties.$preciseAsPercents = preciseAsPercents
+  app.config.globalProperties.$preciseAsFormatedCoin = preciseAsFormatedCoin
   app.config.globalProperties.$fNum = bigMath.format
   app.config.globalProperties.$fDate = formatDate
   app.config.globalProperties.$tRequestStatus = translateRequestStatus

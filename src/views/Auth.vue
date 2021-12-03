@@ -138,11 +138,13 @@ export default defineComponent({
   max-height: 25rem;
 }
 
-.auth__content {
-  padding: 3.2rem;
-  position: relative;
+.auth {
+  &__content {
+    padding: 3.2rem;
+    position: relative;
+  }
 
-  &-title {
+  &__content-title {
     font-weight: 400;
   }
 }
@@ -169,12 +171,12 @@ export default defineComponent({
   }
 }
 
-.auth__copy {
-  &-warning {
+.auth {
+  &__copy-warning {
     padding: 3.2rem 0;
   }
 
-  &-important {
+  &__copy-important {
     font-weight: 700;
   }
 }

@@ -71,13 +71,15 @@
       />
     </template>
 
-    <button
-      class="app-btn create-oracle-script-btn create-oracle-script-btn_bottom"
-      type="button"
-      @click="createOracleScript()"
-    >
-      Create oracle script
-    </button>
+    <div class="page-mobile-activities">
+      <button
+        class="app-btn w-full"
+        type="button"
+        @click="createOracleScript()"
+      >
+        Create oracle script
+      </button>
+    </div>
   </div>
 </template>
 
@@ -168,25 +170,17 @@ export default defineComponent({
     minmax(8rem, 8fr);
 }
 
-.create-oracle-script-btn {
-  &_bottom {
-    display: none;
-    width: 100%;
-    @media (max-width: 768px) {
-      display: block;
-    }
-  }
-  &_top {
-    display: block;
-    @media (max-width: 768px) {
-      display: none;
-    }
-  }
-}
-
 @media screen and (max-width: 768px) {
+  .view-main {
+    padding-bottom: 10rem;
+  }
+
   .app-table__row {
     grid: none;
+  }
+
+  .create-oracle-script-btn_top {
+    display: none;
   }
 }
 </style>

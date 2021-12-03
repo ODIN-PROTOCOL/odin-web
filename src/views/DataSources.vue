@@ -72,17 +72,11 @@
       />
     </template>
 
-    <button
-      class="
-        app-btn
-        create-data-source-btn create-data-source-btn_bottom
-        fx-sae
-      "
-      type="button"
-      @click="createDataSource()"
-    >
-      Create data source
-    </button>
+    <div class="page-mobile-activities">
+      <button class="app-btn w-full" type="button" @click="createDataSource()">
+        Create data source
+      </button>
+    </div>
   </div>
 </template>
 
@@ -177,25 +171,17 @@ export default defineComponent({
     minmax(8rem, 8fr);
 }
 
-.create-data-source-btn {
-  &_bottom {
-    display: none;
-    width: 100%;
-    @media (max-width: 768px) {
-      display: block;
-    }
-  }
-  &_top {
-    display: block;
-    @media (max-width: 768px) {
-      display: none;
-    }
-  }
-}
-
 @media screen and (max-width: 768px) {
+  .view-main {
+    padding-bottom: 10rem;
+  }
+
   .app-table__row {
     grid: none;
+  }
+
+  .create-data-source-btn_top {
+    display: none;
   }
 }
 </style>
