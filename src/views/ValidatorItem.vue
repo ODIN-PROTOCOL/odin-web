@@ -14,7 +14,7 @@
         </p>
         <CopyButton class="mg-l8" :text="String(validator?.operatorAddress)" />
       </div>
-      <div class="validator__activities validator__activities_top">
+      <div class="validator__activities validator__activities_top fx-sae">
         <template v-if="delegations[validator?.operatorAddress]">
           <button
             class="app-btn app-btn_outlined app-btn_small"
@@ -32,7 +32,7 @@
           </button>
         </template>
         <button
-          class="app-btn app-btn_small fx-sae"
+          class="app-btn app-btn_small mg-l24"
           type="button"
           @click="delegate"
         >
