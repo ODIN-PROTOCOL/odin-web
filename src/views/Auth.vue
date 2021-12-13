@@ -37,23 +37,23 @@
           <button
             class="app-btn w-full mg-t32"
             type="submit"
-            @click.prevent="generateKey"
-          >
-            Generate mnemonic key
-          </button>
-          <button
-            class="app-btn w-full mg-t32"
-            type="submit"
             :disabled="!form.isValid || isLoading"
-            @click="changeLoginMethod(authMethod.LOGIN_WITH_ODIN_WALLET)"
+            @click="changeLoginMethod(WalletTypes.ODIN_WALLET)"
           >
             Log in
           </button>
           <button
             class="app-btn w-full mg-t32"
             type="submit"
+            @click.prevent="generateKey"
+          >
+            Generate mnemonic key
+          </button>
+          <button
+            class="app-btn w-full mg-t64"
+            type="submit"
             :disabled="isLoading"
-            @click="changeLoginMethod(authMethod.LOGIN_WITH_KEPLR_WALLET)"
+            @click="changeLoginMethod(WalletTypes.KEPLR_WALLET)"
           >
             Connect with Keplr
           </button>
@@ -67,7 +67,8 @@
 import router from '@/router'
 import { API_CONFIG, CHAIN_CONFIG } from '@/api/api-config'
 import { defineComponent, ref } from 'vue'
-import { useAuthorization, authMethod } from '@/composables/useAuthorization'
+import { useAuthorization } from '@/composables/useAuthorization'
+import { WalletTypes } from '@/api/wallet'
 import { handleError } from '@/helpers/errors'
 import { useForm, validators } from '@/composables/useForm'
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing'
@@ -87,14 +88,14 @@ export default defineComponent({
       const auth = useAuthorization()
       isLoading.value = true
       try {
-        if (loginType.value === authMethod.LOGIN_WITH_ODIN_WALLET) {
+        if (loginType.value === WalletTypes.ODIN_WALLET) {
           await auth.logIn({
-            type: authMethod.LOGIN_WITH_ODIN_WALLET,
+            walletType: WalletTypes.ODIN_WALLET,
             key: form.mnemonic.val(),
           })
-        } else if (loginType.value === authMethod.LOGIN_WITH_KEPLR_WALLET) {
+        } else if (loginType.value === WalletTypes.KEPLR_WALLET) {
           await auth.logIn({
-            type: authMethod.LOGIN_WITH_KEPLR_WALLET,
+            walletType: WalletTypes.KEPLR_WALLET,
             key: CHAIN_CONFIG.chainId,
           })
         }
@@ -105,7 +106,7 @@ export default defineComponent({
       isLoading.value = false
     }
 
-    const changeLoginMethod = (type: authMethod) => {
+    const changeLoginMethod = (type: WalletTypes) => {
       loginType.value = type
     }
 
@@ -122,7 +123,7 @@ export default defineComponent({
     return {
       form: form.flatten(),
       isLoading,
-      authMethod,
+      WalletTypes,
       submit,
       changeLoginMethod,
       generateKey,

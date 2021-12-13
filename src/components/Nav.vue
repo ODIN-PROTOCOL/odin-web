@@ -58,7 +58,7 @@ import { useAuthorization } from '@/composables/useAuthorization'
 import router from '@/router'
 import LinksDropdown from '@/components/LinksDropdown.vue'
 import ExitIcon from '@/components/icons/ExitIcon.vue'
-import { wallet } from '@/api/wallet'
+import { WalletTypes, wallet } from '@/api/wallet'
 
 export default defineComponent({
   components: { LinksDropdown, ExitIcon },
@@ -103,7 +103,7 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      if (wallet.type === 'keplrWallet') {
+      if (wallet.type === WalletTypes.KEPLR_WALLET) {
         window.addEventListener('keplr_keystorechange', logOutAndLeave)
       }
     })

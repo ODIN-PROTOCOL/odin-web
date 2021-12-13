@@ -8,10 +8,15 @@ declare global {
   interface Window extends KeplrWindow {}
 }
 
+export enum WalletTypes {
+  ODIN_WALLET,
+  KEPLR_WALLET,
+}
+
 export class OdinWallet {
   _wallet: DirectSecp256k1HdWallet | OfflineSigner | null = null
   _walletAccounts: readonly AccountData[] | null = null
-  _walletType: string | null = null
+  _walletType: WalletTypes | null = null
 
   get signer(): DirectSecp256k1HdWallet | OfflineSigner {
     if (!this._wallet) {
@@ -31,15 +36,20 @@ export class OdinWallet {
     return this._wallet === null
   }
 
-  get type(): string | null {
+  get type(): WalletTypes | null {
     if (!this._wallet) {
       throw new ReferenceError('OdinWallet not initialized!')
     }
     return this._walletType
   }
 
-  async init(walletData: { type: string; key: string }): Promise<void> {
-    if (walletData.type === 'odinWallet') {
+  async init(walletData: { type: WalletTypes; key: string }): Promise<void> {
+    // if (walletData.test === WalletTypes.ODIN_WALLET) {
+    //   console.log('ODIN WALLET')
+    // } else if (walletData.test === WalletTypes.KEPLR_WALLET) {
+    //   console.log('KEPLR WALLET')
+    // }
+    if (walletData.type === WalletTypes.ODIN_WALLET) {
       this._wallet = await DirectSecp256k1HdWallet.fromMnemonic(
         walletData.key,
         {
@@ -47,7 +57,7 @@ export class OdinWallet {
           prefix: 'odin',
         }
       )
-    } else if (walletData.type === 'keplrWallet') {
+    } else if (walletData.type === WalletTypes.KEPLR_WALLET) {
       const offlineSigner =
         window.getOfflineSigner != null
           ? window.getOfflineSigner(walletData.key)

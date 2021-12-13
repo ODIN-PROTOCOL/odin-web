@@ -1,12 +1,8 @@
 import { stringToPath } from '@cosmjs/crypto'
 
 export const API_CONFIG = {
-  // api: 'http://192.168.1.37:1317',
-  // rpc: 'http://192.168.1.37:26657',
-  // api: process.env.VUE_APP_API_URL as string,
-  // rpc: process.env.VUE_APP_RPC_URL as string,
-  rpc: 'http://34.77.171.169:26657',
-  api: 'http://34.77.171.169:1317',
+  api: process.env.VUE_APP_API_URL as string,
+  rpc: process.env.VUE_APP_RPC_URL as string,
   faucet: process.env.VUE_APP_FAUCET_URL as string,
   exBridge: process.env.VUE_APP_EX_BRIDGE_URL as string,
   exBridgeFee: process.env.VUE_APP_EX_BRIDGE_FEE as string,
@@ -15,14 +11,10 @@ export const API_CONFIG = {
 }
 
 export const CHAIN_CONFIG = {
-  // chainId: 'odin',
-  // chainName: 'odin',
   chainId: 'odin-testnet-heimdall',
   chainName: 'odin testnet heimdall',
-  rpc: 'http://34.77.171.169:26657',
-  rest: 'http://34.77.171.169:1317',
-  // rpc: API_CONFIG.rpc,
-  // rest: API_CONFIG.api,
+  rpc: API_CONFIG.rpc,
+  rest: API_CONFIG.api,
   bip44: {
     coinType: 494,
   },

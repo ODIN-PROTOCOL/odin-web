@@ -1,63 +1,21 @@
 import { api } from '@/api/api'
-import { OdinWallet, wallet } from '@/api/wallet'
+import { WalletTypes, OdinWallet, wallet } from '@/api/wallet'
 import { storage } from '@/helpers/storage'
 import { readonly, ref } from 'vue'
 import { useBalances } from './useBalances'
 import { CHAIN_CONFIG } from '@/api/api-config'
 
-export enum authMethod {
-  LOGIN_WITH_KEPLR_WALLET,
-  LOGIN_WITH_ODIN_WALLET,
-}
-
 const _isLoggedIn = ref<boolean>(false)
 const isLoggedInReadonly = readonly(_isLoggedIn)
 
 async function createSession(authData: {
-  type: authMethod
+  walletType: WalletTypes
   key: string
 }): Promise<OdinWallet> {
-  if (authData.type === authMethod.LOGIN_WITH_ODIN_WALLET) {
-    await wallet.init({
-      type: 'odinWallet',
-      key: authData.key,
-    })
-
-    await Promise.all([api.attachWallet(wallet), useBalances().load()])
-
-    _isLoggedIn.value = true
-    storage.set('mnemonic', authData.key)
-  } else if (authData.type === authMethod.LOGIN_WITH_KEPLR_WALLET) {
-    if (window.keplr == null) {
-      throw new ReferenceError('Install Keplr extension')
-    } else {
-      if (window.keplr.experimentalSuggestChain) {
-        try {
-          await window.keplr.experimentalSuggestChain(CHAIN_CONFIG)
-        } catch {
-          throw new ReferenceError('Failed to suggest the chain')
-        }
-      } else {
-        throw new ReferenceError(
-          'Please use the recent version of keplr extension'
-        )
-      }
-
-      try {
-        await window.keplr.enable(authData.key)
-        await wallet.init({
-          type: 'keplrWallet',
-          key: authData.key,
-        })
-
-        await Promise.all([api.attachWallet(wallet), useBalances().load()])
-
-        _isLoggedIn.value = true
-        storage.set('chainId', authData.key)
-      } catch (err) {
-        throw new ReferenceError((err as Error).message)
-      }
-    }
+  if (authData.walletType === WalletTypes.ODIN_WALLET) {
+    await _createSessionWithOdinWallet(authData.key)
+  } else if (authData.walletType === WalletTypes.KEPLR_WALLET) {
+    await _createSessionWithKeplrWallet(authData.key)
   }
   return wallet
 }
@@ -80,17 +38,60 @@ export async function tryRestoreSession(): Promise<OdinWallet | null> {
   try {
     if (mnemonic) {
       return createSession({
-        type: authMethod.LOGIN_WITH_ODIN_WALLET,
+        walletType: WalletTypes.ODIN_WALLET,
         key: mnemonic,
       })
     } else {
       return createSession({
-        type: authMethod.LOGIN_WITH_KEPLR_WALLET,
+        walletType: WalletTypes.KEPLR_WALLET,
         key: chainId as string,
       })
     }
   } catch (error) {
     return null
+  }
+}
+
+async function _createSessionWithOdinWallet(mnemonic: string) {
+  await wallet.init({
+    type: WalletTypes.ODIN_WALLET,
+    key: mnemonic,
+  })
+
+  await Promise.all([api.attachWallet(wallet), useBalances().load()])
+
+  _isLoggedIn.value = true
+  storage.set('mnemonic', mnemonic)
+}
+
+async function _createSessionWithKeplrWallet(chainId: string) {
+  if (window.keplr == null) {
+    throw new ReferenceError('Please install the Keplr extension')
+  } else {
+    if (window.keplr.experimentalSuggestChain) {
+      try {
+        await window.keplr.experimentalSuggestChain(CHAIN_CONFIG)
+      } catch {
+        throw new ReferenceError('Failed to suggest the chain')
+      }
+    } else {
+      throw new ReferenceError(
+        'Please use the recent version of keplr extension'
+      )
+    }
+
+    try {
+      await window.keplr.enable(chainId)
+      await wallet.init({
+        type: WalletTypes.KEPLR_WALLET,
+        key: chainId,
+      })
+      await Promise.all([api.attachWallet(wallet), useBalances().load()])
+      _isLoggedIn.value = true
+      storage.set('chainId', chainId)
+    } catch (err) {
+      throw new ReferenceError((err as Error).message)
+    }
   }
 }
 
