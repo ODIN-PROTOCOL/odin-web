@@ -52,12 +52,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue'
+import { defineComponent, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthorization } from '@/composables/useAuthorization'
 import router from '@/router'
 import LinksDropdown from '@/components/LinksDropdown.vue'
 import ExitIcon from '@/components/icons/ExitIcon.vue'
+import { wallet } from '@/api/wallet'
 
 export default defineComponent({
   components: { LinksDropdown, ExitIcon },
@@ -81,7 +82,7 @@ export default defineComponent({
     }
 
     const auth = useAuthorization()
-    const logOutAndLeave = () => {
+    function logOutAndLeave() {
       auth.logOut()
       router.push({ name: 'Auth' })
     }
@@ -100,6 +101,16 @@ export default defineComponent({
     const handleDropdownActive = () => {
       isDropdownActive.value = urls.indexOf(route.path) > -1
     }
+
+    onMounted(() => {
+      if (wallet.type === 'keplrWallet') {
+        window.addEventListener('keplr_keystorechange', logOutAndLeave)
+      }
+    })
+
+    onUnmounted(() => {
+      window.removeEventListener('keplr_keystorechange', logOutAndLeave)
+    })
 
     return {
       isDropdownActive,

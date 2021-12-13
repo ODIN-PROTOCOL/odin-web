@@ -295,10 +295,10 @@ export default defineComponent({
     }
 
     onMounted(async () => {
-      await getRate()
-      await getTransactions()
       ratePoll.start()
       lokiPoll.start()
+      await getRate()
+      await getTransactions()
     })
 
     onUnmounted(() => {
