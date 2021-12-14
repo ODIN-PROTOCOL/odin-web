@@ -57,8 +57,10 @@ export class OdinWallet {
         window.getOfflineSigner != null
           ? window.getOfflineSigner(walletData.key)
           : null
-      if (offlineSigner == null)
-        throw new ReferenceError('Error with offline signer!')
+      if (offlineSigner !== null)
+        throw new ReferenceError(
+          'Something went wrong. Error with offline signer.'
+        )
       this._wallet = offlineSigner
     }
 

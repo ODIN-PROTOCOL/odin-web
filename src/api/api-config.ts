@@ -10,6 +10,7 @@ export const API_CONFIG = {
   odinScan: process.env.VUE_APP_ODIN_SCAN_URL as string,
 }
 
+// Configuration of the chain to which the Kepler extension connects
 export const CHAIN_CONFIG = {
   chainId: 'odin-testnet-heimdall',
   chainName: 'odin testnet heimdall',

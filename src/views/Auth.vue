@@ -38,7 +38,7 @@
             class="app-btn w-full mg-t32"
             type="submit"
             :disabled="!form.isValid || isLoading"
-            @click="changeLoginMethod(WalletTypes.ODIN_WALLET)"
+            @click="changeLoginType(WalletTypes.ODIN_WALLET)"
           >
             Log in
           </button>
@@ -53,7 +53,7 @@
             class="app-btn w-full mg-t64"
             type="submit"
             :disabled="isLoading"
-            @click="changeLoginMethod(WalletTypes.KEPLR_WALLET)"
+            @click="changeLoginType(WalletTypes.KEPLR_WALLET)"
           >
             Connect with Keplr
           </button>
@@ -69,9 +69,9 @@ import { API_CONFIG, CHAIN_CONFIG } from '@/api/api-config'
 import { defineComponent, ref } from 'vue'
 import { useAuthorization } from '@/composables/useAuthorization'
 import { WalletTypes } from '@/api/wallet'
-import { handleError } from '@/helpers/errors'
 import { useForm, validators } from '@/composables/useForm'
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing'
+import { showInfoModal } from '@/components/modals/InfoModal.vue'
 
 const MNEMONIC_SIZE = 24
 
@@ -89,24 +89,18 @@ export default defineComponent({
       isLoading.value = true
       try {
         if (loginType.value === WalletTypes.ODIN_WALLET) {
-          await auth.logIn({
-            walletType: WalletTypes.ODIN_WALLET,
-            key: form.mnemonic.val(),
-          })
+          await auth.logInWithOdinWallet(form.mnemonic.val())
         } else if (loginType.value === WalletTypes.KEPLR_WALLET) {
-          await auth.logIn({
-            walletType: WalletTypes.KEPLR_WALLET,
-            key: CHAIN_CONFIG.chainId,
-          })
+          await auth.logInWithKeplrWallet(CHAIN_CONFIG.chainId)
         }
         await router.push({ name: 'Redirector' })
       } catch (error) {
-        handleError(error as Error)
+        showInfo('Ooops!', (error as Error).message)
       }
       isLoading.value = false
     }
 
-    const changeLoginMethod = (type: WalletTypes) => {
+    const changeLoginType = (type: WalletTypes) => {
       loginType.value = type
     }
 
@@ -120,12 +114,22 @@ export default defineComponent({
       copyWarning.value = true
     }
 
+    const showInfo = (title: string, text: string) => {
+      showInfoModal(
+        {},
+        {
+          title,
+          text,
+        }
+      )
+    }
+
     return {
       form: form.flatten(),
       isLoading,
       WalletTypes,
       submit,
-      changeLoginMethod,
+      changeLoginType,
       generateKey,
       copyWarning,
     }
