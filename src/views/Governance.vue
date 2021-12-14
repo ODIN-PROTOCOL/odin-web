@@ -9,6 +9,7 @@
           fx-sae
         "
         type="button"
+        @click="createProposal()"
       >
         Create a proposal
       </button>
@@ -76,7 +77,9 @@
     </template>
 
     <div class="page-mobile-activities">
-      <button class="app-btn w-full" type="button">Create a proposal</button>
+      <button class="app-btn w-full" type="button" @click="createProposal()">
+        Create a proposal
+      </button>
     </div>
   </div>
 </template>
@@ -92,6 +95,8 @@ import {
 import { proposalStatusType } from '@/helpers/statusTypes'
 import { handleError } from '@/helpers/errors'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
+import { showProposalFormDialog } from '@/components/modals/ProposalFormModal.vue'
+import { ProposalChanges } from '@/helpers/Types'
 import TitledLink from '@/components/TitledLink.vue'
 import CustomDoughnutChart from '@/components/charts/CustomDoughnutChart.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
@@ -106,6 +111,7 @@ export default defineComponent({
     const proposalsCount = ref(0)
     const proposals = ref()
     const filteredProposals = ref()
+    const proposalChanges = ref()
     let proposalsDataForChart = ref()
 
     const getProposals = async () => {
@@ -141,12 +147,35 @@ export default defineComponent({
       currentPage.value = newPage
     }
 
+    const getChangesParams = async () => {
+      const res = await callers.getProposalChanges()
+      const data = await res.json()
+
+      proposalChanges.value = data
+      console.log(data)
+    }
+
+    const createProposal = async () => {
+      await showProposalFormDialog(
+        {
+          onSubmit: (d) => {
+            d.kill()
+            getProposals()
+          },
+        },
+        {
+          proposalChanges: proposalChanges.value as ProposalChanges,
+        }
+      )
+    }
+
     const paginationHandler = (num: number) => {
       filterProposals(num)
     }
 
     onMounted(async () => {
       await getProposals()
+      await getChangesParams()
     })
 
     return {
@@ -158,6 +187,7 @@ export default defineComponent({
       proposalsCount,
       proposals,
       filteredProposals,
+      createProposal,
       paginationHandler,
     }
   },

@@ -42,3 +42,23 @@ export type WalletRate = {
   geodb: USD
   'odin-protocol': USD
 }
+
+type ProposalChangesItem = {
+  Key: string
+  ValueType: string
+}
+
+export type ProposalChanges = {
+  auction: ProposalChangesItem[]
+  auth: ProposalChangesItem[]
+  bank: ProposalChangesItem[]
+  coinswap: ProposalChangesItem[]
+  crisis: ProposalChangesItem[]
+  distribution: ProposalChangesItem[]
+  gov: ProposalChangesItem[]
+  ibc: ProposalChangesItem[]
+  mint: ProposalChangesItem[]
+  oracle: ProposalChangesItem[]
+  slashing: ProposalChangesItem[]
+  staking: ProposalChangesItem[]
+}

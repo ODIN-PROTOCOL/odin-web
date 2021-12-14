@@ -79,12 +79,16 @@ const makeCallers = () => {
     getProposer: (proposalId: NumLike) => {
       return sendGet(`${API_CONFIG.api}/gov/proposals/${proposalId}/proposer`)
     },
+    getProposalChanges: () => {
+      return sendGet(
+        `${API_CONFIG.telemetryUrl}/telemetry/blocks/vote_proposals`
+      )
+    },
     proposalDeposit: broadcaster<MsgDeposit>(
       '/cosmos.gov.v1beta1.MsgDeposit',
       MsgDeposit
     ),
     proposalVote: broadcaster<MsgVote>('/cosmos.gov.v1beta1.MsgVote', MsgVote),
-
     getBalances: querier((qc) => () => {
       const myAddress = wallet.account.address
       return qc.bank.allBalances(myAddress)
