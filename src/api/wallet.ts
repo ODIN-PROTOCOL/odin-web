@@ -44,11 +44,6 @@ export class OdinWallet {
   }
 
   async init(walletData: { type: WalletTypes; key: string }): Promise<void> {
-    // if (walletData.test === WalletTypes.ODIN_WALLET) {
-    //   console.log('ODIN WALLET')
-    // } else if (walletData.test === WalletTypes.KEPLR_WALLET) {
-    //   console.log('KEPLR WALLET')
-    // }
     if (walletData.type === WalletTypes.ODIN_WALLET) {
       this._wallet = await DirectSecp256k1HdWallet.fromMnemonic(
         walletData.key,
