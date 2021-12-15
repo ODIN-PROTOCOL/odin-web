@@ -5,6 +5,7 @@ import {
   MsgCreateOracleScript,
   MsgRequestData,
 } from '@provider/codec/oracle/v1/tx'
+import { MsgSubmitProposal } from '@provider/codec/cosmos/gov/v1beta1/tx'
 import { MsgExchange } from '@provider/codec/coinswap/tx'
 import { MsgDeposit, MsgVote } from '@provider/codec/cosmos/gov/v1beta1/tx'
 import { api } from './api'
@@ -64,6 +65,10 @@ const makeCallers = () => {
           proposals: decodeProposals(response.proposals),
         }
       })
+    ),
+    createProposal: broadcaster<MsgSubmitProposal>(
+      '/cosmos.gov.v1beta1.MsgSubmitProposal',
+      MsgSubmitProposal
     ),
     getProposal: querier((qc) =>
       mapResponse(qc.gov.unverified.proposal, (response) => {

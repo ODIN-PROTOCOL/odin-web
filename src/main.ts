@@ -7,9 +7,6 @@ import {
   preciseAsPercents,
   preciseAsFormatedCoin,
 } from './helpers/formatters'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 import Notifications from '@kyvg/vue3-notification'
 import { api } from './api/api'
 import { bigMath } from './helpers/bigMath'
@@ -22,6 +19,9 @@ import {
   translateTallyShort,
   translateVote,
 } from './helpers/translators'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 
 async function _main() {
   try {

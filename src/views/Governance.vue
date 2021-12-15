@@ -23,7 +23,7 @@
     <div class="app-table">
       <div class="app-table__head">
         <span>Proposal</span>
-        <span>Proposer’s account ID</span>
+        <span>Proposer's account ID</span>
         <span>Proposal status</span>
       </div>
       <div class="app-table__body">
@@ -42,7 +42,7 @@
               />
             </div>
             <div class="app-table__cell">
-              <span class="app-table__title">Proposer’s account ID</span>
+              <span class="app-table__title">Proposer's account ID</span>
               <a
                 class="app-table__cell-txt app-table__link"
                 :href="`${API_CONFIG.odinScan}/account/${item.proposerAddress}`"
@@ -121,6 +121,8 @@ export default defineComponent({
         const transformedProposals = await getTransformedProposals(
           response.proposals
         )
+        const test = await callers.getProposalTally(6)
+        console.log(test)
 
         proposalsDataForChart.value =
           getProposalsCountByStatus(transformedProposals)
@@ -152,7 +154,6 @@ export default defineComponent({
       const data = await res.json()
 
       proposalChanges.value = data
-      console.log(data)
     }
 
     const createProposal = async () => {
@@ -174,8 +175,8 @@ export default defineComponent({
     }
 
     onMounted(async () => {
-      await getProposals()
       await getChangesParams()
+      await getProposals()
     })
 
     return {
