@@ -254,28 +254,13 @@ export function showProposalFormDialog(
 
 <style lang="scss" scoped>
 .app-form__info {
-  display: flex;
-  width: fit-content;
-  gap: 0.5rem;
-
-  span {
-    color: var(--clr__action);
-  }
-
   &-wrapper {
     position: relative;
-    table,
-    th,
-    td {
-      border: 1px solid var(--clr__tooltip-text);
-      border-collapse: collapse;
-    }
-    table {
-      width: 100%;
-      margin-top: 1rem;
-    }
-    td {
-      padding: 1rem;
+  }
+
+  &:hover {
+    & + .tooltip {
+      display: block;
     }
   }
 }
@@ -317,14 +302,6 @@ export function showProposalFormDialog(
     display: inline-block;
     color: var(--clr__input-border);
     margin-bottom: 1rem;
-  }
-}
-
-.app-form__info {
-  &:hover {
-    & + .tooltip {
-      display: block;
-    }
   }
 }
 </style>
