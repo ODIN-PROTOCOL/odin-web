@@ -18,7 +18,7 @@ export const CHAIN_CONFIG = {
   rpc: API_CONFIG.rpc,
   rest: API_CONFIG.api,
   bip44: {
-    coinType: 494,
+    coinType: 118,
   },
   bech32Config: {
     bech32PrefixAccAddr: 'odin',
@@ -56,7 +56,7 @@ export const CHAIN_CONFIG = {
     coinDecimals: 6,
     coinGeckoId: 'odin',
   },
-  coinType: 494,
+  coinType: 118,
   gasPriceStep: {
     low: 0.01,
     average: 0.025,
