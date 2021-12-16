@@ -109,11 +109,7 @@
                 <div class="tooltip">
                   <span>Value type:</span>
                   <p>
-                    {{
-                      proposalChanges[form.changesSubspace].find(
-                        (item) => item.Key === form.changesKey
-                      ).ValueType
-                    }}
+                    {{ changesValueType }}
                   </p>
                 </div>
               </div>
@@ -156,7 +152,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, watch } from 'vue'
+import { computed, defineComponent, PropType, ref, toRef, watch } from 'vue'
 import { coins } from '@cosmjs/launchpad'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
@@ -165,7 +161,7 @@ import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
-import { ProposalChanges } from '@/helpers/Types'
+import { ProposalChanges, ProposalChangesItem } from '@/helpers/Types'
 import { ParameterChangeProposal } from '@provider/codec/cosmos/params/v1beta1/params'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -180,7 +176,8 @@ const ProposalFormModal = defineComponent({
     },
   },
   components: { ModalBase, VuePicker, VuePickerOption },
-  setup() {
+  setup(props) {
+    const _proposalChanges = toRef(props, 'proposalChanges')
     const form = useForm({
       name: ['', validators.required],
       description: ['', validators.required],
@@ -188,6 +185,12 @@ const ProposalFormModal = defineComponent({
       changesSubspace: ['', validators.required],
       changesKey: ['', validators.required],
       changesValue: ['', validators.required],
+    })
+
+    const changesValueType = computed(() => {
+      return _proposalChanges.value[form.changesSubspace.val() as keyof ProposalChanges].find(
+        (item: ProposalChangesItem) => item.Key === form.changesKey.val()
+      )?.ValueType
     })
 
     const isLoading = ref(false)
@@ -235,6 +238,7 @@ const ProposalFormModal = defineComponent({
       form: form.flatten(),
       isLoading,
       submit,
+      changesValueType,
       onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
     }
   },

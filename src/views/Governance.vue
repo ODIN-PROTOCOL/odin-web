@@ -121,8 +121,6 @@ export default defineComponent({
         const transformedProposals = await getTransformedProposals(
           response.proposals
         )
-        const test = await callers.getProposalTally(6)
-        console.log(test)
 
         proposalsDataForChart.value =
           getProposalsCountByStatus(transformedProposals)

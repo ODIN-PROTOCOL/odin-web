@@ -43,7 +43,7 @@ export type WalletRate = {
   'odin-protocol': USD
 }
 
-type ProposalChangesItem = {
+export type ProposalChangesItem = {
   Key: string
   ValueType: string
 }

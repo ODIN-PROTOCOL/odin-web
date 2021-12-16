@@ -8,7 +8,7 @@ export const API_CONFIG = {
   exBridgeFee: process.env.VUE_APP_EX_BRIDGE_FEE as string,
   hdDeviation: stringToPath(process.env.VUE_APP_DEVIATION as string),
   odinScan: process.env.VUE_APP_ODIN_SCAN_URL as string,
-  telemetryUrl: 'http://192.168.1.37:8100',
+  telemetryUrl: process.env.VUE_APP_TELEMETRY_URL as string,
 }
 
 // Configuration of the chain to which the Kepler extension connects
