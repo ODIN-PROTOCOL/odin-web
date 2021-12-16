@@ -4,7 +4,7 @@
       <DoughnutChart v-bind="doughnutChartProps" />
     </div>
     <template v-if="data">
-      <div class="legend" @click="handler()">
+      <div class="legend">
         <div v-for="(item, idx) in data" :key="item.name" class="legend__item">
           <span class="legend__item-percentage">{{ percentage[idx] }}%</span>
           <span
