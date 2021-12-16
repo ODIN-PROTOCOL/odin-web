@@ -37,16 +37,25 @@
           <button
             class="app-btn w-full mg-t32"
             type="submit"
+            :disabled="!form.isValid || isLoading"
+            @click="changeLoginType(WalletTypes.ODIN_WALLET)"
+          >
+            Log in
+          </button>
+          <button
+            class="app-btn w-full mg-t32"
+            type="submit"
             @click.prevent="generateKey"
           >
             Generate mnemonic key
           </button>
           <button
-            class="app-btn w-full mg-t32"
+            class="app-btn w-full mg-t64"
             type="submit"
-            :disabled="!form.isValid || isLoading"
+            :disabled="isLoading"
+            @click="changeLoginType(WalletTypes.KEPLR_WALLET)"
           >
-            Log in
+            Connect with Keplr
           </button>
         </div>
       </form>
@@ -56,12 +65,13 @@
 
 <script lang="ts">
 import router from '@/router'
-import { API_CONFIG } from '@/api/api-config'
+import { API_CONFIG, CHAIN_CONFIG } from '@/api/api-config'
 import { defineComponent, ref } from 'vue'
 import { useAuthorization } from '@/composables/useAuthorization'
-import { handleError } from '@/helpers/errors'
+import { WalletTypes } from '@/api/wallet'
 import { useForm, validators } from '@/composables/useForm'
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing'
+import { showInfoModal } from '@/components/modals/InfoModal.vue'
 
 const MNEMONIC_SIZE = 24
 
@@ -72,17 +82,28 @@ export default defineComponent({
     })
     const isLoading = ref(false)
     const copyWarning = ref(false)
+    const loginType = ref()
+
     const submit = async () => {
       const auth = useAuthorization()
       isLoading.value = true
       try {
-        await auth.logIn(form.mnemonic.val())
+        if (loginType.value === WalletTypes.ODIN_WALLET) {
+          await auth.logInWithOdinWallet(form.mnemonic.val())
+        } else if (loginType.value === WalletTypes.KEPLR_WALLET) {
+          await auth.logInWithKeplrWallet(CHAIN_CONFIG.chainId)
+        }
         await router.push({ name: 'Redirector' })
       } catch (error) {
-        handleError(error)
+        showInfo('Ooops!', (error as Error).message)
       }
       isLoading.value = false
     }
+
+    const changeLoginType = (type: WalletTypes) => {
+      loginType.value = type
+    }
+
     const generateKey = async () => {
       const newWallet = await DirectSecp256k1HdWallet.generate(MNEMONIC_SIZE, {
         hdPaths: [API_CONFIG.hdDeviation],
@@ -92,10 +113,23 @@ export default defineComponent({
       form.mnemonic.val(newWallet.mnemonic)
       copyWarning.value = true
     }
+
+    const showInfo = (title: string, text: string) => {
+      showInfoModal(
+        {},
+        {
+          title,
+          text,
+        }
+      )
+    }
+
     return {
       form: form.flatten(),
       isLoading,
+      WalletTypes,
       submit,
+      changeLoginType,
       generateKey,
       copyWarning,
     }
