@@ -8,6 +8,7 @@ export const API_CONFIG = {
   exBridgeFee: process.env.VUE_APP_EX_BRIDGE_FEE as string,
   hdDeviation: stringToPath(process.env.VUE_APP_DEVIATION as string),
   odinScan: process.env.VUE_APP_ODIN_SCAN_URL as string,
+  telemetryUrl: process.env.VUE_APP_TELEMETRY_URL as string,
 }
 
 // Configuration of the chain to which the Kepler extension connects
@@ -17,7 +18,7 @@ export const CHAIN_CONFIG = {
   rpc: API_CONFIG.rpc,
   rest: API_CONFIG.api,
   bip44: {
-    coinType: 494,
+    coinType: 118,
   },
   bech32Config: {
     bech32PrefixAccAddr: 'odin',
@@ -55,7 +56,7 @@ export const CHAIN_CONFIG = {
     coinDecimals: 6,
     coinGeckoId: 'odin',
   },
-  coinType: 494,
+  coinType: 118,
   gasPriceStep: {
     low: 0.01,
     average: 0.025,

@@ -19,6 +19,9 @@ import {
   translateTallyShort,
   translateVote,
 } from './helpers/translators'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 
 async function _main() {
   try {
@@ -56,6 +59,8 @@ async function _main() {
   app.config.globalProperties.$tBondStatus = translateBondStatus
   app.use(router)
   app.use(Notifications)
+  app.component('VuePicker', VuePicker)
+  app.component('VuePickerOption', VuePickerOption)
   app.mount('#app')
   return app
 }
