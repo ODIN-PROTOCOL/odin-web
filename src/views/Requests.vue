@@ -3,11 +3,7 @@
     <div class="page-title fx-row">
       <h2 class="view-title">Requests</h2>
       <button
-        class="
-          app-btn app-btn_small
-          create-request-btn create-request-btn_top
-          fx-sae
-        "
+        class="app-btn app-btn_small create-request-btn create-request-btn_top fx-sae"
         type="button"
         @click="createRequest()"
       >
@@ -102,7 +98,7 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue'
 import { callers } from '@/api/callers'
-import { showRequestFormDialog } from '@/components/modals/RequestFormModal.vue'
+import { showRequestFormModal } from '@/components/modals/handlers/requestFormModalHandler'
 import TitledLink from '@/components/TitledLink.vue'
 import Progressbar from '@/components/Progressbar.vue'
 import Pagination from '@/components/pagination/pagination.vue'
@@ -136,7 +132,7 @@ export default defineComponent({
     }
 
     const createRequest = async () => {
-      showRequestFormDialog(
+      showRequestFormModal(
         {
           onSubmit: (d) => {
             d.kill()

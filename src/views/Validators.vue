@@ -6,11 +6,7 @@
     <div class="page-title">
       <h2 class="view-title">All Validators</h2>
       <button
-        class="
-          app-btn app-btn_small
-          become-validator-btn become-validator-btn_top
-          fx-sae
-        "
+        class="app-btn app-btn_small become-validator-btn become-validator-btn_top fx-sae"
         type="button"
         @click="becomeValidator()"
       >
@@ -147,11 +143,10 @@ import Tab from '@/components/tabs/Tab.vue'
 import TitledLink from '@/components/TitledLink.vue'
 import StatusIcon from '@/components/StatusIcon.vue'
 import Pagination from '@/components/pagination/pagination.vue'
-import { showWithdrawRewardsFormDialog } from '@/components/modals/WithdrawRewardsFormModal.vue'
-import { showDelegateFormDialog } from '@/components/modals/DelegateFormModal.vue'
-import { showUndelegateFormDialog } from '@/components/modals/UndelegateFormModal.vue'
-import { showBecomeValidatorFormDialog } from '@/components/modals/BecomeValidatorFormModal.vue'
-// import { showBecomeValidatorInfoModal } from '@/components/modals/BecomeValidatorInfoModal.vue'
+import { showWithdrawRewardsFormModal } from '@/components/modals/handlers/withdrawRewardsFormModalHandler'
+import { showDelegateFormModal } from '@/components/modals/handlers/delegateFormModalHandler'
+import { showUndelegateFormModal } from '@/components/modals/handlers/undelegateFormModalHandler'
+import { showBecomeValidatorFormModal } from '@/components/modals/handlers/becomeValidatorFormModalHandler'
 
 export default defineComponent({
   components: { Tabs, Tab, TitledLink, StatusIcon, Pagination },
@@ -261,7 +256,7 @@ export default defineComponent({
     // }
 
     const becomeValidator = async () => {
-      showBecomeValidatorFormDialog({
+      showBecomeValidatorFormModal({
         onSubmit: (d) => {
           d.kill()
           getDelegations()
@@ -272,7 +267,7 @@ export default defineComponent({
 
     const withdrawRewards = (validator: ValidatorDecoded) => {
       if (!delegations.value[validator.operatorAddress]) return
-      showWithdrawRewardsFormDialog(
+      showWithdrawRewardsFormModal(
         {
           onSubmit: (d) => {
             d.kill()
@@ -285,7 +280,7 @@ export default defineComponent({
     }
 
     const delegate = (validator: ValidatorDecoded) => {
-      showDelegateFormDialog(
+      showDelegateFormModal(
         {
           onSubmit: (d) => {
             d.kill()
@@ -299,7 +294,7 @@ export default defineComponent({
 
     const undelegate = (validator: ValidatorDecoded) => {
       if (!delegations.value[validator.operatorAddress]) return
-      showUndelegateFormDialog(
+      showUndelegateFormModal(
         {
           onSubmit: (d) => {
             d.kill()

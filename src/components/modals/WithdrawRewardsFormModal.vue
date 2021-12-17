@@ -47,7 +47,7 @@
 import { defineComponent, onMounted, onUnmounted, PropType, ref } from 'vue'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
-import { DialogHandler, dialogs } from '@/helpers/dialogs'
+import { dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
@@ -113,15 +113,6 @@ const WithdrawRewardsFormDialog = defineComponent({
 })
 
 export default WithdrawRewardsFormDialog
-export function showWithdrawRewardsFormDialog(
-  callbacks: {
-    onSubmit?: DialogHandler
-    onClose?: DialogHandler
-  },
-  props: { validator: ValidatorDecoded }
-): Promise<unknown | null> {
-  return dialogs.show(WithdrawRewardsFormDialog, callbacks, { props })
-}
 </script>
 
 <style lang="scss" scoped></style>

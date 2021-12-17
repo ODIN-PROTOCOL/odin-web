@@ -47,7 +47,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import { callers } from '@/api/callers'
-import { DialogHandler, dialogs } from '@/helpers/dialogs'
+import { dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
@@ -77,9 +77,9 @@ const FaucetFormModal = defineComponent({
         onSubmit()
         notifySuccess('Faucet request created')
       } catch (error) {
-        const indTime = error.message.indexOf('time')
-        const errorStr = error.message.slice(10, indTime - 3)
-        const timeStr = error.message.slice(indTime + 6, -1)
+        const indTime = (error as Error).message.indexOf('time')
+        const errorStr = (error as Error).message.slice(10, indTime - 3)
+        const timeStr = (error as Error).message.slice(indTime + 6, -1)
 
         const hours = Math.floor(+timeStr / 60 / 60)
         let minutes = Math.floor(
@@ -112,12 +112,6 @@ const FaucetFormModal = defineComponent({
 })
 
 export default FaucetFormModal
-export function showFaucetFormDialog(callbacks?: {
-  onSubmit?: DialogHandler
-  onClose?: DialogHandler
-}): Promise<unknown | null> {
-  return dialogs.show(FaucetFormModal, callbacks)
-}
 </script>
 
 <style scoped lang="scss"></style>

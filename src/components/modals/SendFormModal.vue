@@ -135,7 +135,7 @@ import { callers } from '@/api/callers'
 import { coins } from '@cosmjs/amino'
 import { wallet } from '@/api/wallet'
 import { useForm, validators } from '@/composables/useForm'
-import { DialogHandler, dialogs } from '@/helpers/dialogs'
+import { dialogs } from '@/helpers/dialogs'
 import { preventIf } from '@/helpers/functions'
 import { handleError } from '@/helpers/errors'
 import { notifySuccess } from '@/helpers/notifications'
@@ -203,18 +203,6 @@ const SendFormModal = defineComponent({
 })
 
 export default SendFormModal
-export function showSendFormDialog(
-  callbacks: {
-    onSubmit?: DialogHandler
-    onClose?: DialogHandler
-  },
-  props?: {
-    rate?: WalletRate
-    balance?: Coin[]
-  }
-): Promise<unknown | null> {
-  return dialogs.show(SendFormModal, callbacks, { props })
-}
 </script>
 
 <style lang="scss" scoped>

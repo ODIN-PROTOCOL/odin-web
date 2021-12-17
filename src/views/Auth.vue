@@ -71,7 +71,7 @@ import { useAuthorization } from '@/composables/useAuthorization'
 import { WalletTypes } from '@/api/wallet'
 import { useForm, validators } from '@/composables/useForm'
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing'
-import { showInfoModal } from '@/components/modals/InfoModal.vue'
+import { showInfoModal } from '@/components/modals/handlers/infoModalHandler'
 
 const MNEMONIC_SIZE = 24
 

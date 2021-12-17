@@ -86,7 +86,7 @@ import { defineComponent, ref } from 'vue'
 import { loremIpsum } from 'lorem-ipsum'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
-import { DialogHandler, dialogs } from '@/helpers/dialogs'
+import { dialogs } from '@/helpers/dialogs'
 import { readFile } from '@/helpers/files'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
@@ -161,12 +161,6 @@ const OracleScriptFormModal = defineComponent({
 })
 
 export default OracleScriptFormModal
-export function showOracleScriptFormDialog(callbacks: {
-  onSubmit?: DialogHandler
-  onClose?: DialogHandler
-}): Promise<unknown | null> {
-  return dialogs.show(OracleScriptFormModal, callbacks)
-}
 </script>
 
 <style scoped lang="scss"></style>

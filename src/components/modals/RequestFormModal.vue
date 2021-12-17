@@ -118,7 +118,7 @@ import { defineComponent, ref } from 'vue'
 import Long from 'long'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
-import { DialogHandler, dialogs } from '@/helpers/dialogs'
+import { dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
@@ -195,15 +195,6 @@ const RequestFormModal = defineComponent({
 })
 
 export default RequestFormModal
-export function showRequestFormDialog(
-  callbacks: {
-    onSubmit?: DialogHandler
-    onClose?: DialogHandler
-  },
-  props: { maxAskCount: number }
-): Promise<unknown | null> {
-  return dialogs.show(RequestFormModal, callbacks, { props })
-}
 </script>
 
 <style scoped lang="scss"></style>
