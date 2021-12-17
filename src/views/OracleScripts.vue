@@ -3,11 +3,7 @@
     <div class="page-title">
       <h2 class="view-title">Oracle Scripts</h2>
       <button
-        class="
-          app-btn app-btn_small
-          create-oracle-script-btn create-oracle-script-btn_top
-          fx-sae
-        "
+        class="app-btn app-btn_small create-oracle-script-btn create-oracle-script-btn_top fx-sae"
         type="button"
         @click="createOracleScript()"
       >
@@ -90,7 +86,7 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
 import TitledLink from '@/components/TitledLink.vue'
 import Pagination from '@/components/pagination/pagination.vue'
-import { showOracleScriptFormDialog } from '@/components/modals/OracleScriptFormModal.vue'
+import { showOracleScriptFormModal } from '@/components/modals/handlers/oracleScriptFormModalHandler'
 
 export default defineComponent({
   components: { TitledLink, Pagination },
@@ -123,7 +119,7 @@ export default defineComponent({
     }
 
     const createOracleScript = async () => {
-      showOracleScriptFormDialog({
+      showOracleScriptFormModal({
         onSubmit: (d) => {
           d.kill()
           loadOracleScripts()

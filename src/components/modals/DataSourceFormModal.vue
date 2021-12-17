@@ -100,7 +100,7 @@ import { loremIpsum } from 'lorem-ipsum'
 import { coins } from '@cosmjs/launchpad'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
-import { DialogHandler, dialogs } from '@/helpers/dialogs'
+import { dialogs } from '@/helpers/dialogs'
 import { readFile } from '@/helpers/files'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
@@ -140,7 +140,7 @@ const DataSourceFormModal = defineComponent({
         onSubmit()
         notifySuccess('Data source created')
       } catch (error) {
-        handleError(error)
+        handleError(error as Error)
       }
       isLoading.value = false
     }
@@ -175,15 +175,6 @@ const DataSourceFormModal = defineComponent({
 })
 
 export default DataSourceFormModal
-export function showDataSourceFormDialog(
-  callbacks: {
-    onSubmit?: DialogHandler
-    onClose?: DialogHandler
-  },
-  props?: { dataSourceId?: string }
-): Promise<unknown | null> {
-  return dialogs.show(DataSourceFormModal, callbacks, { props })
-}
 </script>
 
 <style scoped lang="scss"></style>

@@ -156,7 +156,7 @@ import { computed, defineComponent, PropType, ref, toRef, watch } from 'vue'
 import { coins } from '@cosmjs/launchpad'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
-import { DialogHandler, dialogs } from '@/helpers/dialogs'
+import { dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
@@ -188,9 +188,10 @@ const ProposalFormModal = defineComponent({
     })
 
     const changesValueType = computed(() => {
-      return _proposalChanges.value[form.changesSubspace.val() as keyof ProposalChanges].find(
-        (item: ProposalChangesItem) => item.Key === form.changesKey.val()
-      )?.ValueType
+      return _proposalChanges.value[
+        form.changesSubspace.val() as keyof ProposalChanges
+      ].find((item: ProposalChangesItem) => item.Key === form.changesKey.val())
+        ?.ValueType
     })
 
     const isLoading = ref(false)
@@ -245,15 +246,6 @@ const ProposalFormModal = defineComponent({
 })
 
 export default ProposalFormModal
-export function showProposalFormDialog(
-  callbacks: {
-    onSubmit?: DialogHandler
-    onClose?: DialogHandler
-  },
-  props?: { proposalChanges?: ProposalChanges }
-): Promise<unknown | null> {
-  return dialogs.show(ProposalFormModal, callbacks, { props })
-}
 </script>
 
 <style lang="scss" scoped>

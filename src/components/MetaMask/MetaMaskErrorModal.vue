@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import { DialogHandler, DialogPayloadHandler, dialogs } from '@/helpers/dialogs'
+import { DialogPayloadHandler, dialogs } from '@/helpers/dialogs'
 import ModalBase from '@/components/modals/ModalBase.vue'
 import { DecoratedFn } from '@/shared-types'
 import { preventIf } from '@/helpers/functions'
@@ -38,15 +38,4 @@ const MetaMaskErrorFormModal = defineComponent({
   },
 })
 export default MetaMaskErrorFormModal
-export function showMetaMaskErrorFormDialog(
-  callbacks?: {
-    onSubmit?: DialogHandler
-    onClose?: DialogHandler
-  },
-  props?: {
-    message: string | null | undefined
-  }
-): Promise<unknown | null> {
-  return dialogs.show(MetaMaskErrorFormModal, callbacks, { props })
-}
 </script>

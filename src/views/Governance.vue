@@ -3,11 +3,7 @@
     <div class="page-title">
       <h2 class="view-title">Governance</h2>
       <button
-        class="
-          app-btn app-btn_small
-          create-proposal-btn create-proposal-btn_top
-          fx-sae
-        "
+        class="app-btn app-btn_small create-proposal-btn create-proposal-btn_top fx-sae"
         type="button"
         @click="createProposal()"
       >
@@ -95,7 +91,7 @@ import {
 import { proposalStatusType } from '@/helpers/statusTypes'
 import { handleError } from '@/helpers/errors'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
-import { showProposalFormDialog } from '@/components/modals/ProposalFormModal.vue'
+import { showProposalFormModal } from '@/components/modals/handlers/proposalFormModalHandler'
 import { ProposalChanges } from '@/helpers/Types'
 import TitledLink from '@/components/TitledLink.vue'
 import CustomDoughnutChart from '@/components/charts/CustomDoughnutChart.vue'
@@ -155,7 +151,7 @@ export default defineComponent({
     }
 
     const createProposal = async () => {
-      await showProposalFormDialog(
+      await showProposalFormModal(
         {
           onSubmit: (d) => {
             d.kill()
