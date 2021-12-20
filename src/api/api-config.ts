@@ -13,8 +13,8 @@ export const API_CONFIG = {
 
 // Configuration of the chain to which the Kepler extension connects
 export const CHAIN_CONFIG = {
-  chainId: 'odin-testnet-heimdall',
-  chainName: 'odin testnet heimdall',
+  chainId: 'odin-mainnet-freya',
+  chainName: 'odin mainnet freya',
   rpc: API_CONFIG.rpc,
   rest: API_CONFIG.api,
   bip44: {
