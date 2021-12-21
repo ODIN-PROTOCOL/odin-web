@@ -29,7 +29,7 @@
       <div class="app-table__head">
         <span>Rank</span>
         <span>Validator</span>
-        <span>Delegator Share</span>
+        <span>Delegated</span>
         <span>Commission</span>
         <span>Oracle Status</span>
         <span></span>
@@ -54,13 +54,19 @@
               />
             </div>
             <div class="app-table__cell">
-              <span class="app-table__title">Delegator Share</span>
-              <span>{{ $preciseAsPercents(item.delegatorShares) }}</span>
+              <span class="app-table__title">Delegated</span>
+              <span :title="$preciseFormatCoin(item.delegatorShares, 'loki')">
+                {{ $preciseFormatOdinCoin(item.delegatorShares) }}
+              </span>
+              <!-- <span>{{ $preciseAsPercents(item.delegatorShares) }}</span> -->
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Commission</span>
-              <span>
+              <!-- <span>
                 {{ $preciseAsPercents(item.commission.commissionRates.rate) }}
+              </span> -->
+              <span>
+                {{ $getPrecisePercents(item.commission.commissionRates.rate) }}
               </span>
             </div>
             <div class="app-table__cell">
