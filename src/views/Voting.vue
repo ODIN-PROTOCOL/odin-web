@@ -3,7 +3,7 @@
     <div class="page-title">
       <BackButton :text="'Proposal'" />
       <h2 class="view-title">Vote for proposal</h2>
-      <span class="view-subtitle"> Proposal Name </span>
+      <span class="view-subtitle">{{ proposalName }}</span>
     </div>
 
     <div class="content-block">
@@ -13,22 +13,37 @@
             <input
               type="radio"
               id="support"
-              value="Support"
+              :value="VoteOption.VOTE_OPTION_YES"
               checked
-              v-model="picked"
+              v-model="pickedOption"
             />
             <label for="support">Support</label>
           </div>
           <div>
-            <input type="radio" id="reject" value="Reject" v-model="picked" />
+            <input
+              type="radio"
+              id="reject"
+              :value="VoteOption.VOTE_OPTION_NO"
+              v-model="pickedOption"
+            />
             <label for="reject">Reject</label>
           </div>
           <div>
-            <input type="radio" id="veto" value="Veto" v-model="picked" />
+            <input
+              type="radio"
+              id="veto"
+              :value="VoteOption.VOTE_OPTION_NO_WITH_VETO"
+              v-model="pickedOption"
+            />
             <label for="veto">Veto</label>
           </div>
           <div>
-            <input type="radio" id="abstain" value="Abstain" v-model="picked" />
+            <input
+              type="radio"
+              id="abstain"
+              :value="VoteOption.VOTE_OPTION_ABSTAIN"
+              v-model="pickedOption"
+            />
             <label for="abstain">Abstain</label>
           </div>
         </div>
@@ -44,6 +59,9 @@
         <CustomDoughnutChart :data="votesDataForChart" />
       </div>
     </div>
+    <template v-if="isLoading">
+      <Loader />
+    </template>
   </div>
 </template>
 
@@ -53,37 +71,55 @@ import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 import Long from 'long'
+import { VoteOption } from '@provider/codec/cosmos/gov/v1beta1/gov'
+import { voteStatusType } from '@/helpers/statusTypes'
 import { handleError } from '@/helpers/errors'
+import { notifySuccess } from '@/helpers/notifications'
 import BackButton from '@/components/BackButton.vue'
 import CustomDoughnutChart from '@/components/charts/CustomDoughnutChart.vue'
+import Loader from '@/components/Loader.vue'
 import { showConfirmationDialog } from '@/components/modals/ConfirmationModal.vue'
+import { getVotesCountByStatus } from '@/helpers/voteHelpers'
 
 export default defineComponent({
-  components: { BackButton, CustomDoughnutChart },
+  components: { BackButton, CustomDoughnutChart, Loader },
   setup: function () {
     const route: RouteLocationNormalizedLoaded = useRoute()
+    const isLoading = ref(false)
 
     const votesDataForChart = ref()
-    const picked = ref('Support')
+    const pickedOption = ref(VoteOption.VOTE_OPTION_YES)
+    const proposalName = ref('')
 
     const getProposal = async () => {
-      const response = await callers.getProposals(0, '', '')
-      const response1 = await callers.getProposalVotes(1)
+      const res = await callers.getProposal(Number(route.params.id))
 
-      console.log(response)
-      console.log(response1)
+      proposalName.value = res.proposal.content?.title as string
+    }
+
+    const getVotes = async () => {
+      const res = await callers.getProposalVotes(Number(route.params.id))
+      votesDataForChart.value = getVotesCountByStatus(res.votes)
     }
 
     const vote = async () => {
+      isLoading.value = true
       try {
         await callers.proposalVote({
-          proposalId: new Long(1),
+          proposalId: new Long(Number(route.params.id)),
           voter: wallet.account.address,
-          option: 2,
+          option: pickedOption.value,
         })
+
+        await getProposal()
+        await getVotes()
+        notifySuccess(
+          `Successfully voted for ${voteStatusType[pickedOption.value].name}`
+        )
       } catch (error) {
         handleError(error as Error)
       }
+      isLoading.value = false
     }
 
     const confirmation = () => {
@@ -92,26 +128,30 @@ export default defineComponent({
           onSubmit: (d) => {
             d.kill()
             vote()
-            console.log(picked.value)
           },
         },
         {
-          text: `You have chosen to vote for "${picked.value}"`,
+          text: `You have chosen to vote for "${
+            voteStatusType[pickedOption.value].name
+          }"`,
         }
       )
     }
 
     onMounted(async () => {
       await getProposal()
-      votesDataForChart.value = [
-        { name: 'Support', count: 10, color: '#00D097' },
-        { name: 'Reject', count: 1, color: '#F65160' },
-        { name: 'Veto', count: 3, color: '#FDC748' },
-        { name: 'Abstained votes', count: 0, color: '#007BFF' },
-      ]
+      await getVotes()
     })
 
-    return { picked, votesDataForChart, confirmation, vote }
+    return {
+      isLoading,
+      pickedOption,
+      proposalName,
+      VoteOption,
+      votesDataForChart,
+      confirmation,
+      vote,
+    }
   },
 })
 </script>

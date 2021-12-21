@@ -46,7 +46,7 @@
           />
         </div>
         <div class="info-table__row">
-          <span class="info-table__row-title">"Support" votes</span>
+          <span class="info-table__row-title">"Support" tally</span>
           <Tally
             v-if="tally"
             class="app-table__cell-txt"

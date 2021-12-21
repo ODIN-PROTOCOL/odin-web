@@ -1,7 +1,7 @@
 import { ProposalDecoded } from '@/helpers/proposalDecoders'
 import {
   TransformedProposal,
-  defaultProposalBlank,
+  defaultChartDataBlank,
   ChartDataItem,
 } from '@/helpers/Types'
 import { proposalStatusType } from '@/helpers/statusTypes'
@@ -25,7 +25,7 @@ export const getTransformedProposals = async (
   return transformedProposals
 }
 
-const defaultProposalsCountBlank: defaultProposalBlank[] = [
+const defaultProposalsCountBlank: defaultChartDataBlank[] = [
   { name: 'Approved', color: '#00D097' },
   { name: 'Rejected', color: '#F65160' },
   { name: 'Pending', color: '#FDC748' },
