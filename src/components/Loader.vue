@@ -28,9 +28,9 @@
 
 .loader {
   display: inline-block;
-  width: 50px;
-  height: 50px;
-  border: 4px solid var(--clr__main-bg);
+  width: 5rem;
+  height: 5rem;
+  border: 0.4rem solid var(--clr__main-bg);
   animation: loader 2s infinite ease;
 }
 
