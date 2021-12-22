@@ -53,10 +53,6 @@
           }}
         </span>
       </div>
-      <div class="card__row">
-        <span class="card__title">Operator</span>
-        <span class="card__txt">{{ validator.operatorAddress }}</span>
-      </div>
     </div>
     <div class="card__item">
       <ExtendedProgressbar

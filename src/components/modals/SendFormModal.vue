@@ -153,7 +153,7 @@ const SendFormModal = defineComponent({
     rate: { type: Object as PropType<WalletRate>, required: true },
     balance: { type: Array as PropType<Coin[]>, required: true },
   },
-  setup: function () {
+  setup: function (props) {
     const form = useForm({
       receiver: [
         '',
@@ -162,10 +162,10 @@ const SendFormModal = defineComponent({
         validators.maxCharacters(128),
       ],
       amount: [
-        0,
+        '',
         validators.required,
         validators.integer,
-        ...validators.num(0),
+        ...validators.num(1, Number(props.balance[0].amount)),
         validators.maxCharacters(128),
       ],
     })

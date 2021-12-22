@@ -12,7 +12,7 @@
       >
         <div class="app-form__main">
           <div class="app-form__field">
-            <label class="app-form__field-lbl"> Moniker </label>
+            <label class="app-form__field-lbl"> Validator </label>
             <input
               class="app-form__field-input"
               name="become-validator-moniker"

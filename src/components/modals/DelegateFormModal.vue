@@ -11,6 +11,11 @@
         @submit.prevent
       >
         <div class="app-form__main">
+          <div class="app-form__field">
+            <label class="app-form__field-lbl"> Available </label>
+            <p>{{ $fCoin(lokiBalance) }}</p>
+          </div>
+
           <div v-if="delegation && delegation.balance" class="app-form__field">
             <label class="app-form__field-lbl"> You delegated </label>
             <p>{{ $fCoin(delegation.balance) }}</p>
@@ -23,8 +28,7 @@
               <input
                 class="app-form__field-input"
                 name="delegate-amount"
-                type="number"
-                min="1"
+                type="string"
                 :max="lokiBalance"
                 placeholder="1000"
                 v-model="form.amount"
@@ -75,14 +79,14 @@ const DelegateFormDialog = defineComponent({
   components: { ModalBase },
   setup(props) {
     const { get: getBalance, load: loadBalances } = useBalances()
-    const lokiBalance = getBalance('loki', 'number')
+    const lokiBalance = getBalance('loki')
 
     const form = useForm({
       amount: [
-        1,
+        '',
         validators.required,
         validators.integer,
-        ...validators.num(1, lokiBalance),
+        ...validators.num(1, Number(lokiBalance?.amount)),
         validators.maxCharacters(128),
       ],
     })
@@ -95,7 +99,7 @@ const DelegateFormDialog = defineComponent({
         await callers.validatorDelegate({
           delegatorAddress: wallet.account.address,
           validatorAddress: props.validator.operatorAddress,
-          amount: coin(form.amount.val(), 'loki'),
+          amount: coin(Number(form.amount.val()), 'loki'),
         })
         await loadBalances()
         onSubmit()
