@@ -38,17 +38,16 @@ const defaultProposalsCountBlank: defaultChartDataBlank[] = [
 export const getProposalsCountByStatus = (
   proposals: ProposalsStatistic
 ): ChartDataItem[] => {
-  const counts: ChartDataItem[] = [
+  let counts: ChartDataItem[] = [
     ...defaultProposalsCountBlank.map((item) => ({ ...item, count: 0 })),
   ]
 
   for (const [, value] of Object.entries(proposals)) {
-    counts.forEach((c: ChartDataItem) => {
-      if (
-        proposalStatusType[(<never>ProposalStatus)[value.Name]].name === c.name
-      )
-        c.count = value.Count
-    })
+    counts = counts.map((c: ChartDataItem) =>
+      proposalStatusType[(<never>ProposalStatus)[value.Name]].name === c.name
+        ? { ...c, count: value.Count }
+        : c
+    )
   }
 
   return counts

@@ -58,13 +58,9 @@
               <span :title="$preciseFormatCoin(item.delegatorShares, 'loki')">
                 {{ $preciseFormatOdinCoin(item.delegatorShares) }}
               </span>
-              <!-- <span>{{ $preciseAsPercents(item.delegatorShares) }}</span> -->
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Commission</span>
-              <!-- <span>
-                {{ $preciseAsPercents(item.commission.commissionRates.rate) }}
-              </span> -->
               <span>
                 {{ $getPrecisePercents(item.commission.commissionRates.rate) }}
               </span>

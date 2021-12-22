@@ -130,7 +130,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType } from 'vue'
+import { defineComponent, ref, PropType, computed } from 'vue'
 import { callers } from '@/api/callers'
 import { coins } from '@cosmjs/amino'
 import { wallet } from '@/api/wallet'
@@ -145,6 +145,7 @@ import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 import ModalBase from '@/components/modals/ModalBase.vue'
 import { Coin } from '@cosmjs/amino'
 import { WalletRate } from '@/helpers/Types'
+import { coin } from '@cosmjs/launchpad'
 
 const SendFormModal = defineComponent({
   name: 'SendFormModal',
@@ -154,7 +155,20 @@ const SendFormModal = defineComponent({
     balance: { type: Array as PropType<Coin[]>, required: true },
   },
   setup: function (props) {
-    const form = useForm({
+    const fee = ref(0)
+    const isLoading = ref(false)
+    const onSubmit = dialogs.getHandler('onSubmit')
+    const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
+    const sendAsset = ref('loki')
+    const selectedBalance = computed(() => {
+      const balance = props.balance.find((item) => {
+        return item.denom === sendAsset.value ? true : false
+      })
+      if (balance) return balance
+      else return coin(0, sendAsset.value)
+    })
+
+    let form = useForm({
       receiver: [
         '',
         validators.required,
@@ -165,15 +179,10 @@ const SendFormModal = defineComponent({
         '',
         validators.required,
         validators.integer,
-        ...validators.num(1, Number(props.balance[0].amount)),
+        ...validators.num(1, Number(selectedBalance.value.amount)),
         validators.maxCharacters(128),
       ],
     })
-    const sendAsset = ref('loki')
-    const fee = ref(0)
-    const isLoading = ref(false)
-    const onSubmit = dialogs.getHandler('onSubmit')
-    const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
 
     const submit = async () => {
       isLoading.value = true

@@ -15,9 +15,10 @@ export const getVotesCountByStatus = (votes: Vote[]): ChartDataItem[] => {
   ]
 
   votes.forEach((p) => {
-    counts.forEach((c: ChartDataItem) => {
-      if (voteStatusType[p.option].name === c.name) c.count += 1
-    })
+    const countsItem = counts.find((c: ChartDataItem) =>
+      voteStatusType[p.option].name === c.name ? true : false
+    )
+    if (countsItem) countsItem.count++
   })
 
   return counts

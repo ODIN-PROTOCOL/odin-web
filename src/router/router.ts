@@ -70,13 +70,6 @@ const routes: Array<RouteRecordRaw> = [
     component: () =>
       import(/* webpackChunkName: "request" */ '../views/RequestItem.vue'),
   },
-  // {
-  //   path: '/voting',
-  //   name: 'Voting',
-  //   beforeEnter: authorizedOnlyGuard,
-  //   component: () =>
-  //     import(/* webpackChunkName: "voting" */ '../views/Voting.vue'),
-  // },
   {
     path: '/validators',
     name: 'Validators',

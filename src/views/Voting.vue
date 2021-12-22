@@ -48,7 +48,7 @@
           </div>
         </div>
         <button
-          class="app-btn app-btn_small voting__btn"
+          class="app-btn app-btn_small voting-btn"
           @click="confirmation()"
         >
           Vote
@@ -78,7 +78,7 @@ import { notifySuccess } from '@/helpers/notifications'
 import BackButton from '@/components/BackButton.vue'
 import CustomDoughnutChart from '@/components/charts/CustomDoughnutChart.vue'
 import Loader from '@/components/Loader.vue'
-import { showConfirmationDialog } from '@/components/modals/ConfirmationModal.vue'
+import { showConfirmationModal } from '@/components/modals/handlers/confirmationModalHandler'
 import { getVotesCountByStatus } from '@/helpers/voteHelpers'
 
 export default defineComponent({
@@ -123,7 +123,7 @@ export default defineComponent({
     }
 
     const confirmation = () => {
-      showConfirmationDialog(
+      showConfirmationModal(
         {
           onSubmit: (d) => {
             d.kill()
@@ -159,6 +159,10 @@ export default defineComponent({
 <style lang="scss" scoped>
 .view-title {
   margin: 0 1.6rem 0 2rem;
+
+  @include respond-to(768px) {
+    margin: 0.8rem 0 0.4rem 0;
+  }
 }
 
 .content-block {
@@ -167,49 +171,43 @@ export default defineComponent({
   align-items: flex-start;
   flex-direction: row;
 
-  &__voting,
-  &__chart {
-    width: 100%;
-    padding: 3.2rem 2.4rem;
-    border-radius: 0.8rem;
-  }
-
-  &__voting {
-    background: var(--clr__grey-bg);
-  }
-
-  &__voting-choice {
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
-
-    label {
-      margin-left: 0.8rem;
-    }
-  }
-
-  &__chart {
-    border: 1px solid var(--clr__action);
-  }
-
-  &__chart-title {
-    font-size: 2.4rem;
-    font-weight: 400;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .view-title {
-    margin: 0.8rem 0 0.4rem 0;
-  }
-
-  .content-block {
+  @include respond-to(768px) {
     flex-direction: column-reverse;
     gap: 4rem;
 
-    .voting__btn {
+    .voting-btn {
       width: 100%;
     }
   }
+}
+
+.content-block__voting,
+.content-block__chart {
+  width: 100%;
+  padding: 3.2rem 2.4rem;
+  border-radius: 0.8rem;
+}
+
+.content-block__voting {
+  background: var(--clr__grey-bg);
+}
+
+.content-block__voting-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+
+  label {
+    margin-left: 0.8rem;
+  }
+}
+
+.content-block__chart {
+  border: 1px solid var(--clr__action);
+}
+
+.content-block__chart-title {
+  font-size: 2.4rem;
+  font-weight: 400;
 }
 </style>

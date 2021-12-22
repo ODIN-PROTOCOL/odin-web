@@ -28,7 +28,7 @@
               <input
                 class="app-form__field-input"
                 name="delegate-amount"
-                type="string"
+                type="text"
                 :max="lokiBalance"
                 placeholder="1000"
                 v-model="form.amount"
@@ -71,6 +71,8 @@ import { useBalances } from '@/composables/useBalances'
 import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
 import { coin } from '@cosmjs/amino'
 
+const defaultBalanceBlank = { amount: 0, denom: 'loki' }
+
 const DelegateFormDialog = defineComponent({
   props: {
     validator: { type: Object as PropType<ValidatorDecoded>, required: true },
@@ -79,14 +81,14 @@ const DelegateFormDialog = defineComponent({
   components: { ModalBase },
   setup(props) {
     const { get: getBalance, load: loadBalances } = useBalances()
-    const lokiBalance = getBalance('loki')
+    const lokiBalance = getBalance('loki') || defaultBalanceBlank
 
     const form = useForm({
       amount: [
         '',
         validators.required,
         validators.integer,
-        ...validators.num(1, Number(lokiBalance?.amount)),
+        ...validators.num(1, Number(lokiBalance.amount)),
         validators.maxCharacters(128),
       ],
     })

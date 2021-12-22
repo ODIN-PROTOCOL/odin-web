@@ -128,11 +128,17 @@ export default defineComponent({
     }
 
     const getProposalStatistic = async () => {
-      const res = await callers.getProposalsStatistic()
-      const proposalsStatistic = await res.json()
+      lockLoading()
+      try {
+        const res = await callers.getProposalsStatistic()
+        const proposalsStatistic = await res.json()
 
-      proposalsDataForChart.value =
-        getProposalsCountByStatus(proposalsStatistic)
+        proposalsDataForChart.value =
+          getProposalsCountByStatus(proposalsStatistic)
+      } catch (error) {
+        handleError(error as Error)
+      }
+      releaseLoading()
     }
 
     const filterProposals = (newPage: number) => {
@@ -150,10 +156,16 @@ export default defineComponent({
     }
 
     const getChangesParams = async () => {
-      const res = await callers.getProposalChanges()
-      const data = await res.json()
+      lockLoading()
+      try {
+        const res = await callers.getProposalChanges()
+        const data = await res.json()
 
-      proposalChanges.value = data
+        proposalChanges.value = data
+      } catch (error) {
+        handleError(error as Error)
+      }
+      releaseLoading()
     }
 
     const createProposal = async () => {

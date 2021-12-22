@@ -1,20 +1,18 @@
 <template>
-  <ModalBase class="confirmation-modal" @close="onClose()">
+  <ModalBase class="confirmation-modal" @close="onClose">
     <template #title>
       <h3 class="app-form__title">Are you sure?</h3>
     </template>
     <template #main>
-      <div class="app-form" @submit.prevent>
+      <div class="app-form">
         <div class="app-form__main">
           <div class="app-form__field">
             {{ text }}
           </div>
         </div>
         <div class="app-form__footer">
-          <button class="app-btn app-btn_outlined" @click="onClose()">
-            No
-          </button>
-          <button class="app-btn" type="button" @click="onSubmit()">Yes</button>
+          <button class="app-btn app-btn_outlined" @click="onClose">No</button>
+          <button class="app-btn" type="button" @click="onSubmit">Yes</button>
         </div>
       </div>
     </template>
@@ -23,7 +21,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { DialogHandler, dialogs } from '@/helpers/dialogs'
+import { dialogs } from '@/helpers/dialogs'
 import ModalBase from './ModalBase.vue'
 
 const ConfirmationModal = defineComponent({
@@ -40,15 +38,6 @@ const ConfirmationModal = defineComponent({
 })
 
 export default ConfirmationModal
-export function showConfirmationDialog(
-  callbacks: {
-    onSubmit?: DialogHandler
-    onClose?: DialogHandler
-  },
-  props: { text: string }
-): Promise<unknown | null> {
-  return dialogs.show(ConfirmationModal, callbacks, { props })
-}
 </script>
 
 <style lang="scss" scoped></style>
