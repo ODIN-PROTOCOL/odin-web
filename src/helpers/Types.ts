@@ -68,3 +68,9 @@ type StatusTypesItem = { name: string; status: string }
 export type StatusTypes = {
   [key: number]: StatusTypesItem
 }
+
+type ProposalsStatisticItem = { Name: string; Count: number }
+
+export type ProposalsStatistic = {
+  [key: number]: ProposalsStatisticItem
+}

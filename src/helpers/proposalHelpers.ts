@@ -3,9 +3,11 @@ import {
   TransformedProposal,
   defaultChartDataBlank,
   ChartDataItem,
+  ProposalsStatistic,
 } from '@/helpers/Types'
 import { proposalStatusType } from '@/helpers/statusTypes'
 import { callers } from '@/api/callers'
+import { ProposalStatus } from '@provider/codec/cosmos/gov/v1beta1/gov'
 
 export const getTransformedProposals = async (
   proposals: ProposalDecoded[]
@@ -34,17 +36,20 @@ const defaultProposalsCountBlank: defaultChartDataBlank[] = [
 ]
 
 export const getProposalsCountByStatus = (
-  proposals: TransformedProposal[]
+  proposals: ProposalsStatistic
 ): ChartDataItem[] => {
   const counts: ChartDataItem[] = [
     ...defaultProposalsCountBlank.map((item) => ({ ...item, count: 0 })),
   ]
 
-  proposals.forEach((p) => {
+  for (const [, value] of Object.entries(proposals)) {
     counts.forEach((c: ChartDataItem) => {
-      if (p.humanizeStatus === c.name) c.count += 1
+      if (
+        proposalStatusType[(<never>ProposalStatus)[value.Name]].name === c.name
+      )
+        c.count = value.Count
     })
-  })
+  }
 
   return counts
 }

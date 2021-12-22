@@ -118,8 +118,6 @@ export default defineComponent({
           response.proposals
         )
 
-        proposalsDataForChart.value =
-          getProposalsCountByStatus(transformedProposals)
         proposalsCount.value = response.proposals.length
         proposals.value = transformedProposals
         filterProposals(currentPage.value)
@@ -127,6 +125,14 @@ export default defineComponent({
         handleError(error as Error)
       }
       releaseLoading()
+    }
+
+    const getProposalStatistic = async () => {
+      const res = await callers.getProposalsStatistic()
+      const proposalsStatistic = await res.json()
+
+      proposalsDataForChart.value =
+        getProposalsCountByStatus(proposalsStatistic)
     }
 
     const filterProposals = (newPage: number) => {
@@ -170,6 +176,7 @@ export default defineComponent({
 
     onMounted(async () => {
       await getChangesParams()
+      await getProposalStatistic()
       await getProposals()
     })
 
