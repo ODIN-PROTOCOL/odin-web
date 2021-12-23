@@ -162,10 +162,9 @@ const SendFormModal = defineComponent({
     const sendAsset = ref('loki')
     const selectedBalance = computed(() => {
       const balance = props.balance.find((item) => {
-        return item.denom === sendAsset.value ? true : false
+        return item.denom === sendAsset.value
       })
-      if (balance) return balance
-      else return coin(0, sendAsset.value)
+      return balance || coin(0, sendAsset.value)
     })
 
     let form = useForm({
