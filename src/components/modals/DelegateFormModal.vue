@@ -11,6 +11,11 @@
         @submit.prevent
       >
         <div class="app-form__main">
+          <div class="app-form__field">
+            <label class="app-form__field-lbl"> Available </label>
+            <p>{{ $fCoin(lokiBalance) }}</p>
+          </div>
+
           <div v-if="delegation && delegation.balance" class="app-form__field">
             <label class="app-form__field-lbl"> You delegated </label>
             <p>{{ $fCoin(delegation.balance) }}</p>
@@ -23,8 +28,7 @@
               <input
                 class="app-form__field-input"
                 name="delegate-amount"
-                type="number"
-                min="1"
+                type="text"
                 :max="lokiBalance"
                 placeholder="1000"
                 v-model="form.amount"
@@ -67,6 +71,8 @@ import { useBalances } from '@/composables/useBalances'
 import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
 import { coin } from '@cosmjs/amino'
 
+const defaultBalanceBlank = { amount: 0, denom: 'loki' }
+
 const DelegateFormDialog = defineComponent({
   props: {
     validator: { type: Object as PropType<ValidatorDecoded>, required: true },
@@ -75,14 +81,14 @@ const DelegateFormDialog = defineComponent({
   components: { ModalBase },
   setup(props) {
     const { get: getBalance, load: loadBalances } = useBalances()
-    const lokiBalance = getBalance('loki', 'number')
+    const lokiBalance = getBalance('loki') || defaultBalanceBlank
 
     const form = useForm({
       amount: [
-        1,
+        '',
         validators.required,
         validators.integer,
-        ...validators.num(1, lokiBalance),
+        ...validators.num(1, Number(lokiBalance.amount)),
         validators.maxCharacters(128),
       ],
     })
@@ -95,7 +101,7 @@ const DelegateFormDialog = defineComponent({
         await callers.validatorDelegate({
           delegatorAddress: wallet.account.address,
           validatorAddress: props.validator.operatorAddress,
-          amount: coin(form.amount.val(), 'loki'),
+          amount: coin(Number(form.amount.val()), 'loki'),
         })
         await loadBalances()
         onSubmit()

@@ -22,7 +22,9 @@
       <div class="card__row">
         <span class="card__title">Delegator shares</span>
         <span class="card__txt">
-          {{ $preciseAsPercents(validator.delegatorShares) }}
+          {{
+            $getPercentOutOfNumber(validator.delegatorShares, validator.tokens)
+          }}
         </span>
       </div>
     </div>
@@ -30,28 +32,26 @@
       <div class="card__row">
         <span class="card__title">Rate</span>
         <span class="card__txt">
-          {{ $preciseAsPercents(validator.commission.commissionRates.rate) }}
+          {{ $getPrecisePercents(validator.commission.commissionRates.rate) }}
         </span>
       </div>
       <div class="card__row">
         <span class="card__title">Max rate</span>
         <span class="card__txt">
-          {{ $preciseAsPercents(validator.commission.commissionRates.maxRate) }}
+          {{
+            $getPrecisePercents(validator.commission.commissionRates.maxRate)
+          }}
         </span>
       </div>
       <div class="card__row">
         <span class="card__title">Max change rate</span>
         <span class="card__txt">
           {{
-            $preciseAsPercents(
+            $getPrecisePercents(
               validator.commission.commissionRates.maxChangeRate
             )
           }}
         </span>
-      </div>
-      <div class="card__row">
-        <span class="card__title">Operator</span>
-        <span class="card__txt">{{ validator.operatorAddress }}</span>
       </div>
     </div>
     <div class="card__item">

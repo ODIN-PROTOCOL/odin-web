@@ -130,7 +130,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType } from 'vue'
+import { defineComponent, ref, PropType, computed } from 'vue'
 import { callers } from '@/api/callers'
 import { coins } from '@cosmjs/amino'
 import { wallet } from '@/api/wallet'
@@ -145,6 +145,7 @@ import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 import ModalBase from '@/components/modals/ModalBase.vue'
 import { Coin } from '@cosmjs/amino'
 import { WalletRate } from '@/helpers/Types'
+import { coin } from '@cosmjs/launchpad'
 
 const SendFormModal = defineComponent({
   name: 'SendFormModal',
@@ -153,8 +154,20 @@ const SendFormModal = defineComponent({
     rate: { type: Object as PropType<WalletRate>, required: true },
     balance: { type: Array as PropType<Coin[]>, required: true },
   },
-  setup: function () {
-    const form = useForm({
+  setup: function (props) {
+    const fee = ref(0)
+    const isLoading = ref(false)
+    const onSubmit = dialogs.getHandler('onSubmit')
+    const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
+    const sendAsset = ref('loki')
+    const selectedBalance = computed(() => {
+      const balance = props.balance.find((item) => {
+        return item.denom === sendAsset.value
+      })
+      return balance || coin(0, sendAsset.value)
+    })
+
+    let form = useForm({
       receiver: [
         '',
         validators.required,
@@ -162,18 +175,13 @@ const SendFormModal = defineComponent({
         validators.maxCharacters(128),
       ],
       amount: [
-        0,
+        '',
         validators.required,
         validators.integer,
-        ...validators.num(0),
+        ...validators.num(1, Number(selectedBalance.value.amount)),
         validators.maxCharacters(128),
       ],
     })
-    const sendAsset = ref('loki')
-    const fee = ref(0)
-    const isLoading = ref(false)
-    const onSubmit = dialogs.getHandler('onSubmit')
-    const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
 
     const submit = async () => {
       isLoading.value = true
