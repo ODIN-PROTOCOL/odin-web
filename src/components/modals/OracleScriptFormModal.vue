@@ -20,6 +20,7 @@
               class="app-form__field-input"
               name="oracle-script-name"
               type="text"
+              placeholder="Oracle Script name"
               v-model="form.name"
               :disabled="isLoading"
             />
@@ -31,7 +32,7 @@
           <div class="app-form__field">
             <label class="app-form__field-lbl"> Description </label>
             <textarea
-              class="app-form__field-input"
+              class="app-form__field-input app-form__field-textarea"
               name="oracle-script-description"
               rows="5"
               v-model="form.description"
@@ -39,6 +40,20 @@
             ></textarea>
             <p v-if="form.descriptionErr" class="app-form__field-err">
               {{ form.descriptionErr }}
+            </p>
+          </div>
+
+          <div class="app-form__field">
+            <label class="app-form__field-lbl"> Schema </label>
+            <textarea
+              class="app-form__field-input app-form__field-textarea"
+              name="oracle-script-schema"
+              rows="2"
+              v-model="form.schema"
+              :disabled="isLoading"
+            ></textarea>
+            <p v-if="form.schemaErr" class="app-form__field-err">
+              {{ form.schemaErr }}
             </p>
           </div>
 
@@ -83,7 +98,6 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import { loremIpsum } from 'lorem-ipsum'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
 import { dialogs } from '@/helpers/dialogs'
@@ -101,6 +115,7 @@ const OracleScriptFormModal = defineComponent({
     const form = useForm({
       name: ['', validators.required],
       description: ['', validators.required],
+      schema: ['', validators.required],
       codeFile: [null as File | null, validators.required],
     })
     const isLoading = ref(false)
@@ -118,7 +133,7 @@ const OracleScriptFormModal = defineComponent({
           code: codeFileParsed,
           owner: wallet.account.address,
           sender: wallet.account.address,
-          schema: '',
+          schema: form.schema.val(),
           sourceCodeUrl: '',
         })
 
@@ -142,14 +157,6 @@ const OracleScriptFormModal = defineComponent({
 
       return parsed
     }
-
-    // TODO: remove fakeForm
-    const _fakeForm = () => {
-      form.name.val('Oracle Script ' + loremIpsum({ units: 'words', count: 3 }))
-      form.description.val(loremIpsum({ units: 'sentences', count: 3 }))
-    }
-
-    _fakeForm()
 
     return {
       form: form.flatten(),

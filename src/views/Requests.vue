@@ -3,7 +3,11 @@
     <div class="page-title fx-row">
       <h2 class="view-title">Requests</h2>
       <button
-        class="app-btn app-btn_small create-request-btn create-request-btn_top fx-sae"
+        class="
+          app-btn app-btn_small
+          create-request-btn create-request-btn_top
+          fx-sae
+        "
         type="button"
         @click="createRequest()"
       >
@@ -20,7 +24,7 @@
     <div class="app-table">
       <div class="app-table__head">
         <span>Request ID</span>
-        <span>Client ID</span>
+        <span>Sender</span>
         <span>Oracle Script ID</span>
         <span>Report Status</span>
         <span>Timestamp</span>
@@ -41,13 +45,15 @@
               />
             </div>
             <div class="app-table__cell">
-              <span class="app-table__title">Client ID</span>
-              <span
-                class="app-table__cell-txt"
-                :title="item.requestPacketData.clientId.toString()"
+              <span class="app-table__title">Sender</span>
+              <a
+                class="app-table__cell-txt app-table__link"
+                :href="`
+                  ${API_CONFIG.odinScan}/account/${item.requestPacketData.clientId}
+                `"
               >
-                {{ item.requestPacketData.clientId.toString() }}
-              </span>
+                {{ item.requestPacketData.clientId }}
+              </a>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Oracle Script ID</span>
@@ -98,6 +104,7 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue'
 import { callers } from '@/api/callers'
+import { API_CONFIG } from '@/api/api-config'
 import { showRequestFormModal } from '@/components/modals/handlers/requestFormModalHandler'
 import TitledLink from '@/components/TitledLink.vue'
 import Progressbar from '@/components/Progressbar.vue'
@@ -154,6 +161,7 @@ export default defineComponent({
     })
 
     return {
+      API_CONFIG,
       ITEMS_PER_PAGE,
       requests,
       requestsCount,
