@@ -31,13 +31,13 @@
 
           <div class="app-form__field">
             <label class="app-form__field-lbl"> Description </label>
-            <textarea
-              class="app-form__field-input app-form__field-textarea"
-              name="oracle-script-description"
-              rows="5"
+            <TextareaField
               v-model="form.description"
+              name="oracle-script-description"
+              :rows="5"
               :disabled="isLoading"
-            ></textarea>
+              placeholder="Oracle Script description"
+            />
             <p v-if="form.descriptionErr" class="app-form__field-err">
               {{ form.descriptionErr }}
             </p>
@@ -45,13 +45,13 @@
 
           <div class="app-form__field">
             <label class="app-form__field-lbl"> Schema </label>
-            <textarea
-              class="app-form__field-input app-form__field-textarea"
-              name="oracle-script-schema"
-              rows="2"
+            <TextareaField
               v-model="form.schema"
+              name="oracle-script-schema"
+              :rows="2"
               :disabled="isLoading"
-            ></textarea>
+              placeholder="Oracle Script Schema"
+            />
             <p v-if="form.schemaErr" class="app-form__field-err">
               {{ form.schemaErr }}
             </p>
@@ -59,7 +59,7 @@
 
           <div class="app-form__field">
             <label class="app-form__field-lbl"> Code (.wasm) </label>
-            <InputFile
+            <InputFileField
               class="app-form__field-input"
               name="oracle-script-executable"
               accept=".wasm"
@@ -107,10 +107,11 @@ import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
-import InputFile from '@/components/inputs/InputFile.vue'
+import InputFileField from '@/components/fields/InputFileField.vue'
+import TextareaField from '@/components/fields/TextareaField.vue'
 
 const OracleScriptFormModal = defineComponent({
-  components: { ModalBase, InputFile },
+  components: { ModalBase, InputFileField, TextareaField },
   setup() {
     const form = useForm({
       name: ['', validators.required],

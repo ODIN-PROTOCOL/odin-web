@@ -69,13 +69,12 @@
                 </div>
               </div>
             </div>
-            <textarea
-              class="app-form__field-input app-form__field-textarea"
-              name="request-calldata"
-              type="text"
-              rows="7"
+            <TextareaField
               v-model="form.calldata"
+              name="request-calldata"
+              :rows="7"
               :disabled="isLoading || form.oracleScriptIdErr"
+              placeholder="Call data"
             />
             <p v-if="form.feeLimitErr" class="app-form__field-err">
               {{ form.calldataErr }}
@@ -135,12 +134,13 @@ import ModalBase from './ModalBase.vue'
 import { coins } from '@cosmjs/launchpad'
 import debounce from 'lodash/debounce'
 import { Obi } from '@bandprotocol/bandchain.js'
+import TextareaField from '@/components/fields/TextareaField.vue'
 
 const RequestFormModal = defineComponent({
   props: {
     maxAskCount: { type: Number, required: true },
   },
-  components: { ModalBase },
+  components: { ModalBase, TextareaField },
   setup(props) {
     const form = useForm({
       oracleScriptId: ['', validators.required],
