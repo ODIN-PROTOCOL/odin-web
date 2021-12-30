@@ -45,7 +45,7 @@ export default defineComponent({
   width: 100%;
   padding: 0.8rem 1.2rem;
   text-overflow: ellipsis;
-  border: 1px solid var(--clr__input-border);
+  border: 0.1rem solid var(--clr__input-border);
   border-radius: 0.4rem;
 
   &::-webkit-input-placeholder {

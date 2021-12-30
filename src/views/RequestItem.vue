@@ -21,12 +21,7 @@
         </div>
         <div class="info-table__row">
           <span class="info-table__row-title">Sender</span>
-          <a
-            class="app-table__cell-txt app-table__link"
-            :href="`
-              ${API_CONFIG.odinScan}/account/${requestData?.requestPacketData.clientId}
-            `"
-          >
+          <a class="app-table__cell-txt app-table__link" :href="senderLink">
             {{ requestData?.requestPacketData.clientId }}
           </a>
           <CopyButton
@@ -61,13 +56,7 @@
 
       <h3 class="view-subtitle mg-b24">Calldata</h3>
       <div class="info-table mg-b32">
-        <template
-          v-if="
-            typeof requestCalldata === 'object' &&
-            requestCalldata !== null &&
-            !Array.isArray(requestCalldata)
-          "
-        >
+        <template v-if="isObject">
           <div
             class="info-table__row"
             v-for="(val, key) in requestCalldata"
@@ -87,7 +76,7 @@
         </template>
       </div>
 
-      <template v-if="requestStatus === ResolveStatus.RESOLVE_STATUS_SUCCESS">
+      <template v-if="isRequestSuccess">
         <h3 class="view-subtitle mg-b24">Result</h3>
         <div class="info-table">
           <div class="info-table__row">
@@ -106,12 +95,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, ref, onMounted, computed } from 'vue'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import { callers } from '@/api/callers'
 import { API_CONFIG } from '@/api/api-config'
 import { requestStatusType } from '@/helpers/statusTypes'
-import { ResolveStatus } from '@provider/codec/oracle/v1/oracle'
+import { RequestResult, ResolveStatus } from '@provider/codec/oracle/v1/oracle'
 import { formatDate, formatDateDifference } from '@/helpers/formatters'
 import TitledLink from '@/components/TitledLink.vue'
 import CopyButton from '@/components/CopyButton.vue'
@@ -127,7 +116,7 @@ export default defineComponent({
   setup: function () {
     const route: RouteLocationNormalizedLoaded = useRoute()
 
-    const requestData = ref()
+    const requestData = ref<RequestResult>()
     const requestStatus = ref()
     const requestTime = ref()
     const resolveTime = ref()
@@ -135,6 +124,20 @@ export default defineComponent({
     const resolveTimeRange = ref()
     const requestCalldata = ref()
     const requestResult = ref()
+
+    const senderLink = computed(() => {
+      return `${API_CONFIG.odinScan}/account/${requestData.value?.requestPacketData?.clientId}`
+    })
+    const isObject = computed(() => {
+      return (
+        typeof requestCalldata.value === 'object' &&
+        requestCalldata.value !== null &&
+        !Array.isArray(requestCalldata)
+      )
+    })
+    const isRequestSuccess = computed(
+      () => requestStatus.value === ResolveStatus.RESOLVE_STATUS_SUCCESS
+    )
 
     const getRequest = async () => {
       const { request } = await callers.getRequest(String(route.params.id))
@@ -150,7 +153,7 @@ export default defineComponent({
         resolveTimeRange.value = formatDateDifference(resPacketData.resolveTime)
         requestCalldata.value = await _decodeCallData(reqPacketData.calldata)
 
-        if (requestStatus.value === ResolveStatus.RESOLVE_STATUS_SUCCESS) {
+        if (isRequestSuccess.value) {
           requestResult.value = uint8ArrayToStr(resPacketData.result)
         }
       }
@@ -159,7 +162,7 @@ export default defineComponent({
     const _decodeCallData = async (calldata: Uint8Array) => {
       try {
         const { oracleScript } = await callers.getOracleScript(
-          requestData.value.requestPacketData?.oracleScriptId
+          Number(requestData.value?.requestPacketData?.oracleScriptId)
         )
         if (oracleScript) {
           const obi = new Obi(oracleScript.schema)
@@ -190,6 +193,9 @@ export default defineComponent({
       resolveTimeRange,
       requestCalldata,
       requestResult,
+      senderLink,
+      isObject,
+      isRequestSuccess,
     }
   },
 })

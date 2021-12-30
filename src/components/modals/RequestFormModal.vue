@@ -249,11 +249,11 @@ export default RequestFormModal
   display: none;
   position: absolute;
   bottom: 130%;
-  right: -5px;
+  right: -0.5rem;
   min-width: 15rem;
   padding: 1.2rem 2.4rem;
   background: var(--clr__tooltip-bg);
-  border-radius: 8px;
+  border-radius: 0.8rem;
   font-size: 1.6rem;
   font-weight: 400;
   line-height: 1.6rem;
@@ -266,7 +266,7 @@ export default RequestFormModal
     height: 0.6rem;
     position: absolute;
     bottom: -0.3rem;
-    right: 10px;
+    right: 1rem;
     transform: rotate(45deg);
     background: var(--clr__tooltip-bg);
   }

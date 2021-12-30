@@ -48,9 +48,7 @@
               <span class="app-table__title">Sender</span>
               <a
                 class="app-table__cell-txt app-table__link"
-                :href="`
-                  ${API_CONFIG.odinScan}/account/${item.requestPacketData.clientId}
-                `"
+                :href="senderLink(item)"
               >
                 {{ item.requestPacketData.clientId }}
               </a>
@@ -102,13 +100,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, ref, onMounted, computed } from 'vue'
 import { callers } from '@/api/callers'
 import { API_CONFIG } from '@/api/api-config'
 import { showRequestFormModal } from '@/components/modals/handlers/requestFormModalHandler'
 import TitledLink from '@/components/TitledLink.vue'
 import Progressbar from '@/components/Progressbar.vue'
 import Pagination from '@/components/pagination/pagination.vue'
+import { RequestResult } from '@provider/codec/oracle/v1/oracle'
 
 export default defineComponent({
   components: { TitledLink, Progressbar, Pagination },
@@ -118,6 +117,9 @@ export default defineComponent({
     const requests = ref()
     const requestsCount = ref()
     const maxAskCount = ref()
+    const senderLink = computed(() => (item: RequestResult) => {
+      return `${API_CONFIG.odinScan}/account/${item.requestPacketData?.clientId}`
+    })
 
     const getRequests = async () => {
       const res = await callers.getRequests(
@@ -167,6 +169,7 @@ export default defineComponent({
       requestsCount,
       createRequest,
       paginationHandler,
+      senderLink,
     }
   },
 })
