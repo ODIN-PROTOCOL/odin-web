@@ -3,7 +3,11 @@
     <div class="page-title fx-row">
       <h2 class="view-title">Requests</h2>
       <button
-        class="app-btn app-btn_small create-request-btn create-request-btn_top fx-sae"
+        class="
+          app-btn app-btn_small
+          create-request-btn create-request-btn_top
+          fx-sae
+        "
         type="button"
         @click="createRequest()"
       >
@@ -20,7 +24,7 @@
     <div class="app-table">
       <div class="app-table__head">
         <span>Request ID</span>
-        <span>Client ID</span>
+        <span>Sender</span>
         <span>Oracle Script ID</span>
         <span>Report Status</span>
         <span>Timestamp</span>
@@ -41,13 +45,13 @@
               />
             </div>
             <div class="app-table__cell">
-              <span class="app-table__title">Client ID</span>
-              <span
-                class="app-table__cell-txt"
-                :title="item.requestPacketData.clientId.toString()"
+              <span class="app-table__title">Sender</span>
+              <a
+                class="app-table__cell-txt app-table__link"
+                :href="senderLink(item)"
               >
-                {{ item.requestPacketData.clientId.toString() }}
-              </span>
+                {{ item.requestPacketData.clientId }}
+              </a>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Oracle Script ID</span>
@@ -96,12 +100,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, ref, onMounted, computed } from 'vue'
 import { callers } from '@/api/callers'
+import { API_CONFIG } from '@/api/api-config'
 import { showRequestFormModal } from '@/components/modals/handlers/requestFormModalHandler'
 import TitledLink from '@/components/TitledLink.vue'
 import Progressbar from '@/components/Progressbar.vue'
 import Pagination from '@/components/pagination/pagination.vue'
+import { RequestResult } from '@provider/codec/oracle/v1/oracle'
 
 export default defineComponent({
   components: { TitledLink, Progressbar, Pagination },
@@ -111,6 +117,9 @@ export default defineComponent({
     const requests = ref()
     const requestsCount = ref()
     const maxAskCount = ref()
+    const senderLink = computed(() => (item: RequestResult) => {
+      return `${API_CONFIG.odinScan}/account/${item.requestPacketData?.clientId}`
+    })
 
     const getRequests = async () => {
       const res = await callers.getRequests(
@@ -154,11 +163,13 @@ export default defineComponent({
     })
 
     return {
+      API_CONFIG,
       ITEMS_PER_PAGE,
       requests,
       requestsCount,
       createRequest,
       paginationHandler,
+      senderLink,
     }
   },
 })

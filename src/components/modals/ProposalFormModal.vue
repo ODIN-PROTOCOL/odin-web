@@ -27,14 +27,13 @@
 
           <div class="app-form__field">
             <label class="app-form__field-lbl"> Description </label>
-            <textarea
-              class="app-form__field-input"
-              name="proposal-description"
-              rows="5"
+            <TextareaField
               v-model="form.description"
+              name="proposal-description"
+              :rows="5"
               :disabled="isLoading"
               placeholder="Proposal Description"
-            ></textarea>
+            />
             <p v-if="form.descriptionErr" class="app-form__field-err">
               {{ form.descriptionErr }}
             </p>
@@ -167,6 +166,7 @@ import { ParameterChangeProposal } from '@provider/codec/cosmos/params/v1beta1/p
 // @ts-ignore
 import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 import ModalBase from './ModalBase.vue'
+import TextareaField from '@/components/fields/TextareaField.vue'
 
 const ProposalFormModal = defineComponent({
   props: {
@@ -175,7 +175,7 @@ const ProposalFormModal = defineComponent({
       required: true,
     },
   },
-  components: { ModalBase, VuePicker, VuePickerOption },
+  components: { ModalBase, VuePicker, VuePickerOption, TextareaField },
   setup(props) {
     const _proposalChanges = toRef(props, 'proposalChanges')
     const form = useForm({

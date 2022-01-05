@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@bandprotocol/bandchain.js": "^2.0.2",
     "@bandprotocol/obi.js": "^1.0.7",
     "@cosmjs/crypto": "^0.25.4",
     "@cosmjs/encoding": "^0.25.4",

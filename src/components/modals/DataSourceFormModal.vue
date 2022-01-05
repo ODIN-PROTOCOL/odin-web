@@ -27,15 +27,14 @@
           </div>
 
           <div class="app-form__field">
-            <label class="app-form__field-lbl"> Description </label>
-            <textarea
-              class="app-form__field-input"
-              name="data-source-description"
-              rows="5"
+            <label class="app-form__field-lbl">Description</label>
+            <TextareaField
               v-model="form.description"
+              name="data-source-description"
+              :rows="5"
               :disabled="isLoading"
               placeholder="Data Source Description"
-            ></textarea>
+            />
             <p v-if="form.descriptionErr" class="app-form__field-err">
               {{ form.descriptionErr }}
             </p>
@@ -57,7 +56,7 @@
           </div>
 
           <div class="app-form__field">
-            <InputFile
+            <InputFileField
               class="app-form__field-input"
               name="data-source-executable"
               accept=".py"
@@ -96,7 +95,6 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import { loremIpsum } from 'lorem-ipsum'
 import { coins } from '@cosmjs/launchpad'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
@@ -107,11 +105,12 @@ import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
-import InputFile from '@/components/inputs/InputFile.vue'
+import InputFileField from '@/components/fields/InputFileField.vue'
+import TextareaField from '@/components/fields/TextareaField.vue'
 
 const DataSourceFormModal = defineComponent({
   props: { dataSourceId: String },
-  components: { ModalBase, InputFile },
+  components: { ModalBase, InputFileField, TextareaField },
   setup() {
     const form = useForm({
       name: ['', validators.required],
@@ -157,13 +156,6 @@ const DataSourceFormModal = defineComponent({
 
       return parsed
     }
-
-    // TODO: remove fakeForm
-    const _fakeForm = () => {
-      form.description.val(loremIpsum({ units: 'sentences', count: 3 }))
-    }
-
-    _fakeForm()
 
     return {
       form: form.flatten(),
