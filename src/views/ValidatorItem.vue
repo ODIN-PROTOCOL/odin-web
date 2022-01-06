@@ -109,9 +109,9 @@ import ValidatorInfoCard from '@/components/ValidatorInfoCard.vue'
 import OracleReportsTable from '@/components/tables/OracleReportsTable.vue'
 import DelegatorsTable from '@/components/tables/DelegatorsTable.vue'
 import ProposedBlocksTable from '@/components/tables/ProposedBlocksTable.vue'
-import { showDelegateFormDialog } from '@/components/modals/DelegateFormModal.vue'
-import { showUndelegateFormDialog } from '@/components/modals/UndelegateFormModal.vue'
-import { showWithdrawRewardsFormDialog } from '@/components/modals/WithdrawRewardsFormModal.vue'
+import { showDelegateFormModal } from '@/components/modals/handlers/delegateFormModalHandler'
+import { showUndelegateFormModal } from '@/components/modals/handlers/undelegateFormModalHandler'
+import { showWithdrawRewardsFormModal } from '@/components/modals/handlers/withdrawRewardsFormModalHandler'
 
 export default defineComponent({
   components: {
@@ -182,7 +182,7 @@ export default defineComponent({
     }
 
     const delegate = () => {
-      showDelegateFormDialog(
+      showDelegateFormModal(
         {
           onSubmit: (d) => {
             d.kill()
@@ -202,7 +202,7 @@ export default defineComponent({
 
     const undelegate = () => {
       if (!delegations.value[validator.value.operatorAddress]) return
-      showUndelegateFormDialog(
+      showUndelegateFormModal(
         {
           onSubmit: (d) => {
             d.kill()
@@ -222,7 +222,7 @@ export default defineComponent({
 
     const withdrawRewards = () => {
       if (!delegations.value[validator.value.operatorAddress]) return
-      showWithdrawRewardsFormDialog(
+      showWithdrawRewardsFormModal(
         {
           onSubmit: (d) => {
             d.kill()

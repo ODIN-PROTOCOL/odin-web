@@ -3,11 +3,7 @@
     <div class="page-title">
       <h2 class="view-title">Data Sources</h2>
       <button
-        class="
-          app-btn app-btn_small
-          create-data-source-btn create-data-source-btn_top
-          fx-sae
-        "
+        class="app-btn app-btn_small create-data-source-btn create-data-source-btn_top fx-sae"
         type="button"
         @click="createDataSource()"
       >
@@ -84,7 +80,7 @@
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
-import { showDataSourceFormDialog } from '@/components/modals/DataSourceFormModal.vue'
+import { showDataSourceFormModal } from '@/components/modals/handlers/dataSourceFormModalHandler'
 import TitledLink from '@/components/TitledLink.vue'
 import Pagination from '@/components/pagination/pagination.vue'
 import { defineComponent, onMounted, ref } from 'vue'
@@ -123,7 +119,7 @@ export default defineComponent({
     }
 
     const createDataSource = async () => {
-      await showDataSourceFormDialog({
+      await showDataSourceFormModal({
         onSubmit: (d) => {
           d.kill()
           loadDataSources()

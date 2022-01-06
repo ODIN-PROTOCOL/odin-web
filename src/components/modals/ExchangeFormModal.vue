@@ -89,7 +89,7 @@
 import { defineComponent, ref } from 'vue'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
-import { DialogHandler, dialogs } from '@/helpers/dialogs'
+import { dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
@@ -125,10 +125,9 @@ const ExchangeFormModal = defineComponent({
         onSubmit()
         notifySuccess('Exchange created')
       } catch (error) {
-        handleError(error)
-      } finally {
-        isLoading.value = false
+        handleError(error as Error)
       }
+      isLoading.value = false
     }
 
     const approxDestAmount = useRateAutoCalc(
@@ -155,12 +154,6 @@ const ExchangeFormModal = defineComponent({
 })
 
 export default ExchangeFormModal
-export function showExchangeFormDialog(callbacks?: {
-  onSubmit?: DialogHandler
-  onClose?: DialogHandler
-}): Promise<unknown | null> {
-  return dialogs.show(ExchangeFormModal, callbacks)
-}
 </script>
 
 <style scoped lang="scss"></style>

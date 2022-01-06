@@ -165,9 +165,9 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
 import { WalletRate } from '@/helpers/Types'
 import { Coin } from '@cosmjs/amino'
-import { showReceiveDialog } from '@/components/modals/ReceiveModal.vue'
-import { showExchangeFormDialog } from '@/components/modals/ExchangeFormModalWallet.vue'
-import { showSendFormDialog } from '@/components/modals/SendFormModal.vue'
+import { showReceiveFormModal } from '@/components/modals/handlers/receiveFormModalHandler'
+import { showWalletExchangeFormModal } from '@/components/modals/handlers/walletExchangeFormModalHandler'
+import { showSendFormModal } from '@/components/modals/handlers/sendFormModalHandler'
 
 export default defineComponent({
   components: { Pagination },
@@ -262,7 +262,7 @@ export default defineComponent({
     }
 
     const receive = () => {
-      showReceiveDialog({
+      showReceiveFormModal({
         onSubmit: (d) => {
           d.kill()
           console.log('Share')
@@ -271,7 +271,7 @@ export default defineComponent({
     }
 
     const exchange = () => {
-      showExchangeFormDialog({
+      showWalletExchangeFormModal({
         onSubmit: (d) => {
           d.kill()
           console.log('exchange')
@@ -280,7 +280,7 @@ export default defineComponent({
     }
 
     const send = () => {
-      showSendFormDialog(
+      showSendFormModal(
         {
           onSubmit: (d) => {
             d.kill()

@@ -23,7 +23,7 @@ export type TransformedProposal = Modify<
   }
 >
 
-export type defaultProposalBlank = {
+export type defaultChartDataBlank = {
   name: string
   color: string
 }
@@ -61,4 +61,16 @@ export type ProposalChanges = {
   oracle: ProposalChangesItem[]
   slashing: ProposalChangesItem[]
   staking: ProposalChangesItem[]
+}
+
+type StatusTypesItem = { name: string; status: string }
+
+export type StatusTypes = {
+  [key: number]: StatusTypesItem
+}
+
+type ProposalsStatisticItem = { Name: string; Count: number }
+
+export type ProposalsStatistic = {
+  [key: number]: ProposalsStatisticItem
 }

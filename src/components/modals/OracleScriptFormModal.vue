@@ -20,6 +20,7 @@
               class="app-form__field-input"
               name="oracle-script-name"
               type="text"
+              placeholder="Oracle Script name"
               v-model="form.name"
               :disabled="isLoading"
             />
@@ -30,21 +31,35 @@
 
           <div class="app-form__field">
             <label class="app-form__field-lbl"> Description </label>
-            <textarea
-              class="app-form__field-input"
-              name="oracle-script-description"
-              rows="5"
+            <TextareaField
               v-model="form.description"
+              name="oracle-script-description"
+              :rows="5"
               :disabled="isLoading"
-            ></textarea>
+              placeholder="Oracle Script description"
+            />
             <p v-if="form.descriptionErr" class="app-form__field-err">
               {{ form.descriptionErr }}
             </p>
           </div>
 
           <div class="app-form__field">
+            <label class="app-form__field-lbl"> Schema </label>
+            <TextareaField
+              v-model="form.schema"
+              name="oracle-script-schema"
+              :rows="2"
+              :disabled="isLoading"
+              placeholder="Oracle Script Schema"
+            />
+            <p v-if="form.schemaErr" class="app-form__field-err">
+              {{ form.schemaErr }}
+            </p>
+          </div>
+
+          <div class="app-form__field">
             <label class="app-form__field-lbl"> Code (.wasm) </label>
-            <InputFile
+            <InputFileField
               class="app-form__field-input"
               name="oracle-script-executable"
               accept=".wasm"
@@ -83,24 +98,25 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import { loremIpsum } from 'lorem-ipsum'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
-import { DialogHandler, dialogs } from '@/helpers/dialogs'
+import { dialogs } from '@/helpers/dialogs'
 import { readFile } from '@/helpers/files'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
-import InputFile from '@/components/inputs/InputFile.vue'
+import InputFileField from '@/components/fields/InputFileField.vue'
+import TextareaField from '@/components/fields/TextareaField.vue'
 
 const OracleScriptFormModal = defineComponent({
-  components: { ModalBase, InputFile },
+  components: { ModalBase, InputFileField, TextareaField },
   setup() {
     const form = useForm({
       name: ['', validators.required],
       description: ['', validators.required],
+      schema: ['', validators.required],
       codeFile: [null as File | null, validators.required],
     })
     const isLoading = ref(false)
@@ -119,7 +135,7 @@ const OracleScriptFormModal = defineComponent({
           code: codeFileParsed,
           owner: wallet.account.address,
           sender: wallet.account.address,
-          schema: '',
+          schema: form.schema.val(),
           sourceCodeUrl: '',
         })
 
@@ -145,14 +161,6 @@ const OracleScriptFormModal = defineComponent({
       return parsed
     }
 
-    // TODO: remove fakeForm
-    const _fakeForm = () => {
-      form.name.val('Oracle Script ' + loremIpsum({ units: 'words', count: 3 }))
-      form.description.val(loremIpsum({ units: 'sentences', count: 3 }))
-    }
-
-    _fakeForm()
-
     return {
       form: form.flatten(),
       isLoading,
@@ -163,12 +171,6 @@ const OracleScriptFormModal = defineComponent({
 })
 
 export default OracleScriptFormModal
-export function showOracleScriptFormDialog(callbacks: {
-  onSubmit?: DialogHandler
-  onClose?: DialogHandler
-}): Promise<unknown | null> {
-  return dialogs.show(OracleScriptFormModal, callbacks)
-}
 </script>
 
 <style scoped lang="scss"></style>

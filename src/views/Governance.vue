@@ -3,11 +3,7 @@
     <div class="page-title">
       <h2 class="view-title">Governance</h2>
       <button
-        class="
-          app-btn app-btn_small
-          create-proposal-btn create-proposal-btn_top
-          fx-sae
-        "
+        class="app-btn app-btn_small create-proposal-btn create-proposal-btn_top fx-sae"
         type="button"
         @click="createProposal()"
       >
@@ -95,7 +91,7 @@ import {
 import { proposalStatusType } from '@/helpers/statusTypes'
 import { handleError } from '@/helpers/errors'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
-import { showProposalFormDialog } from '@/components/modals/ProposalFormModal.vue'
+import { showProposalFormModal } from '@/components/modals/handlers/proposalFormModalHandler'
 import { ProposalChanges } from '@/helpers/Types'
 import TitledLink from '@/components/TitledLink.vue'
 import CustomDoughnutChart from '@/components/charts/CustomDoughnutChart.vue'
@@ -122,11 +118,23 @@ export default defineComponent({
           response.proposals
         )
 
-        proposalsDataForChart.value =
-          getProposalsCountByStatus(transformedProposals)
         proposalsCount.value = response.proposals.length
         proposals.value = transformedProposals
         filterProposals(currentPage.value)
+      } catch (error) {
+        handleError(error as Error)
+      }
+      releaseLoading()
+    }
+
+    const getProposalStatistic = async () => {
+      lockLoading()
+      try {
+        const res = await callers.getProposalsStatistic()
+        const proposalsStatistic = await res.json()
+
+        proposalsDataForChart.value =
+          getProposalsCountByStatus(proposalsStatistic)
       } catch (error) {
         handleError(error as Error)
       }
@@ -148,14 +156,20 @@ export default defineComponent({
     }
 
     const getChangesParams = async () => {
-      const res = await callers.getProposalChanges()
-      const data = await res.json()
+      lockLoading()
+      try {
+        const res = await callers.getProposalChanges()
+        const data = await res.json()
 
-      proposalChanges.value = data
+        proposalChanges.value = data
+      } catch (error) {
+        handleError(error as Error)
+      }
+      releaseLoading()
     }
 
     const createProposal = async () => {
-      await showProposalFormDialog(
+      await showProposalFormModal(
         {
           onSubmit: (d) => {
             d.kill()
@@ -174,6 +188,7 @@ export default defineComponent({
 
     onMounted(async () => {
       await getChangesParams()
+      await getProposalStatistic()
       await getProposals()
     })
 

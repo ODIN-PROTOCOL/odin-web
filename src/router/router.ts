@@ -21,62 +21,54 @@ const routes: Array<RouteRecordRaw> = [
     beforeEnter: unauthorizedOnlyGuard,
     component: () => import(/* webpackChunkName: "auth" */ '../views/Auth.vue'),
   },
-  // Temp. hidden all but validators and wallet page
-  // {
-  //   path: '/data-sources',
-  //   name: 'DataSources',
-  //   beforeEnter: authorizedOnlyGuard,
-  //   component: () =>
-  //     import(/* webpackChunkName: "data-sources" */ '../views/DataSources.vue'),
-  // },
-  // {
-  //   path: '/data-sources/:id',
-  //   name: 'DataSource',
-  //   beforeEnter: authorizedOnlyGuard,
-  //   component: () =>
-  //     import(
-  //       /* webpackChunkName: "data-source" */ '../views/DataSourcesItem.vue'
-  //     ),
-  // },
-  // {
-  //   path: '/oracle-scripts',
-  //   name: 'OracleScripts',
-  //   beforeEnter: authorizedOnlyGuard,
-  //   component: () =>
-  //     import(
-  //       /* webpackChunkName: "oracle-scripts" */ '../views/OracleScripts.vue'
-  //     ),
-  // },
-  // {
-  //   path: '/oracle-scripts/:id',
-  //   name: 'OracleScript',
-  //   beforeEnter: authorizedOnlyGuard,
-  //   component: () =>
-  //     import(
-  //       /* webpackChunkName: "oracle-script" */ '../views/OracleScriptsItem.vue'
-  //     ),
-  // },
-  // {
-  //   path: '/requests',
-  //   name: 'Requests',
-  //   beforeEnter: authorizedOnlyGuard,
-  //   component: () =>
-  //     import(/* webpackChunkName: "requests" */ '../views/Requests.vue'),
-  // },
-  // {
-  //   path: '/requests/:id',
-  //   name: 'Request',
-  //   beforeEnter: authorizedOnlyGuard,
-  //   component: () =>
-  //     import(/* webpackChunkName: "request" */ '../views/RequestItem.vue'),
-  // },
-  // {
-  //   path: '/voting',
-  //   name: 'Voting',
-  //   beforeEnter: authorizedOnlyGuard,
-  //   component: () =>
-  //     import(/* webpackChunkName: "voting" */ '../views/Voting.vue'),
-  // },
+  {
+    path: '/data-sources',
+    name: 'DataSources',
+    beforeEnter: authorizedOnlyGuard,
+    component: () =>
+      import(/* webpackChunkName: "data-sources" */ '../views/DataSources.vue'),
+  },
+  {
+    path: '/data-sources/:id',
+    name: 'DataSource',
+    beforeEnter: authorizedOnlyGuard,
+    component: () =>
+      import(
+        /* webpackChunkName: "data-source" */ '../views/DataSourcesItem.vue'
+      ),
+  },
+  {
+    path: '/oracle-scripts',
+    name: 'OracleScripts',
+    beforeEnter: authorizedOnlyGuard,
+    component: () =>
+      import(
+        /* webpackChunkName: "oracle-scripts" */ '../views/OracleScripts.vue'
+      ),
+  },
+  {
+    path: '/oracle-scripts/:id',
+    name: 'OracleScript',
+    beforeEnter: authorizedOnlyGuard,
+    component: () =>
+      import(
+        /* webpackChunkName: "oracle-script" */ '../views/OracleScriptsItem.vue'
+      ),
+  },
+  {
+    path: '/requests',
+    name: 'Requests',
+    beforeEnter: authorizedOnlyGuard,
+    component: () =>
+      import(/* webpackChunkName: "requests" */ '../views/Requests.vue'),
+  },
+  {
+    path: '/requests/:id',
+    name: 'Request',
+    beforeEnter: authorizedOnlyGuard,
+    component: () =>
+      import(/* webpackChunkName: "request" */ '../views/RequestItem.vue'),
+  },
   {
     path: '/validators',
     name: 'Validators',
@@ -100,21 +92,27 @@ const routes: Array<RouteRecordRaw> = [
         /* webpackChunkName: "oracle-validators" */ '../views/OracleValidators.vue'
       ),
   },
-  // Temp. hidden all but validators and wallet page
-  // {
-  //   path: '/governance',
-  //   name: 'Governance',
-  //   beforeEnter: authorizedOnlyGuard,
-  //   component: () =>
-  //     import(/* webpackChunkName: "governance" */ '../views/Governance.vue'),
-  // },
-  // {
-  //   path: '/proposal/:id',
-  //   name: 'Proposal',
-  //   beforeEnter: authorizedOnlyGuard,
-  //   component: () =>
-  //     import(/* webpackChunkName: "proposal" */ '../views/Proposal.vue'),
-  // },
+  {
+    path: '/governance',
+    name: 'Governance',
+    beforeEnter: authorizedOnlyGuard,
+    component: () =>
+      import(/* webpackChunkName: "governance" */ '../views/Governance.vue'),
+  },
+  {
+    path: '/proposal/:id',
+    name: 'Proposal',
+    beforeEnter: authorizedOnlyGuard,
+    component: () =>
+      import(/* webpackChunkName: "proposal" */ '../views/Proposal.vue'),
+  },
+  {
+    path: '/proposal/:id/voting',
+    name: 'Voting',
+    beforeEnter: authorizedOnlyGuard,
+    component: () =>
+      import(/* webpackChunkName: "voting" */ '../views/Voting.vue'),
+  },
   {
     path: '/wallet',
     name: 'Wallet',

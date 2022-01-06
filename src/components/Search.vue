@@ -2,7 +2,7 @@
   <div class="search">
     <transition name="slide-fade">
       <div class="search__input" v-if="data.isOpen">
-        <Input v-model="data.searchValue" placeholder="Search" />
+        <InputField v-model="data.searchValue" placeholder="Search" />
       </div>
     </transition>
     <button
@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { defineComponent, reactive } from 'vue'
-import Input from '@/components/inputs/Input.vue'
+import InputField from '@/components/fields/InputField.vue'
 import SearchIcon from '@/components/icons/SearchIcon.vue'
 
 type Data = {
@@ -26,7 +26,7 @@ type Data = {
 }
 
 export default defineComponent({
-  components: { Input, SearchIcon },
+  components: { InputField, SearchIcon },
   setup() {
     const data = reactive<Data>({
       isOpen: false,

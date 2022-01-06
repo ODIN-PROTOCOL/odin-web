@@ -16,14 +16,14 @@
           <TitledLink
             class="info-table__row-link"
             :text="String(requestData?.requestPacketData.oracleScriptId)"
+            :to="`/oracle-scripts/${requestData?.requestPacketData.oracleScriptId}`"
           />
         </div>
         <div class="info-table__row">
           <span class="info-table__row-title">Sender</span>
-          <TitledLink
-            class="info-table__row-link"
-            :text="String(requestData?.requestPacketData.clientId)"
-          />
+          <a class="app-table__cell-txt app-table__link" :href="senderLink">
+            {{ requestData?.requestPacketData.clientId }}
+          </a>
           <CopyButton
             class="mg-l8"
             :text="String(requestData?.requestPacketData.clientId)"
@@ -56,27 +56,33 @@
 
       <h3 class="view-subtitle mg-b24">Calldata</h3>
       <div class="info-table mg-b32">
-        <div class="info-table__row">
-          <span class="info-table__row-title">Symbols</span>
-          <span class="info-table__row-txt">
-            {{ requestCalldata.symbol }}
-          </span>
-        </div>
-        <div class="info-table__row">
-          <span class="info-table__row-title">Multiplier</span>
-          <span class="info-table__row-txt">
-            {{ requestCalldata.multiplier }}
-          </span>
-        </div>
+        <template v-if="isObject">
+          <div
+            class="info-table__row"
+            v-for="(val, key) in requestCalldata"
+            :key="key"
+          >
+            <span class="info-table__row-title">{{ key }}</span>
+            <span class="info-table__row-txt">{{ val }}</span>
+          </div>
+        </template>
+        <template v-else>
+          <div class="info-table__row">
+            <span class="info-table__row-title">data</span>
+            <span class="info-table__row-txt">
+              {{ requestCalldata }}
+            </span>
+          </div>
+        </template>
       </div>
 
-      <template v-if="requestRates">
+      <template v-if="isRequestSuccess">
         <h3 class="view-subtitle mg-b24">Result</h3>
         <div class="info-table">
           <div class="info-table__row">
-            <span class="info-table__row-title">Rates</span>
+            <span class="info-table__row-title">Data</span>
             <span class="info-table__row-txt">
-              {{ requestRates }}
+              {{ requestResult }}
             </span>
           </div>
         </div>
@@ -89,31 +95,49 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, ref, onMounted, computed } from 'vue'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import { callers } from '@/api/callers'
+import { API_CONFIG } from '@/api/api-config'
 import { requestStatusType } from '@/helpers/statusTypes'
+import { RequestResult, ResolveStatus } from '@provider/codec/oracle/v1/oracle'
 import { formatDate, formatDateDifference } from '@/helpers/formatters'
-import { obiCoin, obiRates } from '@/helpers/obi-structures'
 import TitledLink from '@/components/TitledLink.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import BackButton from '@/components/BackButton.vue'
 import Progressbar from '@/components/Progressbar.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
+import { Obi } from '@bandprotocol/bandchain.js'
+import { handleError } from '@/helpers/errors'
+import { uint8ArrayToStr } from '@/helpers/casts'
 
 export default defineComponent({
   components: { TitledLink, CopyButton, BackButton, Progressbar, StatusBlock },
   setup: function () {
     const route: RouteLocationNormalizedLoaded = useRoute()
 
-    const requestData = ref()
+    const requestData = ref<RequestResult>()
     const requestStatus = ref()
     const requestTime = ref()
     const resolveTime = ref()
     const requestTimeRange = ref()
     const resolveTimeRange = ref()
     const requestCalldata = ref()
-    const requestRates = ref()
+    const requestResult = ref()
+
+    const senderLink = computed(() => {
+      return `${API_CONFIG.odinScan}/account/${requestData.value?.requestPacketData?.clientId}`
+    })
+    const isObject = computed(() => {
+      return (
+        typeof requestCalldata.value === 'object' &&
+        requestCalldata.value !== null &&
+        !Array.isArray(requestCalldata)
+      )
+    })
+    const isRequestSuccess = computed(
+      () => requestStatus.value === ResolveStatus.RESOLVE_STATUS_SUCCESS
+    )
 
     const getRequest = async () => {
       const { request } = await callers.getRequest(String(route.params.id))
@@ -127,19 +151,39 @@ export default defineComponent({
         resolveTime.value = formatDate(resPacketData.resolveTime)
         requestTimeRange.value = formatDateDifference(resPacketData.requestTime)
         resolveTimeRange.value = formatDateDifference(resPacketData.resolveTime)
-        requestCalldata.value = obiCoin.decode(reqPacketData.calldata)
+        requestCalldata.value = await _decodeCallData(reqPacketData.calldata)
 
-        if (requestStatus.value == 1) {
-          requestRates.value = obiRates.decode(resPacketData.result)
+        if (isRequestSuccess.value) {
+          requestResult.value = uint8ArrayToStr(resPacketData.result)
         }
       }
     }
 
+    const _decodeCallData = async (calldata: Uint8Array) => {
+      try {
+        const { oracleScript } = await callers.getOracleScript(
+          Number(requestData.value?.requestPacketData?.oracleScriptId)
+        )
+        if (oracleScript) {
+          const obi = new Obi(oracleScript.schema)
+          return obi.decodeInput(Buffer.from(calldata))
+        }
+      } catch (error) {
+        handleError(error as Error)
+      }
+    }
+
     onMounted(async () => {
-      await getRequest()
+      try {
+        await getRequest()
+      } catch (error) {
+        handleError(error as Error)
+      }
     })
 
     return {
+      API_CONFIG,
+      ResolveStatus,
       requestStatusType,
       requestData,
       requestStatus,
@@ -148,7 +192,10 @@ export default defineComponent({
       requestTimeRange,
       resolveTimeRange,
       requestCalldata,
-      requestRates,
+      requestResult,
+      senderLink,
+      isObject,
+      isRequestSuccess,
     }
   },
 })

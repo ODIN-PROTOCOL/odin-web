@@ -67,7 +67,7 @@
 import { defineComponent, PropType, ref } from 'vue'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
-import { DialogHandler, dialogs } from '@/helpers/dialogs'
+import { dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
@@ -119,10 +119,9 @@ const UndelegateFormDialog = defineComponent({
         onSubmit()
         notifySuccess('Successfully undelegated')
       } catch (error) {
-        handleError(error)
-      } finally {
-        isLoading.value = false
+        handleError(error as Error)
       }
+      isLoading.value = false
     }
 
     return {
@@ -136,15 +135,6 @@ const UndelegateFormDialog = defineComponent({
 })
 
 export default UndelegateFormDialog
-export function showUndelegateFormDialog(
-  callbacks: {
-    onSubmit?: DialogHandler
-    onClose?: DialogHandler
-  },
-  props: { validator: ValidatorDecoded; delegation: DelegationResponse }
-): Promise<unknown | null> {
-  return dialogs.show(UndelegateFormDialog, callbacks, { props })
-}
 </script>
 
 <style scoped lang="scss"></style>

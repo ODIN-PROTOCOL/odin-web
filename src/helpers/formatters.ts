@@ -153,3 +153,30 @@ function _getDateDifference(dateLeft: Date | number): string {
     return `${dayRange} days ago`
   }
 }
+
+export function preciseFormatOdinCoin(amount: string): string {
+  const res = bigMath.format(
+    bigMath.divide(bigMath.fromPrecise(amount), 1000000)
+  )
+  return `${res} ODIN`
+}
+
+export function getPrecisePercents(amount: string): string {
+  const percents = bigMath.fromPrecise(bigMath.multiply(amount, 100))
+  return `${percents}%`
+}
+
+export function preciseFormatCoin(amount: string, denom: string): string {
+  const res = bigMath.format(bigMath.fromPrecise(amount))
+  return `${res} ${denom.toUpperCase()}`
+}
+
+export function getPercentOutOfNumber(
+  number: string,
+  ofNumber: string
+): string {
+  const percent = bigMath.fromPrecise(
+    bigMath.multiply(bigMath.divide(number, ofNumber), 100)
+  )
+  return `${percent}%`
+}

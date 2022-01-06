@@ -6,6 +6,10 @@ import {
   formatDate,
   preciseAsPercents,
   preciseAsFormatedCoin,
+  getPrecisePercents,
+  preciseFormatOdinCoin,
+  preciseFormatCoin,
+  getPercentOutOfNumber,
 } from './helpers/formatters'
 import Notifications from '@kyvg/vue3-notification'
 import { api } from './api/api'
@@ -57,6 +61,10 @@ async function _main() {
   app.config.globalProperties.$tTallyShort = translateTallyShort
   app.config.globalProperties.$tVote = translateVote
   app.config.globalProperties.$tBondStatus = translateBondStatus
+  app.config.globalProperties.$preciseFormatOdinCoin = preciseFormatOdinCoin
+  app.config.globalProperties.$getPrecisePercents = getPrecisePercents
+  app.config.globalProperties.$preciseFormatCoin = preciseFormatCoin
+  app.config.globalProperties.$getPercentOutOfNumber = getPercentOutOfNumber
   app.use(router)
   app.use(Notifications)
   app.component('VuePicker', VuePicker)
