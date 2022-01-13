@@ -109,9 +109,11 @@ import ValidatorInfoCard from '@/components/ValidatorInfoCard.vue'
 import OracleReportsTable from '@/components/tables/OracleReportsTable.vue'
 import DelegatorsTable from '@/components/tables/DelegatorsTable.vue'
 import ProposedBlocksTable from '@/components/tables/ProposedBlocksTable.vue'
-import { showDelegateFormModal } from '@/components/modals/handlers/delegateFormModalHandler'
-import { showUndelegateFormModal } from '@/components/modals/handlers/undelegateFormModalHandler'
-import { showWithdrawRewardsFormModal } from '@/components/modals/handlers/withdrawRewardsFormModalHandler'
+
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
+import WithdrawRewardsFormModal from '@/components/modals/WithdrawRewardsFormModal.vue'
+import DelegateFormModal from '@/components/modals/DelegateFormModal.vue'
+import UndelegateFormModal from '@/components/modals/UndelegateFormModal.vue'
 
 export default defineComponent({
   components: {
@@ -181,16 +183,21 @@ export default defineComponent({
       }
     }
 
-    const delegate = () => {
-      showDelegateFormModal(
+    const loadData = async () => {
+      await getValidator()
+      await getDelegators()
+      await getBlocks()
+      await getReports()
+      await getDelegations()
+    }
+
+    const delegate = async () => {
+      await showDialogHandler(
+        DelegateFormModal,
         {
-          onSubmit: (d) => {
+          onSubmit: async (d) => {
             d.kill()
-            getValidator()
-            getDelegators()
-            getBlocks()
-            getReports()
-            getDelegations()
+            await loadData()
           },
         },
         {
@@ -200,17 +207,14 @@ export default defineComponent({
       )
     }
 
-    const undelegate = () => {
+    const undelegate = async () => {
       if (!delegations.value[validator.value.operatorAddress]) return
-      showUndelegateFormModal(
+      await showDialogHandler(
+        UndelegateFormModal,
         {
-          onSubmit: (d) => {
+          onSubmit: async (d) => {
             d.kill()
-            getValidator()
-            getDelegators()
-            getBlocks()
-            getReports()
-            getDelegations()
+            await loadData()
           },
         },
         {
@@ -220,17 +224,14 @@ export default defineComponent({
       )
     }
 
-    const withdrawRewards = () => {
+    const withdrawRewards = async () => {
       if (!delegations.value[validator.value.operatorAddress]) return
-      showWithdrawRewardsFormModal(
+      await showDialogHandler(
+        WithdrawRewardsFormModal,
         {
-          onSubmit: (d) => {
+          onSubmit: async (d) => {
             d.kill()
-            getValidator()
-            getDelegators()
-            getBlocks()
-            getReports()
-            getDelegations()
+            await loadData()
           },
         },
         { validator: validator.value }
@@ -238,11 +239,7 @@ export default defineComponent({
     }
 
     onMounted(async () => {
-      await getValidator()
-      await getDelegators()
-      await getBlocks()
-      await getReports()
-      await getDelegations()
+      await loadData()
     })
 
     return {

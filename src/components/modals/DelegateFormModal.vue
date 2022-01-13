@@ -73,7 +73,7 @@ import { coin } from '@cosmjs/amino'
 
 const defaultBalanceBlank = { amount: 0, denom: 'loki' }
 
-const DelegateFormDialog = defineComponent({
+export default defineComponent({
   props: {
     validator: { type: Object as PropType<ValidatorDecoded>, required: true },
     delegation: { type: Object as PropType<DelegationResponse> },
@@ -121,8 +121,6 @@ const DelegateFormDialog = defineComponent({
     }
   },
 })
-
-export default DelegateFormDialog
 </script>
 
 <style scoped lang="scss"></style>

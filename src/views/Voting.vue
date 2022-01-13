@@ -78,8 +78,10 @@ import { notifySuccess } from '@/helpers/notifications'
 import BackButton from '@/components/BackButton.vue'
 import CustomDoughnutChart from '@/components/charts/CustomDoughnutChart.vue'
 import Loader from '@/components/Loader.vue'
-import { showConfirmationModal } from '@/components/modals/handlers/confirmationModalHandler'
 import { getVotesCountByStatus } from '@/helpers/voteHelpers'
+
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
+import ConfirmationModal from '@/components/modals/ConfirmationModal.vue'
 
 export default defineComponent({
   components: { BackButton, CustomDoughnutChart, Loader },
@@ -122,8 +124,9 @@ export default defineComponent({
       isLoading.value = false
     }
 
-    const confirmation = () => {
-      showConfirmationModal(
+    const confirmation = async () => {
+      await showDialogHandler(
+        ConfirmationModal,
         {
           onSubmit: (d) => {
             d.kill()

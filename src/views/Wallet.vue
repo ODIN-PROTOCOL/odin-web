@@ -163,11 +163,11 @@ import { useBalances } from '@/composables/useBalances'
 import { adjustedData } from '@/helpers/Types'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
-import { WalletRate } from '@/helpers/Types'
-import { Coin } from '@cosmjs/amino'
-import { showReceiveFormModal } from '@/components/modals/handlers/receiveFormModalHandler'
-import { showWalletExchangeFormModal } from '@/components/modals/handlers/walletExchangeFormModalHandler'
-import { showSendFormModal } from '@/components/modals/handlers/sendFormModalHandler'
+
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
+import SendFormModal from '@/components/modals/SendFormModal.vue'
+import ReceiveFormModal from '@/components/modals/ReceiveFormModal.vue'
+import WalletExchangeFormModal from '@/components/modals/WalletExchangeFormModal.vue'
 
 export default defineComponent({
   components: { Pagination },
@@ -261,35 +261,21 @@ export default defineComponent({
       }
     }
 
-    const receive = () => {
-      showReceiveFormModal({
-        onSubmit: (d) => {
-          d.kill()
-          console.log('Share')
-        },
-      })
+    const receive = async () => {
+      await showDialogHandler(ReceiveFormModal)
     }
 
-    const exchange = () => {
-      showWalletExchangeFormModal({
-        onSubmit: (d) => {
-          d.kill()
-          console.log('exchange')
-        },
-      })
+    const exchange = async () => {
+      await showDialogHandler(WalletExchangeFormModal)
     }
 
-    const send = () => {
-      showSendFormModal(
+    const send = async () => {
+      await showDialogHandler(
+        SendFormModal,
+        {},
         {
-          onSubmit: (d) => {
-            d.kill()
-            console.log('Send')
-          },
-        },
-        {
-          rate: rate.value as WalletRate,
-          balance: [lokiCoins.value as Coin],
+          rate: rate.value,
+          balance: [lokiCoins.value],
         }
       )
     }

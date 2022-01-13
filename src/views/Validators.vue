@@ -145,10 +145,12 @@ import Tab from '@/components/tabs/Tab.vue'
 import TitledLink from '@/components/TitledLink.vue'
 import StatusIcon from '@/components/StatusIcon.vue'
 import Pagination from '@/components/pagination/pagination.vue'
-import { showWithdrawRewardsFormModal } from '@/components/modals/handlers/withdrawRewardsFormModalHandler'
-import { showDelegateFormModal } from '@/components/modals/handlers/delegateFormModalHandler'
-import { showUndelegateFormModal } from '@/components/modals/handlers/undelegateFormModalHandler'
-import { showBecomeValidatorFormModal } from '@/components/modals/handlers/becomeValidatorFormModalHandler'
+
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
+import WithdrawRewardsFormModal from '@/components/modals/WithdrawRewardsFormModal.vue'
+import DelegateFormModal from '@/components/modals/DelegateFormModal.vue'
+import UndelegateFormModal from '@/components/modals/UndelegateFormModal.vue'
+import BecomeValidatorFormModal from '@/components/modals/BecomeValidatorFormModal.vue'
 
 export default defineComponent({
   components: { Tabs, Tab, TitledLink, StatusIcon, Pagination },
@@ -252,56 +254,55 @@ export default defineComponent({
       }
     }
 
-    // TODO: delete if become a validator modal works fine
-    // const becomeValidator = () => {
-    //   showBecomeValidatorInfoModal({})
-    // }
+    const loadData = async () => {
+      await getDelegations()
+      await getValidators()
+    }
 
     const becomeValidator = async () => {
-      showBecomeValidatorFormModal({
-        onSubmit: (d) => {
+      await showDialogHandler(BecomeValidatorFormModal, {
+        onSubmit: async (d) => {
           d.kill()
-          getDelegations()
-          getValidators()
+          await loadData()
         },
       })
     }
 
-    const withdrawRewards = (validator: ValidatorDecoded) => {
+    const withdrawRewards = async (validator: ValidatorDecoded) => {
       if (!delegations.value[validator.operatorAddress]) return
-      showWithdrawRewardsFormModal(
+      await showDialogHandler(
+        WithdrawRewardsFormModal,
         {
-          onSubmit: (d) => {
+          onSubmit: async (d) => {
             d.kill()
-            getValidators()
-            getDelegations()
+            await loadData()
           },
         },
         { validator }
       )
     }
 
-    const delegate = (validator: ValidatorDecoded) => {
-      showDelegateFormModal(
+    const delegate = async (validator: ValidatorDecoded) => {
+      await showDialogHandler(
+        DelegateFormModal,
         {
-          onSubmit: (d) => {
+          onSubmit: async (d) => {
             d.kill()
-            getValidators()
-            getDelegations()
+            await loadData()
           },
         },
         { validator, delegation: delegations.value[validator.operatorAddress] }
       )
     }
 
-    const undelegate = (validator: ValidatorDecoded) => {
+    const undelegate = async (validator: ValidatorDecoded) => {
       if (!delegations.value[validator.operatorAddress]) return
-      showUndelegateFormModal(
+      await showDialogHandler(
+        UndelegateFormModal,
         {
-          onSubmit: (d) => {
+          onSubmit: async (d) => {
             d.kill()
-            getValidators()
-            getDelegations()
+            await loadData()
           },
         },
         { validator, delegation: delegations.value[validator.operatorAddress] }
@@ -309,8 +310,7 @@ export default defineComponent({
     }
 
     onMounted(async () => {
-      await getValidators()
-      await getDelegations()
+      await loadData()
     })
 
     return {

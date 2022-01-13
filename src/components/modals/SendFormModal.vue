@@ -147,7 +147,7 @@ import { Coin } from '@cosmjs/amino'
 import { WalletRate } from '@/helpers/Types'
 import { coin } from '@cosmjs/launchpad'
 
-const SendFormModal = defineComponent({
+export default defineComponent({
   name: 'SendFormModal',
   components: { ModalBase, VuePicker, VuePickerOption },
   props: {
@@ -161,6 +161,7 @@ const SendFormModal = defineComponent({
     const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
     const sendAsset = ref('loki')
     const selectedBalance = computed(() => {
+      console.log(props.balance)
       const balance = props.balance.find((item) => {
         return item.denom === sendAsset.value
       })
@@ -209,8 +210,6 @@ const SendFormModal = defineComponent({
     }
   },
 })
-
-export default SendFormModal
 </script>
 
 <style lang="scss" scoped>

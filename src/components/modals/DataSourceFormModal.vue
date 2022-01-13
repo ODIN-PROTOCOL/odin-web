@@ -108,7 +108,7 @@ import ModalBase from './ModalBase.vue'
 import InputFileField from '@/components/fields/InputFileField.vue'
 import TextareaField from '@/components/fields/TextareaField.vue'
 
-const DataSourceFormModal = defineComponent({
+export default defineComponent({
   props: { dataSourceId: String },
   components: { ModalBase, InputFileField, TextareaField },
   setup() {
@@ -165,8 +165,6 @@ const DataSourceFormModal = defineComponent({
     }
   },
 })
-
-export default DataSourceFormModal
 </script>
 
 <style scoped lang="scss"></style>

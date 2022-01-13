@@ -136,7 +136,7 @@ import debounce from 'lodash/debounce'
 import { Obi } from '@bandprotocol/bandchain.js'
 import TextareaField from '@/components/fields/TextareaField.vue'
 
-const RequestFormModal = defineComponent({
+export default defineComponent({
   props: {
     maxAskCount: { type: Number, required: true },
   },
@@ -222,8 +222,6 @@ const RequestFormModal = defineComponent({
     }
   },
 })
-
-export default RequestFormModal
 </script>
 
 <style scoped lang="scss">

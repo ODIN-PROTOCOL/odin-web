@@ -168,7 +168,7 @@ import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 import ModalBase from './ModalBase.vue'
 import TextareaField from '@/components/fields/TextareaField.vue'
 
-const ProposalFormModal = defineComponent({
+export default defineComponent({
   props: {
     proposalChanges: {
       type: Object as PropType<ProposalChanges>,
@@ -244,8 +244,6 @@ const ProposalFormModal = defineComponent({
     }
   },
 })
-
-export default ProposalFormModal
 </script>
 
 <style lang="scss" scoped>

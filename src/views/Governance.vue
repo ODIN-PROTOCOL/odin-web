@@ -91,12 +91,13 @@ import {
 import { proposalStatusType } from '@/helpers/statusTypes'
 import { handleError } from '@/helpers/errors'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
-import { showProposalFormModal } from '@/components/modals/handlers/proposalFormModalHandler'
-import { ProposalChanges } from '@/helpers/Types'
 import TitledLink from '@/components/TitledLink.vue'
 import CustomDoughnutChart from '@/components/charts/CustomDoughnutChart.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
 import Pagination from '@/components/pagination/pagination.vue'
+
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
+import ProposalFormModal from '@/components/modals/ProposalFormModal.vue'
 
 export default defineComponent({
   components: { CustomDoughnutChart, TitledLink, StatusBlock, Pagination },
@@ -169,16 +170,15 @@ export default defineComponent({
     }
 
     const createProposal = async () => {
-      await showProposalFormModal(
+      await showDialogHandler(
+        ProposalFormModal,
         {
           onSubmit: (d) => {
             d.kill()
             getProposals()
           },
         },
-        {
-          proposalChanges: proposalChanges.value as ProposalChanges,
-        }
+        { proposalChanges: proposalChanges.value }
       )
     }
 

@@ -55,7 +55,7 @@ import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import ModalBase from './ModalBase.vue'
 import { usePoll } from '@/composables/usePoll'
 
-const WithdrawRewardsFormDialog = defineComponent({
+export default defineComponent({
   props: {
     validator: { type: Object as PropType<ValidatorDecoded>, required: true },
   },
@@ -111,8 +111,6 @@ const WithdrawRewardsFormDialog = defineComponent({
     }
   },
 })
-
-export default WithdrawRewardsFormDialog
 </script>
 
 <style lang="scss" scoped></style>

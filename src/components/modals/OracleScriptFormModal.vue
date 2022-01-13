@@ -110,7 +110,7 @@ import ModalBase from './ModalBase.vue'
 import InputFileField from '@/components/fields/InputFileField.vue'
 import TextareaField from '@/components/fields/TextareaField.vue'
 
-const OracleScriptFormModal = defineComponent({
+export default defineComponent({
   components: { ModalBase, InputFileField, TextareaField },
   setup() {
     const form = useForm({
@@ -167,8 +167,6 @@ const OracleScriptFormModal = defineComponent({
     }
   },
 })
-
-export default OracleScriptFormModal
 </script>
 
 <style scoped lang="scss"></style>

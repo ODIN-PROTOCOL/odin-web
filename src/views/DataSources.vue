@@ -80,10 +80,12 @@
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
-import { showDataSourceFormModal } from '@/components/modals/handlers/dataSourceFormModalHandler'
 import TitledLink from '@/components/TitledLink.vue'
 import Pagination from '@/components/pagination/pagination.vue'
 import { defineComponent, onMounted, ref } from 'vue'
+
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
+import DataSourceFormModal from '@/components/modals/DataSourceFormModal.vue'
 
 export default defineComponent({
   components: {
@@ -119,10 +121,10 @@ export default defineComponent({
     }
 
     const createDataSource = async () => {
-      await showDataSourceFormModal({
-        onSubmit: (d) => {
+      await showDialogHandler(DataSourceFormModal, {
+        onSubmit: async (d) => {
           d.kill()
-          loadDataSources()
+          await loadDataSources()
         },
       })
     }

@@ -45,9 +45,12 @@ import { defineComponent, onUnmounted, ref } from 'vue'
 import { useBalances } from '@/composables/useBalances'
 import { useDropdown } from '@/composables/useDropdown'
 import { usePoll } from '@/composables/usePoll'
-import { showExchangeFormModal } from '@/components/modals/handlers/exchangeFormModalHandler'
-import { showFaucetFormModal } from '@/components/modals/handlers/faucetFormModalHandler'
 import WalletIcon from '@/components/icons/WalletIcon.vue'
+
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
+import ExchangeFormModal from '@/components/modals/ExchangeFormModal.vue'
+import FaucetFormModal from '@/components/modals/FaucetFormModal.vue'
+
 export default defineComponent({
   components: {
     WalletIcon,
@@ -58,12 +61,12 @@ export default defineComponent({
       load: loadBalances,
     } = useBalances(['loki'])
 
-    const exchange = () => {
-      showExchangeFormModal()
+    const exchange = async () => {
+      await showDialogHandler(ExchangeFormModal)
     }
 
-    const faucet = () => {
-      showFaucetFormModal()
+    const faucet = async () => {
+      await showDialogHandler(FaucetFormModal)
     }
 
     const lokiPoll = usePoll(loadBalances, 5000)

@@ -79,7 +79,7 @@ import { coin } from '@cosmjs/amino'
 import { useBalances } from '@/composables/useBalances'
 import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
 
-const UndelegateFormDialog = defineComponent({
+export default defineComponent({
   props: {
     validator: { type: Object as PropType<ValidatorDecoded>, required: true },
     delegation: {
@@ -131,8 +131,6 @@ const UndelegateFormDialog = defineComponent({
     }
   },
 })
-
-export default UndelegateFormDialog
 </script>
 
 <style scoped lang="scss"></style>

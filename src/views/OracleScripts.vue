@@ -86,7 +86,9 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
 import TitledLink from '@/components/TitledLink.vue'
 import Pagination from '@/components/pagination/pagination.vue'
-import { showOracleScriptFormModal } from '@/components/modals/handlers/oracleScriptFormModalHandler'
+
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
+import OracleScriptFormModal from '@/components/modals/OracleScriptFormModal.vue'
 
 export default defineComponent({
   components: { TitledLink, Pagination },
@@ -119,10 +121,10 @@ export default defineComponent({
     }
 
     const createOracleScript = async () => {
-      showOracleScriptFormModal({
-        onSubmit: (d) => {
+      await showDialogHandler(OracleScriptFormModal, {
+        onSubmit: async (d) => {
           d.kill()
-          loadOracleScripts()
+          await loadOracleScripts()
         },
       })
     }

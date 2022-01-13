@@ -103,11 +103,13 @@
 import { defineComponent, ref, onMounted, computed } from 'vue'
 import { callers } from '@/api/callers'
 import { API_CONFIG } from '@/api/api-config'
-import { showRequestFormModal } from '@/components/modals/handlers/requestFormModalHandler'
 import TitledLink from '@/components/TitledLink.vue'
 import Progressbar from '@/components/Progressbar.vue'
 import Pagination from '@/components/pagination/pagination.vue'
 import { RequestResult } from '@provider/codec/oracle/v1/oracle'
+
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
+import RequestFormModal from '@/components/modals/RequestFormModal.vue'
 
 export default defineComponent({
   components: { TitledLink, Progressbar, Pagination },
@@ -141,11 +143,12 @@ export default defineComponent({
     }
 
     const createRequest = async () => {
-      showRequestFormModal(
+      await showDialogHandler(
+        RequestFormModal,
         {
-          onSubmit: (d) => {
+          onSubmit: async (d) => {
             d.kill()
-            getRequests()
+            await getRequests()
           },
         },
         { maxAskCount: maxAskCount.value }
