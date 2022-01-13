@@ -1,12 +1,12 @@
 <template>
   <div
-    class="validators view-main load-fog"
+    class="view-main load-fog"
     :class="{ 'load-fog_show': isLoading && validators?.length }"
   >
-    <div class="page-title">
-      <h2 class="view-title">All Validators</h2>
+    <div class="view-main__title-wrapper">
+      <h2 class="view-main__title">All Validators</h2>
       <button
-        class="app-btn app-btn_small become-validator-btn become-validator-btn_top fx-sae"
+        class="view-main__title-btn app-btn app-btn_small fx-sae"
         type="button"
         @click="becomeValidator()"
       >
@@ -15,7 +15,7 @@
     </div>
 
     <template v-if="validatorsCount">
-      <div class="validators__count-info">
+      <div class="view-main__count-info">
         <p>{{ validatorsCount }} validators found</p>
       </div>
     </template>
@@ -127,7 +127,7 @@
       />
     </template>
 
-    <div class="page-mobile-activities">
+    <div class="view-main__mobile-activities">
       <button class="app-btn w-full" type="button" @click="becomeValidator()">
         Become a validator
       </button>
@@ -342,11 +342,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.validators__count-info {
-  margin-bottom: 3.2rem;
-
-  @media screen and (max-width: 768px) {
-    margin-bottom: 0;
+.view-main {
+  &__count-info {
+    margin-bottom: 3.2rem;
   }
 }
 
@@ -378,9 +376,17 @@ export default defineComponent({
   }
 }
 
-@media screen and (max-width: 768px) {
+@include respond-to(tablet) {
   .view-main {
     padding-bottom: 10rem;
+
+    &__count-info {
+      margin-bottom: 0;
+    }
+
+    &__title-btn {
+      display: none;
+    }
   }
 
   .app-table {
@@ -397,10 +403,6 @@ export default defineComponent({
         flex: 1;
       }
     }
-  }
-
-  .become-validator-btn_top {
-    display: none;
   }
 }
 </style>

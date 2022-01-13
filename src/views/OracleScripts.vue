@@ -1,9 +1,9 @@
 <template>
-  <div class="oracle-scripts view-main">
-    <div class="page-title">
-      <h2 class="view-title">Oracle Scripts</h2>
+  <div class="view-main">
+    <div class="view-main__title-wrapper">
+      <h2 class="view-main__title">Oracle Scripts</h2>
       <button
-        class="app-btn app-btn_small create-oracle-script-btn create-oracle-script-btn_top fx-sae"
+        class="view-main__title-btn app-btn app-btn_small fx-sae"
         type="button"
         @click="createOracleScript()"
       >
@@ -12,7 +12,7 @@
     </div>
 
     <template v-if="oracleScriptsCount">
-      <div class="oracle-scripts__count-info">
+      <div class="view-main__count-info">
         <p>{{ oracleScriptsCount }} oracle scripts found</p>
       </div>
     </template>
@@ -67,7 +67,7 @@
       />
     </template>
 
-    <div class="page-mobile-activities">
+    <div class="view-main__mobile-activities">
       <button
         class="app-btn w-full"
         type="button"
@@ -151,11 +151,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.oracle-scripts__count-info {
-  margin-bottom: 3.2rem;
-
-  @media screen and (max-width: 768px) {
-    margin-bottom: 0;
+.view-main {
+  &__count-info {
+    margin-bottom: 3.2rem;
   }
 }
 
@@ -168,17 +166,21 @@ export default defineComponent({
     minmax(8rem, 8fr);
 }
 
-@media screen and (max-width: 768px) {
+@include respond-to(tablet) {
   .view-main {
     padding-bottom: 10rem;
+
+    &__count-info {
+      margin-bottom: 0;
+    }
+
+    &__title-btn {
+      display: none;
+    }
   }
 
   .app-table__row {
     grid: none;
-  }
-
-  .create-oracle-script-btn_top {
-    display: none;
   }
 }
 </style>

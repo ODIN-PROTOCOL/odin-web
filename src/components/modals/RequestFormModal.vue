@@ -61,8 +61,8 @@
                 <div class="app-form__info">
                   <img src="~@/assets/icons/info.svg" alt="info" />
                 </div>
-                <div class="tooltip">
-                  <span>Schema:</span>
+                <div class="app-form__info-tooltip">
+                  <span class="app-form__info-tooltip-txt">Schema:</span>
                   <p>
                     {{ callDataSchema }}
                   </p>
@@ -229,54 +229,58 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.app-form__info {
-  &-wrapper {
+.app-form {
+  &__info-wrapper {
     position: relative;
   }
 
-  &:hover {
-    & + .tooltip {
-      display: block;
+  &__info {
+    &:hover {
+      & + .app-form__info-tooltip {
+        display: block;
+      }
     }
   }
-}
 
-.app-form__field-lbl_ext {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.tooltip {
-  display: none;
-  position: absolute;
-  bottom: 130%;
-  right: -0.5rem;
-  min-width: 15rem;
-  padding: 1.2rem 2.4rem;
-  background: var(--clr__tooltip-bg);
-  border-radius: 0.8rem;
-  font-size: 1.6rem;
-  font-weight: 400;
-  line-height: 1.6rem;
-  color: var(--clr__tooltip-text);
-
-  &:before {
-    content: '';
-    display: block;
-    width: 0.6rem;
-    height: 0.6rem;
+  &__info-tooltip {
+    display: none;
     position: absolute;
-    bottom: -0.3rem;
-    right: 1rem;
-    transform: rotate(45deg);
+    bottom: 130%;
+    right: -0.5rem;
+    min-width: 15rem;
+    padding: 1.2rem 2.4rem;
     background: var(--clr__tooltip-bg);
+    border-radius: 0.8rem;
+    font-size: 1.6rem;
+    font-weight: 400;
+    line-height: 1.6rem;
+    color: var(--clr__tooltip-text);
+
+    &:before {
+      content: '';
+      display: block;
+      width: 0.6rem;
+      height: 0.6rem;
+      position: absolute;
+      bottom: -0.3rem;
+      right: 1rem;
+      transform: rotate(45deg);
+      background: var(--clr__tooltip-bg);
+    }
   }
 
-  span {
+  &__info-tooltip-txt {
     display: inline-block;
     color: var(--clr__input-border);
     margin-bottom: 1rem;
+  }
+
+  &__field-lbl {
+    &_ext {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
   }
 }
 </style>

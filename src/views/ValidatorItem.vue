@@ -1,20 +1,20 @@
 <template>
   <div
-    class="validator view-main"
+    class="view-main"
     :class="
       delegations[validator?.operatorAddress] ? 'view-main_large-padding' : ''
     "
   >
-    <div class="page-title">
+    <div class="view-main__title-wrapper">
       <BackButton :text="'Validators'" />
-      <h2 class="view-title">Validator</h2>
-      <div class="validator__address">
-        <p :title="validator?.operatorAddress" class="view-subtitle">
+      <h2 class="view-main__title">Validator</h2>
+      <div class="view-main__validator-address">
+        <p :title="validator?.operatorAddress" class="view-main__subtitle">
           {{ validator?.operatorAddress }}
         </p>
         <CopyButton class="mg-l8" :text="String(validator?.operatorAddress)" />
       </div>
-      <div class="validator__activities validator__activities_top fx-sae">
+      <div class="view-main__activities view-main__activities_top fx-sae">
         <template v-if="delegations[validator?.operatorAddress]">
           <button
             class="app-btn app-btn_outlined app-btn_small"
@@ -63,29 +63,33 @@
       </Tabs>
     </template>
 
-    <div class="page-mobile-activities">
-      <div class="validator__activities">
+    <div class="view-main__mobile-activities">
+      <div class="view-main__activities">
         <div
-          class="validator__activities-item"
+          class="view-main__activities-item"
           v-if="delegations[validator?.operatorAddress]"
         >
           <button
-            class="app-btn app-btn_outlined"
+            class="view-main__activities-btn app-btn app-btn_outlined"
             type="button"
             @click="withdrawRewards"
           >
             Claim rewards
           </button>
           <button
-            class="app-btn app-btn_outlined"
+            class="view-main__activities-btn app-btn app-btn_outlined"
             type="button"
             @click="undelegate"
           >
             Undelegate
           </button>
         </div>
-        <div class="validator__activities-item">
-          <button class="app-btn" type="button" @click="delegate">
+        <div class="view-main__activities-item">
+          <button
+            class="view-main__activities-btn app-btn"
+            type="button"
+            @click="delegate"
+          >
             Delegate
           </button>
         </div>
@@ -257,45 +261,41 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.view-title {
-  margin: 0 1.6rem 0 2rem;
+.view-main {
+  &__title {
+    margin: 0 1.6rem 0 2rem;
+  }
+
+  &__subtitle {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  &__validator-address {
+    display: flex;
+    min-width: 10%;
+    margin-right: 1rem;
+  }
+
+  &__activities {
+    display: flex;
+  }
 }
 
-.view-subtitle {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.validator__address {
-  display: flex;
-  min-width: 10%;
-  margin-right: 1rem;
-}
-
-.validator__activities {
-  display: flex;
-}
-
-@media screen and (max-width: 768px) {
+@include respond-to(tablet) {
   .view-main {
     padding-bottom: 10rem;
 
-    &_large-padding {
-      padding-bottom: 17rem;
+    &__title {
+      margin: 0.8rem 0 0.4rem 0;
     }
-  }
 
-  .view-title {
-    margin: 0.8rem 0 0.4rem 0;
-  }
+    &__validator-address {
+      width: 100%;
+      margin: 0;
+    }
 
-  .validator__address {
-    width: 100%;
-    margin: 0;
-  }
-
-  .validator {
     &__activities {
       flex-direction: column;
       gap: 2.4rem;
@@ -314,12 +314,16 @@ export default defineComponent({
         flex: 1;
       }
     }
+
+    &_large-padding {
+      padding-bottom: 17rem;
+    }
   }
 }
 
-@media screen and (max-width: 390px) {
-  .validator__activities-item {
-    button {
+@include respond-to(390px) {
+  .view-main {
+    &__activities-btn {
       font-size: 1.6rem;
     }
   }

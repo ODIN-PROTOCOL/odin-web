@@ -1,7 +1,7 @@
 <template>
-  <div class="wallet view-main">
-    <div class="page-title">
-      <h2 class="view-title">Wallet</h2>
+  <div class="view-main">
+    <div class="view-main__title-wrapper">
+      <h2 class="view-main__title">Wallet</h2>
     </div>
 
     <div class="info mg-b40">
@@ -50,9 +50,11 @@
       </div>
     </div>
 
-    <div class="view-subtitle mg-b24">
-      <span class="subtitle">Transaction list</span>
-      <span class="tooltip">Based on last 100 transactions in system</span>
+    <div class="view-main__subtitle mg-b24">
+      <span class="view-main__subtitle-item">Transaction list</span>
+      <span class="view-main__subtitle-tooltip">
+        Based on last 100 transactions in system
+      </span>
     </div>
     <div class="app-table">
       <div class="app-table__head">
@@ -323,10 +325,10 @@ export default defineComponent({
     flex-direction: column;
     width: 39rem;
     padding: 3.2rem 2.4rem;
-    border: 1px solid var(--clr__action);
+    border: 0.1rem solid var(--clr__action);
     border-radius: 0.8rem;
 
-    @include respond-to(sm) {
+    @include respond-to(tablet) {
       width: 100%;
     }
   }
@@ -364,15 +366,25 @@ export default defineComponent({
     }
   }
 
-  @include respond-to(sm) {
+  @include respond-to(tablet) {
     flex-direction: column;
   }
 }
 
-.view-subtitle {
-  position: relative;
+.view-main {
+  &__subtitle {
+    position: relative;
+  }
 
-  .tooltip {
+  &__subtitle-item {
+    &:hover {
+      & + .view-main__subtitle-tooltip {
+        display: block;
+      }
+    }
+  }
+
+  &__subtitle-tooltip {
     display: none;
     position: absolute;
     bottom: 130%;
@@ -380,7 +392,7 @@ export default defineComponent({
     max-width: 20rem;
     padding: 1.2rem 2.4rem;
     background: var(--clr__tooltip-bg);
-    border-radius: 8px;
+    border-radius: 0.8rem;
     font-size: 1.6rem;
     font-weight: 400;
     line-height: 1.6rem;
@@ -396,14 +408,6 @@ export default defineComponent({
       left: 50%;
       transform: translateX(-50%) rotate(45deg);
       background: var(--clr__tooltip-bg);
-    }
-  }
-
-  .subtitle {
-    &:hover {
-      & + .tooltip {
-        display: block;
-      }
     }
   }
 }

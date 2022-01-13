@@ -1,14 +1,14 @@
 <template>
-  <div class="request view-main">
-    <div class="page-title">
+  <div class="view-main">
+    <div class="view-main__title-wrapper">
       <BackButton :text="'Requests'" />
-      <h2 class="view-title">Request</h2>
-      <span class="view-subtitle">
+      <h2 class="view-main__title">Request</h2>
+      <span class="view-main__subtitle">
         #{{ String(requestData?.responsePacketData.requestId) }}
       </span>
     </div>
 
-    <h3 class="view-subtitle mg-b24">Request info</h3>
+    <h3 class="view-main__subtitle mg-b24">Request info</h3>
     <template v-if="requestData">
       <div class="info-table mg-b32">
         <div class="info-table__row">
@@ -54,7 +54,7 @@
         </div>
       </div>
 
-      <h3 class="view-subtitle mg-b24">Calldata</h3>
+      <h3 class="view-main__subtitle mg-b24">Calldata</h3>
       <div class="info-table mg-b32">
         <template v-if="isObject">
           <div
@@ -77,7 +77,7 @@
       </div>
 
       <template v-if="isRequestSuccess">
-        <h3 class="view-subtitle mg-b24">Result</h3>
+        <h3 class="view-main__subtitle mg-b24">Result</h3>
         <div class="info-table">
           <div class="info-table__row">
             <span class="info-table__row-title">Data</span>
@@ -89,7 +89,7 @@
       </template>
     </template>
     <template v-else>
-      <p class="empty-msg">There is no information about request</p>
+      <p class="view-main__empty-msg">There is no information about request</p>
     </template>
   </div>
 </template>
@@ -110,6 +110,7 @@ import StatusBlock from '@/components/StatusBlock.vue'
 import { Obi } from '@bandprotocol/bandchain.js'
 import { handleError } from '@/helpers/errors'
 import { uint8ArrayToStr } from '@/helpers/casts'
+import isObjectLodash from 'lodash/isObject'
 
 export default defineComponent({
   components: { TitledLink, CopyButton, BackButton, Progressbar, StatusBlock },
@@ -129,11 +130,7 @@ export default defineComponent({
       return `${API_CONFIG.odinScan}/account/${requestData.value?.requestPacketData?.clientId}`
     })
     const isObject = computed(() => {
-      return (
-        typeof requestCalldata.value === 'object' &&
-        requestCalldata.value !== null &&
-        !Array.isArray(requestCalldata)
-      )
+      return isObjectLodash(requestCalldata.value)
     })
     const isRequestSuccess = computed(
       () => requestStatus.value === ResolveStatus.RESOLVE_STATUS_SUCCESS
@@ -202,17 +199,21 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.view-title {
-  margin: 0 1.6rem 0 2rem;
+.view-main {
+  &__title {
+    margin: 0 1.6rem 0 2rem;
+  }
+
+  &__empty-msg {
+    text-align: center;
+  }
 }
 
-.empty-msg {
-  text-align: center;
-}
-
-@media screen and (max-width: 768px) {
-  .view-title {
-    margin: 0.8rem 0 0.4rem 0;
+@include respond-to(tablet) {
+  .view-main {
+    &__title {
+      margin: 0.8rem 0 0.4rem 0;
+    }
   }
 }
 </style>
