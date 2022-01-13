@@ -24,6 +24,7 @@
 import { defineComponent, onMounted, ref } from 'vue'
 import { useWeb3 } from '@/composables/useWeb3/useWeb3'
 import { callers } from '@/api/callers'
+import { COINS_LIST } from '@/api/api-config'
 import { showMetaMaskErrorModal } from '@/components/MetaMask/handlers/metaMaskErrorModalHandler'
 import { showMetaMaskModal } from './handlers/metaMaskModalHandler'
 
@@ -56,7 +57,10 @@ export default defineComponent({
       )
     }
     const getOdinToLokiRate = async (): Promise<void> => {
-      odinToLokiRate.value = await callers.getRate('odin', 'loki')
+      odinToLokiRate.value = await callers.getRate(
+        COINS_LIST.ODIN,
+        COINS_LIST.LOKI
+      )
     }
     const getMaxWithdrawalPerTime = async (): Promise<void> => {
       const res = await callers.getParams()

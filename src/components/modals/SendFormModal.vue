@@ -134,6 +134,7 @@ import { defineComponent, ref, PropType, computed } from 'vue'
 import { callers } from '@/api/callers'
 import { coins } from '@cosmjs/amino'
 import { wallet } from '@/api/wallet'
+import { COINS_LIST } from '@/api/api-config'
 import { useForm, validators } from '@/composables/useForm'
 import { dialogs } from '@/helpers/dialogs'
 import { preventIf } from '@/helpers/functions'
@@ -159,7 +160,7 @@ export default defineComponent({
     const isLoading = ref(false)
     const onSubmit = dialogs.getHandler('onSubmit')
     const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
-    const sendAsset = ref('loki')
+    const sendAsset = ref(COINS_LIST.LOKI)
     const selectedBalance = computed(() => {
       console.log(props.balance)
       const balance = props.balance.find((item) => {

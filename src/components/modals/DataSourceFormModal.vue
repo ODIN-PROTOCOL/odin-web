@@ -98,6 +98,7 @@ import { defineComponent, ref } from 'vue'
 import { coins } from '@cosmjs/launchpad'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
+import { COINS_LIST } from '@/api/api-config'
 import { dialogs } from '@/helpers/dialogs'
 import { readFile } from '@/helpers/files'
 import { handleError } from '@/helpers/errors'
@@ -131,7 +132,7 @@ export default defineComponent({
           name: form.name.val(),
           description: form.description.val(),
           executable: executableParsed,
-          fee: coins(Number(form.price.val()), 'loki'),
+          fee: coins(Number(form.price.val()), COINS_LIST.LOKI),
           owner: wallet.account.address,
           sender: wallet.account.address,
         })

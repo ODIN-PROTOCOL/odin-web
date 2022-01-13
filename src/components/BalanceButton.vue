@@ -46,6 +46,7 @@ import { useBalances } from '@/composables/useBalances'
 import { useDropdown } from '@/composables/useDropdown'
 import { usePoll } from '@/composables/usePoll'
 import WalletIcon from '@/components/icons/WalletIcon.vue'
+import { COINS_LIST } from '@/api/api-config'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import ExchangeFormModal from '@/components/modals/ExchangeFormModal.vue'
@@ -59,7 +60,7 @@ export default defineComponent({
     const {
       coins: [lokiCoins],
       load: loadBalances,
-    } = useBalances(['loki'])
+    } = useBalances([COINS_LIST.LOKI])
 
     const exchange = async () => {
       await showDialogHandler(ExchangeFormModal)

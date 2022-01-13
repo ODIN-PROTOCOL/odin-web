@@ -155,6 +155,7 @@
 import { defineComponent, onMounted, onUnmounted, ref } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
+import { COINS_LIST } from '@/api/api-config'
 import Pagination from '@/components/pagination/pagination.vue'
 import { wallet } from '@/api/wallet'
 import { prepareTransaction } from '@/helpers/helpers'
@@ -231,7 +232,7 @@ export default defineComponent({
     const {
       coins: [lokiCoins],
       load: loadBalances,
-    } = useBalances(['loki'])
+    } = useBalances([COINS_LIST.LOKI])
     const lokiPoll = usePoll(loadBalances, 5000)
 
     const filterTransactions = (newPage: number) => {

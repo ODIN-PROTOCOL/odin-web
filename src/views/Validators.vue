@@ -55,7 +55,11 @@
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Delegated</span>
-              <span :title="$preciseFormatCoin(item.delegatorShares, 'loki')">
+              <span
+                :title="
+                  $preciseFormatCoin(item.delegatorShares, COINS_LIST.LOKI)
+                "
+              >
                 {{ $preciseFormatOdinCoin(item.delegatorShares) }}
               </span>
             </div>
@@ -135,6 +139,7 @@
 import { defineComponent, ref, onMounted } from 'vue'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
+import { COINS_LIST } from '@/api/api-config'
 import { handleError } from '@/helpers/errors'
 import { getTransformedValidators } from '@/helpers/validatorHelpers'
 import { ValidatorDecoded } from '@/helpers/validatorDecoders'
@@ -314,6 +319,7 @@ export default defineComponent({
     })
 
     return {
+      COINS_LIST,
       ITEMS_PER_PAGE,
       currentPage,
       filteredValidatorsCount,

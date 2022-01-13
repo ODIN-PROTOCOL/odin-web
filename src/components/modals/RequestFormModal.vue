@@ -126,6 +126,7 @@ import Long from 'long'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
 import { dialogs } from '@/helpers/dialogs'
+import { COINS_LIST } from '@/api/api-config'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
@@ -197,7 +198,10 @@ export default defineComponent({
           askCount: Long.fromNumber(form.askCount.val()),
           minCount: Long.fromNumber(form.minCount.val()),
           calldata: _processCallData(),
-          feeLimit: coins(Number.parseInt(form.feeLimit.val()), 'loki'),
+          feeLimit: coins(
+            Number.parseInt(form.feeLimit.val()),
+            COINS_LIST.LOKI
+          ),
           prepareGas: Long.fromNumber(200000),
           executeGas: Long.fromNumber(200000),
           sender: wallet.account.address,

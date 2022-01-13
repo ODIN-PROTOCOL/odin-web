@@ -67,6 +67,7 @@
 import { defineComponent, PropType, ref } from 'vue'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
+import { COINS_LIST } from '@/api/api-config'
 import { dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
@@ -105,13 +106,13 @@ export default defineComponent({
           validatorAddress: props.validator.operatorAddress,
           amount: {
             amount: form.amount.val(),
-            denom: 'loki',
+            denom: COINS_LIST.LOKI,
           },
         })
         await callers.validatorUndelegate({
           delegatorAddress: wallet.account.address,
           validatorAddress: props.validator.operatorAddress,
-          amount: coin(Number(form.amount.val()), 'loki'),
+          amount: coin(Number(form.amount.val()), COINS_LIST.LOKI),
         })
         await useBalances().load()
         onSubmit()
