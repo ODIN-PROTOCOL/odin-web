@@ -5,7 +5,8 @@
     <!-- <button class="nav-btn">
       <img src="~@/assets/icons/metamask.svg" alt="metamask" />
     </button> -->
-    <MetaMask />
+    <!-- TEMP. Hide metamask -->
+    <!-- <MetaMask /> -->
     <BalanceButton />
     <button
       class="app-ico-btn log-out-and-leave"
@@ -21,12 +22,13 @@
 import { defineComponent } from 'vue'
 import { useAuthorization } from '@/composables/useAuthorization'
 import BalanceButton from '@/components/BalanceButton.vue'
-import MetaMask from '@/components/MetaMask/MetaMask.vue'
+//TEMP. Hide metamask
+// import MetaMask from '@/components/MetaMask/MetaMask.vue'
 // import Search from '@/components/Search.vue'
 import router from '@/router'
 
 export default defineComponent({
-  components: { BalanceButton, MetaMask },
+  components: { BalanceButton },
   setup() {
     const auth = useAuthorization()
     const logOutAndLeave = () => {
