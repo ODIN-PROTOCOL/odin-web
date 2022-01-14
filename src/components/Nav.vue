@@ -23,10 +23,6 @@
         <span>Requests</span>
       </router-link>
       <LinksDropdown :isActive="isDropdownActive" :list="ValidatorsList" />
-      <!-- Rewards page not ready -->
-      <!-- <router-link class="nav__link" data-text="Rewards" to="/">
-        <span>Rewards</span>
-      </router-link> -->
       <router-link
         class="nav__link"
         data-text="Governance"
@@ -34,10 +30,6 @@
       >
         <span>Governance</span>
       </router-link>
-      <!-- Voting page not ready -->
-      <!--      <router-link class="nav__link" :to="{ name: 'Voting' }">-->
-      <!--        Voting-->
-      <!--      </router-link>-->
     </div>
     <div class="nav__activities">
       <button
