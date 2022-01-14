@@ -1,8 +1,7 @@
 <template>
   <div class="nav" :class="{ 'nav-mob': isOpen }">
     <div class="nav__wrap-cont">
-      <!-- Hide all unnecessary -->
-      <!-- <router-link
+      <router-link
         class="nav__link"
         data-text="Data Sources"
         :to="{ name: 'DataSources' }"
@@ -22,22 +21,15 @@
         :to="{ name: 'Requests' }"
       >
         <span>Requests</span>
-      </router-link> -->
-      <LinksDropdown :isActive="isDropdownActive" :list="ValidatorsList" />
-      <!-- <router-link class="nav__link" data-text="Rewards" to="/">
-        <span>Rewards</span>
       </router-link>
+      <LinksDropdown :isActive="isDropdownActive" :list="ValidatorsList" />
       <router-link
         class="nav__link"
         data-text="Governance"
         :to="{ name: 'Governance' }"
       >
         <span>Governance</span>
-      </router-link> -->
-      <!-- Voting page not ready -->
-      <!--      <router-link class="nav__link" :to="{ name: 'Voting' }">-->
-      <!--        Voting-->
-      <!--      </router-link>-->
+      </router-link>
     </div>
     <div class="nav__activities">
       <button

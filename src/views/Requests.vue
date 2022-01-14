@@ -1,13 +1,9 @@
 <template>
-  <div class="requests view-main">
-    <div class="page-title fx-row">
-      <h2 class="view-title">Requests</h2>
+  <div class="view-main">
+    <div class="view-main__title-wrapper">
+      <h2 class="view-main__title">Requests</h2>
       <button
-        class="
-          app-btn app-btn_small
-          create-request-btn create-request-btn_top
-          fx-sae
-        "
+        class="view-main__title-btn app-btn app-btn_small fx-sae"
         type="button"
         @click="createRequest()"
       >
@@ -16,7 +12,7 @@
     </div>
 
     <template v-if="requestsCount">
-      <div class="requests__count-info fx-row">
+      <div class="view-main__count-info">
         <p>{{ requestsCount }} requests found</p>
       </div>
     </template>
@@ -24,7 +20,7 @@
     <div class="app-table">
       <div class="app-table__head">
         <span>Request ID</span>
-        <span>Client ID</span>
+        <span>Sender</span>
         <span>Oracle Script ID</span>
         <span>Report Status</span>
         <span>Timestamp</span>
@@ -45,13 +41,13 @@
               />
             </div>
             <div class="app-table__cell">
-              <span class="app-table__title">Client ID</span>
-              <span
-                class="app-table__cell-txt"
-                :title="item.requestPacketData.clientId.toString()"
+              <span class="app-table__title">Sender</span>
+              <a
+                class="app-table__cell-txt app-table__link"
+                :href="senderLink(item)"
               >
-                {{ item.requestPacketData.clientId.toString() }}
-              </span>
+                {{ item.requestPacketData.clientId }}
+              </a>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Oracle Script ID</span>
@@ -91,7 +87,7 @@
       />
     </template>
 
-    <div class="page-mobile-activities">
+    <div class="view-main__mobile-activities">
       <button class="app-btn w-full" type="button" @click="createRequest()">
         Create Request
       </button>
@@ -100,12 +96,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, ref, onMounted, computed } from 'vue'
 import { callers } from '@/api/callers'
-import { showRequestFormDialog } from '@/components/modals/RequestFormModal.vue'
+import { API_CONFIG } from '@/api/api-config'
 import TitledLink from '@/components/TitledLink.vue'
 import Progressbar from '@/components/Progressbar.vue'
 import Pagination from '@/components/pagination/pagination.vue'
+import { RequestResult } from '@provider/codec/oracle/v1/oracle'
+
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
+import RequestFormModal from '@/components/modals/RequestFormModal.vue'
 
 export default defineComponent({
   components: { TitledLink, Progressbar, Pagination },
@@ -115,6 +115,9 @@ export default defineComponent({
     const requests = ref()
     const requestsCount = ref()
     const maxAskCount = ref()
+    const senderLink = computed(() => (item: RequestResult) => {
+      return `${API_CONFIG.odinScan}/account/${item.requestPacketData?.clientId}`
+    })
 
     const getRequests = async () => {
       const res = await callers.getRequests(
@@ -136,11 +139,12 @@ export default defineComponent({
     }
 
     const createRequest = async () => {
-      showRequestFormDialog(
+      await showDialogHandler(
+        RequestFormModal,
         {
-          onSubmit: (d) => {
+          onSubmit: async (d) => {
             d.kill()
-            getRequests()
+            await getRequests()
           },
         },
         { maxAskCount: maxAskCount.value }
@@ -158,32 +162,36 @@ export default defineComponent({
     })
 
     return {
+      API_CONFIG,
       ITEMS_PER_PAGE,
       requests,
       requestsCount,
       createRequest,
       paginationHandler,
+      senderLink,
     }
   },
 })
 </script>
 
 <style lang="scss" scoped>
-.requests__count-info {
-  margin-bottom: 3.2rem;
-
-  @media screen and (max-width: 768px) {
-    margin-bottom: 0;
+.view-main {
+  &__count-info {
+    margin-bottom: 3.2rem;
   }
 }
 
-@media screen and (max-width: 768px) {
+@include respond-to(tablet) {
   .view-main {
     padding-bottom: 10rem;
-  }
 
-  .create-request-btn_top {
-    display: none;
+    &__count-info {
+      margin-bottom: 0;
+    }
+
+    &__title-btn {
+      display: none;
+    }
   }
 }
 </style>

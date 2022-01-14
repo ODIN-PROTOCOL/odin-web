@@ -17,6 +17,7 @@
               class="app-form__field-input"
               name="request-oracle-script-id"
               type="text"
+              @input="findOracleScript"
               v-model="form.oracleScriptId"
               :disabled="isLoading"
             />
@@ -53,25 +54,35 @@
             </p>
           </div>
 
-          <div class="app-form__field">
-            <label class="app-form__field-lbl"> Call data </label>
-            <VuePicker
-              class="_vue-picker"
-              placeholder="call data"
-              v-model="form.calldata"
-            >
-              <template #dropdownInner>
-                <div
-                  class="_vue-picker__dropdown-custom"
-                  v-for="phone in phones"
-                  :key="phone"
-                >
-                  <VuePickerOption :value="phone" :text="phone">
-                    {{ phone }}
-                  </VuePickerOption>
+          <div class="app-form__field request-form-modal__field">
+            <div class="app-form__field-lbl request-form-modal__field-lbl_ext">
+              <label> Call data(JSON format) </label>
+              <div class="request-form-modal__field-info" v-if="callDataSchema">
+                <img
+                  class="request-form-modal__field-info-icon"
+                  src="~@/assets/icons/info.svg"
+                  alt="info"
+                />
+                <div class="request-form-modal__field-info-tooltip">
+                  <span class="request-form-modal__field-info-tooltip-txt">
+                    Schema:
+                  </span>
+                  <p>
+                    {{ callDataSchema }}
+                  </p>
                 </div>
-              </template>
-            </VuePicker>
+              </div>
+            </div>
+            <TextareaField
+              v-model="form.calldata"
+              name="request-calldata"
+              :rows="7"
+              :disabled="isLoading || form.oracleScriptIdErr"
+              placeholder="Call data"
+            />
+            <p v-if="form.feeLimitErr" class="app-form__field-err">
+              {{ form.calldataErr }}
+            </p>
           </div>
 
           <div class="app-form__field">
@@ -118,24 +129,23 @@ import { defineComponent, ref } from 'vue'
 import Long from 'long'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
-import { DialogHandler, dialogs } from '@/helpers/dialogs'
+import { dialogs } from '@/helpers/dialogs'
+import { COINS_LIST } from '@/api/api-config'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
-import { obiCoin } from '@/helpers/obi-structures'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 import { coins } from '@cosmjs/launchpad'
-import phones from '@/assets/phones.json'
+import debounce from 'lodash/debounce'
+import { Obi } from '@bandprotocol/bandchain.js'
+import TextareaField from '@/components/fields/TextareaField.vue'
 
-const RequestFormModal = defineComponent({
+export default defineComponent({
   props: {
     maxAskCount: { type: Number, required: true },
   },
-  components: { ModalBase, VuePicker, VuePickerOption },
+  components: { ModalBase, TextareaField },
   setup(props) {
     const form = useForm({
       oracleScriptId: ['', validators.required],
@@ -149,12 +159,40 @@ const RequestFormModal = defineComponent({
         validators.required,
         ...validators.num(1, props.maxAskCount),
       ],
-      calldata: ['', validators.required],
+      calldata: [''],
       feeLimit: ['1', validators.required, ...validators.num(1)],
     })
     const isLoading = ref(false)
+    const callDataSchema = ref()
     const onSubmit = dialogs.getHandler('onSubmit')
     const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
+
+    const findOracleScript = debounce(async () => {
+      if (!form.oracleScriptId.val()) return
+      isLoading.value = true
+      try {
+        const { oracleScript } = await callers.getOracleScript(
+          form.oracleScriptId.val()
+        )
+        callDataSchema.value = oracleScript?.schema
+      } catch (error) {
+        form.oracleScriptId.error.value = 'Oracle script not found'
+        callDataSchema.value = ''
+        form.calldata.val('')
+      }
+      isLoading.value = false
+    }, 500)
+
+    const _processCallData = () => {
+      try {
+        const obi = new Obi(callDataSchema.value)
+        return obi.encodeInput(JSON.parse(form.calldata.val()))
+      } catch (error) {
+        throw new ReferenceError(
+          'Invalid call data! Pay attention to the data schema!'
+        )
+      }
+    }
 
     const submit = async () => {
       if (!form.isValid.value) return
@@ -164,17 +202,15 @@ const RequestFormModal = defineComponent({
           oracleScriptId: Long.fromString(form.oracleScriptId.val()),
           askCount: Long.fromNumber(form.askCount.val()),
           minCount: Long.fromNumber(form.minCount.val()),
-          // TODO: clarify calldata
-          // calldata: obiPhoneModels(form.calldata.val()),
-          calldata: obiCoin.encode({
-            symbol: 'BTC',
-            multiplier: '1000000000',
-          }),
-          feeLimit: coins(Number.parseInt(form.feeLimit.val()), 'loki'),
+          calldata: _processCallData(),
+          feeLimit: coins(
+            Number.parseInt(form.feeLimit.val()),
+            COINS_LIST.LOKI
+          ),
           prepareGas: Long.fromNumber(200000),
           executeGas: Long.fromNumber(200000),
           sender: wallet.account.address,
-          clientId: '1',
+          clientId: wallet.account.address,
         })
 
         onSubmit()
@@ -191,21 +227,64 @@ const RequestFormModal = defineComponent({
       isLoading,
       submit,
       onClose,
-      phones,
+      callDataSchema,
+      findOracleScript,
     }
   },
 })
-
-export default RequestFormModal
-export function showRequestFormDialog(
-  callbacks: {
-    onSubmit?: DialogHandler
-    onClose?: DialogHandler
-  },
-  props: { maxAskCount: number }
-): Promise<unknown | null> {
-  return dialogs.show(RequestFormModal, callbacks, { props })
-}
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.request-form-modal {
+  &__field-info {
+    position: relative;
+
+    &:hover {
+      .request-form-modal__field-info-tooltip {
+        display: block;
+      }
+    }
+  }
+
+  &__field-info-tooltip {
+    display: none;
+    position: absolute;
+    bottom: 130%;
+    right: -0.5rem;
+    min-width: 15rem;
+    padding: 1.2rem 2.4rem;
+    background: var(--clr__tooltip-bg);
+    border-radius: 0.8rem;
+    font-size: 1.6rem;
+    font-weight: 400;
+    line-height: 1.6rem;
+    color: var(--clr__tooltip-text);
+
+    &:before {
+      content: '';
+      display: block;
+      width: 0.6rem;
+      height: 0.6rem;
+      position: absolute;
+      bottom: -0.3rem;
+      right: 1rem;
+      transform: rotate(45deg);
+      background: var(--clr__tooltip-bg);
+    }
+  }
+
+  &__field-info-tooltip-txt {
+    display: inline-block;
+    color: var(--clr__input-border);
+    margin-bottom: 1rem;
+  }
+
+  &__field-lbl {
+    &_ext {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+}
+</style>

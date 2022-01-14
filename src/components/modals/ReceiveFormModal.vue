@@ -31,13 +31,13 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import { DialogHandler, dialogs } from '@/helpers/dialogs'
+import { dialogs } from '@/helpers/dialogs'
 import { wallet } from '@/api/wallet'
 import QrcodeVue from 'qrcode.vue'
 import ModalBase from '@/components/modals/ModalBase.vue'
 import CopyButton from '@/components/CopyButton.vue'
 
-const ReceiveDialog = defineComponent({
+export default defineComponent({
   components: { ModalBase, QrcodeVue, CopyButton },
   setup: function () {
     const address = ref(wallet.account.address)
@@ -49,14 +49,6 @@ const ReceiveDialog = defineComponent({
     }
   },
 })
-
-export default ReceiveDialog
-export function showReceiveDialog(callbacks: {
-  onSubmit?: DialogHandler
-  onClose?: DialogHandler
-}): Promise<unknown | null> {
-  return dialogs.show(ReceiveDialog, callbacks)
-}
 </script>
 
 <style lang="scss" scoped>

@@ -1,7 +1,7 @@
 <template>
-  <div class="oracle-validators view-main">
-    <div class="page-title">
-      <h2 class="view-title">Oracle validators</h2>
+  <div class="view-main">
+    <div class="view-main__title-wrapper">
+      <h2 class="view-main__title">Oracle validators</h2>
     </div>
 
     <div class="app-table">
@@ -134,14 +134,16 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.app-table__head,
-.app-table__row {
-  grid:
-    auto /
-    minmax(10rem, 1fr) minmax(10rem, 1fr) minmax(10rem, 1fr) minmax(10rem, 0.1fr);
+.app-table {
+  &__head,
+  &__row {
+    grid:
+      auto /
+      minmax(10rem, 1fr) minmax(10rem, 1fr) minmax(10rem, 1fr) minmax(10rem, 0.1fr);
+  }
 }
 
-@media screen and (max-width: 768px) {
+@include respond-to(tablet) {
   .app-table__row {
     grid: none;
   }

@@ -12,7 +12,7 @@
       >
         <div class="app-form__main">
           <div class="app-form__field">
-            <label class="app-form__field-lbl"> Moniker </label>
+            <label class="app-form__field-lbl"> Validator </label>
             <input
               class="app-form__field-input"
               name="become-validator-moniker"
@@ -151,7 +151,8 @@ import { defineComponent, ref } from 'vue'
 import { loremIpsum } from 'lorem-ipsum'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
-import { DialogHandler, dialogs } from '@/helpers/dialogs'
+import { COINS_LIST } from '@/api/api-config'
+import { dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
@@ -245,13 +246,13 @@ const BecomeValidatorFormModal = defineComponent({
               key: Buffer.from(fromBase64(form.pubKey.val())),
             }).finish(),
           },
-          value: coin(form.selfDelegation.val(), 'loki'),
+          value: coin(form.selfDelegation.val(), COINS_LIST.LOKI),
         })
 
         onSubmit()
         notifySuccess('Promoted to validators election')
       } catch (error) {
-        handleError(error)
+        handleError(error as Error)
       }
       isLoading.value = false
     }
@@ -279,12 +280,6 @@ const BecomeValidatorFormModal = defineComponent({
 })
 
 export default BecomeValidatorFormModal
-export function showBecomeValidatorFormDialog(callbacks: {
-  onSubmit?: DialogHandler
-  onClose?: DialogHandler
-}): Promise<unknown | null> {
-  return dialogs.show(BecomeValidatorFormModal, callbacks)
-}
 </script>
 
 <style scoped lang="scss">

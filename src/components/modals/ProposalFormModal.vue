@@ -27,14 +27,13 @@
 
           <div class="app-form__field">
             <label class="app-form__field-lbl"> Description </label>
-            <textarea
-              class="app-form__field-input"
-              name="proposal-description"
-              rows="5"
+            <TextareaField
               v-model="form.description"
+              name="proposal-description"
+              :rows="5"
               :disabled="isLoading"
               placeholder="Proposal Description"
-            ></textarea>
+            />
             <p v-if="form.descriptionErr" class="app-form__field-err">
               {{ form.descriptionErr }}
             </p>
@@ -156,7 +155,8 @@ import { computed, defineComponent, PropType, ref, toRef, watch } from 'vue'
 import { coins } from '@cosmjs/launchpad'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
-import { DialogHandler, dialogs } from '@/helpers/dialogs'
+import { COINS_LIST } from '@/api/api-config'
+import { dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
@@ -167,15 +167,16 @@ import { ParameterChangeProposal } from '@provider/codec/cosmos/params/v1beta1/p
 // @ts-ignore
 import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 import ModalBase from './ModalBase.vue'
+import TextareaField from '@/components/fields/TextareaField.vue'
 
-const ProposalFormModal = defineComponent({
+export default defineComponent({
   props: {
     proposalChanges: {
       type: Object as PropType<ProposalChanges>,
       required: true,
     },
   },
-  components: { ModalBase, VuePicker, VuePickerOption },
+  components: { ModalBase, VuePicker, VuePickerOption, TextareaField },
   setup(props) {
     const _proposalChanges = toRef(props, 'proposalChanges')
     const form = useForm({
@@ -188,9 +189,10 @@ const ProposalFormModal = defineComponent({
     })
 
     const changesValueType = computed(() => {
-      return _proposalChanges.value[form.changesSubspace.val() as keyof ProposalChanges].find(
-        (item: ProposalChangesItem) => item.Key === form.changesKey.val()
-      )?.ValueType
+      return _proposalChanges.value[
+        form.changesSubspace.val() as keyof ProposalChanges
+      ].find((item: ProposalChangesItem) => item.Key === form.changesKey.val())
+        ?.ValueType
     })
 
     const isLoading = ref(false)
@@ -214,7 +216,7 @@ const ProposalFormModal = defineComponent({
               ],
             }).finish(),
           },
-          initialDeposit: coins(Number(form.deposit.val()), 'loki'),
+          initialDeposit: coins(Number(form.deposit.val()), COINS_LIST.LOKI),
           proposer: wallet.account.address,
         })
 
@@ -243,17 +245,6 @@ const ProposalFormModal = defineComponent({
     }
   },
 })
-
-export default ProposalFormModal
-export function showProposalFormDialog(
-  callbacks: {
-    onSubmit?: DialogHandler
-    onClose?: DialogHandler
-  },
-  props?: { proposalChanges?: ProposalChanges }
-): Promise<unknown | null> {
-  return dialogs.show(ProposalFormModal, callbacks, { props })
-}
 </script>
 
 <style lang="scss" scoped>

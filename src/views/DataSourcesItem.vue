@@ -1,9 +1,9 @@
 <template>
-  <div class="data-source view-main">
-    <div class="page-title">
+  <div class="view-main">
+    <div class="view-main__title-wrapper">
       <BackButton :text="'Data Sources'" />
-      <h2 class="view-title">Data Source</h2>
-      <span class="view-subtitle">
+      <h2 class="view-main__title">Data Source</h2>
+      <span class="view-main__subtitle">
         {{ String(dataSourceData?.name) }}
       </span>
     </div>
@@ -35,7 +35,7 @@
       </div>
     </template>
     <template v-else>
-      <div class="empty-msg">
+      <div class="view-main__empty-msg">
         <p v-if="isLoading">Loading…</p>
         <p v-else>Data source not found</p>
       </div>
@@ -85,17 +85,21 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.view-title {
-  margin: 0 1.6rem 0 2rem;
+.view-main {
+  &__title {
+    margin: 0 1.6rem 0 2rem;
+  }
+
+  &__empty-msg {
+    text-align: center;
+  }
 }
 
-.empty-msg {
-  text-align: center;
-}
-
-@media screen and (max-width: 768px) {
-  .view-title {
-    margin: 0.8rem 0 0.4rem 0;
+@include respond-to(tablet) {
+  .view-main {
+    &__title {
+      margin: 0.8rem 0 0.4rem 0;
+    }
   }
 }
 </style>

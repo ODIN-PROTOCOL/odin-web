@@ -71,7 +71,9 @@ import { useAuthorization } from '@/composables/useAuthorization'
 import { WalletTypes } from '@/api/wallet'
 import { useForm, validators } from '@/composables/useForm'
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing'
-import { showInfoModal } from '@/components/modals/InfoModal.vue'
+
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
+import InfoModal from '@/components/modals/InfoModal.vue'
 
 const MNEMONIC_SIZE = 24
 
@@ -109,19 +111,12 @@ export default defineComponent({
         hdPaths: [API_CONFIG.hdDeviation],
         prefix: 'odin',
       })
-      // const newAccount = await newWallet.getAccounts()
       form.mnemonic.val(newWallet.mnemonic)
       copyWarning.value = true
     }
 
-    const showInfo = (title: string, text: string) => {
-      showInfoModal(
-        {},
-        {
-          title,
-          text,
-        }
-      )
+    const showInfo = async (title: string, text: string) => {
+      await showDialogHandler(InfoModal, {}, { title, text })
     }
 
     return {

@@ -89,6 +89,11 @@ const makeCallers = () => {
         `${API_CONFIG.telemetryUrl}/telemetry/blocks/vote_proposals`
       )
     },
+    getProposalsStatistic: () => {
+      return sendGet(
+        `${API_CONFIG.telemetryUrl}/telemetry/blocks/vote_proposals_statistics`
+      )
+    },
     proposalDeposit: broadcaster<MsgDeposit>(
       '/cosmos.gov.v1beta1.MsgDeposit',
       MsgDeposit

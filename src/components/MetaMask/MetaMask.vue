@@ -22,10 +22,12 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue'
-import { showMetaMaskFormDialog } from './MetaMaskModal.vue'
 import { useWeb3 } from '@/composables/useWeb3/useWeb3'
 import { callers } from '@/api/callers'
-import { showMetaMaskErrorFormDialog } from '@/components/MetaMask/MetaMaskErrorModal.vue'
+import { COINS_LIST } from '@/api/api-config'
+import { showMetaMaskErrorModal } from '@/components/MetaMask/handlers/metaMaskErrorModalHandler'
+import { showMetaMaskModal } from './handlers/metaMaskModalHandler'
+
 export default defineComponent({
   name: 'MetaMask',
   setup() {
@@ -36,7 +38,7 @@ export default defineComponent({
     const errorAbiNet = ref<boolean>(false)
     const connectMetaMask = (): void => {
       if (burnFee.value) {
-        showMetaMaskFormDialog(
+        showMetaMaskModal(
           {},
           {
             maxWithdrawalPerTime: maxWithdrawalPerTime.value,
@@ -47,7 +49,7 @@ export default defineComponent({
       }
     }
     const openErrorForm = (): void => {
-      showMetaMaskErrorFormDialog(
+      showMetaMaskErrorModal(
         {},
         {
           message: errorText.value,
@@ -55,7 +57,10 @@ export default defineComponent({
       )
     }
     const getOdinToLokiRate = async (): Promise<void> => {
-      odinToLokiRate.value = await callers.getRate('odin', 'loki')
+      odinToLokiRate.value = await callers.getRate(
+        COINS_LIST.ODIN,
+        COINS_LIST.LOKI
+      )
     }
     const getMaxWithdrawalPerTime = async (): Promise<void> => {
       const res = await callers.getParams()

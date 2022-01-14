@@ -67,7 +67,8 @@
 import { defineComponent, PropType, ref } from 'vue'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
-import { DialogHandler, dialogs } from '@/helpers/dialogs'
+import { COINS_LIST } from '@/api/api-config'
+import { dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
@@ -79,7 +80,7 @@ import { coin } from '@cosmjs/amino'
 import { useBalances } from '@/composables/useBalances'
 import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
 
-const UndelegateFormDialog = defineComponent({
+export default defineComponent({
   props: {
     validator: { type: Object as PropType<ValidatorDecoded>, required: true },
     delegation: {
@@ -107,22 +108,21 @@ const UndelegateFormDialog = defineComponent({
           validatorAddress: props.validator.operatorAddress,
           amount: {
             amount: form.amount.val(),
-            denom: 'loki',
+            denom: COINS_LIST.LOKI,
           },
         })
         await callers.validatorUndelegate({
           delegatorAddress: wallet.account.address,
           validatorAddress: props.validator.operatorAddress,
-          amount: coin(Number(form.amount.val()), 'loki'),
+          amount: coin(Number(form.amount.val()), COINS_LIST.LOKI),
         })
         await useBalances().load()
         onSubmit()
         notifySuccess('Successfully undelegated')
       } catch (error) {
-        handleError(error)
-      } finally {
-        isLoading.value = false
+        handleError(error as Error)
       }
+      isLoading.value = false
     }
 
     return {
@@ -134,17 +134,6 @@ const UndelegateFormDialog = defineComponent({
     }
   },
 })
-
-export default UndelegateFormDialog
-export function showUndelegateFormDialog(
-  callbacks: {
-    onSubmit?: DialogHandler
-    onClose?: DialogHandler
-  },
-  props: { validator: ValidatorDecoded; delegation: DelegationResponse }
-): Promise<unknown | null> {
-  return dialogs.show(UndelegateFormDialog, callbacks, { props })
-}
 </script>
 
 <style scoped lang="scss"></style>

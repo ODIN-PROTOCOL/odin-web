@@ -1,13 +1,9 @@
 <template>
-  <div class="governance view-main">
-    <div class="page-title">
-      <h2 class="view-title">Governance</h2>
+  <div class="view-main">
+    <div class="view-main__title-wrapper">
+      <h2 class="view-main__title">Governance</h2>
       <button
-        class="
-          app-btn app-btn_small
-          create-proposal-btn create-proposal-btn_top
-          fx-sae
-        "
+        class="view-main__title-btn app-btn app-btn_small fx-sae"
         type="button"
         @click="createProposal()"
       >
@@ -76,7 +72,7 @@
       />
     </template>
 
-    <div class="page-mobile-activities">
+    <div class="view-main__mobile-activities">
       <button class="app-btn w-full" type="button" @click="createProposal()">
         Create a proposal
       </button>
@@ -95,12 +91,13 @@ import {
 import { proposalStatusType } from '@/helpers/statusTypes'
 import { handleError } from '@/helpers/errors'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
-import { showProposalFormDialog } from '@/components/modals/ProposalFormModal.vue'
-import { ProposalChanges } from '@/helpers/Types'
 import TitledLink from '@/components/TitledLink.vue'
 import CustomDoughnutChart from '@/components/charts/CustomDoughnutChart.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
 import Pagination from '@/components/pagination/pagination.vue'
+
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
+import ProposalFormModal from '@/components/modals/ProposalFormModal.vue'
 
 export default defineComponent({
   components: { CustomDoughnutChart, TitledLink, StatusBlock, Pagination },
@@ -122,11 +119,23 @@ export default defineComponent({
           response.proposals
         )
 
-        proposalsDataForChart.value =
-          getProposalsCountByStatus(transformedProposals)
         proposalsCount.value = response.proposals.length
         proposals.value = transformedProposals
         filterProposals(currentPage.value)
+      } catch (error) {
+        handleError(error as Error)
+      }
+      releaseLoading()
+    }
+
+    const getProposalStatistic = async () => {
+      lockLoading()
+      try {
+        const res = await callers.getProposalsStatistic()
+        const proposalsStatistic = await res.json()
+
+        proposalsDataForChart.value =
+          getProposalsCountByStatus(proposalsStatistic)
       } catch (error) {
         handleError(error as Error)
       }
@@ -148,23 +157,28 @@ export default defineComponent({
     }
 
     const getChangesParams = async () => {
-      const res = await callers.getProposalChanges()
-      const data = await res.json()
+      lockLoading()
+      try {
+        const res = await callers.getProposalChanges()
+        const data = await res.json()
 
-      proposalChanges.value = data
+        proposalChanges.value = data
+      } catch (error) {
+        handleError(error as Error)
+      }
+      releaseLoading()
     }
 
     const createProposal = async () => {
-      await showProposalFormDialog(
+      await showDialogHandler(
+        ProposalFormModal,
         {
           onSubmit: (d) => {
             d.kill()
             getProposals()
           },
         },
-        {
-          proposalChanges: proposalChanges.value as ProposalChanges,
-        }
+        { proposalChanges: proposalChanges.value }
       )
     }
 
@@ -174,6 +188,7 @@ export default defineComponent({
 
     onMounted(async () => {
       await getChangesParams()
+      await getProposalStatistic()
       await getProposals()
     })
 
@@ -197,7 +212,7 @@ export default defineComponent({
 .info-card {
   width: 60rem;
   padding: 3.2rem 2.4rem;
-  border: 1px solid var(--clr__action);
+  border: 0.1rem solid var(--clr__action);
   border-radius: 0.8rem;
 
   &__title {
@@ -207,16 +222,22 @@ export default defineComponent({
   }
 }
 
-.app-table__head,
-.app-table__row {
-  grid:
-    auto /
-    minmax(8rem, 1fr) minmax(8rem, 3fr) minmax(13rem, 0.5fr);
+.app-table {
+  &__head,
+  &__row {
+    grid:
+      auto /
+      minmax(8rem, 1fr) minmax(8rem, 3fr) minmax(13rem, 0.5fr);
+  }
 }
 
-@media screen and (max-width: 768px) {
+@include respond-to(tablet) {
   .view-main {
     padding-bottom: 10rem;
+
+    &__title-btn {
+      display: none;
+    }
   }
 
   .info-card {
@@ -225,10 +246,6 @@ export default defineComponent({
 
   .app-table__row {
     grid: none;
-  }
-
-  .create-proposal-btn_top {
-    display: none;
   }
 }
 </style>

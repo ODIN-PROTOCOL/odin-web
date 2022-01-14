@@ -10,7 +10,10 @@ import {
   MsgEditValidator,
   MsgUndelegate,
 } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/tx'
-import { MsgWithdrawDelegatorReward } from '@cosmjs/stargate/build/codec/cosmos/distribution/v1beta1/tx'
+import {
+  MsgWithdrawDelegatorReward,
+  MsgWithdrawValidatorCommission,
+} from '@cosmjs/stargate/build/codec/cosmos/distribution/v1beta1/tx'
 import {
   MsgSend,
   MsgMultiSend,
@@ -94,6 +97,9 @@ export function humanizeMessageType(type: string): string {
     case '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward':
       return 'Withdraw delegator reward'
 
+    case '/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission':
+      return 'Withdraw validator commission'
+
     default:
       throw new ReferenceError(`Unknown type ${type}`)
   }
@@ -104,6 +110,7 @@ function decodeMessage(obj: {
   value: Uint8Array
 }):
   | MsgWithdrawCoinsToAccFromTreasury
+  | MsgWithdrawValidatorCommission
   | MsgCreateValidator
   | MsgEditValidator
   | MsgDelegate
@@ -170,6 +177,9 @@ function decodeMessage(obj: {
 
     case '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward':
       return MsgWithdrawDelegatorReward.decode(obj.value)
+
+    case '/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission':
+      return MsgWithdrawValidatorCommission.decode(obj.value)
 
     default:
       throw new ReferenceError(`Unknown type ${obj.typeUrl}`)

@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import { DialogHandler, dialogs } from '@/helpers/dialogs'
+import { dialogs } from '@/helpers/dialogs'
 import { preventIf } from '@/helpers/functions'
 import ModalBase from './ModalBase.vue'
 
@@ -34,17 +34,6 @@ const InfoModal = defineComponent({
 })
 
 export default InfoModal
-export function showInfoModal(
-  callbacks: {
-    onClose?: DialogHandler
-  },
-  props?: {
-    title: string
-    text: string
-  }
-): Promise<unknown | null> {
-  return dialogs.show(InfoModal, callbacks, { props })
-}
 </script>
 
 <style lang="scss" scoped>

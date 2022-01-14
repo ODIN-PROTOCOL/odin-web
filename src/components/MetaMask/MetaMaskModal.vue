@@ -45,9 +45,7 @@
                   </label>
                   <input
                     class="
-                      app-form__field-input
-                      app-form__field-input--disabled
-                      app-form__field-input--disabled-no_border
+                      app-form__field-input app-form__field-input--disabled
                     "
                     type="text"
                     v-model="odinBalanceOnProvider"
@@ -115,7 +113,7 @@
 <script lang="ts">
 import { defineComponent, PropType, ref, watch } from 'vue'
 import { memoize, preventIf } from '@/helpers/functions'
-import { DialogHandler, DialogPayloadHandler, dialogs } from '@/helpers/dialogs'
+import { DialogPayloadHandler, dialogs } from '@/helpers/dialogs'
 import { DecoratedFn } from '@/shared-types'
 import { TransactionReceipt } from 'web3-core/types'
 import { handleError } from '@/helpers/errors'
@@ -124,8 +122,6 @@ import ModalBase from '@/components/modals/ModalBase.vue'
 import { useWeb3 } from '@/composables/useWeb3/useWeb3'
 import { big, bigFromPrecise } from '@/helpers/bigMath'
 import { wallet } from '@/api/wallet'
-import { QueryRateResponse } from '@provider/codec/coinswap/query'
-import { Coin } from '@provider/codec/cosmos/base/v1beta1/coin'
 import { NumLike, NumLikeTypes } from '@/helpers/casts'
 import BigNumber from 'bignumber.js'
 
@@ -265,7 +261,7 @@ const MetaMaskFormModal = defineComponent({
           if (res.status) metaLoading.value = false
         }
       } catch (error) {
-        handleError(error)
+        handleError(error as Error)
       } finally {
         metaLoadingText.value = 'Please wait for approval'
         metaLoading.value = false
@@ -284,7 +280,7 @@ const MetaMaskFormModal = defineComponent({
           try {
             await getBalance()
           } catch (error) {
-            handleError(error)
+            handleError(error as Error)
           }
         }
         isLoading.value = false
@@ -299,7 +295,7 @@ const MetaMaskFormModal = defineComponent({
         try {
           await isNeedAuth()
         } catch (error) {
-          handleError(error)
+          handleError(error as Error)
         }
       },
       onProviderUndetected: async (): Promise<void> => {
@@ -324,17 +320,4 @@ const MetaMaskFormModal = defineComponent({
 })
 
 export default MetaMaskFormModal
-export function showMetaMaskFormDialog(
-  callbacks?: {
-    onSubmit?: DialogHandler
-    onClose?: DialogHandler
-  },
-  props?: {
-    maxWithdrawalPerTime: Coin
-    odinToLokiRate: QueryRateResponse
-    burnFee: number | string | undefined | null
-  }
-): Promise<unknown | null> {
-  return dialogs.show(MetaMaskFormModal, callbacks, { props })
-}
 </script>

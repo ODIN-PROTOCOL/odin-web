@@ -41,6 +41,7 @@
 import { defineComponent, PropType, ref, watch } from 'vue'
 import { useForm, validators } from '@/composables/useForm'
 import { callers } from '@/api/callers'
+import { COINS_LIST } from '@/api/api-config'
 import { handleError } from '@/helpers/errors'
 import { notifySuccess } from '@/helpers/notifications'
 import { wallet } from '@/api/wallet'
@@ -67,13 +68,13 @@ export default defineComponent({
         await callers.proposalDeposit({
           proposalId: props.proposal.proposalId,
           depositor: wallet.account.address,
-          amount: coins(Number(form.amount.val()), 'loki'),
+          amount: coins(Number(form.amount.val()), COINS_LIST.LOKI),
         })
 
         emit('submitted')
         notifySuccess('Deposited successfully')
       } catch (error) {
-        handleError(error)
+        handleError(error as Error)
       }
       isProcessing.value = false
     }

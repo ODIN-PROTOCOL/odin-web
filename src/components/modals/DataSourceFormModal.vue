@@ -27,15 +27,14 @@
           </div>
 
           <div class="app-form__field">
-            <label class="app-form__field-lbl"> Description </label>
-            <textarea
-              class="app-form__field-input"
-              name="data-source-description"
-              rows="5"
+            <label class="app-form__field-lbl">Description</label>
+            <TextareaField
               v-model="form.description"
+              name="data-source-description"
+              :rows="5"
               :disabled="isLoading"
               placeholder="Data Source Description"
-            ></textarea>
+            />
             <p v-if="form.descriptionErr" class="app-form__field-err">
               {{ form.descriptionErr }}
             </p>
@@ -57,7 +56,7 @@
           </div>
 
           <div class="app-form__field">
-            <InputFile
+            <InputFileField
               class="app-form__field-input"
               name="data-source-executable"
               accept=".py"
@@ -96,22 +95,23 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import { loremIpsum } from 'lorem-ipsum'
 import { coins } from '@cosmjs/launchpad'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
-import { DialogHandler, dialogs } from '@/helpers/dialogs'
+import { COINS_LIST } from '@/api/api-config'
+import { dialogs } from '@/helpers/dialogs'
 import { readFile } from '@/helpers/files'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
-import InputFile from '@/components/inputs/InputFile.vue'
+import InputFileField from '@/components/fields/InputFileField.vue'
+import TextareaField from '@/components/fields/TextareaField.vue'
 
-const DataSourceFormModal = defineComponent({
+export default defineComponent({
   props: { dataSourceId: String },
-  components: { ModalBase, InputFile },
+  components: { ModalBase, InputFileField, TextareaField },
   setup() {
     const form = useForm({
       name: ['', validators.required],
@@ -134,7 +134,7 @@ const DataSourceFormModal = defineComponent({
           name: form.name.val(),
           description: form.description.val(),
           executable: executableParsed,
-          fee: coins(Number(form.price.val()), 'loki'),
+          fee: coins(Number(form.price.val()), COINS_LIST.LOKI),
           owner: wallet.account.address,
           sender: wallet.account.address,
         })
@@ -142,10 +142,9 @@ const DataSourceFormModal = defineComponent({
         onSubmit()
         notifySuccess('Data source created')
       } catch (error) {
-        handleError(error)
-      } finally {
-        isLoading.value = false
+        handleError(error as Error)
       }
+      isLoading.value = false
     }
 
     const _parseExecutable = async (): Promise<Uint8Array | null> => {
@@ -161,13 +160,6 @@ const DataSourceFormModal = defineComponent({
       return parsed
     }
 
-    // TODO: remove fakeForm
-    const _fakeForm = () => {
-      form.description.val(loremIpsum({ units: 'sentences', count: 3 }))
-    }
-
-    _fakeForm()
-
     return {
       form: form.flatten(),
       isLoading,
@@ -176,17 +168,6 @@ const DataSourceFormModal = defineComponent({
     }
   },
 })
-
-export default DataSourceFormModal
-export function showDataSourceFormDialog(
-  callbacks: {
-    onSubmit?: DialogHandler
-    onClose?: DialogHandler
-  },
-  props?: { dataSourceId?: string }
-): Promise<unknown | null> {
-  return dialogs.show(DataSourceFormModal, callbacks, { props })
-}
 </script>
 
 <style scoped lang="scss"></style>

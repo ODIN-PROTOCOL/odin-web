@@ -48,13 +48,14 @@
 // MEDIA
 
 $mediaBreakpoints: (
-  xs: 480px,
-  sm: 600px,
-  tablet: 820px,
-  md: 1024px,
-  xm: 1200px,
-  lg: 1440px,
-  xl: 1920px,
+  small: 480px,
+  x-small: 600px,
+  tablet: 768px,
+  x-tablet: 820px,
+  medium: 1024px,
+  x-medium: 1200px,
+  large: 1440px,
+  x-large: 1920px,
 ) !default;
 
 @mixin respond-to($media) {

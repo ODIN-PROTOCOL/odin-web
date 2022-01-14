@@ -108,11 +108,11 @@ import { defineComponent, onMounted, ref, watch } from 'vue'
 import { callers } from '@/api/callers'
 import { coin } from '@cosmjs/amino'
 import { wallet } from '@/api/wallet'
-import { QueryRateResponse } from '@provider/codec/coinswap/query'
+import { COINS_LIST } from '@/api/api-config'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
-import { DialogHandler, dialogs } from '@/helpers/dialogs'
+import { dialogs } from '@/helpers/dialogs'
 import { notifySuccess } from '@/helpers/notifications'
 import { handleError } from '@/helpers/errors'
 import { useForm, validators } from '@/composables/useForm'
@@ -134,8 +134,8 @@ const ExchangeFormDialog = defineComponent({
         validators.maxCharacters(128),
       ],
     })
-    const exchangeFrom = ref<string>('loki')
-    const exchangeTo = ref<string>('odin')
+    const exchangeFrom = ref<string>(COINS_LIST.LOKI)
+    const exchangeTo = ref<string>(COINS_LIST.ODIN)
     const expectedAmount = ref<string>('0')
     const rate = ref()
     const rateText = ref()
@@ -230,17 +230,6 @@ const ExchangeFormDialog = defineComponent({
 })
 
 export default ExchangeFormDialog
-export function showExchangeFormDialog(
-  callbacks?: {
-    onSubmit?: DialogHandler
-    onClose?: DialogHandler
-  },
-  props?: {
-    lokiToOdinRate: QueryRateResponse
-  }
-): Promise<unknown | null> {
-  return dialogs.show(ExchangeFormDialog, callbacks, { props })
-}
 </script>
 
 <style lang="scss" scoped>

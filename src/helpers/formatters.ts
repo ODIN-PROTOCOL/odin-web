@@ -1,5 +1,5 @@
 import { Coin } from '@provider/codec/cosmos/base/v1beta1/coin'
-import { big } from './bigMath'
+import { big as bigMath } from './bigMath'
 import { NumLike, toNum } from './casts'
 import {
   isToday,
@@ -38,14 +38,14 @@ export function abbreviateNumber(value: NumLike): string {
 }
 
 export function preciseAsPercents(amount: string): string {
-  const percents = big
-    .format(big.fromPrecise(amount), { decimals: 2 })
+  const percents = bigMath
+    .format(bigMath.fromPrecise(amount), { decimals: 2 })
     .replace(/.00$/, '')
   return `${percents}%` // TODO: translate
 }
 
 export function preciseAsFormatedCoin(coin: Coin): string {
-  const amount = big.format(big.fromPrecise(coin.amount))
+  const amount = bigMath.format(bigMath.fromPrecise(coin.amount))
   return `${amount} ${coin.denom.toUpperCase()}`
 }
 
@@ -69,7 +69,7 @@ export function formatCoin(
     amount = in1
     denom = in2 as string
   }
-  const fmt = abbr ? abbreviateNumber(amount) : big.format(amount)
+  const fmt = abbr ? abbreviateNumber(amount) : bigMath.format(amount)
   return `${fmt}${NBSP}${(denom || '').toUpperCase()}`
 }
 
@@ -152,4 +152,31 @@ function _getDateDifference(dateLeft: Date | number): string {
     const dayRange = Math.abs(differenceInDays(dateLeft, new Date()))
     return `${dayRange} days ago`
   }
+}
+
+export function preciseFormatOdinCoin(amount: string): string {
+  const res = bigMath.format(
+    bigMath.divide(bigMath.fromPrecise(amount), 1000000)
+  )
+  return `${res} ODIN`
+}
+
+export function getPrecisePercents(amount: string): string {
+  const percents = bigMath.fromPrecise(bigMath.multiply(amount, 100))
+  return `${percents}%`
+}
+
+export function preciseFormatCoin(amount: string, denom: string): string {
+  const res = bigMath.format(bigMath.fromPrecise(amount))
+  return `${res} ${denom.toUpperCase()}`
+}
+
+export function getPercentOutOfNumber(
+  number: string,
+  ofNumber: string
+): string {
+  const percent = bigMath.fromPrecise(
+    bigMath.multiply(bigMath.divide(number, ofNumber), 100)
+  )
+  return `${percent}%`
 }
