@@ -73,20 +73,6 @@
                 </div>
               </div>
             </div>
-            <!-- <div class="app-form__field-lbl app-form__field-lbl_ext">
-              <label> Call data(JSON format) </label>
-              <div class="app-form__info-wrapper" v-if="callDataSchema">
-                <div class="app-form__info">
-                  <img src="~@/assets/icons/info.svg" alt="info" />
-                </div>
-                <div class="app-form__info-tooltip">
-                  <span class="app-form__info-tooltip-txt">Schema:</span>
-                  <p>
-                    {{ callDataSchema }}
-                  </p>
-                </div>
-              </div>
-            </div> -->
             <TextareaField
               v-model="form.calldata"
               name="request-calldata"
