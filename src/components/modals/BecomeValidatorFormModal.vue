@@ -151,6 +151,7 @@ import { defineComponent, ref } from 'vue'
 import { loremIpsum } from 'lorem-ipsum'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
+import { COINS_LIST } from '@/api/api-config'
 import { dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
@@ -247,7 +248,7 @@ const BecomeValidatorFormModal = defineComponent({
               key: Buffer.from(fromBase64(form.pubKey.val())),
             }).finish(),
           },
-          value: coin(form.selfDelegation.val(), 'loki'),
+          value: coin(form.selfDelegation.val(), COINS_LIST.LOKI),
         })
 
         onSubmit()

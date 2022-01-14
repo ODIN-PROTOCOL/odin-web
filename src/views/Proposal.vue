@@ -1,13 +1,13 @@
 <template>
-  <div class="proposal view-main">
-    <div class="page-title">
+  <div class="view-main">
+    <div class="view-main__title-wrapper">
       <BackButton :text="'Governance'" />
-      <h2 class="view-title">Proposal</h2>
-      <span class="view-subtitle" v-if="proposal">
+      <h2 class="view-main__title">Proposal</h2>
+      <span class="view-main__subtitle" v-if="proposal">
         {{ proposal.content.title }}
       </span>
       <button
-        class="app-btn app-btn_small fx-sae vote-btn vote-btn_top"
+        class="view-main__title-btn app-btn app-btn_small fx-sae"
         :disabled="
           !proposal ||
           proposal?.status !== ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
@@ -59,11 +59,11 @@
       </div>
     </template>
     <template v-else>
-      <span v-if="isLoading" class="view-subtitle">Loading...</span>
-      <span v-else class="view-subtitle">Proposal not found</span>
+      <span v-if="isLoading" class="view-main__subtitle">Loading...</span>
+      <span v-else class="view-main__subtitle">Proposal not found</span>
     </template>
 
-    <div class="page-mobile-activities">
+    <div class="view-main__mobile-activities">
       <button
         class="app-btn w-full"
         :disabled="
@@ -156,21 +156,23 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.view-title {
-  margin: 0 1.6rem 0 2rem;
+.view-main {
+  &__title {
+    margin: 0 1.6rem 0 2rem;
+  }
 }
 
-@media screen and (max-width: 768px) {
+@include respond-to(tablet) {
   .view-main {
     padding-bottom: 10rem;
-  }
 
-  .view-title {
-    margin: 0.8rem 0 0.4rem 0;
-  }
+    &__title {
+      margin: 0.8rem 0 0.4rem 0;
+    }
 
-  .vote-btn_top {
-    display: none;
+    &__title-btn {
+      display: none;
+    }
   }
 }
 </style>

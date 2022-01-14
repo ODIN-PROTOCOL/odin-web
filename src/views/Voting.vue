@@ -1,9 +1,9 @@
 <template>
-  <div class="voting view-main">
-    <div class="page-title">
+  <div class="view-main">
+    <div class="view-main__title-wrapper">
       <BackButton :text="'Proposal'" />
-      <h2 class="view-title">Vote for proposal</h2>
-      <span class="view-subtitle">{{ proposalName }}</span>
+      <h2 class="view-main__title">Vote for proposal</h2>
+      <span class="view-main__subtitle">{{ proposalName }}</span>
     </div>
 
     <div class="content-block">
@@ -17,7 +17,9 @@
               checked
               v-model="pickedOption"
             />
-            <label for="support">Support</label>
+            <label class="content-block__voting-choice-lbl" for="support">
+              Support
+            </label>
           </div>
           <div>
             <input
@@ -26,7 +28,9 @@
               :value="VoteOption.VOTE_OPTION_NO"
               v-model="pickedOption"
             />
-            <label for="reject">Reject</label>
+            <label class="content-block__voting-choice-lbl" for="reject">
+              Reject
+            </label>
           </div>
           <div>
             <input
@@ -35,7 +39,9 @@
               :value="VoteOption.VOTE_OPTION_NO_WITH_VETO"
               v-model="pickedOption"
             />
-            <label for="veto">Veto</label>
+            <label class="content-block__voting-choice-lbl" for="veto">
+              Veto
+            </label>
           </div>
           <div>
             <input
@@ -44,11 +50,13 @@
               :value="VoteOption.VOTE_OPTION_ABSTAIN"
               v-model="pickedOption"
             />
-            <label for="abstain">Abstain</label>
+            <label class="content-block__voting-choice-lbl" for="abstain">
+              Abstain
+            </label>
           </div>
         </div>
         <button
-          class="app-btn app-btn_small voting-btn"
+          class="content-block__voting-btn app-btn app-btn_small"
           @click="confirmation()"
         >
           Vote
@@ -78,8 +86,10 @@ import { notifySuccess } from '@/helpers/notifications'
 import BackButton from '@/components/BackButton.vue'
 import CustomDoughnutChart from '@/components/charts/CustomDoughnutChart.vue'
 import Loader from '@/components/Loader.vue'
-import { showConfirmationModal } from '@/components/modals/handlers/confirmationModalHandler'
 import { getVotesCountByStatus } from '@/helpers/voteHelpers'
+
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
+import ConfirmationModal from '@/components/modals/ConfirmationModal.vue'
 
 export default defineComponent({
   components: { BackButton, CustomDoughnutChart, Loader },
@@ -122,8 +132,9 @@ export default defineComponent({
       isLoading.value = false
     }
 
-    const confirmation = () => {
-      showConfirmationModal(
+    const confirmation = async () => {
+      await showDialogHandler(
+        ConfirmationModal,
         {
           onSubmit: (d) => {
             d.kill()
@@ -157,11 +168,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.view-title {
-  margin: 0 1.6rem 0 2rem;
-
-  @include respond-to(768px) {
-    margin: 0.8rem 0 0.4rem 0;
+.view-main {
+  &__title {
+    margin: 0 1.6rem 0 2rem;
   }
 }
 
@@ -171,43 +180,51 @@ export default defineComponent({
   align-items: flex-start;
   flex-direction: row;
 
-  @include respond-to(768px) {
+  &__voting,
+  &__chart {
+    width: 100%;
+    padding: 3.2rem 2.4rem;
+    border-radius: 0.8rem;
+  }
+
+  &__voting {
+    background: var(--clr__grey-bg);
+  }
+
+  &__chart {
+    border: 0.1rem solid var(--clr__action);
+  }
+
+  &__voting-choice {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  &__voting-choice-lbl {
+    margin-left: 0.8rem;
+  }
+
+  &__chart-title {
+    font-size: 2.4rem;
+    font-weight: 400;
+  }
+}
+
+@include respond-to(tablet) {
+  .view-main {
+    &__title {
+      margin: 0.8rem 0 0.4rem 0;
+    }
+  }
+
+  .content-block {
     flex-direction: column-reverse;
     gap: 4rem;
 
-    .voting-btn {
+    &__voting-btn {
       width: 100%;
     }
   }
-}
-
-.content-block__voting,
-.content-block__chart {
-  width: 100%;
-  padding: 3.2rem 2.4rem;
-  border-radius: 0.8rem;
-}
-
-.content-block__voting {
-  background: var(--clr__grey-bg);
-}
-
-.content-block__voting-choice {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-
-  label {
-    margin-left: 0.8rem;
-  }
-}
-
-.content-block__chart {
-  border: 1px solid var(--clr__action);
-}
-
-.content-block__chart-title {
-  font-size: 2.4rem;
-  font-weight: 400;
 }
 </style>

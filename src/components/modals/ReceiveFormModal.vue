@@ -37,7 +37,7 @@ import QrcodeVue from 'qrcode.vue'
 import ModalBase from '@/components/modals/ModalBase.vue'
 import CopyButton from '@/components/CopyButton.vue'
 
-const ReceiveFormModal = defineComponent({
+export default defineComponent({
   components: { ModalBase, QrcodeVue, CopyButton },
   setup: function () {
     const address = ref(wallet.account.address)
@@ -49,8 +49,6 @@ const ReceiveFormModal = defineComponent({
     }
   },
 })
-
-export default ReceiveFormModal
 </script>
 
 <style lang="scss" scoped>

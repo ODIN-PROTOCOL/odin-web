@@ -1,4 +1,5 @@
 import { callers } from '@/api/callers'
+import { COINS_LIST } from '@/api/api-config'
 import { bigMath } from '@/helpers/bigMath'
 import { TallyResult } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { computed, ComputedRef, onUnmounted, Ref, ref } from 'vue'
@@ -16,9 +17,11 @@ const _loadPowerConst = async () => {
   ])
 
   const lokiSupply = supply
-    .filter((el) => el.denom === 'loki')
+    .filter((el) => el.denom === COINS_LIST.LOKI)
     .reduce((acc, cur) => bigMath.add(acc, cur.amount), bigMath.zero)
-  const lokiPool = treasuryPool.find((el) => el.denom === 'loki')?.amount
+  const lokiPool = treasuryPool.find(
+    (el) => el.denom === COINS_LIST.LOKI
+  )?.amount
 
   if (!lokiSupply || !lokiPool) {
     _powerConst.value = null
