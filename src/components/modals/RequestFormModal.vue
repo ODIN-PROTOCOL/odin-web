@@ -54,8 +54,26 @@
             </p>
           </div>
 
-          <div class="app-form__field">
-            <div class="app-form__field-lbl app-form__field-lbl_ext">
+          <div class="app-form__field request-form-modal__field">
+            <div class="app-form__field-lbl request-form-modal__field-lbl_ext">
+              <label> Call data(JSON format) </label>
+              <div class="request-form-modal__field-info" v-if="callDataSchema">
+                <img
+                  class="request-form-modal__field-info-icon"
+                  src="~@/assets/icons/info.svg"
+                  alt="info"
+                />
+                <div class="request-form-modal__field-info-tooltip">
+                  <span class="request-form-modal__field-info-tooltip-txt">
+                    Schema:
+                  </span>
+                  <p>
+                    {{ callDataSchema }}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="app-form__field-lbl app-form__field-lbl_ext">
               <label> Call data(JSON format) </label>
               <div class="app-form__info-wrapper" v-if="callDataSchema">
                 <div class="app-form__info">
@@ -68,7 +86,7 @@
                   </p>
                 </div>
               </div>
-            </div>
+            </div> -->
             <TextareaField
               v-model="form.calldata"
               name="request-calldata"
@@ -229,20 +247,18 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.app-form {
-  &__info-wrapper {
+.request-form-modal {
+  &__field-info {
     position: relative;
-  }
 
-  &__info {
     &:hover {
-      & + .app-form__info-tooltip {
+      .request-form-modal__field-info-tooltip {
         display: block;
       }
     }
   }
 
-  &__info-tooltip {
+  &__field-info-tooltip {
     display: none;
     position: absolute;
     bottom: 130%;
@@ -269,7 +285,7 @@ export default defineComponent({
     }
   }
 
-  &__info-tooltip-txt {
+  &__field-info-tooltip-txt {
     display: inline-block;
     color: var(--clr__input-border);
     margin-bottom: 1rem;

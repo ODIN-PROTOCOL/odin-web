@@ -321,7 +321,7 @@ export default defineComponent({
   }
 }
 
-@include respond-to(390px) {
+@include respond-to(small) {
   .view-main {
     &__activities-btn {
       font-size: 1.6rem;
