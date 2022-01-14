@@ -63,3 +63,9 @@ export const CHAIN_CONFIG = {
     high: 0.03,
   },
 }
+
+export enum COINS_LIST {
+  LOKI = 'loki',
+  ODIN = 'odin',
+  GEO = 'geo',
+}

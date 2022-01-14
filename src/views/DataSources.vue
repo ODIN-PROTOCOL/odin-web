@@ -1,9 +1,9 @@
 <template>
-  <div class="data-sources view-main">
-    <div class="page-title">
-      <h2 class="view-title">Data Sources</h2>
+  <div class="view-main">
+    <div class="view-main__title-wrapper">
+      <h2 class="view-main__title">Data Sources</h2>
       <button
-        class="app-btn app-btn_small create-data-source-btn create-data-source-btn_top fx-sae"
+        class="view-main__title-btn app-btn app-btn_small fx-sae"
         type="button"
         @click="createDataSource()"
       >
@@ -12,7 +12,7 @@
     </div>
 
     <template v-if="dataSourcesCount">
-      <div class="data-sources__count-info">
+      <div class="view-main__count-info">
         <p>{{ dataSourcesCount }} data sources found</p>
       </div>
     </template>
@@ -68,7 +68,7 @@
       />
     </template>
 
-    <div class="page-mobile-activities">
+    <div class="view-main__mobile-activities">
       <button class="app-btn w-full" type="button" @click="createDataSource()">
         Create data source
       </button>
@@ -80,10 +80,12 @@
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
-import { showDataSourceFormModal } from '@/components/modals/handlers/dataSourceFormModalHandler'
 import TitledLink from '@/components/TitledLink.vue'
 import Pagination from '@/components/pagination/pagination.vue'
 import { defineComponent, onMounted, ref } from 'vue'
+
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
+import DataSourceFormModal from '@/components/modals/DataSourceFormModal.vue'
 
 export default defineComponent({
   components: {
@@ -119,10 +121,10 @@ export default defineComponent({
     }
 
     const createDataSource = async () => {
-      await showDataSourceFormModal({
-        onSubmit: (d) => {
+      await showDialogHandler(DataSourceFormModal, {
+        onSubmit: async (d) => {
           d.kill()
-          loadDataSources()
+          await loadDataSources()
         },
       })
     }
@@ -150,11 +152,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.data-sources__count-info {
-  margin-bottom: 3.2rem;
-
-  @media screen and (max-width: 768px) {
-    margin-bottom: 0;
+.view-main {
+  &__count-info {
+    margin-bottom: 3.2rem;
   }
 }
 
@@ -167,17 +167,21 @@ export default defineComponent({
     minmax(8rem, 8fr);
 }
 
-@media screen and (max-width: 768px) {
+@include respond-to(tablet) {
   .view-main {
     padding-bottom: 10rem;
+
+    &__count-info {
+      margin-bottom: 0;
+    }
+
+    &__title-btn {
+      display: none;
+    }
   }
 
   .app-table__row {
     grid: none;
-  }
-
-  .create-data-source-btn_top {
-    display: none;
   }
 }
 </style>

@@ -108,6 +108,7 @@ import { defineComponent, onMounted, ref, watch } from 'vue'
 import { callers } from '@/api/callers'
 import { coin } from '@cosmjs/amino'
 import { wallet } from '@/api/wallet'
+import { COINS_LIST } from '@/api/api-config'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
@@ -133,8 +134,8 @@ const ExchangeFormDialog = defineComponent({
         validators.maxCharacters(128),
       ],
     })
-    const exchangeFrom = ref<string>('loki')
-    const exchangeTo = ref<string>('odin')
+    const exchangeFrom = ref<string>(COINS_LIST.LOKI)
+    const exchangeTo = ref<string>(COINS_LIST.ODIN)
     const expectedAmount = ref<string>('0')
     const rate = ref()
     const rateText = ref()

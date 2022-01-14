@@ -24,7 +24,7 @@ import { defineComponent } from 'vue'
 import { dialogs } from '@/helpers/dialogs'
 import ModalBase from './ModalBase.vue'
 
-const ConfirmationModal = defineComponent({
+export default defineComponent({
   props: {
     text: { type: String, default: 'Choose some' },
   },
@@ -36,8 +36,6 @@ const ConfirmationModal = defineComponent({
     }
   },
 })
-
-export default ConfirmationModal
 </script>
 
 <style lang="scss" scoped></style>

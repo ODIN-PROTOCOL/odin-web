@@ -155,6 +155,7 @@ import { computed, defineComponent, PropType, ref, toRef, watch } from 'vue'
 import { coins } from '@cosmjs/launchpad'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
+import { COINS_LIST } from '@/api/api-config'
 import { dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
@@ -168,7 +169,7 @@ import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 import ModalBase from './ModalBase.vue'
 import TextareaField from '@/components/fields/TextareaField.vue'
 
-const ProposalFormModal = defineComponent({
+export default defineComponent({
   props: {
     proposalChanges: {
       type: Object as PropType<ProposalChanges>,
@@ -215,7 +216,7 @@ const ProposalFormModal = defineComponent({
               ],
             }).finish(),
           },
-          initialDeposit: coins(Number(form.deposit.val()), 'loki'),
+          initialDeposit: coins(Number(form.deposit.val()), COINS_LIST.LOKI),
           proposer: wallet.account.address,
         })
 
@@ -244,8 +245,6 @@ const ProposalFormModal = defineComponent({
     }
   },
 })
-
-export default ProposalFormModal
 </script>
 
 <style lang="scss" scoped>

@@ -54,21 +54,39 @@
             </p>
           </div>
 
-          <div class="app-form__field">
-            <div class="app-form__field-lbl app-form__field-lbl_ext">
+          <div class="app-form__field request-form-modal__field">
+            <div class="app-form__field-lbl request-form-modal__field-lbl_ext">
               <label> Call data(JSON format) </label>
-              <div class="app-form__info-wrapper" v-if="callDataSchema">
-                <div class="app-form__info">
-                  <img src="~@/assets/icons/info.svg" alt="info" />
-                </div>
-                <div class="tooltip">
-                  <span>Schema:</span>
+              <div class="request-form-modal__field-info" v-if="callDataSchema">
+                <img
+                  class="request-form-modal__field-info-icon"
+                  src="~@/assets/icons/info.svg"
+                  alt="info"
+                />
+                <div class="request-form-modal__field-info-tooltip">
+                  <span class="request-form-modal__field-info-tooltip-txt">
+                    Schema:
+                  </span>
                   <p>
                     {{ callDataSchema }}
                   </p>
                 </div>
               </div>
             </div>
+            <!-- <div class="app-form__field-lbl app-form__field-lbl_ext">
+              <label> Call data(JSON format) </label>
+              <div class="app-form__info-wrapper" v-if="callDataSchema">
+                <div class="app-form__info">
+                  <img src="~@/assets/icons/info.svg" alt="info" />
+                </div>
+                <div class="app-form__info-tooltip">
+                  <span class="app-form__info-tooltip-txt">Schema:</span>
+                  <p>
+                    {{ callDataSchema }}
+                  </p>
+                </div>
+              </div>
+            </div> -->
             <TextareaField
               v-model="form.calldata"
               name="request-calldata"
@@ -126,6 +144,7 @@ import Long from 'long'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
 import { dialogs } from '@/helpers/dialogs'
+import { COINS_LIST } from '@/api/api-config'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
@@ -136,7 +155,7 @@ import debounce from 'lodash/debounce'
 import { Obi } from '@bandprotocol/bandchain.js'
 import TextareaField from '@/components/fields/TextareaField.vue'
 
-const RequestFormModal = defineComponent({
+export default defineComponent({
   props: {
     maxAskCount: { type: Number, required: true },
   },
@@ -198,7 +217,10 @@ const RequestFormModal = defineComponent({
           askCount: Long.fromNumber(form.askCount.val()),
           minCount: Long.fromNumber(form.minCount.val()),
           calldata: _processCallData(),
-          feeLimit: coins(Number.parseInt(form.feeLimit.val()), 'loki'),
+          feeLimit: coins(
+            Number.parseInt(form.feeLimit.val()),
+            COINS_LIST.LOKI
+          ),
           prepareGas: Long.fromNumber(200000),
           executeGas: Long.fromNumber(200000),
           sender: wallet.account.address,
@@ -224,59 +246,59 @@ const RequestFormModal = defineComponent({
     }
   },
 })
-
-export default RequestFormModal
 </script>
 
 <style scoped lang="scss">
-.app-form__info {
-  &-wrapper {
+.request-form-modal {
+  &__field-info {
     position: relative;
-  }
 
-  &:hover {
-    & + .tooltip {
-      display: block;
+    &:hover {
+      .request-form-modal__field-info-tooltip {
+        display: block;
+      }
     }
   }
-}
 
-.app-form__field-lbl_ext {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.tooltip {
-  display: none;
-  position: absolute;
-  bottom: 130%;
-  right: -0.5rem;
-  min-width: 15rem;
-  padding: 1.2rem 2.4rem;
-  background: var(--clr__tooltip-bg);
-  border-radius: 0.8rem;
-  font-size: 1.6rem;
-  font-weight: 400;
-  line-height: 1.6rem;
-  color: var(--clr__tooltip-text);
-
-  &:before {
-    content: '';
-    display: block;
-    width: 0.6rem;
-    height: 0.6rem;
+  &__field-info-tooltip {
+    display: none;
     position: absolute;
-    bottom: -0.3rem;
-    right: 1rem;
-    transform: rotate(45deg);
+    bottom: 130%;
+    right: -0.5rem;
+    min-width: 15rem;
+    padding: 1.2rem 2.4rem;
     background: var(--clr__tooltip-bg);
+    border-radius: 0.8rem;
+    font-size: 1.6rem;
+    font-weight: 400;
+    line-height: 1.6rem;
+    color: var(--clr__tooltip-text);
+
+    &:before {
+      content: '';
+      display: block;
+      width: 0.6rem;
+      height: 0.6rem;
+      position: absolute;
+      bottom: -0.3rem;
+      right: 1rem;
+      transform: rotate(45deg);
+      background: var(--clr__tooltip-bg);
+    }
   }
 
-  span {
+  &__field-info-tooltip-txt {
     display: inline-block;
     color: var(--clr__input-border);
     margin-bottom: 1rem;
+  }
+
+  &__field-lbl {
+    &_ext {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
   }
 }
 </style>

@@ -1,12 +1,12 @@
 <template>
   <div
-    class="validators view-main load-fog"
+    class="view-main load-fog"
     :class="{ 'load-fog_show': isLoading && validators?.length }"
   >
-    <div class="page-title">
-      <h2 class="view-title">All Validators</h2>
+    <div class="view-main__title-wrapper">
+      <h2 class="view-main__title">All Validators</h2>
       <button
-        class="app-btn app-btn_small become-validator-btn become-validator-btn_top fx-sae"
+        class="view-main__title-btn app-btn app-btn_small fx-sae"
         type="button"
         @click="becomeValidator()"
       >
@@ -15,7 +15,7 @@
     </div>
 
     <template v-if="validatorsCount">
-      <div class="validators__count-info">
+      <div class="view-main__count-info">
         <p>{{ validatorsCount }} validators found</p>
       </div>
     </template>
@@ -55,7 +55,11 @@
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Delegated</span>
-              <span :title="$preciseFormatCoin(item.delegatorShares, 'loki')">
+              <span
+                :title="
+                  $preciseFormatCoin(item.delegatorShares, COINS_LIST.LOKI)
+                "
+              >
                 {{ $preciseFormatOdinCoin(item.delegatorShares) }}
               </span>
             </div>
@@ -123,7 +127,7 @@
       />
     </template>
 
-    <div class="page-mobile-activities">
+    <div class="view-main__mobile-activities">
       <button class="app-btn w-full" type="button" @click="becomeValidator()">
         Become a validator
       </button>
@@ -135,6 +139,7 @@
 import { defineComponent, ref, onMounted } from 'vue'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
+import { COINS_LIST } from '@/api/api-config'
 import { handleError } from '@/helpers/errors'
 import { getTransformedValidators } from '@/helpers/validatorHelpers'
 import { ValidatorDecoded } from '@/helpers/validatorDecoders'
@@ -145,10 +150,12 @@ import Tab from '@/components/tabs/Tab.vue'
 import TitledLink from '@/components/TitledLink.vue'
 import StatusIcon from '@/components/StatusIcon.vue'
 import Pagination from '@/components/pagination/pagination.vue'
-import { showWithdrawRewardsFormModal } from '@/components/modals/handlers/withdrawRewardsFormModalHandler'
-import { showDelegateFormModal } from '@/components/modals/handlers/delegateFormModalHandler'
-import { showUndelegateFormModal } from '@/components/modals/handlers/undelegateFormModalHandler'
-import { showBecomeValidatorFormModal } from '@/components/modals/handlers/becomeValidatorFormModalHandler'
+
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
+import WithdrawRewardsFormModal from '@/components/modals/WithdrawRewardsFormModal.vue'
+import DelegateFormModal from '@/components/modals/DelegateFormModal.vue'
+import UndelegateFormModal from '@/components/modals/UndelegateFormModal.vue'
+import BecomeValidatorFormModal from '@/components/modals/BecomeValidatorFormModal.vue'
 
 export default defineComponent({
   components: { Tabs, Tab, TitledLink, StatusIcon, Pagination },
@@ -252,56 +259,55 @@ export default defineComponent({
       }
     }
 
-    // TODO: delete if become a validator modal works fine
-    // const becomeValidator = () => {
-    //   showBecomeValidatorInfoModal({})
-    // }
+    const loadData = async () => {
+      await getDelegations()
+      await getValidators()
+    }
 
     const becomeValidator = async () => {
-      showBecomeValidatorFormModal({
-        onSubmit: (d) => {
+      await showDialogHandler(BecomeValidatorFormModal, {
+        onSubmit: async (d) => {
           d.kill()
-          getDelegations()
-          getValidators()
+          await loadData()
         },
       })
     }
 
-    const withdrawRewards = (validator: ValidatorDecoded) => {
+    const withdrawRewards = async (validator: ValidatorDecoded) => {
       if (!delegations.value[validator.operatorAddress]) return
-      showWithdrawRewardsFormModal(
+      await showDialogHandler(
+        WithdrawRewardsFormModal,
         {
-          onSubmit: (d) => {
+          onSubmit: async (d) => {
             d.kill()
-            getValidators()
-            getDelegations()
+            await loadData()
           },
         },
         { validator }
       )
     }
 
-    const delegate = (validator: ValidatorDecoded) => {
-      showDelegateFormModal(
+    const delegate = async (validator: ValidatorDecoded) => {
+      await showDialogHandler(
+        DelegateFormModal,
         {
-          onSubmit: (d) => {
+          onSubmit: async (d) => {
             d.kill()
-            getValidators()
-            getDelegations()
+            await loadData()
           },
         },
         { validator, delegation: delegations.value[validator.operatorAddress] }
       )
     }
 
-    const undelegate = (validator: ValidatorDecoded) => {
+    const undelegate = async (validator: ValidatorDecoded) => {
       if (!delegations.value[validator.operatorAddress]) return
-      showUndelegateFormModal(
+      await showDialogHandler(
+        UndelegateFormModal,
         {
-          onSubmit: (d) => {
+          onSubmit: async (d) => {
             d.kill()
-            getValidators()
-            getDelegations()
+            await loadData()
           },
         },
         { validator, delegation: delegations.value[validator.operatorAddress] }
@@ -309,11 +315,11 @@ export default defineComponent({
     }
 
     onMounted(async () => {
-      await getValidators()
-      await getDelegations()
+      await loadData()
     })
 
     return {
+      COINS_LIST,
       ITEMS_PER_PAGE,
       currentPage,
       filteredValidatorsCount,
@@ -336,11 +342,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.validators__count-info {
-  margin-bottom: 3.2rem;
-
-  @media screen and (max-width: 768px) {
-    margin-bottom: 0;
+.view-main {
+  &__count-info {
+    margin-bottom: 3.2rem;
   }
 }
 
@@ -372,9 +376,17 @@ export default defineComponent({
   }
 }
 
-@media screen and (max-width: 768px) {
+@include respond-to(tablet) {
   .view-main {
     padding-bottom: 10rem;
+
+    &__count-info {
+      margin-bottom: 0;
+    }
+
+    &__title-btn {
+      display: none;
+    }
   }
 
   .app-table {
@@ -391,10 +403,6 @@ export default defineComponent({
         flex: 1;
       }
     }
-  }
-
-  .become-validator-btn_top {
-    display: none;
   }
 }
 </style>

@@ -89,6 +89,7 @@
 import { defineComponent, ref } from 'vue'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
+import { COINS_LIST } from '@/api/api-config'
 import { dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
@@ -133,7 +134,7 @@ const ExchangeFormModal = defineComponent({
     const approxDestAmount = useRateAutoCalc(
       form.sourceAsset.current,
       form.sourceAmount.current,
-      'loki'
+      COINS_LIST.LOKI
     )
 
     // TODO: remove fakeForm
