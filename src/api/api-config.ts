@@ -9,6 +9,7 @@ export const API_CONFIG = {
   hdDeviation: stringToPath(process.env.VUE_APP_DEVIATION as string),
   odinScan: process.env.VUE_APP_ODIN_SCAN_URL as string,
   telemetryUrl: process.env.VUE_APP_TELEMETRY_URL as string,
+  fee: process.env.VUE_APP_FEE as string,
 }
 
 // Configuration of the chain to which the Kepler extension connects
@@ -58,7 +59,7 @@ export const CHAIN_CONFIG = {
   },
   coinType: 118,
   gasPriceStep: {
-    low: 0.01,
+    low: 0.0125,
     average: 0.025,
     high: 0.03,
   },
