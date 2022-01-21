@@ -58,7 +58,9 @@
           </div>
 
           <div class="app-form__field">
-            <label class="app-form__field-lbl"> Code (.wasm) </label>
+            <label class="app-form__field-lbl">
+              File with the script code
+            </label>
             <InputFileField
               class="app-form__field-input"
               name="oracle-script-executable"
@@ -114,10 +116,20 @@ export default defineComponent({
   components: { ModalBase, InputFileField, TextareaField },
   setup() {
     const form = useForm({
-      name: ['', validators.required],
-      description: ['', validators.required],
+      name: [
+        '',
+        validators.required,
+        validators.withOutSpaceAtStart,
+        validators.maxCharacters(128),
+      ],
+      description: ['', validators.maxCharacters(256)],
       schema: ['', validators.required],
-      codeFile: [null as File | null, validators.required],
+      codeFile: [
+        null as File | null,
+        validators.required,
+        validators.upTo10Mb(),
+        validators.acceptFileFormat('.wasm'),
+      ],
     })
     const isLoading = ref(false)
     const onSubmit = dialogs.getHandler('onSubmit')

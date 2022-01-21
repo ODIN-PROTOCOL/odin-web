@@ -15,10 +15,12 @@
           >
             <div class="app-table__cell">
               <span class="app-table__title">Delegator</span>
-              <TitledLink
+              <a
                 class="app-table__cell-txt app-table__link"
-                :text="String(item.delegation.delegatorAddress)"
-              />
+                :href="`${API_CONFIG.odinScan}/account/${item.delegation.delegatorAddress}`"
+              >
+                {{ item.delegation.delegatorAddress }}
+              </a>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Balance</span>
@@ -54,11 +56,11 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, ref, toRef } from 'vue'
-import TitledLink from '@/components/TitledLink.vue'
+import { API_CONFIG } from '@/api/api-config'
 import Pagination from '@/components/pagination/pagination.vue'
 
 export default defineComponent({
-  components: { TitledLink, Pagination },
+  components: { Pagination },
   props: {
     delegators: { type: Array, required: true },
   },
@@ -94,6 +96,7 @@ export default defineComponent({
     })
 
     return {
+      API_CONFIG,
       ITEMS_PER_PAGE,
       delegatorsCount,
       filteredDelegators,

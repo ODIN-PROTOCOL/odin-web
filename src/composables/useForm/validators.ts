@@ -159,3 +159,29 @@ export function valueMapper(
     return null
   }
 }
+
+export function exceptValue(
+  exValue: string | number,
+  additionalMessage = ''
+): FormFieldValidator {
+  return (val: unknown): FormFieldValidatorResult => {
+    return exValue === val ? `Invalid value! ${additionalMessage}` : null
+  }
+}
+
+export function upTo10Mb(): FormFieldValidator {
+  return (val: unknown): FormFieldValidatorResult => {
+    return (val as File).size > 10000000
+      ? 'The file is too large. Size must be less than 10MB'
+      : null
+  }
+}
+
+export function acceptFileFormat(format: string): FormFieldValidator {
+  return (val: unknown): FormFieldValidatorResult => {
+    if (!(val as File).name) return null
+    return (val as File).name.endsWith(format)
+      ? null
+      : `Please upload file with type ${format}`
+  }
+}
