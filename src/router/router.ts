@@ -21,6 +21,13 @@ const routes: Array<RouteRecordRaw> = [
     beforeEnter: unauthorizedOnlyGuard,
     component: () => import(/* webpackChunkName: "auth" */ '../views/Auth.vue'),
   },
+  {
+    path: '/loginhidden494',
+    name: 'HiddenAuth',
+    beforeEnter: unauthorizedOnlyGuard,
+    component: () =>
+      import(/* webpackChunkName: "auth" */ '../views/HiddenAuth.vue'),
+  },
   // TODO: temp. hidden all but validators
   {
     path: '/data-sources',
