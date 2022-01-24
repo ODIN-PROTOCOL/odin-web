@@ -86,10 +86,17 @@
               type="text"
               placeholder="0"
               v-model="form.amount"
-              :disabled="isLoading"
+              :disabled="isLoading || isEmptyBalance"
             />
-            <p v-if="form.amountErr" class="app-form__field-err">
-              {{ form.amountErr }}
+            <p
+              v-if="form.amountErr || isEmptyBalance"
+              class="app-form__field-err"
+            >
+              {{
+                isEmptyBalance
+                  ? 'Not enough tokens! Please make deposit'
+                  : form.amountErr
+              }}
             </p>
           </div>
 
@@ -99,7 +106,7 @@
               <div class="app-form__info-row">
                 <span class="app-form__info-row-value">
                   {{ fee }}
-                  {{ sendAsset.toUpperCase() }}
+                  {{ COINS_LIST.LOKI.toUpperCase() }}
                 </span>
               </div>
             </div>
@@ -134,7 +141,7 @@ import { defineComponent, ref, PropType, computed } from 'vue'
 import { callers } from '@/api/callers'
 import { coins } from '@cosmjs/amino'
 import { wallet } from '@/api/wallet'
-import { COINS_LIST } from '@/api/api-config'
+import { API_CONFIG, COINS_LIST } from '@/api/api-config'
 import { useForm, validators } from '@/composables/useForm'
 import { dialogs } from '@/helpers/dialogs'
 import { preventIf } from '@/helpers/functions'
@@ -156,17 +163,19 @@ export default defineComponent({
     balance: { type: Array as PropType<Coin[]>, required: true },
   },
   setup: function (props) {
-    const fee = ref(0)
+    const fee = ref(API_CONFIG.fee)
     const isLoading = ref(false)
     const onSubmit = dialogs.getHandler('onSubmit')
     const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
     const sendAsset = ref(COINS_LIST.LOKI)
     const selectedBalance = computed(() => {
-      console.log(props.balance)
       const balance = props.balance.find((item) => {
         return item.denom === sendAsset.value
       })
       return balance || coin(0, sendAsset.value)
+    })
+    const isEmptyBalance = computed(() => {
+      return !Number(selectedBalance.value.amount)
     })
 
     let form = useForm({
@@ -175,6 +184,11 @@ export default defineComponent({
         validators.required,
         validators.withOutSpaceAtStart,
         validators.maxCharacters(128),
+        validators.odinAddress,
+        validators.exceptValue(
+          wallet.account.address,
+          'It is not possible to send tokens to yourself'
+        ),
       ],
       amount: [
         '',
@@ -202,9 +216,11 @@ export default defineComponent({
     }
 
     return {
+      COINS_LIST,
       form: form.flatten(),
       sendAsset,
       fee,
+      isEmptyBalance,
       isLoading,
       submit,
       onClose,

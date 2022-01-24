@@ -15,10 +15,12 @@
           >
             <div class="app-table__cell">
               <span class="app-table__title">Delegator</span>
-              <TitledLink
+              <a
                 class="app-table__cell-txt app-table__link"
-                :text="String(item.delegation.delegatorAddress)"
-              />
+                :href="`${API_CONFIG.odinScan}/account/${item.delegation.delegatorAddress}`"
+              >
+                {{ item.delegation.delegatorAddress }}
+              </a>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Balance</span>
@@ -44,9 +46,10 @@
 
     <template v-if="delegatorsCount > ITEMS_PER_PAGE">
       <Pagination
-        @changePageNumber="paginationHandler($event)"
-        :blocksPerPage="ITEMS_PER_PAGE"
-        :total-length="delegatorsCount"
+        class="mg-t32 mg-b32"
+        v-model="currentPage"
+        :pages="totalPages"
+        @update:modelValue="paginationHandler"
       />
     </template>
   </div>
@@ -54,17 +57,18 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, ref, toRef } from 'vue'
-import TitledLink from '@/components/TitledLink.vue'
-import Pagination from '@/components/pagination/pagination.vue'
+import { API_CONFIG } from '@/api/api-config'
+import Pagination from '@/components/Pagination/Pagination.vue'
 
 export default defineComponent({
-  components: { TitledLink, Pagination },
+  components: { Pagination },
   props: {
     delegators: { type: Array, required: true },
   },
   setup: function (props) {
     const ITEMS_PER_PAGE = 5
     const currentPage = ref(1)
+    const totalPages = ref(0)
     const delegatorsCount = ref()
     const filteredDelegators = ref()
 
@@ -91,10 +95,14 @@ export default defineComponent({
     onMounted(() => {
       filterDelegators(currentPage.value)
       delegatorsCount.value = _delegators.value.length
+      totalPages.value = Math.ceil(delegatorsCount.value / ITEMS_PER_PAGE)
     })
 
     return {
+      API_CONFIG,
       ITEMS_PER_PAGE,
+      currentPage,
+      totalPages,
       delegatorsCount,
       filteredDelegators,
       paginationHandler,

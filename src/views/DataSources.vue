@@ -61,10 +61,10 @@
 
     <template v-if="dataSourcesCount > ITEMS_PER_PAGE">
       <Pagination
-        @changePageNumber="paginationHandler($event)"
-        :blocksPerPage="ITEMS_PER_PAGE"
-        :total-length="dataSourcesCount"
-        :startFrom="currentPage"
+        class="mg-t32 mg-b32"
+        v-model="currentPage"
+        :pages="totalPages"
+        @update:modelValue="paginationHandler"
       />
     </template>
 
@@ -81,7 +81,7 @@ import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
 import TitledLink from '@/components/TitledLink.vue'
-import Pagination from '@/components/pagination/pagination.vue'
+import Pagination from '@/components/Pagination/Pagination.vue'
 import { defineComponent, onMounted, ref } from 'vue'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
@@ -96,6 +96,7 @@ export default defineComponent({
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 4
     const currentPage = ref(1)
+    const totalPages = ref(0)
     const dataSourcesCount = ref(0)
     const dataSources = ref()
 
@@ -118,6 +119,7 @@ export default defineComponent({
     const getDataSourcesCount = async () => {
       const res = await callers.getCounts()
       dataSourcesCount.value = res.dataSourceCount.toNumber()
+      totalPages.value = Math.ceil(dataSourcesCount.value / ITEMS_PER_PAGE)
     }
 
     const createDataSource = async () => {
@@ -142,6 +144,7 @@ export default defineComponent({
       isLoading,
       ITEMS_PER_PAGE,
       currentPage,
+      totalPages,
       dataSourcesCount,
       dataSources,
       createDataSource,

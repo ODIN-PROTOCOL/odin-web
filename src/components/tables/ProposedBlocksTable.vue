@@ -15,10 +15,12 @@
           >
             <div class="app-table__cell">
               <span class="app-table__title">Block</span>
-              <TitledLink
+              <a
                 class="app-table__cell-txt app-table__link"
-                :text="toHex(item.blockId.hash)"
-              />
+                :href="`${API_CONFIG.odinScan}/blocks/${item.header.height}`"
+              >
+                {{ toHex(item.blockId.hash) }}
+              </a>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Date and time</span>
@@ -40,9 +42,10 @@
 
     <template v-if="blocksCount > ITEMS_PER_PAGE">
       <Pagination
-        @changePageNumber="paginationHandler($event)"
-        :blocksPerPage="ITEMS_PER_PAGE"
-        :total-length="blocksCount"
+        class="mg-t32 mg-b32"
+        v-model="currentPage"
+        :pages="totalPages"
+        @update:modelValue="paginationHandler"
       />
     </template>
   </div>
@@ -51,22 +54,23 @@
 <script lang="ts">
 import { defineComponent, onMounted, toRef, ref } from 'vue'
 import { toHex } from '@cosmjs/encoding'
-// import { Bech32 } from '@cosmjs/encoding'
-import TitledLink from '@/components/TitledLink.vue'
-import Pagination from '@/components/pagination/pagination.vue'
+import { API_CONFIG } from '@/api/api-config'
+import Pagination from '@/components/Pagination/Pagination.vue'
 
 export default defineComponent({
-  components: { TitledLink, Pagination },
+  components: { Pagination },
   props: {
     blocks: { type: Array, required: true },
   },
   setup: function (props) {
     const ITEMS_PER_PAGE = 5
     const currentPage = ref(1)
+    const totalPages = ref(0)
     const blocksCount = ref()
     const filteredBlocks = ref()
 
     const _blocks = toRef(props, 'blocks')
+    console.log(_blocks.value)
 
     const filterBlocks = (newPage: number) => {
       let tempArr = _blocks.value
@@ -89,10 +93,14 @@ export default defineComponent({
     onMounted(() => {
       filterBlocks(currentPage.value)
       blocksCount.value = _blocks.value.length
+      totalPages.value = Math.ceil(blocksCount.value / ITEMS_PER_PAGE)
     })
 
     return {
+      API_CONFIG,
       ITEMS_PER_PAGE,
+      currentPage,
+      totalPages,
       blocksCount,
       filteredBlocks,
       paginationHandler,

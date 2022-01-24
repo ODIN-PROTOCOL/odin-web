@@ -18,7 +18,10 @@
 
         <h2 class="auth__content-title fs-40 mg-b48">Sign in</h2>
 
-        <div class="app-form__field">
+        <div
+          class="app-form__field"
+          v-if="loginType === WalletTypes.ODIN_WALLET"
+        >
           <label class="app-form__field-lbl"> Mnemonic </label>
           <input
             class="app-form__field-input"
@@ -38,7 +41,6 @@
             class="app-btn w-full mg-t32"
             type="submit"
             :disabled="!form.isValid || isLoading"
-            @click="changeLoginType(WalletTypes.ODIN_WALLET)"
           >
             Log in
           </button>
@@ -50,12 +52,26 @@
             Generate mnemonic key
           </button>
           <button
-            class="app-btn w-full mg-t64"
-            type="submit"
-            :disabled="isLoading"
-            @click="changeLoginType(WalletTypes.KEPLR_WALLET)"
+            class="auth__field-btn auth__field-btn_additional"
+            @click.prevent="changeLoginType(WalletTypes.KEPLR_WALLET)"
           >
+            Use keplr login
+          </button>
+        </div>
+
+        <div
+          class="app-form__field auth__field"
+          v-if="loginType === WalletTypes.KEPLR_WALLET"
+        >
+          <button class="app-btn w-full" type="submit" :disabled="isLoading">
             Connect with Keplr
+          </button>
+
+          <button
+            class="auth__field-btn auth__field-btn_additional"
+            @click.prevent="changeLoginType(WalletTypes.ODIN_WALLET)"
+          >
+            Use mnemonic login
           </button>
         </div>
       </form>
@@ -84,7 +100,7 @@ export default defineComponent({
     })
     const isLoading = ref(false)
     const copyWarning = ref(false)
-    const loginType = ref()
+    const loginType = ref(WalletTypes.KEPLR_WALLET)
 
     const submit = async () => {
       const auth = useAuthorization()
@@ -123,6 +139,7 @@ export default defineComponent({
       form: form.flatten(),
       isLoading,
       WalletTypes,
+      loginType,
       submit,
       changeLoginType,
       generateKey,
@@ -138,36 +155,26 @@ export default defineComponent({
   grid: 100% / 1fr 0.85fr;
   flex: 1;
 
-  @media (max-width: 768px) {
-    grid: 100% / 1fr;
+  &__splash {
+    background: url('~@/assets/images/auth_background.png') no-repeat
+      center#031e3a;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
-}
 
-.auth__splash {
-  background: url('~@/assets/images/auth_background.png') no-repeat center
-    #031e3a;
-  background-size: cover;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  @media (max-width: 768px) {
-    display: none;
+  &__splash-logo {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    width: 100%;
+    min-width: 22rem;
+    max-width: 25vw;
+    max-height: 25rem;
   }
-}
 
-.auth__splash-logo {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  width: 100%;
-  min-width: 22rem;
-  max-width: 25vw;
-  max-height: 25rem;
-}
-
-.auth {
   &__content {
     padding: 3.2rem;
     position: relative;
@@ -176,37 +183,58 @@ export default defineComponent({
   &__content-title {
     font-weight: 400;
   }
-}
 
-.auth__form {
-  width: 100%;
-  max-width: 30rem;
-  margin-inline-start: 8vw;
-
-  @media (max-width: 768px) {
-    margin: 0 auto;
+  &__form {
+    width: 100%;
+    max-width: 30rem;
+    margin-inline-start: 8vw;
   }
-}
 
-.auth__form-logo {
-  display: none;
-  max-width: 12rem;
-  position: absolute;
-  top: 4rem;
-
-  @media (max-width: 768px) {
-    display: block;
-    margin: 0 auto;
+  &__form-logo {
+    display: none;
+    max-width: 12rem;
+    position: absolute;
+    top: 4rem;
   }
-}
 
-.auth {
+  &__field-btn {
+    &_additional {
+      display: block;
+      color: var(--clr__action);
+      font-weight: 600;
+      margin: 3.2rem auto 0;
+
+      &:hover {
+        color: var(--clr__text);
+      }
+    }
+  }
+
   &__copy-warning {
     padding: 3.2rem 0;
   }
 
   &__copy-important {
     font-weight: 700;
+  }
+}
+
+@include respond-to(tablet) {
+  .auth {
+    grid: 100% / 1fr;
+
+    &__splash {
+      display: none;
+    }
+
+    &__form {
+      margin: 0 auto;
+    }
+
+    &__form-logo {
+      display: block;
+      margin: 0 auto;
+    }
   }
 }
 </style>

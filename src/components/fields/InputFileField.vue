@@ -7,7 +7,9 @@
             <FileIcon />
           </div>
           <div class="drag__title">
-            <span>Drag and drop a file with the script code</span>
+            <span>
+              Drag and drop a file with the script code ({{ accept }})
+            </span>
           </div>
           <span class="drag__text">or</span>
           <button class="drag__button">
@@ -20,6 +22,7 @@
       <input
         v-else
         class="input-file"
+        accept=""
         type="file"
         @change="parseFile($event)"
       />
@@ -34,6 +37,9 @@
             <span>Name: {{ fileName.name }}</span>
             <span>Size: {{ fileName.size }} bytes</span>
           </div>
+          <button class="drag__button mg-t8" @click="removeFile">
+            Remove file
+          </button>
         </div>
       </div>
     </template>
@@ -54,6 +60,7 @@ export default defineComponent({
   props: {
     modelValue: { type: [File, String] },
     drag: { type: Boolean, default: false },
+    accept: { type: String, default: '' },
   },
   setup(props, { emit }) {
     let fileName = ref()
@@ -61,12 +68,15 @@ export default defineComponent({
       const file = getEventFile(event)
       if (!file) return
       emit('update:modelValue', file)
-      console.log(file)
       fileName.value = { name: file.name, size: file.size }
-      console.log(fileName.value)
     }
 
-    return { parseFile, fileName }
+    const removeFile = () => {
+      emit('update:modelValue', null)
+      fileName.value = null
+    }
+
+    return { parseFile, removeFile, fileName }
   },
 })
 </script>

@@ -32,11 +32,18 @@
                 :max="lokiBalance"
                 placeholder="1000"
                 v-model="form.amount"
-                :disabled="isLoading"
+                :disabled="isLoading || isEmptyBalance"
               />
             </div>
-            <p v-if="form.amountErr" class="app-form__field-err">
-              {{ form.amountErr }}
+            <p
+              v-if="form.amountErr || isEmptyBalance"
+              class="app-form__field-err"
+            >
+              {{
+                isEmptyBalance
+                  ? 'Not enough tokens! Please make deposit'
+                  : form.amountErr
+              }}
             </p>
           </div>
         </div>
@@ -57,7 +64,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue'
+import { computed, defineComponent, PropType, ref } from 'vue'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
 import { COINS_LIST } from '@/api/api-config'
@@ -83,6 +90,9 @@ export default defineComponent({
   setup(props) {
     const { get: getBalance, load: loadBalances } = useBalances()
     const lokiBalance = getBalance(COINS_LIST.LOKI) || defaultBalanceBlank
+    const isEmptyBalance = computed(() => {
+      return !Number(lokiBalance.amount)
+    })
 
     const form = useForm({
       amount: [
@@ -117,6 +127,7 @@ export default defineComponent({
       form: form.flatten(),
       lokiBalance,
       isLoading,
+      isEmptyBalance,
       submit,
       onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
     }

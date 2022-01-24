@@ -41,21 +41,27 @@
           </div>
 
           <div class="app-form__field">
-            <label class="app-form__field-lbl"> Price</label>
-            <input
-              class="app-form__field-input"
-              name="data-source-price"
-              v-model="form.price"
-              type="text"
-              :disabled="isLoading"
-              placeholder="Data source price"
-            />
+            <label class="app-form__field-lbl">Price</label>
+            <div class="app-form__field-input-wrapper">
+              <span>LOKI</span>
+              <input
+                class="app-form__field-input"
+                name="data-source-price"
+                v-model="form.price"
+                type="text"
+                :disabled="isLoading"
+                placeholder="1000"
+              />
+            </div>
             <p v-if="form.priceErr" class="app-form__field-err">
               {{ form.priceErr }}
             </p>
           </div>
 
           <div class="app-form__field">
+            <label class="app-form__field-lbl">
+              File with the script code
+            </label>
             <InputFileField
               class="app-form__field-input"
               name="data-source-executable"
@@ -114,10 +120,26 @@ export default defineComponent({
   components: { ModalBase, InputFileField, TextareaField },
   setup() {
     const form = useForm({
-      name: ['', validators.required],
-      description: ['', validators.required],
-      price: ['', validators.required, ...validators.num(1)],
-      executable: [null as File | null, validators.required],
+      name: [
+        '',
+        validators.required,
+        validators.withOutSpaceAtStart,
+        validators.maxCharacters(128),
+      ],
+      description: ['', validators.maxCharacters(256)],
+      price: [
+        '',
+        validators.required,
+        validators.integer,
+        ...validators.num(1),
+        validators.maxCharacters(18),
+      ],
+      executable: [
+        null as File | null,
+        validators.required,
+        validators.upTo10Mb(),
+        validators.acceptFileFormat('.py'),
+      ],
     })
     const isLoading = ref(false)
     const onSubmit = dialogs.getHandler('onSubmit')

@@ -120,10 +120,10 @@
 
     <template v-if="filteredValidatorsCount > ITEMS_PER_PAGE">
       <Pagination
-        @changePageNumber="paginationHandler($event)"
-        :blocksPerPage="ITEMS_PER_PAGE"
-        :total-length="filteredValidatorsCount"
-        :startFrom="currentPage"
+        class="mg-t32 mg-b32"
+        v-model="currentPage"
+        :pages="totalPages"
+        @update:modelValue="paginationHandler"
       />
     </template>
 
@@ -149,7 +149,7 @@ import Tabs from '@/components/tabs/Tabs.vue'
 import Tab from '@/components/tabs/Tab.vue'
 import TitledLink from '@/components/TitledLink.vue'
 import StatusIcon from '@/components/StatusIcon.vue'
-import Pagination from '@/components/pagination/pagination.vue'
+import Pagination from '@/components/Pagination/Pagination.vue'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import WithdrawRewardsFormModal from '@/components/modals/WithdrawRewardsFormModal.vue'
@@ -163,6 +163,7 @@ export default defineComponent({
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 6
     const currentPage = ref(1)
+    const totalPages = ref(0)
     const validatorsStatus = ref('Active')
     const filteredValidatorsCount = ref(0)
     const validatorsCount = ref(0)
@@ -196,6 +197,9 @@ export default defineComponent({
         validatorsCount.value =
           activeValidators.length + inactiveValidators.length
         filteredValidatorsCount.value = validators.value.length
+        totalPages.value = Math.ceil(
+          filteredValidatorsCount.value / ITEMS_PER_PAGE
+        )
         filterValidators(currentPage.value)
       } catch (error) {
         handleError(error as Error)
@@ -254,6 +258,9 @@ export default defineComponent({
         }
 
         filteredValidatorsCount.value = validators.value.length
+        totalPages.value = Math.ceil(
+          filteredValidatorsCount.value / ITEMS_PER_PAGE
+        )
         currentPage.value = 1
         filterValidators(currentPage.value)
       }
@@ -321,6 +328,7 @@ export default defineComponent({
     return {
       COINS_LIST,
       ITEMS_PER_PAGE,
+      totalPages,
       currentPage,
       filteredValidatorsCount,
       validatorsCount,

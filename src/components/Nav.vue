@@ -215,6 +215,7 @@ export default defineComponent({
 
   .nav-mob {
     display: flex;
+    overflow: auto;
     flex-direction: column;
     justify-content: space-between;
     position: fixed;

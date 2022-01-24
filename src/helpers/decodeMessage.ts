@@ -1,23 +1,16 @@
 import { MsgWithdrawCoinsToAccFromTreasury } from '@provider/codec/mint/tx'
-import { MsgExchange } from '@provider/codec/coinswap/tx'
 import {
   MsgSubmitProposal,
   MsgVote,
 } from '@provider/codec/cosmos/gov/v1beta1/tx'
 import {
+  MsgBeginRedelegate,
   MsgCreateValidator,
   MsgDelegate,
   MsgEditValidator,
   MsgUndelegate,
 } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/tx'
-import {
-  MsgWithdrawDelegatorReward,
-  MsgWithdrawValidatorCommission,
-} from '@cosmjs/stargate/build/codec/cosmos/distribution/v1beta1/tx'
-import {
-  MsgSend,
-  MsgMultiSend,
-} from '@cosmjs/stargate/build/codec/cosmos/bank/v1beta1/tx'
+import { MsgSend } from '@cosmjs/stargate/build/codec/cosmos/bank/v1beta1/tx'
 import {
   MsgActivate,
   MsgAddReporter,
@@ -26,11 +19,23 @@ import {
   MsgReportData,
   MsgRequestData,
 } from '@provider/codec/oracle/v1/tx'
+import {
+  MsgWithdrawDelegatorReward,
+  MsgWithdrawValidatorCommission,
+} from '@cosmjs/stargate/build/codec/cosmos/distribution/v1beta1/tx'
 import { callers } from '@/api/callers'
 import { Tx } from '@cosmjs/stargate/build/codec/cosmos/tx/v1beta1/tx'
 import { ReadonlyDateWithNanoseconds } from '@cosmjs/tendermint-rpc/build/dates'
 import { TxResponse } from '@cosmjs/tendermint-rpc/build/tendermint34/responses'
 import { adjustedData } from '@/helpers/Types'
+import {
+  MsgCreateClient,
+  MsgUpdateClient,
+} from 'cosmjs-types/ibc/core/client/v1/tx'
+import { MsgConnectionOpenInit } from 'cosmjs-types/ibc/core/connection/v1/tx'
+import { MsgChannelOpenInit } from 'cosmjs-types/ibc/core/channel/v1/tx'
+import { MsgTransfer } from 'cosmjs-types/ibc/applications/transfer/v1/tx'
+import { MsgUnjail } from 'cosmjs-types/cosmos/slashing/v1beta1/tx'
 
 export const getDecodeTx = (tx: TxResponse['tx']): Tx => Tx.decode(tx)
 
@@ -53,13 +58,10 @@ export function humanizeMessageType(type: string): string {
       return 'Vote'
 
     case '/cosmos.gov.v1beta1.MsgSubmitProposal':
-      return 'Submit proposal'
+      return 'Submit Proposal'
 
     case '/cosmos.staking.v1beta1.MsgCreateValidator':
       return 'Create Validator'
-
-    case '/cosmos.staking.v1beta1.MsgEditValidator':
-      return 'Edit Validator'
 
     case '/cosmos.staking.v1beta1.MsgDelegate':
       return 'Delegate'
@@ -67,14 +69,14 @@ export function humanizeMessageType(type: string): string {
     case '/cosmos.bank.v1beta1.MsgSend':
       return 'Send'
 
-    case '/cosmos.bank.v1beta1.MsgMultiSend':
-      return 'Multi Send'
-
-    case '/coinswap.MsgExchange':
-      return 'Exchange'
-
     case '/cosmos.staking.v1beta1.MsgUndelegate':
       return 'Undelegate'
+
+    case '/cosmos.staking.v1beta1.MsgEditValidator':
+      return 'Edit Validator'
+
+    case '/cosmos.staking.v1beta1.MsgBeginRedelegate':
+      return 'Begin Redelegate'
 
     case '/oracle.v1.MsgActivate':
       return 'Activate'
@@ -89,16 +91,34 @@ export function humanizeMessageType(type: string): string {
       return 'Add Reporter'
 
     case '/oracle.v1.MsgRequestData':
-      return 'Request data'
+      return 'Request Data'
 
     case '/oracle.v1.MsgReportData':
-      return 'Report data'
+      return 'Report Data'
 
     case '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward':
       return 'Withdraw delegator reward'
 
     case '/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission':
       return 'Withdraw validator commission'
+
+    case '/cosmos.slashing.v1beta1.MsgUnjail':
+      return 'Unjail'
+
+    case '/ibc.core.client.v1.MsgCreateClient':
+      return 'Create IBC Client'
+
+    case '/ibc.core.connection.v1.MsgConnectionOpenInit':
+      return 'Connection Open Init'
+
+    case '/ibc.core.client.v1.MsgUpdateClient':
+      return 'Update IBC Client'
+
+    case '/ibc.core.channel.v1.MsgChannelOpenInit':
+      return 'Chanel Open Init'
+
+    case '/ibc.applications.transfer.v1.MsgTransfer':
+      return 'IBC Transfer'
 
     default:
       throw new ReferenceError(`Unknown type ${type}`)
@@ -110,31 +130,33 @@ function decodeMessage(obj: {
   value: Uint8Array
 }):
   | MsgWithdrawCoinsToAccFromTreasury
-  | MsgWithdrawValidatorCommission
   | MsgCreateValidator
   | MsgEditValidator
   | MsgDelegate
   | MsgUndelegate
+  | MsgBeginRedelegate
   | MsgSend
-  | MsgMultiSend
-  | MsgExchange
   | MsgVote
   | MsgSubmitProposal
   | MsgAddReporter
-  | MsgRequestData
-  | MsgReportData
   | MsgActivate
   | MsgCreateOracleScript
-  | MsgCreateDataSource {
+  | MsgCreateDataSource
+  | MsgRequestData
+  | MsgReportData
+  | MsgCreateClient
+  | MsgConnectionOpenInit
+  | MsgUpdateClient
+  | MsgChannelOpenInit
+  | MsgTransfer
+  | MsgWithdrawValidatorCommission
+  | MsgUnjail {
   switch (obj.typeUrl) {
     case '/mint.MsgWithdrawCoinsToAccFromTreasury':
       return MsgWithdrawCoinsToAccFromTreasury.decode(obj.value)
 
     case '/cosmos.staking.v1beta1.MsgCreateValidator':
       return MsgCreateValidator.decode(obj.value)
-
-    case '/cosmos.staking.v1beta1.MsgEditValidator':
-      return MsgEditValidator.decode(obj.value)
 
     case '/cosmos.staking.v1beta1.MsgDelegate':
       return MsgDelegate.decode(obj.value)
@@ -151,11 +173,11 @@ function decodeMessage(obj: {
     case '/cosmos.bank.v1beta1.MsgSend':
       return MsgSend.decode(obj.value)
 
-    case '/cosmos.bank.v1beta1.MsgMultiSend':
-      return MsgMultiSend.decode(obj.value)
+    case '/cosmos.staking.v1beta1.MsgEditValidator':
+      return MsgEditValidator.decode(obj.value)
 
-    case '/coinswap.MsgExchange':
-      return MsgExchange.decode(obj.value)
+    case '/cosmos.staking.v1beta1.MsgBeginRedelegate':
+      return MsgBeginRedelegate.decode(obj.value)
 
     case '/oracle.v1.MsgActivate':
       return MsgActivate.decode(obj.value)
@@ -180,6 +202,24 @@ function decodeMessage(obj: {
 
     case '/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission':
       return MsgWithdrawValidatorCommission.decode(obj.value)
+
+    case '/cosmos.slashing.v1beta1.MsgUnjail':
+      return MsgUnjail.decode(obj.value)
+
+    case '/ibc.core.client.v1.MsgCreateClient':
+      return MsgCreateClient.decode(obj.value)
+
+    case '/ibc.core.connection.v1.MsgConnectionOpenInit':
+      return MsgConnectionOpenInit.decode(obj.value)
+
+    case '/ibc.core.client.v1.MsgUpdateClient':
+      return MsgUpdateClient.decode(obj.value)
+
+    case '/ibc.core.channel.v1.MsgChannelOpenInit':
+      return MsgChannelOpenInit.decode(obj.value)
+
+    case '/ibc.applications.transfer.v1.MsgTransfer':
+      return MsgTransfer.decode(obj.value)
 
     default:
       throw new ReferenceError(`Unknown type ${obj.typeUrl}`)
