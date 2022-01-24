@@ -81,9 +81,10 @@
 
     <template v-if="requestsCount > ITEMS_PER_PAGE">
       <Pagination
-        @changePageNumber="paginationHandler($event)"
-        :blocksPerPage="ITEMS_PER_PAGE"
-        :total-length="requestsCount"
+        class="mg-t32 mg-b32"
+        v-model="currentPage"
+        :pages="totalPages"
+        @update:modelValue="paginationHandler"
       />
     </template>
 
@@ -101,8 +102,8 @@ import { callers } from '@/api/callers'
 import { API_CONFIG } from '@/api/api-config'
 import TitledLink from '@/components/TitledLink.vue'
 import Progressbar from '@/components/Progressbar.vue'
-import Pagination from '@/components/pagination/pagination.vue'
 import { RequestResult } from '@provider/codec/oracle/v1/oracle'
+import Pagination from '@/components/Pagination/Pagination.vue'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import RequestFormModal from '@/components/modals/RequestFormModal.vue'
@@ -112,6 +113,7 @@ export default defineComponent({
   setup() {
     const ITEMS_PER_PAGE = 5
     const currentPage = ref(1)
+    const totalPages = ref(0)
     const requests = ref()
     const requestsCount = ref()
     const maxAskCount = ref()
@@ -131,6 +133,7 @@ export default defineComponent({
     const getRequestsCount = async () => {
       const res = await callers.getCounts()
       requestsCount.value = res.requestCount.toNumber()
+      totalPages.value = Math.ceil(requestsCount.value / ITEMS_PER_PAGE)
     }
 
     const getParams = async () => {
@@ -164,6 +167,8 @@ export default defineComponent({
     return {
       API_CONFIG,
       ITEMS_PER_PAGE,
+      currentPage,
+      totalPages,
       requests,
       requestsCount,
       createRequest,

@@ -66,9 +66,10 @@
 
     <template v-if="proposalsCount > ITEMS_PER_PAGE">
       <Pagination
-        @changePageNumber="paginationHandler($event)"
-        :blocksPerPage="ITEMS_PER_PAGE"
-        :total-length="proposalsCount"
+        class="mg-t32 mg-b32"
+        v-model="currentPage"
+        :pages="totalPages"
+        @update:modelValue="paginationHandler"
       />
     </template>
 
@@ -94,7 +95,7 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import TitledLink from '@/components/TitledLink.vue'
 import CustomDoughnutChart from '@/components/charts/CustomDoughnutChart.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
-import Pagination from '@/components/pagination/pagination.vue'
+import Pagination from '@/components/Pagination/Pagination.vue'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import ProposalFormModal from '@/components/modals/ProposalFormModal.vue'
@@ -105,6 +106,7 @@ export default defineComponent({
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 5
     const currentPage = ref(1)
+    const totalPages = ref()
     const proposalsCount = ref(0)
     const proposals = ref()
     const filteredProposals = ref()
@@ -121,6 +123,7 @@ export default defineComponent({
 
         proposalsCount.value = response.proposals.length
         proposals.value = transformedProposals
+        totalPages.value = Math.ceil(proposalsCount.value / ITEMS_PER_PAGE)
         filterProposals(currentPage.value)
       } catch (error) {
         handleError(error as Error)
@@ -194,6 +197,8 @@ export default defineComponent({
 
     return {
       API_CONFIG,
+      currentPage,
+      totalPages,
       isLoading,
       proposalStatusType,
       proposalsDataForChart,

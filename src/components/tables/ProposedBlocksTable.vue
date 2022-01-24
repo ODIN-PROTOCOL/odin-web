@@ -42,9 +42,10 @@
 
     <template v-if="blocksCount > ITEMS_PER_PAGE">
       <Pagination
-        @changePageNumber="paginationHandler($event)"
-        :blocksPerPage="ITEMS_PER_PAGE"
-        :total-length="blocksCount"
+        class="mg-t32 mg-b32"
+        v-model="currentPage"
+        :pages="totalPages"
+        @update:modelValue="paginationHandler"
       />
     </template>
   </div>
@@ -54,7 +55,7 @@
 import { defineComponent, onMounted, toRef, ref } from 'vue'
 import { toHex } from '@cosmjs/encoding'
 import { API_CONFIG } from '@/api/api-config'
-import Pagination from '@/components/pagination/pagination.vue'
+import Pagination from '@/components/Pagination/Pagination.vue'
 
 export default defineComponent({
   components: { Pagination },
@@ -64,6 +65,7 @@ export default defineComponent({
   setup: function (props) {
     const ITEMS_PER_PAGE = 5
     const currentPage = ref(1)
+    const totalPages = ref(0)
     const blocksCount = ref()
     const filteredBlocks = ref()
 
@@ -91,11 +93,14 @@ export default defineComponent({
     onMounted(() => {
       filterBlocks(currentPage.value)
       blocksCount.value = _blocks.value.length
+      totalPages.value = Math.ceil(blocksCount.value / ITEMS_PER_PAGE)
     })
 
     return {
       API_CONFIG,
       ITEMS_PER_PAGE,
+      currentPage,
+      totalPages,
       blocksCount,
       filteredBlocks,
       paginationHandler,

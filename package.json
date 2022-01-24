@@ -16,6 +16,7 @@
     "@cosmjs/proto-signing": "^0.25.4",
     "@cosmjs/stargate": "^0.25.4",
     "@cosmjs/tendermint-rpc": "^0.25.4",
+    "@hennge/vue3-pagination": "^1.0.17",
     "@invisiburu/vue-picker": "^2.0.3",
     "@kyvg/vue3-notification": "^2.3.0",
     "bignumber.js": "^9.0.1",

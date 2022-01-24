@@ -46,9 +46,10 @@
 
     <template v-if="delegatorsCount > ITEMS_PER_PAGE">
       <Pagination
-        @changePageNumber="paginationHandler($event)"
-        :blocksPerPage="ITEMS_PER_PAGE"
-        :total-length="delegatorsCount"
+        class="mg-t32 mg-b32"
+        v-model="currentPage"
+        :pages="totalPages"
+        @update:modelValue="paginationHandler"
       />
     </template>
   </div>
@@ -57,7 +58,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref, toRef } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
-import Pagination from '@/components/pagination/pagination.vue'
+import Pagination from '@/components/Pagination/Pagination.vue'
 
 export default defineComponent({
   components: { Pagination },
@@ -67,6 +68,7 @@ export default defineComponent({
   setup: function (props) {
     const ITEMS_PER_PAGE = 5
     const currentPage = ref(1)
+    const totalPages = ref(0)
     const delegatorsCount = ref()
     const filteredDelegators = ref()
 
@@ -93,11 +95,14 @@ export default defineComponent({
     onMounted(() => {
       filterDelegators(currentPage.value)
       delegatorsCount.value = _delegators.value.length
+      totalPages.value = Math.ceil(delegatorsCount.value / ITEMS_PER_PAGE)
     })
 
     return {
       API_CONFIG,
       ITEMS_PER_PAGE,
+      currentPage,
+      totalPages,
       delegatorsCount,
       filteredDelegators,
       paginationHandler,
