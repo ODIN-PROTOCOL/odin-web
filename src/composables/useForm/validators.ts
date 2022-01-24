@@ -185,3 +185,11 @@ export function acceptFileFormat(format: string): FormFieldValidator {
       : `Please upload file with type ${format}`
   }
 }
+
+const ADDRESS_RE = /^odin1/
+export const odinAddress: FormFieldValidator = (val: unknown) => {
+  if (typeof val === 'string' && !ADDRESS_RE.test(val)) {
+    return 'Invalid address'
+  }
+  return null
+}

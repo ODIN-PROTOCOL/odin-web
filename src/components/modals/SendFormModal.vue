@@ -184,6 +184,7 @@ export default defineComponent({
         validators.required,
         validators.withOutSpaceAtStart,
         validators.maxCharacters(128),
+        validators.odinAddress,
         validators.exceptValue(
           wallet.account.address,
           'It is not possible to send tokens to yourself'
