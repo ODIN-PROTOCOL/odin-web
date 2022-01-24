@@ -13,12 +13,16 @@
         <div class="app-form__main">
           <div class="app-form__field">
             <label class="app-form__field-lbl"> Available </label>
-            <p>{{ $fCoin(lokiBalance) }}</p>
+            <p>
+              {{ $convertLokiToOdin(lokiBalance.amount, { withDenom: true }) }}
+            </p>
           </div>
 
           <div v-if="delegation && delegation.balance" class="app-form__field">
             <label class="app-form__field-lbl"> You delegated </label>
-            <p>{{ $fCoin(delegation.balance) }}</p>
+            <p>
+              {{ $convertLokiToOdin(lokiBalance.amount, { withDenom: true }) }}
+            </p>
           </div>
 
           <div class="app-form__field">

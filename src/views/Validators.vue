@@ -57,10 +57,18 @@
               <span class="app-table__title">Delegated</span>
               <span
                 :title="
-                  $preciseFormatCoin(item.delegatorShares, COINS_LIST.LOKI)
+                  $convertLokiToOdin(item.delegatorShares, {
+                    withDenom: true,
+                    withPrecise: true,
+                  })
                 "
               >
-                {{ $preciseFormatOdinCoin(item.delegatorShares) }}
+                {{
+                  $convertLokiToOdin(item.delegatorShares, {
+                    withDenom: true,
+                    withPrecise: true,
+                  })
+                }}
               </span>
             </div>
             <div class="app-table__cell">

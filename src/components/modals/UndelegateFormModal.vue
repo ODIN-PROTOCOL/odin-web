@@ -22,12 +22,24 @@
 
           <div class="app-form__field">
             <label class="app-form__field-lbl"> Min delegation </label>
-            <p>{{ $fCoin(validator.minSelfDelegation, 'LOKI') }}</p>
+            <p>
+              {{
+                $convertLokiToOdin(validator.minSelfDelegation, {
+                  withDenom: true,
+                })
+              }}
+            </p>
           </div>
 
           <div v-if="delegation && delegation.balance" class="app-form__field">
             <label class="app-form__field-lbl"> You delegated </label>
-            <p>{{ $fCoin(delegation.balance) }}</p>
+            <p>
+              {{
+                $convertLokiToOdin(delegation.balance.amount, {
+                  withDenom: true,
+                })
+              }}
+            </p>
           </div>
 
           <div class="app-form__field">

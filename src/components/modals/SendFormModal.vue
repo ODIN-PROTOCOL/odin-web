@@ -19,10 +19,10 @@
                 v-for="item in balance"
                 :key="item.denom"
               >
-                <span class="app-form__info-row-title">
-                  {{ item.denom.toUpperCase() }}
+                <span class="app-form__info-row-title"> ODIN </span>
+                <span class="app-form__info-row-value">
+                  {{ $convertLokiToOdin(item.amount, { withDenom: true }) }}
                 </span>
-                <span class="app-form__info-row-value">{{ $fCoin(item) }}</span>
               </div>
             </div>
           </div>
@@ -105,8 +105,7 @@
             <div class="app-form__info-content">
               <div class="app-form__info-row">
                 <span class="app-form__info-row-value">
-                  {{ fee }}
-                  {{ COINS_LIST.LOKI.toUpperCase() }}
+                  {{ $convertLokiToOdin(fee, { withDenom: true }) }}
                 </span>
               </div>
             </div>

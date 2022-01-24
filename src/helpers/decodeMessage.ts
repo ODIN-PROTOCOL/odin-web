@@ -242,9 +242,9 @@ export async function getDateFromMessage(
   if ('amount' in message) {
     if (typeof message.amount === 'object') {
       if ('denom' in message.amount && 'amount' in message.amount) {
-        adjustedData.amount = `${message.amount?.amount} ${message.amount?.denom}`
+        adjustedData.amount = message.amount?.amount
       } else {
-        adjustedData.amount = `${message.amount[0]?.amount} ${message.amount[0]?.denom}`
+        adjustedData.amount = message.amount[0]?.amount
       }
     }
   }
