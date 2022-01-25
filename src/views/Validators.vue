@@ -169,7 +169,7 @@ export default defineComponent({
   components: { Tabs, Tab, TitledLink, StatusIcon, Pagination },
   setup() {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 6
+    const ITEMS_PER_PAGE = 25
     const currentPage = ref(1)
     const totalPages = ref(0)
     const validatorsStatus = ref('Active')
