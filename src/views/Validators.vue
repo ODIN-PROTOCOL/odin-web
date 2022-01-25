@@ -1,12 +1,12 @@
 <template>
   <div
-    class="view-main load-fog"
+    class="view-main validators load-fog"
     :class="{ 'load-fog_show': isLoading && validators?.length }"
   >
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">All Validators</h2>
       <button
-        class="view-main__title-btn app-btn app-btn_small fx-sae"
+        class="validators__title-btn app-btn app-btn_small fx-sae"
         type="button"
         @click="becomeValidator()"
       >
@@ -15,7 +15,7 @@
     </div>
 
     <template v-if="validatorsCount">
-      <div class="view-main__count-info">
+      <div class="validators__count-info">
         <p>{{ validatorsCount }} validators found</p>
       </div>
     </template>
@@ -25,21 +25,33 @@
       <Tab title="Inactive" />
     </Tabs>
 
-    <div class="app-table">
-      <div class="app-table__head">
-        <span>Rank</span>
-        <span>Validator</span>
-        <span>Delegated</span>
-        <span>Commission</span>
-        <span>Oracle Status</span>
-        <span></span>
+    <div class="app-table validators__table">
+      <div class="app-table__head validators__table-head">
+        <span class="validators__table-head-item">Rank</span>
+        <span class="validators__table-head-item">Validator</span>
+        <span
+          class="validators__table-head-item validators__table-head-item_end"
+        >
+          Delegated
+        </span>
+        <span
+          class="validators__table-head-item validators__table-head-item_end"
+        >
+          Commission
+        </span>
+        <span
+          class="validators__table-head-item validators__table-head-item_center"
+        >
+          Oracle Status
+        </span>
+        <span class="validators__table-head-item"></span>
       </div>
       <div class="app-table__body">
         <template v-if="validators?.length">
           <div
             v-for="item in filteredValidators"
             :key="item.operatorAddress"
-            class="app-table__row"
+            class="app-table__row validators__table-row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">Rank</span>
@@ -53,7 +65,7 @@
                 :to="`/validators/${item.operatorAddress}`"
               />
             </div>
-            <div class="app-table__cell">
+            <div class="app-table__cell validators__table-cell_end">
               <span class="app-table__title">Delegated</span>
               <span
                 :title="
@@ -71,21 +83,26 @@
                 }}
               </span>
             </div>
-            <div class="app-table__cell">
+            <div class="app-table__cell validators__table-cell_end">
               <span class="app-table__title">Commission</span>
               <span>
                 {{ $getPrecisePercents(item.commission.commissionRates.rate) }}
               </span>
             </div>
-            <div class="app-table__cell">
+            <div class="app-table__cell validators__table-cell_center">
               <span class="app-table__title">Oracle Status</span>
               <StatusIcon
                 :status="item.isOracleValidator ? 'success' : 'error'"
               />
             </div>
             <div class="app-table__cell">
-              <div class="app-table__activities">
-                <div class="app-table__activities-item">
+              <div class="app-table__activities validators__table-activities">
+                <div
+                  class="
+                    app-table__activities-item
+                    validators__table-activities-item
+                  "
+                >
                   <button
                     class="app-btn app-btn_small w-min150"
                     type="button"
@@ -96,7 +113,10 @@
                 </div>
                 <div
                   v-if="delegations[item.operatorAddress]"
-                  class="app-table__activities-item"
+                  class="
+                    app-table__activities-item
+                    validators__table-activities-item
+                  "
                 >
                   <button
                     class="app-btn app-btn_outlined app-btn_small"
@@ -358,26 +378,24 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.view-main {
+.validators {
   &__count-info {
     margin-bottom: 3.2rem;
   }
-}
 
-.app-table {
-  &__head,
-  &__row {
+  &__table-head,
+  &__table-row {
     grid:
       auto /
       minmax(3rem, 1fr)
       minmax(8rem, 4fr)
       minmax(8rem, 4fr)
-      minmax(8rem, 2fr)
+      minmax(8rem, 3fr)
       minmax(8rem, 2fr)
       minmax(32.5rem, 4fr);
   }
 
-  &__activities {
+  &__table-activities {
     width: 100%;
 
     & > *:not(:last-child) {
@@ -385,17 +403,34 @@ export default defineComponent({
     }
   }
 
-  &__activities-item {
+  &__table-activities-item {
     display: flex;
     justify-content: flex-end;
     gap: 2.4rem;
   }
+
+  &__table-cell {
+    &_center {
+      justify-content: center;
+    }
+    &_end {
+      justify-content: flex-end;
+    }
+  }
+
+  &__table-head-item {
+    &_center {
+      text-align: center;
+    }
+    &_end {
+      text-align: end;
+    }
+  }
 }
 
 @include respond-to(tablet) {
-  .view-main {
+  .validators {
     padding-bottom: 10rem;
-
     &__count-info {
       margin-bottom: 0;
     }
@@ -403,20 +438,36 @@ export default defineComponent({
     &__title-btn {
       display: none;
     }
-  }
 
-  .app-table {
-    &__row {
+    &__table-row {
       grid: none;
     }
 
-    &__activities {
+    &__table-activities {
       width: 100%;
     }
 
-    &__activities-item {
+    &__table-activities-item {
       & > * {
         flex: 1;
+      }
+    }
+
+    &__table-cell {
+      &_center {
+        justify-content: flex-start;
+      }
+      &_end {
+        justify-content: flex-start;
+      }
+    }
+
+    &__table-head {
+      &_center {
+        text-align: start;
+      }
+      &_end {
+        text-align: start;
       }
     }
   }
