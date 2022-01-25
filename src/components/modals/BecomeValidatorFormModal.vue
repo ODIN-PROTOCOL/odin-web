@@ -97,34 +97,36 @@
           </div>
 
           <div class="app-form__field">
-            <label class="app-form__field-lbl"> Min delegation (LOKI) </label>
-            <input
-              class="app-form__field-input"
-              name="become-validator-min-delegation"
-              type="number"
-              min="1"
-              step="1000"
-              placeholder="1000"
-              v-model="form.minDelegation"
-              :disabled="isLoading"
-            />
+            <label class="app-form__field-lbl"> Min delegation </label>
+            <div class="app-form__field-input-wrapper">
+              <span>ODIN</span>
+              <input
+                class="app-form__field-input"
+                name="become-validator-min-delegation"
+                type="text"
+                placeholder="0.000001"
+                v-model="form.minDelegation"
+                :disabled="isLoading"
+              />
+            </div>
             <p v-if="form.minDelegationErr" class="app-form__field-err">
               {{ form.minDelegationErr }}
             </p>
           </div>
 
           <div class="app-form__field">
-            <label class="app-form__field-lbl"> Self delegation (LOKI) </label>
-            <input
-              class="app-form__field-input"
-              name="become-validator-self-delegation"
-              type="number"
-              min="1"
-              step="1000"
-              placeholder="1000"
-              v-model="form.selfDelegation"
-              :disabled="isLoading"
-            />
+            <label class="app-form__field-lbl"> Self delegation </label>
+            <div class="app-form__field-input-wrapper">
+              <span>ODIN</span>
+              <input
+                class="app-form__field-input"
+                name="become-validator-self-delegation"
+                type="text"
+                placeholder="1"
+                v-model="form.selfDelegation"
+                :disabled="isLoading"
+              />
+            </div>
             <p v-if="form.selfDelegationErr" class="app-form__field-err">
               {{ form.selfDelegationErr }}
             </p>
@@ -155,6 +157,7 @@ import { COINS_LIST } from '@/api/api-config'
 import { dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
+import { convertOdinToLoki } from '@/helpers/converters'
 import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
@@ -204,14 +207,18 @@ const BecomeValidatorFormModal = defineComponent({
       minDelegation: [
         '',
         validators.required,
-        ...validators.num(1),
-        validators.maxCharacters(128),
+        validators.number,
+        validators.sixDecimalNumber,
+        ...validators.num(0.000001),
+        validators.maxCharacters(32),
       ],
       selfDelegation: [
-        0,
+        '',
         validators.required,
-        ...validators.num(0),
-        validators.maxCharacters(128),
+        validators.number,
+        validators.sixDecimalNumber,
+        ...validators.num(0.000001),
+        validators.maxCharacters(32),
       ],
     })
     const isLoading = ref(false)
@@ -235,7 +242,9 @@ const BecomeValidatorFormModal = defineComponent({
               .toPrecise(form.maxChangeRate.val())
               .toString(),
           },
-          minSelfDelegation: form.minDelegation.val(),
+          minSelfDelegation: convertOdinToLoki(
+            form.minDelegation.val()
+          ).toString(),
           delegatorAddress: wallet.account.address,
           validatorAddress: Bech32.encode(
             'odinvaloper',
@@ -248,7 +257,10 @@ const BecomeValidatorFormModal = defineComponent({
               key: Buffer.from(fromBase64(form.pubKey.val())),
             }).finish(),
           },
-          value: coin(form.selfDelegation.val(), COINS_LIST.LOKI),
+          value: coin(
+            convertOdinToLoki(form.selfDelegation.val()),
+            COINS_LIST.LOKI
+          ),
         })
 
         onSubmit()
@@ -268,8 +280,8 @@ const BecomeValidatorFormModal = defineComponent({
         bigMath.fromPrecise('100000000000000000').toString()
       )
       form.pubKey.val('YVo5TzlCK5Y5C+7lnOKMlHZKoGfLrEKhmpci3xNs5HA=')
-      form.minDelegation.val('1')
-      form.selfDelegation.val(10000000)
+      form.minDelegation.val()
+      form.selfDelegation.val()
     }
 
     _fakeForm()

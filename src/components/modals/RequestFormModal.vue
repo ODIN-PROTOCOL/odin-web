@@ -88,14 +88,17 @@
 
           <div class="app-form__field">
             <label class="app-form__field-lbl"> Fee limit </label>
-            <input
-              class="app-form__field-input"
-              name="request-fee-limit"
-              type="number"
-              min="1"
-              v-model="form.feeLimit"
-              :disabled="isLoading"
-            />
+            <div class="app-form__field-input-wrapper">
+              <span>ODIN</span>
+              <input
+                class="app-form__field-input"
+                name="request-fee-limit"
+                type="text"
+                v-model="form.feeLimit"
+                :disabled="isLoading"
+                placeholder="1"
+              />
+            </div>
             <p v-if="form.feeLimitErr" class="app-form__field-err">
               {{ form.feeLimitErr }}
             </p>
@@ -134,6 +137,7 @@ import { dialogs } from '@/helpers/dialogs'
 import { COINS_LIST } from '@/api/api-config'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
+import { convertOdinToLoki } from '@/helpers/converters'
 import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
@@ -161,7 +165,14 @@ export default defineComponent({
         ...validators.num(1, props.maxAskCount),
       ],
       calldata: [''],
-      feeLimit: ['1', validators.required, ...validators.num(1)],
+      feeLimit: [
+        '',
+        validators.required,
+        validators.number,
+        validators.sixDecimalNumber,
+        ...validators.num(0.000001),
+        validators.maxCharacters(32),
+      ],
     })
     const isLoading = ref(false)
     const callDataSchema = ref()
@@ -204,7 +215,7 @@ export default defineComponent({
           minCount: Long.fromNumber(form.minCount.val()),
           calldata: _processCallData(),
           feeLimit: coins(
-            Number.parseInt(form.feeLimit.val()),
+            convertOdinToLoki(form.feeLimit.val()),
             COINS_LIST.LOKI
           ),
           prepareGas: Long.fromNumber(200000),

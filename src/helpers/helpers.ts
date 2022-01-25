@@ -38,8 +38,8 @@ export const prepareTransaction = async (
         time: time ? time : null,
         sender: sender ? sender : '',
         receiver: receiver ? receiver : '',
-        amount: amount ? odinAmount : '',
-        fee: fee ? odinFee : '-',
+        amount: amount ? String(odinAmount) : '',
+        fee: fee ? String(odinFee) : '-',
       }
     })
   )

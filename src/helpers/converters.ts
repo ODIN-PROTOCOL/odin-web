@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js'
 import { bigMath } from './bigMath'
 
 type ConverterOptions = {
@@ -6,41 +7,36 @@ type ConverterOptions = {
 }
 
 const FORMAT_OPTIONS = {
-  decimals: 6,
+  decimals: 2,
   decimalSeparator: '.',
 }
-
-const ROUND_RE = /(0+|\.0+)$/
-const MULTIPLIER = 0.000001
+const ODIN_MULTIPLIER = 0.000001
 const ODIN_DENOM = 'ODIN'
+const LOKI_MULTIPLIER = 1000000
 
 export function convertLokiToOdin(
   amount: string | undefined,
   options?: ConverterOptions
-): string {
+): string | BigNumber {
   if (!amount) return '- ' + ODIN_DENOM
 
   let res = null
   if (options && options.withPrecise) {
-    res = _multiplyWithPrecise(amount)
+    res = bigMath.fromPrecise(bigMath.multiply(amount, ODIN_MULTIPLIER))
   } else {
-    res = _multiplyWithoutPrecise(amount)
+    res = bigMath.multiply(amount, ODIN_MULTIPLIER)
   }
 
-  return options && options.withDenom ? res + ' ' + ODIN_DENOM : res
+  if (options && options.withDenom) {
+    return bigMath.format(res, FORMAT_OPTIONS) + ' ' + ODIN_DENOM
+  } else {
+    return res
+  }
 }
 
-const _multiplyWithPrecise = (v: string): string => {
-  return bigMath
-    .format(
-      bigMath.fromPrecise(bigMath.multiply(v, MULTIPLIER)),
-      FORMAT_OPTIONS
-    )
-    .replace(ROUND_RE, '')
-}
+export function convertOdinToLoki(amount: string): number {
+  const num = Number(amount)
+  if (isNaN(num)) throw ReferenceError('Invalid number')
 
-const _multiplyWithoutPrecise = (v: string): string => {
-  return bigMath
-    .format(bigMath.multiply(v, MULTIPLIER), FORMAT_OPTIONS)
-    .replace(ROUND_RE, '')
+  return bigMath.multiply(num, LOKI_MULTIPLIER).toNumber()
 }
