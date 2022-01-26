@@ -14,6 +14,7 @@ export const API_CONFIG = {
 
 // Configuration of the chain to which the Kepler extension connects
 export const CHAIN_CONFIG = {
+  features: ['no-legacy-stdTx'],
   chainId: 'odin-mainnet-freya',
   chainName: 'ODIN118',
   rpc: API_CONFIG.rpc,
