@@ -13,24 +13,31 @@
         <div class="app-form__main">
           <div class="app-form__field">
             <label class="app-form__field-lbl"> Available </label>
-            <p>{{ $fCoin(lokiBalance) }}</p>
+            <p>
+              {{ $convertLokiToOdin(lokiBalance.amount, { withDenom: true }) }}
+            </p>
           </div>
 
           <div v-if="delegation && delegation.balance" class="app-form__field">
             <label class="app-form__field-lbl"> You delegated </label>
-            <p>{{ $fCoin(delegation.balance) }}</p>
+            <p>
+              {{
+                $convertLokiToOdin(delegation.balance.amount, {
+                  withDenom: true,
+                })
+              }}
+            </p>
           </div>
 
           <div class="app-form__field">
             <label class="app-form__field-lbl">Amount</label>
             <div class="app-form__field-input-wrapper">
-              <span>LOKI</span>
+              <span>ODIN</span>
               <input
                 class="app-form__field-input"
                 name="delegate-amount"
                 type="text"
-                :max="lokiBalance"
-                placeholder="1000"
+                placeholder="1"
                 v-model="form.amount"
                 :disabled="isLoading || isEmptyBalance"
               />
@@ -71,15 +78,16 @@ import { COINS_LIST } from '@/api/api-config'
 import { dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
+import { convertLokiToOdin, convertOdinToLoki } from '@/helpers/converters'
 import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { useBalances } from '@/composables/useBalances'
 import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
-import { coin } from '@cosmjs/amino'
+import { coin, Coin } from '@cosmjs/amino'
 
-const defaultBalanceBlank = { amount: 0, denom: COINS_LIST.LOKI }
+const defaultBalanceBlank: Coin = { amount: '0', denom: COINS_LIST.LOKI }
 
 export default defineComponent({
   props: {
@@ -89,7 +97,7 @@ export default defineComponent({
   components: { ModalBase },
   setup(props) {
     const { get: getBalance, load: loadBalances } = useBalances()
-    const lokiBalance = getBalance(COINS_LIST.LOKI) || defaultBalanceBlank
+    const lokiBalance: Coin = getBalance(COINS_LIST.LOKI) || defaultBalanceBlank
     const isEmptyBalance = computed(() => {
       return !Number(lokiBalance.amount)
     })
@@ -98,9 +106,13 @@ export default defineComponent({
       amount: [
         '',
         validators.required,
-        validators.integer,
-        ...validators.num(1, Number(lokiBalance.amount)),
-        validators.maxCharacters(128),
+        validators.number,
+        validators.sixDecimalNumber,
+        ...validators.num(
+          0.000001,
+          Number(convertLokiToOdin(lokiBalance.amount))
+        ),
+        validators.maxCharacters(32),
       ],
     })
     const isLoading = ref(false)
@@ -112,7 +124,7 @@ export default defineComponent({
         await callers.validatorDelegate({
           delegatorAddress: wallet.account.address,
           validatorAddress: props.validator.operatorAddress,
-          amount: coin(Number(form.amount.val()), COINS_LIST.LOKI),
+          amount: coin(convertOdinToLoki(form.amount.val()), COINS_LIST.LOKI),
         })
         await loadBalances()
         onSubmit()

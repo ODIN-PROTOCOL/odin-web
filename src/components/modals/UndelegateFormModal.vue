@@ -22,26 +22,39 @@
 
           <div class="app-form__field">
             <label class="app-form__field-lbl"> Min delegation </label>
-            <p>{{ $fCoin(validator.minSelfDelegation, 'LOKI') }}</p>
+            <p>
+              {{
+                $convertLokiToOdin(validator.minSelfDelegation, {
+                  withDenom: true,
+                })
+              }}
+            </p>
           </div>
 
           <div v-if="delegation && delegation.balance" class="app-form__field">
             <label class="app-form__field-lbl"> You delegated </label>
-            <p>{{ $fCoin(delegation.balance) }}</p>
+            <p>
+              {{
+                $convertLokiToOdin(delegation.balance.amount, {
+                  withDenom: true,
+                })
+              }}
+            </p>
           </div>
 
           <div class="app-form__field">
-            <label class="app-form__field-lbl"> Amount (LOKI) </label>
-            <input
-              class="app-form__field-input"
-              name="undelegate-amount"
-              type="number"
-              min="1"
-              :max="delegated"
-              placeholder="1000"
-              v-model="form.amount"
-              :disabled="isLoading"
-            />
+            <label class="app-form__field-lbl"> Amount </label>
+            <div class="app-form__field-input-wrapper">
+              <span>ODIN</span>
+              <input
+                class="app-form__field-input"
+                name="undelegate-amount"
+                type="text"
+                placeholder="1"
+                v-model="form.amount"
+                :disabled="isLoading"
+              />
+            </div>
             <p v-if="form.amountErr" class="app-form__field-err">
               {{ form.amountErr }}
             </p>
@@ -71,6 +84,7 @@ import { COINS_LIST } from '@/api/api-config'
 import { dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
+import { convertLokiToOdin, convertOdinToLoki } from '@/helpers/converters'
 import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
@@ -90,10 +104,19 @@ export default defineComponent({
   },
   components: { ModalBase, CopyText },
   setup(props) {
-    const delegated = Number(props.delegation.balance?.amount)
+    const delegated = Number(
+      convertLokiToOdin(props.delegation.balance?.amount)
+    )
 
     const form = useForm({
-      amount: ['', validators.required, ...validators.num(1, delegated)],
+      amount: [
+        '',
+        validators.required,
+        validators.number,
+        validators.sixDecimalNumber,
+        ...validators.num(0.000001, delegated),
+        validators.maxCharacters(32),
+      ],
     })
     const isLoading = ref(false)
     const onSubmit = dialogs.getHandler('onSubmit')
@@ -101,18 +124,10 @@ export default defineComponent({
     const submit = async () => {
       isLoading.value = true
       try {
-        console.log({
-          delegatorAddress: wallet.account.address,
-          validatorAddress: props.validator.operatorAddress,
-          amount: {
-            amount: form.amount.val(),
-            denom: COINS_LIST.LOKI,
-          },
-        })
         await callers.validatorUndelegate({
           delegatorAddress: wallet.account.address,
           validatorAddress: props.validator.operatorAddress,
-          amount: coin(Number(form.amount.val()), COINS_LIST.LOKI),
+          amount: coin(convertOdinToLoki(form.amount.val()), COINS_LIST.LOKI),
         })
         await useBalances().load()
         onSubmit()
@@ -125,7 +140,6 @@ export default defineComponent({
 
     return {
       form: form.flatten(),
-      delegated,
       isLoading,
       submit,
       onClose: preventIf(dialogs.getHandler('onClose'), isLoading),

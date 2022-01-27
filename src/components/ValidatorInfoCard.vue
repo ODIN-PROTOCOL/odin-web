@@ -16,7 +16,7 @@
       <div class="card__row">
         <span class="card__title">Delegated</span>
         <span class="card__txt" :title="$fCoin(validator.tokens, 'loki')">
-          {{ $fCoin(validator.tokens, 'loki') }}
+          {{ $convertLokiToOdin(validator.tokens, { withDenom: true }) }}
         </span>
       </div>
       <div class="card__row">

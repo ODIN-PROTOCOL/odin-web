@@ -41,14 +41,17 @@
 
           <div class="app-form__field">
             <label class="app-form__field-lbl">Deposit</label>
-            <input
-              class="app-form__field-input"
-              name="proposal-deposit"
-              v-model="form.deposit"
-              type="text"
-              :disabled="isLoading"
-              placeholder="Proposal deposit"
-            />
+            <div class="app-form__field-input-wrapper">
+              <span>ODIN</span>
+              <input
+                class="app-form__field-input"
+                name="proposal-deposit"
+                v-model="form.deposit"
+                type="text"
+                :disabled="isLoading"
+                placeholder="1"
+              />
+            </div>
             <p v-if="form.depositErr" class="app-form__field-err">
               {{ form.depositErr }}
             </p>
@@ -115,7 +118,7 @@
             </div>
             <input
               class="app-form__field-input"
-              name="proposal-deposit"
+              name="changes-value"
               v-model="form.changesValue"
               type="text"
               :disabled="isLoading"
@@ -159,6 +162,7 @@ import { COINS_LIST } from '@/api/api-config'
 import { dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
+import { convertOdinToLoki } from '@/helpers/converters'
 import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import { ProposalChanges, ProposalChangesItem } from '@/helpers/Types'
@@ -182,7 +186,14 @@ export default defineComponent({
     const form = useForm({
       name: ['', validators.required],
       description: ['', validators.required],
-      deposit: [0, validators.required, ...validators.num(1)],
+      deposit: [
+        '',
+        validators.required,
+        validators.number,
+        validators.sixDecimalNumber,
+        ...validators.num(0.000001),
+        validators.maxCharacters(32),
+      ],
       changesSubspace: ['', validators.required],
       changesKey: ['', validators.required],
       changesValue: ['', validators.required],
@@ -216,10 +227,12 @@ export default defineComponent({
               ],
             }).finish(),
           },
-          initialDeposit: coins(Number(form.deposit.val()), COINS_LIST.LOKI),
+          initialDeposit: coins(
+            convertOdinToLoki(form.deposit.val()),
+            COINS_LIST.LOKI
+          ),
           proposer: wallet.account.address,
         })
-
         onSubmit()
         notifySuccess('Proposal created!')
       } catch (error) {

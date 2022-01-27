@@ -43,14 +43,14 @@
           <div class="app-form__field">
             <label class="app-form__field-lbl">Price</label>
             <div class="app-form__field-input-wrapper">
-              <span>LOKI</span>
+              <span>ODIN</span>
               <input
                 class="app-form__field-input"
                 name="data-source-price"
                 v-model="form.price"
                 type="text"
                 :disabled="isLoading"
-                placeholder="1000"
+                placeholder="1"
               />
             </div>
             <p v-if="form.priceErr" class="app-form__field-err">
@@ -109,6 +109,7 @@ import { dialogs } from '@/helpers/dialogs'
 import { readFile } from '@/helpers/files'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
+import { convertOdinToLoki } from '@/helpers/converters'
 import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
@@ -130,9 +131,10 @@ export default defineComponent({
       price: [
         '',
         validators.required,
-        validators.integer,
-        ...validators.num(1),
-        validators.maxCharacters(18),
+        validators.number,
+        validators.sixDecimalNumber,
+        ...validators.num(0.000001),
+        validators.maxCharacters(32),
       ],
       executable: [
         null as File | null,
@@ -154,7 +156,7 @@ export default defineComponent({
           name: form.name.val(),
           description: form.description.val(),
           executable: executableParsed,
-          fee: coins(Number(form.price.val()), COINS_LIST.LOKI),
+          fee: coins(convertOdinToLoki(form.price.val()), COINS_LIST.LOKI),
           owner: wallet.account.address,
           sender: wallet.account.address,
         })

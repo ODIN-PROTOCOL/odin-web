@@ -29,6 +29,14 @@ export const number: FormFieldValidator = (val: unknown) => {
   return null
 }
 
+const SIX_DECIMAL_RE = /^(?=.*\d)\d*(?:\.\d{1,6})?$/
+export const sixDecimalNumber: FormFieldValidator = (val: unknown) => {
+  if (typeof val === 'string' && !SIX_DECIMAL_RE.test(val)) {
+    return 'The number must have a maximum of six decimal places'
+  }
+  return null
+}
+
 const INTEGER_RE = /^[0-9]+$/
 export const integer: FormFieldValidator = (val: unknown) => {
   console.log(val, typeof val)

@@ -9,9 +9,9 @@
         <span class="info__card-title">Balance</span>
         <div class="info__card-balance mg-b40">
           <div class="info__card-row">
-            <span class="info__card-row-title">LOKI</span>
+            <span class="info__card-row-title">ODIN</span>
             <span class="info__card-row-value">
-              {{ $fCoin(lokiCoins) }}
+              {{ $convertLokiToOdin(lokiCoins.amount, { withDenom: true }) }}
             </span>
           </div>
         </div>

@@ -15,7 +15,12 @@
             <div class="app-form__field">
               <label class="app-form__field-lbl">Your rewards:</label>
               <p v-for="item in rewards" :key="item.denom">
-                {{ $preciseAsFormatedCoin(item) }}
+                {{
+                  $convertLokiToOdin(item.amount, {
+                    withDenom: true,
+                    withPrecise: true,
+                  })
+                }}
               </p>
             </div>
           </template>

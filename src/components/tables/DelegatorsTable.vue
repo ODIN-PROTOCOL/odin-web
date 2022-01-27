@@ -25,13 +25,20 @@
             <div class="app-table__cell">
               <span class="app-table__title">Balance</span>
               <span class="app-table__cell-txt">
-                {{ $fCoin(item.balance.amount, item.balance.denom) }}
+                {{
+                  $convertLokiToOdin(item.balance.amount, { withDenom: true })
+                }}
               </span>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Stake</span>
               <span class="app-table__cell-txt">
-                {{ $fCoin(item.delegation.shares, item.balance.denom) }}
+                {{
+                  $convertLokiToOdin(item.delegation.shares, {
+                    withDenom: true,
+                    withPrecise: true,
+                  })
+                }}
               </span>
             </div>
           </div>
