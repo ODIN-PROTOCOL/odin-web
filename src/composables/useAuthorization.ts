@@ -3,7 +3,7 @@ import { WalletTypes, OdinWallet, wallet } from '@/api/wallet'
 import { storage } from '@/helpers/storage'
 import { readonly, ref } from 'vue'
 import { useBalances } from './useBalances'
-import { CHAIN_CONFIG } from '@/api/api-config'
+import { CHAIN_CONFIG, COINS_TYPE } from '@/api/api-config'
 
 const _isLoggedIn = ref<boolean>(false)
 const isLoggedInReadonly = readonly(_isLoggedIn)
@@ -25,7 +25,8 @@ async function createSessionWithOdinWallet(
 }
 
 async function createSessionWithKeplrWallet(
-  chainId: string
+  chainId: string,
+  coinType: COINS_TYPE
 ): Promise<OdinWallet> {
   if (window.keplr == null) {
     throw new ReferenceError(
@@ -34,7 +35,11 @@ async function createSessionWithKeplrWallet(
   } else {
     if (window.keplr.experimentalSuggestChain) {
       try {
-        await window.keplr.experimentalSuggestChain(CHAIN_CONFIG)
+        await window.keplr.experimentalSuggestChain({
+          ...CHAIN_CONFIG,
+          bip44: { coinType },
+          coinType,
+        })
       } catch {
         throw new ReferenceError(
           'Something went wrong. Failed to suggest chain.'
@@ -55,6 +60,7 @@ async function createSessionWithKeplrWallet(
       await Promise.all([api.attachWallet(wallet), useBalances().load()])
       _isLoggedIn.value = true
       storage.set('chainId', chainId)
+      storage.set('coinType', coinType.toString())
     } catch (err) {
       throw new ReferenceError((err as Error).message)
     }
@@ -71,18 +77,20 @@ function destroySession(): void {
   _isLoggedIn.value = false
   storage.remove('mnemonic')
   storage.remove('chainId')
+  storage.remove('coinType')
 }
 
 export async function tryRestoreSession(): Promise<OdinWallet | null> {
   const mnemonic = storage.get('mnemonic')
   const chainId = storage.get('chainId')
+  const coinType = storage.get('coinType')
   if (!mnemonic && !chainId) return null
 
   try {
     if (mnemonic) {
       return createSessionWithOdinWallet(mnemonic)
     } else if (chainId) {
-      return createSessionWithKeplrWallet(chainId)
+      return createSessionWithKeplrWallet(chainId, Number(coinType))
     } else {
       return null
     }
