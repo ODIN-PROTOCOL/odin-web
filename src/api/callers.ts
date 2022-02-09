@@ -27,6 +27,7 @@ import { MsgWithdrawDelegatorReward } from '@cosmjs/stargate/build/codec/cosmos/
 
 const makeCallers = () => {
   const broadcaster = api.makeBroadcastCaller.bind(api)
+  const multiBroadcaster = api.makeMultiBroadcastCaller.bind(api)
   const querier = api.makeQueryCaller.bind(api)
   const tmQuerier = api.makeTendermintCaller.bind(api)
 
@@ -152,6 +153,10 @@ const makeCallers = () => {
       MsgWithdrawCoinsToAccFromTreasury
     ),
     withdrawDelegatorRewards: broadcaster<MsgWithdrawDelegatorReward>(
+      '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward',
+      MsgWithdrawDelegatorReward
+    ),
+    withdrawMultiDelegatorRewards: multiBroadcaster<MsgWithdrawDelegatorReward>(
       '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward',
       MsgWithdrawDelegatorReward
     ),

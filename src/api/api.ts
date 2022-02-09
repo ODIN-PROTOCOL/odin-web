@@ -82,6 +82,20 @@ class Api {
     }
   }
 
+  makeMultiBroadcastCaller<T>(
+    typeUrl: string,
+    type: GeneratedType
+  ): (msgs: T[]) => Promise<BroadcastTxResponse> {
+    this._stargateRegistry.register(typeUrl, type)
+    return (msgs: T[]): Promise<BroadcastTxResponse> => {
+      return this._signAndBroadcast(
+        msgs.map((item) => {
+          return { typeUrl, value: item }
+        })
+      )
+    }
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   makeQueryCaller<T extends (...args: any) => any>(
     make: (qc: OdinQueryClient) => T

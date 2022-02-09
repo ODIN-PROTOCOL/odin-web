@@ -1,17 +1,30 @@
 <template>
   <div
     class="view-main validators load-fog"
-    :class="{ 'load-fog_show': isLoading && validators?.length }"
+    :class="{
+      'load-fog_show': isLoading && validators?.length,
+      'validators_large-padding': isDelegator,
+    }"
   >
-    <div class="view-main__title-wrapper">
+    <div class="view-main__title-wrapper validators__title-wrapper">
       <h2 class="view-main__title">All Validators</h2>
-      <button
-        class="validators__title-btn app-btn app-btn_small fx-sae"
-        type="button"
-        @click="becomeValidator()"
-      >
-        Become a validator
-      </button>
+      <div class="validators__title-activities fx-sae">
+        <button
+          class="validators__title-btn app-btn app-btn_small"
+          type="button"
+          @click="becomeValidator()"
+        >
+          Become a validator
+        </button>
+        <button
+          v-if="isDelegator"
+          class="validators__title-btn app-btn app-btn_small"
+          type="button"
+          @click="claimAllRewards"
+        >
+          Claim all rewards
+        </button>
+      </div>
     </div>
 
     <template v-if="validatorsCount">
@@ -148,23 +161,31 @@
 
     <template v-if="filteredValidatorsCount > ITEMS_PER_PAGE">
       <Pagination
-        class="mg-t32 mg-b32"
+        class="mg-t32"
         v-model="currentPage"
         :pages="totalPages"
         @update:modelValue="paginationHandler"
       />
     </template>
 
-    <div class="view-main__mobile-activities">
+    <div class="view-main__mobile-activities validators__mobile-activities">
       <button class="app-btn w-full" type="button" @click="becomeValidator()">
         Become a validator
+      </button>
+      <button
+        v-if="isDelegator"
+        class="app-btn w-full"
+        type="button"
+        @click="claimAllRewards"
+      >
+        Claim all rewards
       </button>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, ref, onMounted, computed } from 'vue'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 import { COINS_LIST } from '@/api/api-config'
@@ -184,6 +205,7 @@ import WithdrawRewardsFormModal from '@/components/modals/WithdrawRewardsFormMod
 import DelegateFormModal from '@/components/modals/DelegateFormModal.vue'
 import UndelegateFormModal from '@/components/modals/UndelegateFormModal.vue'
 import BecomeValidatorFormModal from '@/components/modals/BecomeValidatorFormModal.vue'
+import ClaimAllRewardsFormModal from '@/components/modals/ClaimAllRewardsFormModal.vue'
 
 export default defineComponent({
   components: { Tabs, Tab, TitledLink, StatusIcon, Pagination },
@@ -197,6 +219,10 @@ export default defineComponent({
     const validatorsCount = ref(0)
     const filteredValidators = ref()
     const validators = ref()
+    const delegations = ref<{ [k: string]: DelegationResponse }>({})
+    const isDelegator = computed(
+      () => Object.keys(delegations.value).length !== 0
+    )
 
     let activeValidators: ValidatorDecoded[] = []
     let inactiveValidators: ValidatorDecoded[] = []
@@ -235,7 +261,6 @@ export default defineComponent({
       releaseLoading()
     }
 
-    const delegations = ref<{ [k: string]: DelegationResponse }>({})
     const getDelegations = async () => {
       lockLoading()
       try {
@@ -248,8 +273,6 @@ export default defineComponent({
           _delegations[delegation.delegation.validatorAddress] = delegation
         }
         delegations.value = _delegations
-
-        console.debug('Delegations:', response)
       } catch (error) {
         // error is ignored, since no delegations also throws the error
         delegations.value = {}
@@ -301,6 +324,15 @@ export default defineComponent({
 
     const becomeValidator = async () => {
       await showDialogHandler(BecomeValidatorFormModal, {
+        onSubmit: async (d) => {
+          d.kill()
+          await loadData()
+        },
+      })
+    }
+
+    const claimAllRewards = async () => {
+      await showDialogHandler(ClaimAllRewardsFormModal, {
         onSubmit: async (d) => {
           d.kill()
           await loadData()
@@ -370,8 +402,10 @@ export default defineComponent({
       tabHandler,
       becomeValidator,
       withdrawRewards,
+      claimAllRewards,
       delegate,
       undelegate,
+      isDelegator,
     }
   },
 })
@@ -379,6 +413,21 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .validators {
+  padding-bottom: 10rem;
+
+  &__title-wrapper {
+    align-items: flex-start;
+  }
+
+  &__title-activities {
+    display: flex;
+    flex-direction: column;
+
+    & > *:not(:last-child) {
+      margin-bottom: 1.6rem;
+    }
+  }
+
   &__count-info {
     margin-bottom: 3.2rem;
   }
@@ -426,16 +475,25 @@ export default defineComponent({
       text-align: end;
     }
   }
+
+  &__mobile-activities {
+    & > *:not(:last-child) {
+      margin-bottom: 1.6rem;
+    }
+  }
+
+  &_large-padding {
+    padding-bottom: 17rem;
+  }
 }
 
 @include respond-to(tablet) {
   .validators {
-    padding-bottom: 10rem;
     &__count-info {
       margin-bottom: 0;
     }
 
-    &__title-btn {
+    &__title-activities {
       display: none;
     }
 
