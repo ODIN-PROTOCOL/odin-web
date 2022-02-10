@@ -117,6 +117,14 @@
                   "
                 >
                   <button
+                    v-if="delegations[item.operatorAddress]"
+                    class="app-btn app-btn_outlined app-btn_small w-min150"
+                    type="button"
+                    @click="redelegate(item)"
+                  >
+                    Redelegate
+                  </button>
+                  <button
                     class="app-btn app-btn_small w-min150"
                     type="button"
                     @click="delegate(item)"
@@ -132,7 +140,7 @@
                   "
                 >
                   <button
-                    class="app-btn app-btn_outlined app-btn_small"
+                    class="app-btn app-btn_outlined app-btn_small w-min150"
                     type="button"
                     @click="withdrawRewards(item)"
                   >
@@ -206,6 +214,7 @@ import DelegateFormModal from '@/components/modals/DelegateFormModal.vue'
 import UndelegateFormModal from '@/components/modals/UndelegateFormModal.vue'
 import BecomeValidatorFormModal from '@/components/modals/BecomeValidatorFormModal.vue'
 import ClaimAllRewardsFormModal from '@/components/modals/ClaimAllRewardsFormModal.vue'
+import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
 
 export default defineComponent({
   components: { Tabs, Tab, TitledLink, StatusIcon, Pagination },
@@ -367,6 +376,19 @@ export default defineComponent({
       )
     }
 
+    const redelegate = async (validator: ValidatorDecoded) => {
+      await showDialogHandler(
+        RedelegateFormModal,
+        {
+          onSubmit: async (d) => {
+            d.kill()
+            await loadData()
+          },
+        },
+        { validator, delegation: delegations.value[validator.operatorAddress] }
+      )
+    }
+
     const undelegate = async (validator: ValidatorDecoded) => {
       if (!delegations.value[validator.operatorAddress]) return
       await showDialogHandler(
@@ -404,6 +426,7 @@ export default defineComponent({
       withdrawRewards,
       claimAllRewards,
       delegate,
+      redelegate,
       undelegate,
       isDelegator,
     }

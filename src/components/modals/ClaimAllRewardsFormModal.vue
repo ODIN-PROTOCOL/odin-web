@@ -38,7 +38,7 @@
             class="app-btn"
             type="button"
             @click="submit"
-            :disabled="!rewards.length || isLoading"
+            :disabled="!totalRewards.length || isLoading"
           >
             Claim
           </button>
