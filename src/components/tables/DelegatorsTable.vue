@@ -3,7 +3,6 @@
     <div class="app-table">
       <div class="app-table__head">
         <span>Delegator</span>
-        <span>Balance</span>
         <span>Stake</span>
       </div>
       <div class="app-table__body">
@@ -23,21 +22,10 @@
               </a>
             </div>
             <div class="app-table__cell">
-              <span class="app-table__title">Balance</span>
-              <span class="app-table__cell-txt">
-                {{
-                  $convertLokiToOdin(item.balance.amount, { withDenom: true })
-                }}
-              </span>
-            </div>
-            <div class="app-table__cell">
               <span class="app-table__title">Stake</span>
               <span class="app-table__cell-txt">
                 {{
-                  $convertLokiToOdin(item.delegation.shares, {
-                    withDenom: true,
-                    withPrecise: true,
-                  })
+                  $convertLokiToOdin(item.balance.amount, { withDenom: true })
                 }}
               </span>
             </div>
