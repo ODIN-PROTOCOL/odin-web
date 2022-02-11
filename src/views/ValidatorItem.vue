@@ -77,9 +77,7 @@
           </template>
         </Tab>
         <Tab title="Proposed Blocks">
-          <template v-if="blocks">
-            <ProposedBlocksTable :blocks="blocks" />
-          </template>
+          <ProposedBlocksTable :proposerAddress="validator.operatorAddress" />
         </Tab>
       </Tabs>
     </template>
@@ -133,7 +131,6 @@ import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
-import { Bech32 } from '@cosmjs/encoding'
 import BackButton from '@/components/BackButton.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import Tabs from '@/components/tabs/Tabs.vue'
@@ -164,7 +161,6 @@ export default defineComponent({
     const route: RouteLocationNormalizedLoaded = useRoute()
     const validator = ref()
     const delegators = ref()
-    const blocks = ref()
     const reports = ref()
     const delegations = ref<{ [k: string]: DelegationResponse }>({})
 
@@ -178,19 +174,6 @@ export default defineComponent({
         String(route.params.address)
       )
       delegators.value = [...response.delegationResponses]
-    }
-
-    const getBlocks = async () => {
-      const response = await callers.getBlockchain()
-      blocks.value = response.blockMetas.filter((item) => {
-        const encodedAddress = Bech32.encode(
-          'odinvaloper',
-          item.header.proposerAddress
-        )
-
-        if (encodedAddress === String(route.params.address)) return true
-        return false
-      })
     }
 
     const getReports = async () => {
@@ -220,7 +203,6 @@ export default defineComponent({
     const loadData = async () => {
       await getValidator()
       await getDelegators()
-      await getBlocks()
       await getReports()
       await getDelegations()
     }
@@ -296,7 +278,6 @@ export default defineComponent({
       validator,
       delegators,
       delegations,
-      blocks,
       reports,
       withdrawRewards,
       delegate,

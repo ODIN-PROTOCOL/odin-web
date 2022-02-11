@@ -180,6 +180,11 @@ const makeCallers = () => {
     getTxSearch: cacheAnswers(tmQuerier((tc) => tc.txSearch.bind(tc))),
     getBlockchain: tmQuerier((tc) => tc.blockchain.bind(tc)),
     getBlock: cacheAnswers(tmQuerier((tc) => tc.block.bind(tc))),
+    getProposedBlocks: (proposer: string) => {
+      return sendGet(
+        `${API_CONFIG.telemetryUrl}telemetry/validator/${proposer}/transactions`
+      )
+    },
   }
 }
 

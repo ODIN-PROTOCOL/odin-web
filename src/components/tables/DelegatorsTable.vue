@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="delegators-table">
     <div class="app-table">
-      <div class="app-table__head">
+      <div class="app-table__head delegators-table__table-head">
         <span>Delegator</span>
         <span>Stake</span>
       </div>
@@ -10,7 +10,7 @@
           <div
             v-for="item in filteredDelegators"
             :key="item.delegation.delegatorAddress"
-            class="app-table__row"
+            class="app-table__row delegators-table__table-row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">Delegator</span>
@@ -106,4 +106,22 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.delegators-table {
+  &__table-head,
+  &__table-row {
+    grid:
+      auto /
+      minmax(8rem, 4fr)
+      minmax(8rem, 2fr);
+  }
+}
+
+@include respond-to(tablet) {
+  .delegators-table {
+    &__table-row {
+      grid: none;
+    }
+  }
+}
+</style>
