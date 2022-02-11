@@ -1,3 +1,4 @@
+import { bigMath } from '@/helpers/bigMath'
 import { callers } from '@/api/callers'
 import { ValidatorDecoded } from './validatorDecoders'
 
@@ -15,11 +16,23 @@ export const isActiveValidator = async (
   return response.status?.isActive ? true : false
 }
 
+const _sortValidatorsByDelegated = (
+  validators: ValidatorDecoded[]
+): ValidatorDecoded[] => {
+  return validators.sort((a, b) => {
+    return (
+      Number(bigMath.fromPrecise(b.delegatorShares)) -
+      Number(bigMath.fromPrecise(a.delegatorShares))
+    )
+  })
+}
+
 export const getTransformedValidators = async (
   validators: ValidatorDecoded[]
 ): Promise<ValidatorDecoded[]> => {
+  const _validators = _sortValidatorsByDelegated(validators)
   const transformedValidators = await Promise.all(
-    validators.map(async (item, idx) => {
+    _validators.map(async (item, idx) => {
       return {
         ...item,
         rank: idx + 1,
