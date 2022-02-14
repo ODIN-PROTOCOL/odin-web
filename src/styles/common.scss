@@ -50,6 +50,7 @@ body {
   }
   .vue-picker__opener-txt,
   .vue-picker-option {
+    white-space: nowrap;
     transition: all 0.5s ease;
   }
   .vue-picker__opener-ico {
