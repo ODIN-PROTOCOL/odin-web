@@ -1,43 +1,64 @@
 <template>
   <div
-    class="view-main"
+    class="view-main validators-item"
     :class="
       delegations[validator?.operatorAddress] ? 'view-main_large-padding' : ''
     "
   >
-    <div class="view-main__title-wrapper">
-      <BackButton :text="'Validators'" />
-      <h2 class="view-main__title">Validator</h2>
-      <div class="view-main__validator-address">
-        <p :title="validator?.operatorAddress" class="view-main__subtitle">
+    <div class="view-main__title-wrapper validators-item__title-wrapper">
+      <BackButton class="validators-item__back-btn" :text="'Validators'" />
+      <h2 class="view-main__title validators-item__title">Validator</h2>
+      <div class="validators-item__validator-address">
+        <p
+          :title="validator?.operatorAddress"
+          class="view-main__subtitle validators-item__subtitle"
+        >
           {{ validator?.operatorAddress }}
         </p>
         <CopyButton class="mg-l8" :text="String(validator?.operatorAddress)" />
       </div>
-      <div class="view-main__activities view-main__activities_top fx-sae">
-        <template v-if="delegations[validator?.operatorAddress]">
+      <div
+        class="
+          validators-item__activities validators-item__activities_top
+          fx-sae
+        "
+      >
+        <div
+          class="validators-item__activities-item"
+          v-if="delegations[validator?.operatorAddress]"
+        >
           <button
-            class="app-btn app-btn_outlined app-btn_small"
+            class="app-btn app-btn_outlined app-btn_small w-min150"
             type="button"
             @click="withdrawRewards"
           >
             Claim rewards
           </button>
           <button
-            class="app-btn app-btn_outlined app-btn_small mg-l24"
+            class="app-btn app-btn_outlined app-btn_small w-min150"
             type="button"
             @click="undelegate"
           >
             Undelegate
           </button>
-        </template>
-        <button
-          class="app-btn app-btn_small mg-l24"
-          type="button"
-          @click="delegate"
-        >
-          Delegate
-        </button>
+        </div>
+        <div class="validators-item__activities-item">
+          <button
+            v-if="delegations[validator?.operatorAddress]"
+            class="app-btn app-btn_outlined app-btn_small w-min150"
+            type="button"
+            @click="redelegate"
+          >
+            Redelegate
+          </button>
+          <button
+            class="app-btn app-btn_small w-min150"
+            type="button"
+            @click="delegate"
+          >
+            Delegate
+          </button>
+        </div>
       </div>
     </div>
 
@@ -56,37 +77,43 @@
           </template>
         </Tab>
         <Tab title="Proposed Blocks">
-          <template v-if="blocks">
-            <ProposedBlocksTable :blocks="blocks" />
-          </template>
+          <ProposedBlocksTable :proposerAddress="validator.operatorAddress" />
         </Tab>
       </Tabs>
     </template>
 
     <div class="view-main__mobile-activities">
-      <div class="view-main__activities">
+      <div class="validators-item__activities">
         <div
-          class="view-main__activities-item"
+          class="validators-item__activities-item"
           v-if="delegations[validator?.operatorAddress]"
         >
           <button
-            class="view-main__activities-btn app-btn app-btn_outlined"
+            class="validators-item__activities-btn app-btn app-btn_outlined"
             type="button"
             @click="withdrawRewards"
           >
             Claim rewards
           </button>
           <button
-            class="view-main__activities-btn app-btn app-btn_outlined"
+            class="validators-item__activities-btn app-btn app-btn_outlined"
             type="button"
             @click="undelegate"
           >
             Undelegate
           </button>
         </div>
-        <div class="view-main__activities-item">
+        <div class="validators-item__activities-item">
           <button
-            class="view-main__activities-btn app-btn"
+            v-if="delegations[validator?.operatorAddress]"
+            class="validators-item__activities-btn app-btn app-btn_outlined"
+            type="button"
+            @click="redelegate"
+          >
+            Redelegate
+          </button>
+          <button
+            class="validators-item__activities-btn app-btn"
             type="button"
             @click="delegate"
           >
@@ -104,7 +131,6 @@ import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
-import { Bech32 } from '@cosmjs/encoding'
 import BackButton from '@/components/BackButton.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import Tabs from '@/components/tabs/Tabs.vue'
@@ -118,6 +144,7 @@ import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import WithdrawRewardsFormModal from '@/components/modals/WithdrawRewardsFormModal.vue'
 import DelegateFormModal from '@/components/modals/DelegateFormModal.vue'
 import UndelegateFormModal from '@/components/modals/UndelegateFormModal.vue'
+import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
 
 export default defineComponent({
   components: {
@@ -134,7 +161,6 @@ export default defineComponent({
     const route: RouteLocationNormalizedLoaded = useRoute()
     const validator = ref()
     const delegators = ref()
-    const blocks = ref()
     const reports = ref()
     const delegations = ref<{ [k: string]: DelegationResponse }>({})
 
@@ -148,19 +174,6 @@ export default defineComponent({
         String(route.params.address)
       )
       delegators.value = [...response.delegationResponses]
-    }
-
-    const getBlocks = async () => {
-      const response = await callers.getBlockchain()
-      blocks.value = response.blockMetas.filter((item) => {
-        const encodedAddress = Bech32.encode(
-          'odinvaloper',
-          item.header.proposerAddress
-        )
-
-        if (encodedAddress === String(route.params.address)) return true
-        return false
-      })
     }
 
     const getReports = async () => {
@@ -190,7 +203,6 @@ export default defineComponent({
     const loadData = async () => {
       await getValidator()
       await getDelegators()
-      await getBlocks()
       await getReports()
       await getDelegations()
     }
@@ -198,6 +210,22 @@ export default defineComponent({
     const delegate = async () => {
       await showDialogHandler(
         DelegateFormModal,
+        {
+          onSubmit: async (d) => {
+            d.kill()
+            await loadData()
+          },
+        },
+        {
+          validator: validator.value,
+          delegation: delegations.value[String(route.params.address)],
+        }
+      )
+    }
+
+    const redelegate = async () => {
+      await showDialogHandler(
+        RedelegateFormModal,
         {
           onSubmit: async (d) => {
             d.kill()
@@ -250,10 +278,10 @@ export default defineComponent({
       validator,
       delegators,
       delegations,
-      blocks,
       reports,
       withdrawRewards,
       delegate,
+      redelegate,
       undelegate,
     }
   },
@@ -261,7 +289,11 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.view-main {
+.validators-item {
+  &__title-wrapper {
+    align-items: flex-start;
+  }
+
   &__title {
     margin: 0 1.6rem 0 2rem;
   }
@@ -270,6 +302,11 @@ export default defineComponent({
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    line-height: 4.6rem;
+  }
+
+  &__back-btn {
+    height: 4.6rem;
   }
 
   &__validator-address {
@@ -280,39 +317,43 @@ export default defineComponent({
 
   &__activities {
     display: flex;
+    flex-direction: column;
+    gap: 2.4rem;
+  }
+
+  &__activities-item {
+    display: flex;
+    flex-direction: row;
+    gap: 2.4rem;
+
+    & > * {
+      flex: 1;
+    }
   }
 }
 
 @include respond-to(tablet) {
-  .view-main {
+  .validators-item {
     padding-bottom: 10rem;
 
     &__title {
       margin: 0.8rem 0 0.4rem 0;
     }
 
+    &__subtitle {
+      line-height: 2.4rem;
+    }
+
+    &__back-btn {
+      height: 2.4rem;
+    }
+
     &__validator-address {
       width: 100%;
       margin: 0;
     }
-
-    &__activities {
-      flex-direction: column;
-      gap: 2.4rem;
-
-      &_top {
-        display: none;
-      }
-    }
-
-    &__activities-item {
-      display: flex;
-      flex-direction: row;
-      gap: 2.4rem;
-
-      & > * {
-        flex: 1;
-      }
+    &__activities_top {
+      display: none;
     }
 
     &_large-padding {
@@ -322,7 +363,7 @@ export default defineComponent({
 }
 
 @include respond-to(small) {
-  .view-main {
+  .validators-item {
     &__activities-btn {
       font-size: 1.6rem;
     }

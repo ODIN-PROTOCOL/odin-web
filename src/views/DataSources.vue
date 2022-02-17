@@ -1,9 +1,9 @@
 <template>
-  <div class="view-main">
+  <div class="view-main data-sources">
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Data Sources</h2>
       <button
-        class="view-main__title-btn app-btn app-btn_small fx-sae"
+        class="data-sources__title-btn app-btn app-btn_small fx-sae"
         type="button"
         @click="createDataSource()"
       >
@@ -12,13 +12,62 @@
     </div>
 
     <template v-if="dataSourcesCount">
-      <div class="view-main__count-info">
+      <div class="data-sources__count-info">
         <p>{{ dataSourcesCount }} data sources found</p>
       </div>
     </template>
 
+    <div class="data-sources__sort-wrapper">
+      <div class="data-sources__sort">
+        <div class="data-sources__sort-item">
+          <span class="data-sources__sort-item-title">Sort by</span>
+          <VuePicker
+            class="data-sources__vue-picker _vue-picker"
+            name="filter"
+            v-model="sortingActivitiesValue"
+            :isDisabled="isLoading"
+          >
+            <template #dropdownInner>
+              <div class="_vue-picker__dropdown-custom">
+                <VuePickerOption
+                  v-for="{ text, value } in sortingActivities"
+                  :key="text"
+                  :value="value"
+                  :text="text"
+                >
+                  {{ text }}
+                </VuePickerOption>
+              </div>
+            </template>
+          </VuePicker>
+        </div>
+        <div class="data-sources__sort-item">
+          <span class="data-sources__sort-item-title">Data Source</span>
+          <VuePicker
+            class="data-sources__vue-picker _vue-picker"
+            name="filter"
+            v-model="sortingOwnersValue"
+            :isDisabled="isLoading"
+          >
+            <template #dropdownInner>
+              <div class="_vue-picker__dropdown-custom">
+                <VuePickerOption
+                  v-for="{ text, value } in sortingOwners"
+                  :key="text"
+                  :value="value"
+                  :text="text"
+                >
+                  {{ text }}
+                </VuePickerOption>
+              </div>
+            </template>
+          </VuePicker>
+        </div>
+      </div>
+    </div>
+
     <div class="app-table">
-      <div class="app-table__head">
+      <div class="app-table__head data-sources__table-head">
         <span>ID</span>
         <span>Data Source</span>
         <span>Description</span>
@@ -26,20 +75,20 @@
       <div class="app-table__body">
         <template v-if="dataSources?.length">
           <div
-            v-for="item in dataSources"
+            v-for="item in filteredDataSources"
             :key="item.id.toString()"
-            class="app-table__row"
+            class="app-table__row data-sources__table-row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">ID</span>
-              <span>{{ item.id.toNumber() }}</span>
+              <span>{{ item.id.toString() }}</span>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Data Source</span>
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="item.name"
-                :to="`/data-sources/${item.id.toNumber()}`"
+                :to="`/data-sources/${item.id.toString()}`"
               />
             </div>
             <div class="app-table__cell">
@@ -77,12 +126,18 @@
 </template>
 
 <script lang="ts">
+import { defineComponent, onMounted, ref, watch } from 'vue'
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
+import {
+  sortingActivities,
+  sortingOwners,
+  ACTIVITIES_SORT,
+  OWNERS_SORT,
+} from '@/helpers/sortingHelpers'
 import TitledLink from '@/components/TitledLink.vue'
 import Pagination from '@/components/Pagination/Pagination.vue'
-import { defineComponent, onMounted, ref } from 'vue'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import DataSourceFormModal from '@/components/modals/DataSourceFormModal.vue'
@@ -99,17 +154,23 @@ export default defineComponent({
     const totalPages = ref(0)
     const dataSourcesCount = ref(0)
     const dataSources = ref()
+    const filteredDataSources = ref()
+
+    const sortingActivitiesValue = ref(ACTIVITIES_SORT.LATEST)
+    const sortingOwnersValue = ref(OWNERS_SORT.ALL)
 
     const loadDataSources = async () => {
       lockLoading()
       try {
-        const response = await callers.getDataSources(
-          ITEMS_PER_PAGE,
-          (currentPage.value - 1) * ITEMS_PER_PAGE
+        const res = await callers.getSortedDataSources(
+          sortingActivitiesValue.value,
+          sortingOwnersValue.value
         )
+        const _dataSources = await res.json()
 
-        dataSources.value = [...response.dataSources]
+        dataSources.value = _dataSources ? _dataSources : []
         await getDataSourcesCount()
+        filterDataSources(currentPage.value)
       } catch (error) {
         handleError(error as Error)
       }
@@ -122,6 +183,20 @@ export default defineComponent({
       totalPages.value = Math.ceil(dataSourcesCount.value / ITEMS_PER_PAGE)
     }
 
+    const filterDataSources = (newPage: number) => {
+      let tempArr = dataSources.value
+
+      if (newPage === 1) {
+        filteredDataSources.value = tempArr.slice(0, newPage * ITEMS_PER_PAGE)
+      } else {
+        filteredDataSources.value = tempArr.slice(
+          (newPage - 1) * ITEMS_PER_PAGE,
+          (newPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE
+        )
+      }
+      currentPage.value = newPage
+    }
+
     const createDataSource = async () => {
       await showDialogHandler(DataSourceFormModal, {
         onSubmit: async (d) => {
@@ -132,9 +207,13 @@ export default defineComponent({
     }
 
     const paginationHandler = (num: number) => {
-      currentPage.value = num
-      loadDataSources()
+      filterDataSources(num)
     }
+
+    watch([sortingActivitiesValue, sortingOwnersValue], async () => {
+      currentPage.value = 1
+      await loadDataSources()
+    })
 
     onMounted(async () => {
       await loadDataSources()
@@ -147,44 +226,83 @@ export default defineComponent({
       totalPages,
       dataSourcesCount,
       dataSources,
+      filteredDataSources,
       createDataSource,
       paginationHandler,
+      sortingActivitiesValue,
+      sortingOwnersValue,
+      sortingActivities,
+      sortingOwners,
     }
   },
 })
 </script>
 
-<style lang="scss" scoped>
-.view-main {
+<style lang="scss">
+.data-sources {
   &__count-info {
     margin-bottom: 3.2rem;
   }
-}
 
-.app-table__head,
-.app-table__row {
-  grid:
-    auto /
-    minmax(3rem, 0.5fr)
-    minmax(8rem, 2fr)
-    minmax(8rem, 8fr);
+  &__sort-wrapper {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__sort {
+    display: flex;
+    gap: 2.4rem;
+  }
+
+  &__sort-item-title {
+    font-size: 1.4rem;
+    font-weight: 300;
+    margin-right: 0.4rem;
+  }
+
+  &__table-head,
+  &__table-row {
+    grid:
+      auto /
+      minmax(3rem, 0.5fr)
+      minmax(8rem, 2fr)
+      minmax(8rem, 8fr);
+  }
 }
 
 @include respond-to(tablet) {
-  .view-main {
+  .data-sources {
     padding-bottom: 10rem;
+    &__title-btn {
+      display: none;
+    }
 
     &__count-info {
       margin-bottom: 0;
     }
 
-    &__title-btn {
-      display: none;
+    &__sort {
+      width: 100%;
+      flex-direction: column;
+      gap: 1.6rem;
     }
-  }
 
-  .app-table__row {
-    grid: none;
+    &__sort-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    &__sort-item-title {
+      margin: 0 0 0.4rem;
+    }
+
+    &__vue-picker {
+      width: 100%;
+    }
+
+    &__table-row {
+      grid: none;
+    }
   }
 }
 </style>

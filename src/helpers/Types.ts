@@ -1,6 +1,16 @@
 import { Modify } from '@/shared-types'
 import { ProposalDecoded } from '@/helpers/proposalDecoders'
 
+export interface IEventsItem {
+  type: string
+  attributes: []
+}
+
+export interface IAttributesItem {
+  key: string
+  value: string
+}
+
 export type adjustedData = {
   voter?: string
   type: string

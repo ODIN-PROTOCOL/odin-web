@@ -22,7 +22,13 @@
           >
             Receive
           </button>
-          <button class="app-btn app-btn_small" @click="send()">Send</button>
+          <button
+            class="app-btn app-btn_small"
+            @click="send()"
+            :disabled="isEmptyBalance"
+          >
+            Send
+          </button>
         </div>
       </div>
       <div class="info__card">
@@ -155,7 +161,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, ref } from 'vue'
+import { computed, defineComponent, onMounted, onUnmounted, ref } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
 import { COINS_LIST } from '@/api/api-config'
@@ -239,6 +245,9 @@ export default defineComponent({
       load: loadBalances,
     } = useBalances([COINS_LIST.LOKI])
     const lokiPoll = usePoll(loadBalances, 5000)
+    const isEmptyBalance = computed(() => {
+      return lokiCoins.value && !Number(lokiCoins.value.amount)
+    })
 
     const filterTransactions = (newPage: number) => {
       let tempArr = transactions.value
@@ -314,6 +323,7 @@ export default defineComponent({
       receive,
       exchange,
       send,
+      isEmptyBalance,
     }
   },
 })
