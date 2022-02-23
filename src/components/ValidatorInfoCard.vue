@@ -2,6 +2,12 @@
   <div class="card mg-b40">
     <div class="card__item">
       <div class="card__row">
+        <span class="card__title">Moniker</span>
+        <span class="card__txt">
+          {{ validator.description.moniker }}
+        </span>
+      </div>
+      <div class="card__row">
         <span class="card__title">Status</span>
         <span class="card__txt">
           {{ $tBondStatus(validator.status) }}
@@ -54,6 +60,7 @@
         </span>
       </div>
     </div>
+
     <div class="card__item">
       <ExtendedProgressbar
         :color="'#007BFF'"
