@@ -29,15 +29,15 @@
         <template v-if="requests?.length">
           <div
             v-for="item in requests"
-            :key="item.responsePacketData.requestId.toString()"
+            :key="item.response_packet_data.request_id.toString()"
             class="app-table__row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">Request ID</span>
               <TitledLink
                 class="app-table__cell-txt app-table__link"
-                :text="item.responsePacketData.requestId.toString()"
-                :to="`/requests/${item.responsePacketData.requestId}`"
+                :text="item.response_packet_data.request_id.toString()"
+                :to="`/requests/${item.response_packet_data.request_id}`"
               />
             </div>
             <div class="app-table__cell">
@@ -46,28 +46,31 @@
                 class="app-table__cell-txt app-table__link"
                 :href="senderLink(item)"
               >
-                {{ item.requestPacketData.clientId }}
+                {{ item.request_packet_data.client_id }}
               </a>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Oracle Script ID</span>
               <TitledLink
                 class="app-table__cell-txt app-table__link"
-                :text="item.requestPacketData.oracleScriptId.toString()"
-                :to="`/oracle-scripts/${item.requestPacketData.oracleScriptId}`"
+                :text="item.request_packet_data.oracle_script_id.toString()"
+                :to="`/oracle-scripts/${item.request_packet_data.oracle_script_id}`"
               />
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Report Status</span>
               <Progressbar
-                :min="Number(item.requestPacketData.minCount)"
-                :max="Number(item.requestPacketData.askCount)"
-                :current="Number(item.responsePacketData.ansCount)"
+                :min="Number(item.request_packet_data.min_count)"
+                :max="Number(item.request_packet_data.ask_count)"
+                :current="Number(item.response_packet_data.ans_count) || 0"
               />
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Timestamp</span>
-              <span>{{ $fDate(item.responsePacketData.requestTime) }}</span>
+              <div>{{}}</div>
+              <span>{{
+                $fDate(new Date(item.response_packet_data.request_time * 1000))
+              }}</span>
             </div>
           </div>
         </template>
@@ -102,7 +105,7 @@ import { API_CONFIG } from '@/api/api-config'
 import TitledLink from '@/components/TitledLink.vue'
 import Progressbar from '@/components/Progressbar.vue'
 import Pagination from '@/components/pagination/pagination.vue'
-import { RequestResult } from '@provider/codec/oracle/v1/oracle'
+// import { RequestResult } from '@provider/codec/oracle/v1/oracle'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import RequestFormModal from '@/components/modals/RequestFormModal.vue'
@@ -115,22 +118,31 @@ export default defineComponent({
     const requests = ref()
     const requestsCount = ref()
     const maxAskCount = ref()
-    const senderLink = computed(() => (item: RequestResult) => {
-      return `${API_CONFIG.odinScan}/account/${item.requestPacketData?.clientId}`
+    const senderLink = computed(() => (item: any) => {
+      return `${API_CONFIG.odinScan}/account/${item.request_packet_data?.client_id}`
     })
 
     const getRequests = async () => {
-      const res = await callers.getRequests(
-        ITEMS_PER_PAGE,
-        (currentPage.value - 1) * ITEMS_PER_PAGE
+      // TODO: make it work through callers.getRequests
+      await fetch(
+        `${API_CONFIG.rpc}api/oracle/requests?limit=${ITEMS_PER_PAGE}&offset=${
+          (currentPage.value - 1) * ITEMS_PER_PAGE
+        }`
       )
-      requests.value = res.requests
+        .then((requests) => requests.json())
+        .then((data) => {
+          requests.value = data.result.result.requests
+        })
       await getRequestsCount()
     }
 
     const getRequestsCount = async () => {
-      const res = await callers.getCounts()
-      requestsCount.value = res.requestCount.toNumber()
+      // TODO: make it work through callers.getCounts
+      await fetch(`${API_CONFIG.rpc}api/oracle/counts`)
+        .then((requests) => requests.json())
+        .then((data) => {
+          requestsCount.value = data.result.result.request_count
+        })
     }
 
     const getParams = async () => {
