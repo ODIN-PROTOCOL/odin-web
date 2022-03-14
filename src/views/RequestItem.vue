@@ -109,7 +109,7 @@ import Progressbar from '@/components/Progressbar.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
 import { Obi } from '@bandprotocol/bandchain.js'
 import { handleError } from '@/helpers/errors'
-import { uint8ArrayToStr } from '@/helpers/casts'
+// import { uint8ArrayToStr } from '@/helpers/casts'
 import isObjectLodash from 'lodash/isObject'
 
 export default defineComponent({
@@ -151,7 +151,8 @@ export default defineComponent({
         requestCalldata.value = await _decodeCallData(reqPacketData.calldata)
 
         if (isRequestSuccess.value) {
-          requestResult.value = uint8ArrayToStr(resPacketData.result)
+          const res = await _decodeResult(resPacketData.result)
+          requestResult.value = res[Object.keys(res)[0]].join(' ') || '[]'
         }
       }
     }
@@ -169,7 +170,19 @@ export default defineComponent({
         handleError(error as Error)
       }
     }
-
+    const _decodeResult = async (result: Uint8Array) => {
+      try {
+        const { oracleScript } = await callers.getOracleScript(
+          Number(requestData.value?.requestPacketData?.oracleScriptId)
+        )
+        if (oracleScript) {
+          const obi = new Obi(oracleScript.schema)
+          return obi.decodeOutput(Buffer.from(result))
+        }
+      } catch (error) {
+        handleError(error as Error)
+      }
+    }
     onMounted(async () => {
       try {
         await getRequest()
