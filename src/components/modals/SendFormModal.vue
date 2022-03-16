@@ -19,10 +19,10 @@
                 v-for="item in balance"
                 :key="item.denom"
               >
-                <span class="app-form__info-row-title">
-                  {{ item.denom.toUpperCase() }}
+                <span class="app-form__info-row-title"> ODIN </span>
+                <span class="app-form__info-row-value">
+                  {{ $convertLokiToOdin(item.amount, { withDenom: true }) }}
                 </span>
-                <span class="app-form__info-row-value">{{ $fCoin(item) }}</span>
               </div>
             </div>
           </div>
@@ -81,16 +81,26 @@
           </div>
           <div class="app-form__field mg-b32">
             <label class="app-form__field-lbl">Amount</label>
-            <input
-              class="app-form__field-input"
-              name="send-amount"
-              type="text"
-              placeholder="0"
-              v-model="form.amount"
-              :disabled="isLoading"
-            />
-            <p v-if="form.amountErr" class="app-form__field-err">
-              {{ form.amountErr }}
+            <div class="app-form__field-input-wrapper">
+              <span>{{ sendAsset.toUpperCase() }}</span>
+              <input
+                class="app-form__field-input"
+                name="send-amount"
+                type="text"
+                placeholder="1"
+                v-model="form.amount"
+                :disabled="isLoading || isEmptyBalance"
+              />
+            </div>
+            <p
+              v-if="form.amountErr || isEmptyBalance"
+              class="app-form__field-err"
+            >
+              {{
+                isEmptyBalance
+                  ? 'Not enough tokens! Please make deposit'
+                  : form.amountErr
+              }}
             </p>
           </div>
 
@@ -99,8 +109,7 @@
             <div class="app-form__info-content">
               <div class="app-form__info-row">
                 <span class="app-form__info-row-value">
-                  {{ fee }}
-                  {{ sendAsset.toUpperCase() }}
+                  {{ $convertLokiToOdin(fee, { withDenom: true }) }}
                 </span>
               </div>
             </div>
@@ -135,10 +144,11 @@ import { defineComponent, ref, PropType, computed } from 'vue'
 import { callers } from '@/api/callers'
 import { coins } from '@cosmjs/amino'
 import { wallet } from '@/api/wallet'
-import { COINS_LIST } from '@/api/api-config'
+import { API_CONFIG, COINS_LIST } from '@/api/api-config'
 import { useForm, validators } from '@/composables/useForm'
 import { dialogs } from '@/helpers/dialogs'
 import { preventIf } from '@/helpers/functions'
+import { convertLokiToOdin, convertOdinToLoki } from '@/helpers/converters'
 import { handleError } from '@/helpers/errors'
 import { notifySuccess } from '@/helpers/notifications'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -157,17 +167,19 @@ export default defineComponent({
     balance: { type: Array as PropType<Coin[]>, required: true },
   },
   setup: function (props) {
-    const fee = ref(0)
+    const fee = ref(API_CONFIG.fee)
     const isLoading = ref(false)
     const onSubmit = dialogs.getHandler('onSubmit')
     const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
-    const sendAsset = ref(COINS_LIST.LOKI)
+    const sendAsset = ref(COINS_LIST.ODIN)
     const selectedBalance = computed(() => {
-      console.log(props.balance)
       const balance = props.balance.find((item) => {
-        return item.denom === sendAsset.value
+        return item.denom === COINS_LIST.LOKI
       })
       return balance || coin(0, sendAsset.value)
+    })
+    const isEmptyBalance = computed(() => {
+      return !Number(selectedBalance.value.amount)
     })
 
     let form = useForm({
@@ -176,13 +188,22 @@ export default defineComponent({
         validators.required,
         validators.withOutSpaceAtStart,
         validators.maxCharacters(128),
+        validators.odinAddress,
+        validators.exceptValue(
+          wallet.account.address,
+          'It is not possible to send tokens to yourself'
+        ),
       ],
       amount: [
         '',
         validators.required,
-        validators.integer,
-        ...validators.num(1, Number(selectedBalance.value.amount)),
-        validators.maxCharacters(128),
+        validators.number,
+        validators.sixDecimalNumber,
+        ...validators.num(
+          0.000001,
+          Number(convertLokiToOdin(selectedBalance.value.amount))
+        ),
+        validators.maxCharacters(32),
       ],
     })
 
@@ -192,7 +213,7 @@ export default defineComponent({
         await callers.createSend({
           fromAddress: wallet.account.address,
           toAddress: form.receiver.val(),
-          amount: coins(Number(form.amount.val()), sendAsset.value),
+          amount: coins(convertOdinToLoki(form.amount.val()), COINS_LIST.LOKI),
         })
         onSubmit()
         notifySuccess('Successfully sent')
@@ -203,9 +224,11 @@ export default defineComponent({
     }
 
     return {
+      COINS_LIST,
       form: form.flatten(),
       sendAsset,
       fee,
+      isEmptyBalance,
       isLoading,
       submit,
       onClose,

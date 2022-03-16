@@ -61,9 +61,10 @@
 
     <template v-if="oracleScriptsCount > ITEMS_PER_PAGE">
       <Pagination
-        @changePageNumber="paginationHandler($event)"
-        :blocksPerPage="ITEMS_PER_PAGE"
-        :total-length="oracleScriptsCount"
+        class="mg-t32 mg-b32"
+        v-model="currentPage"
+        :pages="totalPages"
+        @update:modelValue="paginationHandler"
       />
     </template>
 
@@ -85,7 +86,7 @@ import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
 import TitledLink from '@/components/TitledLink.vue'
-import Pagination from '@/components/pagination/pagination.vue'
+import Pagination from '@/components/Pagination/Pagination.vue'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import OracleScriptFormModal from '@/components/modals/OracleScriptFormModal.vue'
@@ -96,6 +97,7 @@ export default defineComponent({
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 4
     const currentPage = ref(1)
+    const totalPages = ref(0)
     const oracleScriptsCount = ref(0)
     const oracleScripts = ref()
 
@@ -118,6 +120,7 @@ export default defineComponent({
     const getOracleScriptsCount = async () => {
       const res = await callers.getCounts()
       oracleScriptsCount.value = res.oracleScriptCount.toNumber()
+      totalPages.value = Math.ceil(oracleScriptsCount.value / ITEMS_PER_PAGE)
     }
 
     const createOracleScript = async () => {
@@ -140,6 +143,7 @@ export default defineComponent({
 
     return {
       ITEMS_PER_PAGE,
+      currentPage,
       isLoading,
       oracleScriptsCount,
       oracleScripts,

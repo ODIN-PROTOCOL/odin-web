@@ -4,6 +4,7 @@ import {
   makeRootRedirector,
   makeUnauthorizedOnlyGuard,
 } from './guards'
+import { LOGIN_TYPE } from '../api/api-config'
 
 const rootRedirector = makeRootRedirector(
   { name: 'Validators' },
@@ -18,6 +19,21 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/auth',
     name: 'Auth',
+    beforeEnter: unauthorizedOnlyGuard,
+    props: { loginType: LOGIN_TYPE.KEPLR118 },
+    component: () => import(/* webpackChunkName: "auth" */ '../views/Auth.vue'),
+  },
+  {
+    path: '/auth/keplr494',
+    name: 'AuthKeplr494',
+    props: { loginType: LOGIN_TYPE.KEPLR494 },
+    beforeEnter: unauthorizedOnlyGuard,
+    component: () => import(/* webpackChunkName: "auth" */ '../views/Auth.vue'),
+  },
+  {
+    path: '/auth/mnemonic494',
+    name: 'AuthMnemonic494',
+    props: { loginType: LOGIN_TYPE.MNEMONIC494 },
     beforeEnter: unauthorizedOnlyGuard,
     component: () => import(/* webpackChunkName: "auth" */ '../views/Auth.vue'),
   },

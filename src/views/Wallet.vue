@@ -9,9 +9,9 @@
         <span class="info__card-title">Balance</span>
         <div class="info__card-balance mg-b40">
           <div class="info__card-row">
-            <span class="info__card-row-title">LOKI</span>
+            <span class="info__card-row-title">ODIN</span>
             <span class="info__card-row-value">
-              {{ $fCoin(lokiCoins) }}
+              {{ $convertLokiToOdin(lokiCoins.amount, { withDenom: true }) }}
             </span>
           </div>
         </div>
@@ -22,7 +22,13 @@
           >
             Receive
           </button>
-          <button class="app-btn app-btn_small" @click="send()">Send</button>
+          <button
+            class="app-btn app-btn_small"
+            @click="send()"
+            :disabled="isEmptyBalance"
+          >
+            Send
+          </button>
         </div>
       </div>
       <div class="info__card">
@@ -145,20 +151,20 @@
 
     <template v-if="transactionsCount > ITEMS_PER_PAGE">
       <Pagination
-        @changePageNumber="paginationHandler($event)"
-        :blocksPerPage="ITEMS_PER_PAGE"
-        :total-length="transactionsCount"
+        class="mg-t32"
+        v-model="currentPage"
+        :pages="totalPages"
+        @update:modelValue="paginationHandler"
       />
     </template>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, ref } from 'vue'
+import { computed, defineComponent, onMounted, onUnmounted, ref } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
 import { COINS_LIST } from '@/api/api-config'
-import Pagination from '@/components/pagination/pagination.vue'
 import { wallet } from '@/api/wallet'
 import { prepareTransaction } from '@/helpers/helpers'
 import { usePoll } from '@/composables/usePoll'
@@ -166,6 +172,7 @@ import { useBalances } from '@/composables/useBalances'
 import { adjustedData } from '@/helpers/Types'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
+import Pagination from '@/components/Pagination/Pagination.vue'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import SendFormModal from '@/components/modals/SendFormModal.vue'
@@ -178,6 +185,7 @@ export default defineComponent({
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 5
     const currentPage = ref(1)
+    const totalPages = ref()
     const transactionsCount = ref(0)
     const transactions = ref()
     const filteredTransactions = ref()
@@ -202,6 +210,7 @@ export default defineComponent({
 
         transactions.value = filterNecessaryTxs(preparedTxs)
         transactionsCount.value = transactions.value.length
+        totalPages.value = Math.ceil(transactionsCount.value / ITEMS_PER_PAGE)
         filterTransactions(currentPage.value)
       } catch (error) {
         handleError(error as Error)
@@ -236,6 +245,9 @@ export default defineComponent({
       load: loadBalances,
     } = useBalances([COINS_LIST.LOKI])
     const lokiPoll = usePoll(loadBalances, 5000)
+    const isEmptyBalance = computed(() => {
+      return lokiCoins.value && !Number(lokiCoins.value.amount)
+    })
 
     const filterTransactions = (newPage: number) => {
       let tempArr = transactions.value
@@ -298,6 +310,8 @@ export default defineComponent({
     return {
       API_CONFIG,
       ITEMS_PER_PAGE,
+      totalPages,
+      currentPage,
       transactionsCount,
       transactions,
       filteredTransactions,
@@ -309,6 +323,7 @@ export default defineComponent({
       receive,
       exchange,
       send,
+      isEmptyBalance,
     }
   },
 })

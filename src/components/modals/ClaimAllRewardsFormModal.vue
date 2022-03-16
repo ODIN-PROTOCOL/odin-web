@@ -1,7 +1,7 @@
 <template>
-  <ModalBase class="withdraw-form-modal" @close="onClose()">
+  <ModalBase class="claim-all-rewards-form-modal" @close="onClose">
     <template #title>
-      <h3 class="app-form__title">Claim delegation rewards</h3>
+      <h3 class="app-form__title">Claim all delegation rewards</h3>
     </template>
 
     <template #main>
@@ -11,10 +11,10 @@
         @submit.prevent
       >
         <div class="app-form__main">
-          <template v-if="rewards?.length">
+          <template v-if="totalRewards.length">
             <div class="app-form__field">
               <label class="app-form__field-lbl">Your rewards:</label>
-              <p v-for="item in rewards" :key="item.denom">
+              <p v-for="item in totalRewards" :key="item.denom">
                 {{
                   $convertLokiToOdin(item.amount, {
                     withDenom: true,
@@ -37,8 +37,8 @@
           <button
             class="app-btn"
             type="button"
-            @click="submit()"
-            :disabled="!rewards?.length || isLoading"
+            @click="submit"
+            :disabled="!totalRewards.length || isLoading"
           >
             Claim
           </button>
@@ -49,33 +49,32 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, PropType, ref } from 'vue'
-import { wallet } from '@/api/wallet'
+import { defineComponent, onMounted, onUnmounted, ref } from 'vue'
 import { callers } from '@/api/callers'
+import { wallet } from '@/api/wallet'
 import { dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
+import { usePoll } from '@/composables/usePoll'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
-import { ValidatorDecoded } from '@/helpers/validatorDecoders'
-import ModalBase from './ModalBase.vue'
-import { usePoll } from '@/composables/usePoll'
+import { DelegationDelegatorReward } from '@cosmjs/stargate/build/codec/cosmos/distribution/v1beta1/distribution'
+import { DecCoin } from 'cosmjs-types/cosmos/base/v1beta1/coin'
+import ModalBase from '@/components/modals/ModalBase.vue'
 
 export default defineComponent({
-  props: {
-    validator: { type: Object as PropType<ValidatorDecoded>, required: true },
-  },
   components: { ModalBase },
-  setup(props) {
+  setup() {
     const isLoading = ref(false)
     const onSubmit = dialogs.getHandler('onSubmit')
-    const rewards = ref()
+    const totalRewards = ref<DecCoin[]>([])
+    const rewards = ref<DelegationDelegatorReward[]>([])
 
     const getRewards = async () => {
       try {
-        const response = await callers.getDelegationDelegatorReward(
-          wallet.account.address,
-          props.validator.operatorAddress
+        const response = await callers.getDelegationRewards(
+          wallet.account.address
         )
+        totalRewards.value = response.total
         rewards.value = response.rewards
       } catch (error) {
         handleError(error as Error)
@@ -87,10 +86,12 @@ export default defineComponent({
     const submit = async () => {
       isLoading.value = true
       try {
-        await callers.withdrawDelegatorRewards({
-          delegatorAddress: wallet.account.address,
-          validatorAddress: props.validator.operatorAddress,
-        })
+        await callers.withdrawMultiDelegatorRewards(
+          rewards.value.map((item) => ({
+            delegatorAddress: wallet.account.address,
+            validatorAddress: item.validatorAddress,
+          }))
+        )
         onSubmit()
         notifySuccess('Successfully claimed')
       } catch (error) {
@@ -109,6 +110,7 @@ export default defineComponent({
     })
 
     return {
+      totalRewards,
       rewards,
       isLoading,
       submit,
@@ -117,5 +119,3 @@ export default defineComponent({
   },
 })
 </script>
-
-<style lang="scss" scoped></style>

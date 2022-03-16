@@ -27,6 +27,7 @@ import { MsgWithdrawDelegatorReward } from '@cosmjs/stargate/build/codec/cosmos/
 
 const makeCallers = () => {
   const broadcaster = api.makeBroadcastCaller.bind(api)
+  const multiBroadcaster = api.makeMultiBroadcastCaller.bind(api)
   const querier = api.makeQueryCaller.bind(api)
   const tmQuerier = api.makeTendermintCaller.bind(api)
 
@@ -37,6 +38,11 @@ const makeCallers = () => {
       MsgCreateDataSource
     ),
     getDataSources: querier((qc) => qc.oracle.unverified.dataSources),
+    getSortedDataSources: (activities: string, owner: string) => {
+      return sendGet(
+        `${API_CONFIG.telemetryUrl}telemetry/data_sources?sort="${activities}"&owner="${owner}"`
+      )
+    },
     getDataSource: querier((qc) => qc.oracle.unverified.dataSource),
     createOracleScript: broadcaster<MsgCreateOracleScript>(
       '/oracle.v1.MsgCreateOracleScript',
@@ -154,6 +160,10 @@ const makeCallers = () => {
       '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward',
       MsgWithdrawDelegatorReward
     ),
+    withdrawMultiDelegatorRewards: multiBroadcaster<MsgWithdrawDelegatorReward>(
+      '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward',
+      MsgWithdrawDelegatorReward
+    ),
     getDelegationDelegatorReward: querier(
       (qc) => qc.distribution.delegationRewards
     ),
@@ -174,6 +184,11 @@ const makeCallers = () => {
     getTxSearch: cacheAnswers(tmQuerier((tc) => tc.txSearch.bind(tc))),
     getBlockchain: tmQuerier((tc) => tc.blockchain.bind(tc)),
     getBlock: cacheAnswers(tmQuerier((tc) => tc.block.bind(tc))),
+    getProposedBlocks: (proposer: string) => {
+      return sendGet(
+        `${API_CONFIG.telemetryUrl}telemetry/validator/${proposer}/transactions`
+      )
+    },
   }
 }
 

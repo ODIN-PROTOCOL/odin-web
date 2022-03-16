@@ -48,13 +48,20 @@
             </div>
           </div>
         </template>
+        <template v-else>
+          <div class="app-table__empty-stub">
+            <p v-if="isLoading">Loading…</p>
+            <p v-else>No items yet</p>
+          </div>
+        </template>
       </div>
 
       <template v-if="validatorsCount > ITEMS_PER_PAGE">
         <Pagination
-          @changePageNumber="paginationHandler($event)"
-          :blocksPerPage="ITEMS_PER_PAGE"
-          :total-length="validatorsCount"
+          class="mg-t32 mg-b32"
+          v-model="currentPage"
+          :pages="totalPages"
+          @update:modelValue="paginationHandler"
         />
       </template>
     </div>
@@ -72,34 +79,45 @@ import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import TitledLink from '@/components/TitledLink.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
-import Pagination from '@/components/pagination/pagination.vue'
+import Pagination from '@/components/Pagination/Pagination.vue'
+import { handleError } from '@/helpers/errors'
+import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 
 export default defineComponent({
   components: { TitledLink, CopyButton, StatusBlock, Pagination },
   setup() {
+    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 5
     const currentPage = ref(1)
+    const totalPages = ref(0)
     const validatorsCount = ref(0)
     const validators = ref<ValidatorDecoded[]>([])
     const filteredValidators = ref()
 
     const getOracleValidators = async () => {
-      const response = await callers.getValidators('BOND_STATUS_BONDED')
-      const oracleValidators = response.validators.filter(async (item) => {
-        if (await isOracleValidator(item.operatorAddress)) return true
-        return false
-      })
-
-      validatorsCount.value = oracleValidators.length
-      validators.value = await Promise.all(
-        oracleValidators.map(async (item) => {
-          return {
-            ...item,
-            isActive: await isActiveValidator(item.operatorAddress),
-          }
+      lockLoading()
+      try {
+        const response = await callers.getValidators('BOND_STATUS_BONDED')
+        const oracleValidators = response.validators.filter(async (item) => {
+          if (await isOracleValidator(item.operatorAddress)) return true
+          return false
         })
-      )
-      filterValidators(currentPage.value)
+
+        validatorsCount.value = oracleValidators.length
+        validators.value = await Promise.all(
+          oracleValidators.map(async (item) => {
+            return {
+              ...item,
+              isActive: await isActiveValidator(item.operatorAddress),
+            }
+          })
+        )
+        totalPages.value = Math.ceil(validatorsCount.value / ITEMS_PER_PAGE)
+        filterValidators(currentPage.value)
+      } catch (error) {
+        handleError(error as Error)
+      }
+      releaseLoading()
     }
 
     const filterValidators = (newPage: number) => {
@@ -126,6 +144,9 @@ export default defineComponent({
 
     return {
       ITEMS_PER_PAGE,
+      currentPage,
+      totalPages,
+      isLoading,
       validatorsCount,
       validators,
       filteredValidators,

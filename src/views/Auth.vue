@@ -1,109 +1,137 @@
 <template>
-  <div class="auth">
-    <div class="auth__splash">
-      <img
-        class="auth__splash-logo"
-        src="~@/assets/brand/odin-logo-white.png"
-        alt="ODIN Logo"
-      />
-    </div>
+  <AuthBase @submit="submit" class="auth">
+    <template v-if="loginType === LOGIN_TYPE.KEPLR118" #content>
+      <div class="app-form__field auth__field">
+        <button class="app-btn w-full" type="submit" :disabled="isLoading">
+          Connect with Keplr
+        </button>
+      </div>
+    </template>
 
-    <div class="auth__content fx-start">
-      <form class="auth__form" @submit.prevent="submit()">
-        <img
-          class="auth__form-logo"
-          src="~@/assets/brand/odin-logo-black.png"
-          alt="ODIN Logo"
-        />
-
-        <h2 class="auth__content-title fs-40 mg-b48">Sign in</h2>
-
-        <div class="app-form__field">
-          <label class="app-form__field-lbl"> Mnemonic </label>
-          <input
-            class="app-form__field-input"
-            name="request-min-count"
-            type="text"
-            v-model="form.mnemonic"
-            :disabled="isLoading"
-          />
-          <p class="auth__copy-warning" v-if="copyWarning">
-            <span class="auth__copy-important">Important! </span>
-            Copy this code, you cannot recover it!
-          </p>
-          <p v-if="form.mnemonicErr" class="app-form__field-err">
-            {{ form.mnemonicErr }}
-          </p>
-          <button
-            class="app-btn w-full mg-t32"
-            type="submit"
-            :disabled="!form.isValid || isLoading"
-            @click="changeLoginType(WalletTypes.ODIN_WALLET)"
+    <template v-else-if="loginType === LOGIN_TYPE.KEPLR494" #content>
+      <div class="app-form__field auth__field">
+        <label class="app-form__field-lbl auth__field-lbl auth__field-lbl_bold">
+          Coin type 494
+        </label>
+        <button class="app-btn w-full" type="submit" :disabled="isLoading">
+          Connect with Keplr
+        </button>
+        <div class="auth__field-additional">
+          <router-link
+            class="auth__field-additional-btn"
+            :to="{ name: 'Auth' }"
           >
-            Log in
-          </button>
-          <button
-            class="app-btn w-full mg-t32"
-            type="submit"
-            @click.prevent="generateKey"
-          >
-            Generate mnemonic key
-          </button>
-          <button
-            class="app-btn w-full mg-t64"
-            type="submit"
-            :disabled="isLoading"
-            @click="changeLoginType(WalletTypes.KEPLR_WALLET)"
-          >
-            Connect with Keplr
-          </button>
+            Use keplr login with coin type 118
+          </router-link>
         </div>
-      </form>
-    </div>
-  </div>
+      </div>
+    </template>
+
+    <template v-else-if="loginType === LOGIN_TYPE.MNEMONIC494" #content>
+      <div class="app-form__field auth__field">
+        <label class="app-form__field-lbl"> Mnemonic </label>
+        <input
+          class="app-form__field-input"
+          name="request-min-count"
+          type="text"
+          v-model="form.mnemonic"
+          :disabled="isLoading"
+        />
+        <p class="auth__copy-warning" v-if="copyWarning">
+          <span class="auth__copy-important">Important! </span>
+          Copy this code, you cannot recover it!
+        </p>
+        <p v-if="form.mnemonicErr" class="app-form__field-err">
+          {{ form.mnemonicErr }}
+        </p>
+        <button
+          class="app-btn w-full mg-t32"
+          type="submit"
+          :disabled="!form.isValid || isLoading"
+        >
+          Log in
+        </button>
+        <button
+          class="app-btn w-full mg-t32"
+          type="submit"
+          @click.prevent="generateKey"
+        >
+          Generate mnemonic key
+        </button>
+        <div class="auth__field-additional">
+          <router-link
+            class="auth__field-additional-btn"
+            :to="{ name: 'Auth' }"
+          >
+            Use keplr login
+          </router-link>
+        </div>
+      </div>
+    </template>
+
+    <template v-else #content>
+      <div class="app-form__field auth__field">
+        <span>Unrecognized login type</span>
+      </div>
+    </template>
+  </AuthBase>
 </template>
 
 <script lang="ts">
 import router from '@/router'
-import { API_CONFIG, CHAIN_CONFIG } from '@/api/api-config'
-import { defineComponent, ref } from 'vue'
+import {
+  API_CONFIG,
+  CHAIN_CONFIG,
+  COINS_TYPE,
+  LOGIN_TYPE,
+} from '@/api/api-config'
+import { defineComponent, PropType, ref } from 'vue'
 import { useAuthorization } from '@/composables/useAuthorization'
-import { WalletTypes } from '@/api/wallet'
-import { useForm, validators } from '@/composables/useForm'
-import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing'
-
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import InfoModal from '@/components/modals/InfoModal.vue'
+import AuthBase from '@/components/Auth/AuthBase.vue'
+import { handleError } from '@/helpers/errors'
+import { useForm, validators } from '@/composables/useForm'
+import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing'
 
 const MNEMONIC_SIZE = 24
 
 export default defineComponent({
-  setup() {
+  components: { AuthBase },
+  props: {
+    loginType: { type: Number as PropType<LOGIN_TYPE>, required: true },
+  },
+  setup(props) {
+    const isLoading = ref(false)
     const form = useForm({
       mnemonic: ['', validators.required],
     })
-    const isLoading = ref(false)
     const copyWarning = ref(false)
-    const loginType = ref()
+    const auth = useAuthorization()
 
     const submit = async () => {
-      const auth = useAuthorization()
       isLoading.value = true
       try {
-        if (loginType.value === WalletTypes.ODIN_WALLET) {
+        if (props.loginType === LOGIN_TYPE.KEPLR118) {
+          await auth.logInWithKeplrWallet(CHAIN_CONFIG.chainId, COINS_TYPE.MAIN)
+        } else if (props.loginType === LOGIN_TYPE.KEPLR494) {
+          await auth.logInWithKeplrWallet(
+            CHAIN_CONFIG.chainId,
+            COINS_TYPE.ADDITIONAL
+          )
+        } else if (props.loginType === LOGIN_TYPE.MNEMONIC494) {
           await auth.logInWithOdinWallet(form.mnemonic.val())
-        } else if (loginType.value === WalletTypes.KEPLR_WALLET) {
-          await auth.logInWithKeplrWallet(CHAIN_CONFIG.chainId)
         }
+
         await router.push({ name: 'Redirector' })
       } catch (error) {
-        showInfo('Ooops!', (error as Error).message)
+        if (props.loginType === LOGIN_TYPE.MNEMONIC494) {
+          handleError(error as Error)
+        } else {
+          showInfo('Ooops!', (error as Error).message)
+        }
       }
       isLoading.value = false
-    }
-
-    const changeLoginType = (type: WalletTypes) => {
-      loginType.value = type
     }
 
     const generateKey = async () => {
@@ -120,11 +148,10 @@ export default defineComponent({
     }
 
     return {
-      form: form.flatten(),
+      LOGIN_TYPE,
       isLoading,
-      WalletTypes,
       submit,
-      changeLoginType,
+      form: form.flatten(),
       generateKey,
       copyWarning,
     }
@@ -134,73 +161,28 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .auth {
-  display: grid;
-  grid: 100% / 1fr 0.85fr;
-  flex: 1;
-
-  @media (max-width: 768px) {
-    grid: 100% / 1fr;
-  }
-}
-
-.auth__splash {
-  background: url('~@/assets/images/auth_background.png') no-repeat center
-    #031e3a;
-  background-size: cover;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  @media (max-width: 768px) {
-    display: none;
-  }
-}
-
-.auth__splash-logo {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  width: 100%;
-  min-width: 22rem;
-  max-width: 25vw;
-  max-height: 25rem;
-}
-
-.auth {
-  &__content {
-    padding: 3.2rem;
-    position: relative;
+  &__field-lbl {
+    &_bold {
+      font-weight: 600;
+    }
   }
 
-  &__content-title {
-    font-weight: 400;
+  &__field-additional {
+    display: flex;
+    justify-content: center;
+    margin-top: 3.2rem;
   }
-}
 
-.auth__form {
-  width: 100%;
-  max-width: 30rem;
-  margin-inline-start: 8vw;
+  &__field-additional-btn {
+    text-decoration: none;
+    font-weight: 600;
+    color: var(--clr__action);
 
-  @media (max-width: 768px) {
-    margin: 0 auto;
+    &:hover {
+      color: var(--clr__text);
+    }
   }
-}
 
-.auth__form-logo {
-  display: none;
-  max-width: 12rem;
-  position: absolute;
-  top: 4rem;
-
-  @media (max-width: 768px) {
-    display: block;
-    margin: 0 auto;
-  }
-}
-
-.auth {
   &__copy-warning {
     padding: 3.2rem 0;
   }

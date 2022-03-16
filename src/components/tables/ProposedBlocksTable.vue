@@ -10,23 +10,26 @@
         <template v-if="blocks.length">
           <div
             v-for="item in filteredBlocks"
-            :key="toHex(item.blockId.hash)"
+            :key="toHex(item.id)"
             class="app-table__row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">Block</span>
-              <TitledLink
+              <a
                 class="app-table__cell-txt app-table__link"
-                :text="toHex(item.blockId.hash)"
-              />
+                :href="`${API_CONFIG.odinScan}/blocks/${item.block_height}`"
+              >
+                {{ toHex(item.block_height) }}
+              </a>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Date and time</span>
-              <span>{{ $fDate(item.header.time) }}</span>
+              <span>{{ $fDate(item.block_time) }}</span>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Transactions</span>
-              <span>{{ item.numTxs }}</span>
+              <!-- TODO get block tx count -->
+              <span>-</span>
             </div>
           </div>
         </template>
@@ -40,36 +43,47 @@
 
     <template v-if="blocksCount > ITEMS_PER_PAGE">
       <Pagination
-        @changePageNumber="paginationHandler($event)"
-        :blocksPerPage="ITEMS_PER_PAGE"
-        :total-length="blocksCount"
+        class="mg-t32 mg-b32"
+        v-model="currentPage"
+        :pages="totalPages"
+        @update:modelValue="paginationHandler"
       />
     </template>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, toRef, ref } from 'vue'
+import { defineComponent, onMounted, ref } from 'vue'
 import { toHex } from '@cosmjs/encoding'
-// import { Bech32 } from '@cosmjs/encoding'
-import TitledLink from '@/components/TitledLink.vue'
-import Pagination from '@/components/pagination/pagination.vue'
+import { API_CONFIG } from '@/api/api-config'
+import Pagination from '@/components/Pagination/Pagination.vue'
+import { callers } from '@/api/callers'
 
 export default defineComponent({
-  components: { TitledLink, Pagination },
+  components: { Pagination },
   props: {
-    blocks: { type: Array, required: true },
+    proposerAddress: { type: String, required: true },
   },
   setup: function (props) {
     const ITEMS_PER_PAGE = 5
     const currentPage = ref(1)
+    const totalPages = ref(0)
+    const blocks = ref([])
     const blocksCount = ref()
     const filteredBlocks = ref()
 
-    const _blocks = toRef(props, 'blocks')
+    const getProposedBlocks = async () => {
+      const response = await callers.getProposedBlocks(props.proposerAddress)
+      const _blocks = await response.json()
+
+      blocks.value = _blocks ? _blocks : []
+      blocksCount.value = blocks.value.length
+      totalPages.value = Math.ceil(blocksCount.value / ITEMS_PER_PAGE)
+      filterBlocks(currentPage.value)
+    }
 
     const filterBlocks = (newPage: number) => {
-      let tempArr = _blocks.value
+      let tempArr = blocks.value
 
       if (newPage === 1) {
         filteredBlocks.value = tempArr.slice(0, newPage * ITEMS_PER_PAGE)
@@ -86,13 +100,16 @@ export default defineComponent({
       filterBlocks(num)
     }
 
-    onMounted(() => {
-      filterBlocks(currentPage.value)
-      blocksCount.value = _blocks.value.length
+    onMounted(async () => {
+      await getProposedBlocks()
     })
 
     return {
+      API_CONFIG,
       ITEMS_PER_PAGE,
+      currentPage,
+      totalPages,
+      blocks,
       blocksCount,
       filteredBlocks,
       paginationHandler,

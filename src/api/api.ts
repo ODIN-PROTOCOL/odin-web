@@ -1,4 +1,4 @@
-import { API_CONFIG } from './api-config'
+import { API_CONFIG, COINS_LIST } from './api-config'
 import { Tendermint34Client } from '@cosmjs/tendermint-rpc'
 import { OdinWallet } from './wallet'
 import {
@@ -82,6 +82,20 @@ class Api {
     }
   }
 
+  makeMultiBroadcastCaller<T>(
+    typeUrl: string,
+    type: GeneratedType
+  ): (msgs: T[]) => Promise<BroadcastTxResponse> {
+    this._stargateRegistry.register(typeUrl, type)
+    return (msgs: T[]): Promise<BroadcastTxResponse> => {
+      return this._signAndBroadcast(
+        msgs.map((item) => {
+          return { typeUrl, value: item }
+        })
+      )
+    }
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   makeQueryCaller<T extends (...args: any) => any>(
     make: (qc: OdinQueryClient) => T
@@ -120,7 +134,7 @@ class Api {
     const res = await this._stargate.signAndBroadcast(
       this._wallet.account.address,
       messages,
-      { amount: coins(0, 'loki'), gas: '2000000' }
+      { amount: coins(Number(API_CONFIG.fee), COINS_LIST.LOKI), gas: '2000000' }
     )
     if (!res || ('code' in res && res.code !== 0)) {
       throw new OdinApiBroadcastError(res as BroadcastTxFailure)

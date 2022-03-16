@@ -26,6 +26,7 @@ import {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
+import { convertLokiToOdin } from './helpers/converters'
 
 async function _main() {
   try {
@@ -65,6 +66,7 @@ async function _main() {
   app.config.globalProperties.$getPrecisePercents = getPrecisePercents
   app.config.globalProperties.$preciseFormatCoin = preciseFormatCoin
   app.config.globalProperties.$getPercentOutOfNumber = getPercentOutOfNumber
+  app.config.globalProperties.$convertLokiToOdin = convertLokiToOdin
   app.use(router)
   app.use(Notifications)
   app.component('VuePicker', VuePicker)

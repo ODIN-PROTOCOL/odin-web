@@ -29,6 +29,14 @@ export const number: FormFieldValidator = (val: unknown) => {
   return null
 }
 
+const SIX_DECIMAL_RE = /^(?=.*\d)\d*(?:\.\d{1,6})?$/
+export const sixDecimalNumber: FormFieldValidator = (val: unknown) => {
+  if (typeof val === 'string' && !SIX_DECIMAL_RE.test(val)) {
+    return 'The number must have a maximum of six decimal places'
+  }
+  return null
+}
+
 const INTEGER_RE = /^[0-9]+$/
 export const integer: FormFieldValidator = (val: unknown) => {
   console.log(val, typeof val)
@@ -158,4 +166,38 @@ export function valueMapper(
 
     return null
   }
+}
+
+export function exceptValue(
+  exValue: string | number,
+  additionalMessage = ''
+): FormFieldValidator {
+  return (val: unknown): FormFieldValidatorResult => {
+    return exValue === val ? `Invalid value! ${additionalMessage}` : null
+  }
+}
+
+export function upTo10Mb(): FormFieldValidator {
+  return (val: unknown): FormFieldValidatorResult => {
+    return (val as File).size > 10000000
+      ? 'The file is too large. Size must be less than 10MB'
+      : null
+  }
+}
+
+export function acceptFileFormat(format: string): FormFieldValidator {
+  return (val: unknown): FormFieldValidatorResult => {
+    if (!(val as File).name) return null
+    return (val as File).name.endsWith(format)
+      ? null
+      : `Please upload file with type ${format}`
+  }
+}
+
+const ADDRESS_RE = /^odin1/
+export const odinAddress: FormFieldValidator = (val: unknown) => {
+  if (typeof val === 'string' && !ADDRESS_RE.test(val)) {
+    return 'Invalid address'
+  }
+  return null
 }

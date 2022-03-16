@@ -42,9 +42,10 @@
 
     <template v-if="reportsCount > ITEMS_PER_PAGE">
       <Pagination
-        @changePageNumber="paginationHandler($event)"
-        :blocksPerPage="ITEMS_PER_PAGE"
-        :total-length="reportsCount"
+        class="mg-t32 mg-b32"
+        v-model="currentPage"
+        :pages="totalPages"
+        @update:modelValue="paginationHandler"
       />
     </template>
   </div>
@@ -53,7 +54,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref, toRef } from 'vue'
 import TitledLink from '@/components/TitledLink.vue'
-import Pagination from '@/components/pagination/pagination.vue'
+import Pagination from '@/components/Pagination/Pagination.vue'
 
 export default defineComponent({
   components: { TitledLink, Pagination },
@@ -63,6 +64,7 @@ export default defineComponent({
   setup: function (props) {
     const ITEMS_PER_PAGE = 5
     const currentPage = ref(1)
+    const totalPages = ref(0)
     const reportsCount = ref()
     const filteredReports = ref()
 
@@ -89,10 +91,13 @@ export default defineComponent({
     onMounted(() => {
       filterReports(currentPage.value)
       reportsCount.value = _reports.value.length
+      totalPages.value = Math.ceil(reportsCount.value / ITEMS_PER_PAGE)
     })
 
     return {
       ITEMS_PER_PAGE,
+      currentPage,
+      totalPages,
       reportsCount,
       filteredReports,
       paginationHandler,

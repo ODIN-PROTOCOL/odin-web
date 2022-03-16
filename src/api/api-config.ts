@@ -9,16 +9,24 @@ export const API_CONFIG = {
   hdDeviation: stringToPath(process.env.VUE_APP_DEVIATION as string),
   odinScan: process.env.VUE_APP_ODIN_SCAN_URL as string,
   telemetryUrl: process.env.VUE_APP_TELEMETRY_URL as string,
+  fee: process.env.VUE_APP_FEE as string,
+}
+
+// Types of coins used in wallet configurations
+export enum COINS_TYPE {
+  MAIN = 118,
+  ADDITIONAL = 494,
 }
 
 // Configuration of the chain to which the Kepler extension connects
 export const CHAIN_CONFIG = {
+  features: ['no-legacy-stdTx'],
   chainId: 'odin-mainnet-freya',
   chainName: 'ODIN118',
   rpc: API_CONFIG.rpc,
   rest: API_CONFIG.api,
   bip44: {
-    coinType: 118,
+    coinType: COINS_TYPE.MAIN,
   },
   bech32Config: {
     bech32PrefixAccAddr: 'odin',
@@ -56,16 +64,24 @@ export const CHAIN_CONFIG = {
     coinDecimals: 6,
     coinGeckoId: 'odin',
   },
-  coinType: 118,
+  coinType: COINS_TYPE.MAIN,
   gasPriceStep: {
-    low: 0.01,
+    low: 0.0125,
     average: 0.025,
     high: 0.03,
   },
 }
 
+// List of coins that are used in the system
 export enum COINS_LIST {
   LOKI = 'loki',
   ODIN = 'odin',
   GEO = 'geo',
+}
+
+// Types of logins in the system
+export enum LOGIN_TYPE {
+  KEPLR118,
+  KEPLR494,
+  MNEMONIC494,
 }

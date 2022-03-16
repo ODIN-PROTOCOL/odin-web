@@ -84,9 +84,10 @@
 
     <template v-if="requestsCount > ITEMS_PER_PAGE">
       <Pagination
-        @changePageNumber="paginationHandler($event)"
-        :blocksPerPage="ITEMS_PER_PAGE"
-        :total-length="requestsCount"
+        class="mg-t32 mg-b32"
+        v-model="currentPage"
+        :pages="totalPages"
+        @update:modelValue="paginationHandler"
       />
     </template>
 
@@ -115,6 +116,7 @@ export default defineComponent({
   setup() {
     const ITEMS_PER_PAGE = 5
     const currentPage = ref(1)
+    const totalPages = ref(0)
     const requests = ref()
     const requestsCount = ref()
     const maxAskCount = ref()
@@ -143,6 +145,9 @@ export default defineComponent({
         .then((data) => {
           requestsCount.value = data.result.result.request_count
         })
+      // const res = await callers.getCounts()
+      // requestsCount.value = res.requestCount.toNumber()
+      // totalPages.value = Math.ceil(requestsCount.value / ITEMS_PER_PAGE)
     }
 
     const getParams = async () => {
@@ -176,6 +181,8 @@ export default defineComponent({
     return {
       API_CONFIG,
       ITEMS_PER_PAGE,
+      currentPage,
+      totalPages,
       requests,
       requestsCount,
       createRequest,
