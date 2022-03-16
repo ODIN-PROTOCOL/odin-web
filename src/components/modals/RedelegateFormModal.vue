@@ -65,7 +65,7 @@ import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
 import { usePoll } from '@/composables/usePoll'
-import { bigMath } from '@/helpers/bigMath'
+import { big } from '@/helpers/bigMath'
 import { coin } from '@cosmjs/amino'
 import { parseLogsToGetRewardsAmount } from '@/helpers/helpers'
 import ModalBase from '@/components/modals/ModalBase.vue'
@@ -112,7 +112,7 @@ export default defineComponent({
           return {
             ...item,
             amount: Number(
-              bigMath.subtract(bigMath.fromPrecise(item.amount), fee.value)
+              big.subtract(big.fromPrecise(item.amount), fee.value)
             ).toFixed(),
           }
         }

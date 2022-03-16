@@ -151,7 +151,7 @@ export default defineComponent({
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 4
     const currentPage = ref(1)
-    const totalPages = ref(0)
+    const totalPages = ref()
     const dataSourcesCount = ref(0)
     const dataSources = ref()
     const filteredDataSources = ref()

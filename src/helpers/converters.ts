@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js'
-import { bigMath } from './bigMath'
+import { big } from './bigMath'
 
 type ConverterOptions = {
   withDenom?: boolean
@@ -22,13 +22,13 @@ export function convertLokiToOdin(
 
   let res = null
   if (options && options.withPrecise) {
-    res = bigMath.fromPrecise(bigMath.multiply(amount, ODIN_MULTIPLIER))
+    res = big.fromPrecise(big.multiply(amount, ODIN_MULTIPLIER))
   } else {
-    res = bigMath.multiply(amount, ODIN_MULTIPLIER)
+    res = big.multiply(amount, ODIN_MULTIPLIER)
   }
 
   if (options && options.withDenom) {
-    return bigMath.format(res, FORMAT_OPTIONS) + ' ' + ODIN_DENOM
+    return big.format(res, FORMAT_OPTIONS) + ' ' + ODIN_DENOM
   } else {
     return res
   }
@@ -38,5 +38,5 @@ export function convertOdinToLoki(amount: string): number {
   const num = Number(amount)
   if (isNaN(num)) throw ReferenceError('Invalid number')
 
-  return bigMath.multiply(num, LOKI_MULTIPLIER).toNumber()
+  return big.multiply(num, LOKI_MULTIPLIER).toNumber()
 }

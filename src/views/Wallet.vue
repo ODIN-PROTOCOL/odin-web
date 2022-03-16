@@ -205,6 +205,7 @@ export default defineComponent({
           per_page: 100,
           page: totalCount > 100 ? Math.floor(totalCount / 100) : 1,
         })
+        console.log(txs)
 
         const preparedTxs = await prepareTransaction(txs)
 

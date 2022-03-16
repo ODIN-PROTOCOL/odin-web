@@ -1,4 +1,4 @@
-import { bigMath } from '@/helpers/bigMath'
+import { big } from '@/helpers/bigMath'
 import { callers } from '@/api/callers'
 import { ValidatorDecoded } from './validatorDecoders'
 
@@ -21,8 +21,8 @@ const _sortValidatorsByDelegated = (
 ): ValidatorDecoded[] => {
   return validators.sort((a, b) => {
     return (
-      Number(bigMath.fromPrecise(b.delegatorShares)) -
-      Number(bigMath.fromPrecise(a.delegatorShares))
+      Number(big.fromPrecise(b.delegatorShares)) -
+      Number(big.fromPrecise(a.delegatorShares))
     )
   })
 }

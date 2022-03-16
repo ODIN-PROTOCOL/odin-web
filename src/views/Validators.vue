@@ -111,10 +111,7 @@
             <div class="app-table__cell">
               <div class="app-table__activities validators__table-activities">
                 <div
-                  class="
-                    app-table__activities-item
-                    validators__table-activities-item
-                  "
+                  class="app-table__activities-item validators__table-activities-item"
                 >
                   <button
                     v-if="delegations[item.operatorAddress]"
@@ -134,10 +131,7 @@
                 </div>
                 <div
                   v-if="delegations[item.operatorAddress]"
-                  class="
-                    app-table__activities-item
-                    validators__table-activities-item
-                  "
+                  class="app-table__activities-item validators__table-activities-item"
                 >
                   <button
                     class="app-btn app-btn_outlined app-btn_small w-min150"
@@ -222,7 +216,7 @@ export default defineComponent({
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 25
     const currentPage = ref(1)
-    const totalPages = ref(0)
+    const totalPages = ref()
     const validatorsStatus = ref('Active')
     const filteredValidatorsCount = ref(0)
     const validatorsCount = ref(0)
