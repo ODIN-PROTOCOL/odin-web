@@ -39,7 +39,6 @@ const makeCallers = () => {
     ),
     getDataSources: querier((qc) => qc.oracle.unverified.dataSources),
     getSortedDataSources: (activities: string, owner?: string) => {
-      console.log(owner)
       if (owner) {
         return sendGet(
           `${API_CONFIG.telemetryUrl}telemetry/data_sources?sort=${activities}&owner=${owner}`
