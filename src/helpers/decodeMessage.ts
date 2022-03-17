@@ -18,6 +18,7 @@ import {
   MsgCreateOracleScript,
   MsgReportData,
   MsgRequestData,
+  MsgEditOracleScript,
 } from '@provider/codec/oracle/v1/tx'
 import {
   MsgWithdrawDelegatorReward,
@@ -96,6 +97,9 @@ export function humanizeMessageType(type: string): string {
     case '/oracle.v1.MsgReportData':
       return 'Report Data'
 
+    case '/oracle.v1.MsgEditOracleScript':
+      return 'Edit OracleScript'
+
     case '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward':
       return 'Withdraw delegator reward'
 
@@ -144,6 +148,7 @@ function decodeMessage(obj: {
   | MsgCreateDataSource
   | MsgRequestData
   | MsgReportData
+  | MsgEditOracleScript
   | MsgCreateClient
   | MsgConnectionOpenInit
   | MsgUpdateClient
@@ -196,6 +201,9 @@ function decodeMessage(obj: {
 
     case '/oracle.v1.MsgReportData':
       return MsgReportData.decode(obj.value)
+
+    case '/oracle.v1.MsgEditOracleScript':
+      return MsgEditOracleScript.decode(obj.value)
 
     case '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward':
       return MsgWithdrawDelegatorReward.decode(obj.value)

@@ -163,8 +163,7 @@ export default defineComponent({
       lockLoading()
       try {
         const res = await callers.getSortedDataSources(
-          sortingActivitiesValue.value,
-          sortingOwnersValue.value
+          sortingActivitiesValue.value
         )
         const _dataSources = await res.json()
 

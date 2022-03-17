@@ -38,10 +38,17 @@ const makeCallers = () => {
       MsgCreateDataSource
     ),
     getDataSources: querier((qc) => qc.oracle.unverified.dataSources),
-    getSortedDataSources: (activities: string, owner: string) => {
-      return sendGet(
-        `${API_CONFIG.telemetryUrl}telemetry/data_sources?sort="${activities}`
-      )
+    getSortedDataSources: (activities: string, owner?: string) => {
+      console.log(owner)
+      if (owner) {
+        return sendGet(
+          `${API_CONFIG.telemetryUrl}telemetry/data_sources?sort=${activities}&owner=${owner}`
+        )
+      } else {
+        return sendGet(
+          `${API_CONFIG.telemetryUrl}telemetry/data_sources?sort=${activities}`
+        )
+      }
     },
     getDataSource: querier((qc) => qc.oracle.unverified.dataSource),
     createOracleScript: broadcaster<MsgCreateOracleScript>(
