@@ -97,7 +97,7 @@ export default defineComponent({
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 4
     const currentPage = ref(1)
-    const totalPages = ref(0)
+    const totalPages = ref()
     const oracleScriptsCount = ref(0)
     const oracleScripts = ref()
 
@@ -149,6 +149,7 @@ export default defineComponent({
       oracleScripts,
       createOracleScript,
       paginationHandler,
+      totalPages,
     }
   },
 })

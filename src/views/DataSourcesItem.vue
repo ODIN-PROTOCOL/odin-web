@@ -14,11 +14,7 @@
           <div class="info-card__row">
             <span class="info-card__row-title">Owner</span>
             <a
-              class="
-                info-card__row-value
-                info-card__row-value_txt
-                info-card__row-link
-              "
+              class="info-card__row-value info-card__row-value_txt info-card__row-link"
               :href="`${API_CONFIG.odinScan}/account/${dataSourceData.owner}`"
               :title="dataSourceData.owner"
             >

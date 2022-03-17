@@ -105,7 +105,7 @@ import { callers } from '@/api/callers'
 import { API_CONFIG } from '@/api/api-config'
 import TitledLink from '@/components/TitledLink.vue'
 import Progressbar from '@/components/Progressbar.vue'
-import Pagination from '@/components/pagination/pagination.vue'
+import Pagination from '@/components/Pagination/Pagination.vue'
 // import { RequestResult } from '@provider/codec/oracle/v1/oracle'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
@@ -147,7 +147,7 @@ export default defineComponent({
         })
       // const res = await callers.getCounts()
       // requestsCount.value = res.requestCount.toNumber()
-      // totalPages.value = Math.ceil(requestsCount.value / ITEMS_PER_PAGE)
+      totalPages.value = Math.ceil(requestsCount.value / ITEMS_PER_PAGE)
     }
 
     const getParams = async () => {

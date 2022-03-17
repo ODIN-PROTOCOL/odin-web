@@ -80,7 +80,7 @@
         <h3 class="view-main__subtitle mg-b24">Result</h3>
         <div class="info-table">
           <div class="info-table__row">
-            <span class="info-table__row-title">Data</span>
+            <span class="info-table__row-title">{{ requestResultName }}</span>
             <span class="info-table__row-txt">
               {{ requestResult }}
             </span>
@@ -125,7 +125,7 @@ export default defineComponent({
     const resolveTimeRange = ref()
     const requestCalldata = ref()
     const requestResult = ref()
-
+    const requestResultName = ref()
     const senderLink = computed(() => {
       return `${API_CONFIG.odinScan}/account/${requestData.value?.requestPacketData?.clientId}`
     })
@@ -152,6 +152,7 @@ export default defineComponent({
 
         if (isRequestSuccess.value) {
           const res = await _decodeResult(resPacketData.result)
+          requestResultName.value = Object.keys(res).toString() || 'Data'
           requestResult.value = res[Object.keys(res)[0]].join(' ') || '[]'
         }
       }
@@ -206,6 +207,7 @@ export default defineComponent({
       senderLink,
       isObject,
       isRequestSuccess,
+      requestResultName,
     }
   },
 })

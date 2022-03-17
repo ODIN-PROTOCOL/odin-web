@@ -10,21 +10,27 @@
         <template v-if="blocks.length">
           <div
             v-for="item in filteredBlocks"
-            :key="toHex(item.id)"
+            :key="item.attributes.block_height"
             class="app-table__row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">Block</span>
               <a
                 class="app-table__cell-txt app-table__link"
-                :href="`${API_CONFIG.odinScan}/blocks/${item.block_height}`"
+                :href="`${API_CONFIG.odinScan}/blocks/${item.attributes.block_height}`"
               >
-                {{ toHex(item.block_height) }}
+                {{ item.attributes.block_height }}
               </a>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Date and time</span>
-              <span>{{ $fDate(item.block_time) }}</span>
+              <!-- {{ item.attributes.block_time }} -->
+              <span>{{
+                $fDate(
+                  new Date(item.attributes.block_time * 1000),
+                  'HH:mm dd.MM.yy'
+                )
+              }}</span>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Transactions</span>
@@ -76,7 +82,8 @@ export default defineComponent({
       const response = await callers.getProposedBlocks(props.proposerAddress)
       const _blocks = await response.json()
 
-      blocks.value = _blocks ? _blocks : []
+      blocks.value = _blocks.data ? _blocks.data : []
+
       blocksCount.value = blocks.value.length
       totalPages.value = Math.ceil(blocksCount.value / ITEMS_PER_PAGE)
       filterBlocks(currentPage.value)

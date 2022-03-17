@@ -18,10 +18,7 @@
         <CopyButton class="mg-l8" :text="String(validator?.operatorAddress)" />
       </div>
       <div
-        class="
-          validators-item__activities validators-item__activities_top
-          fx-sae
-        "
+        class="validators-item__activities validators-item__activities_top fx-sae"
       >
         <div
           class="validators-item__activities-item"
