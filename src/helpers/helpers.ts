@@ -7,8 +7,8 @@ import { convertLokiToOdin } from './converters'
 export const _allowedTypes = [
   'Send',
   'Receive',
-  'Report',
-  'Request',
+  'Report Data',
+  'Request Data',
   'Delegate',
   'Undelegate',
   'Redelegate',
@@ -43,7 +43,7 @@ export const prepareTransaction = async (
       }
     })
   )
-  return transformedTxs.filter((item) => _allowedTypes.includes(item.type))
+  return transformedTxs
 }
 
 const LOKI_STRING_LENGTH = 4

@@ -75,7 +75,7 @@ import { computed, defineComponent, PropType, ref } from 'vue'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
 import { COINS_LIST } from '@/api/api-config'
-import { dialogs } from '@/helpers/dialogs'
+import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { convertLokiToOdin, convertOdinToLoki } from '@/helpers/converters'
@@ -84,12 +84,12 @@ import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { useBalances } from '@/composables/useBalances'
-import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
+import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { coin, Coin } from '@cosmjs/amino'
 
 const defaultBalanceBlank: Coin = { amount: '0', denom: COINS_LIST.LOKI }
 
-export default defineComponent({
+const DelegateFormDialog = defineComponent({
   props: {
     validator: { type: Object as PropType<ValidatorDecoded>, required: true },
     delegation: { type: Object as PropType<DelegationResponse> },
@@ -145,6 +145,16 @@ export default defineComponent({
     }
   },
 })
+export default DelegateFormDialog
+export function showDelegateFormDialog(
+  callbacks: {
+    onSubmit?: DialogHandler
+    onClose?: DialogHandler
+  },
+  props: { validator: ValidatorDecoded; delegation?: DelegationResponse }
+): Promise<unknown | null> {
+  return dialogs.show(DelegateFormDialog, callbacks, { props })
+}
 </script>
 
 <style scoped lang="scss"></style>

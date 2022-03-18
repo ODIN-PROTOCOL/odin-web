@@ -81,7 +81,7 @@ import { defineComponent, PropType, ref } from 'vue'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
 import { COINS_LIST } from '@/api/api-config'
-import { dialogs } from '@/helpers/dialogs'
+import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { convertLokiToOdin, convertOdinToLoki } from '@/helpers/converters'
@@ -92,9 +92,9 @@ import CopyText from '@/components/CopyText.vue'
 import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { coin } from '@cosmjs/amino'
 import { useBalances } from '@/composables/useBalances'
-import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
+import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 
-export default defineComponent({
+const UndelegateFormDialog = defineComponent({
   props: {
     validator: { type: Object as PropType<ValidatorDecoded>, required: true },
     delegation: {
@@ -148,6 +148,16 @@ export default defineComponent({
     }
   },
 })
+export default UndelegateFormDialog
+export function showUndelegateFormDialog(
+  callbacks: {
+    onSubmit?: DialogHandler
+    onClose?: DialogHandler
+  },
+  props: { validator: ValidatorDecoded; delegation: DelegationResponse }
+): Promise<unknown | null> {
+  return dialogs.show(UndelegateFormDialog, callbacks, { props })
+}
 </script>
 
 <style scoped lang="scss"></style>

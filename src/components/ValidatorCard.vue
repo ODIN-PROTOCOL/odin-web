@@ -94,11 +94,11 @@
 
 <script lang="ts">
 import { ValidatorDecoded } from '@/helpers/validatorDecoders'
-import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
+import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { defineComponent, PropType } from 'vue'
 import CopyText from './CopyText.vue'
 import TitledLink from '@/components/TitledLink.vue'
-import { showWithdrawRewardsFormDialog } from './modals/WithdrawRewardsFormModal.vue'
+import { showWithdrawFormDialog } from './modals/WithdrawRewardsFormModal.vue'
 import { showDelegateFormDialog } from './modals/DelegateFormModal.vue'
 import { showUndelegateFormDialog } from './modals/UndelegateFormModal.vue'
 
@@ -111,14 +111,11 @@ export default defineComponent({
   },
   setup(props, ctx) {
     const withdraw = () => {
-      showWithdrawRewardsFormDialog(
-        {
-          onSubmit: (d) => {
-            d.kill()
-          },
+      showWithdrawFormDialog({
+        onSubmit: (d) => {
+          d.kill()
         },
-        { validator: props.validator }
-      )
+      })
     }
 
     const delegate = () => {
@@ -181,9 +178,6 @@ export default defineComponent({
   &__link {
     text-decoration: none;
     color: var(--clr__action);
-  }
-
-  &__activities {
   }
 }
 </style>

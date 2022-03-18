@@ -42,8 +42,10 @@
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Validator since</span>
-              <span
-                >{{ $fDate(item.commission.updateTime, 'HH:mm dd.MM.yy') }}
+              <span>
+                {{
+                  $fDate(item.commission.updateTime.seconds, 'HH:mm dd.MM.yy')
+                }}
               </span>
             </div>
           </div>

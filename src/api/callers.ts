@@ -1,5 +1,5 @@
 import { MsgWithdrawCoinsToAccFromTreasury } from '@provider/codec/mint/tx'
-import { MsgSend } from '@cosmjs/stargate/build/codec/cosmos/bank/v1beta1/tx'
+import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx'
 import {
   MsgCreateDataSource,
   MsgCreateOracleScript,
@@ -21,9 +21,9 @@ import {
   MsgCreateValidator,
   MsgDelegate,
   MsgUndelegate,
-} from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/tx'
+} from 'cosmjs-types/cosmos/staking/v1beta1/tx'
 import { Proposal } from '@provider/codec/cosmos/gov/v1beta1/gov'
-import { MsgWithdrawDelegatorReward } from '@cosmjs/stargate/build/codec/cosmos/distribution/v1beta1/tx'
+import { MsgWithdrawDelegatorReward } from 'cosmjs-types/cosmos/distribution/v1beta1/tx'
 
 const makeCallers = () => {
   const broadcaster = api.makeBroadcastCaller.bind(api)

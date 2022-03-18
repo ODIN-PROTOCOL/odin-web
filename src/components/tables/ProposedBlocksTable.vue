@@ -82,13 +82,19 @@ export default defineComponent({
       const response = await callers.getProposedBlocks(props.proposerAddress)
       const _blocks = await response.json()
 
-      blocks.value = _blocks.data ? _blocks.data : []
+      blocks.value = _blocks.data
+        ? _blocks.data.sort(
+            (
+              a: { attributes: { block_height: number } },
+              b: { attributes: { block_height: number } }
+            ) => b.attributes.block_height - a.attributes.block_height
+          )
+        : []
 
       blocksCount.value = blocks.value.length
       totalPages.value = Math.ceil(blocksCount.value / ITEMS_PER_PAGE)
       filterBlocks(currentPage.value)
     }
-
     const filterBlocks = (newPage: number) => {
       let tempArr = blocks.value
 

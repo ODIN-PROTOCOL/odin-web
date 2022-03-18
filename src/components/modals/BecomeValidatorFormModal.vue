@@ -77,9 +77,7 @@
             </div>
 
             <div class="app-form__field mg-l16">
-              <label class="app-form__field-lbl">
-                Max change (%)
-              </label>
+              <label class="app-form__field-lbl"> Max change (%) </label>
               <input
                 class="app-form__field-input"
                 name="become-validator-rate"
@@ -163,7 +161,7 @@ import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import { Bech32, fromBase64 } from '@cosmjs/encoding'
 import { big } from '@/helpers/bigMath'
-import { PubKey } from '@cosmjs/stargate/build/codec/cosmos/crypto/secp256k1/keys'
+import { PubKey } from 'cosmjs-types/cosmos/crypto/secp256k1/keys'
 import { coin } from '@cosmjs/amino'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore

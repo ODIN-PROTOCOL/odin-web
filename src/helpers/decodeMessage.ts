@@ -9,8 +9,8 @@ import {
   MsgDelegate,
   MsgEditValidator,
   MsgUndelegate,
-} from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/tx'
-import { MsgSend } from '@cosmjs/stargate/build/codec/cosmos/bank/v1beta1/tx'
+} from 'cosmjs-types/cosmos/staking/v1beta1/tx'
+import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx'
 import {
   MsgActivate,
   MsgAddReporter,
@@ -23,9 +23,10 @@ import {
 import {
   MsgWithdrawDelegatorReward,
   MsgWithdrawValidatorCommission,
-} from '@cosmjs/stargate/build/codec/cosmos/distribution/v1beta1/tx'
+} from 'cosmjs-types/cosmos/distribution/v1beta1/tx'
+
 import { callers } from '@/api/callers'
-import { Tx } from '@cosmjs/stargate/build/codec/cosmos/tx/v1beta1/tx'
+import { Tx } from 'cosmjs-types/cosmos/tx/v1beta1/tx'
 import { ReadonlyDateWithNanoseconds } from '@cosmjs/tendermint-rpc/build/dates'
 import { TxResponse } from '@cosmjs/tendermint-rpc/build/tendermint34/responses'
 import { adjustedData } from '@/helpers/Types'
@@ -199,12 +200,11 @@ function decodeMessage(obj: {
     case '/oracle.v1.MsgRequestData':
       return MsgRequestData.decode(obj.value)
 
-    case '/oracle.v1.MsgReportData':
-      return MsgReportData.decode(obj.value)
-
     case '/oracle.v1.MsgEditOracleScript':
       return MsgEditOracleScript.decode(obj.value)
 
+    case '/oracle.v1.MsgReportData':
+      return MsgReportData.decode(obj.value)
     case '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward':
       return MsgWithdrawDelegatorReward.decode(obj.value)
 
