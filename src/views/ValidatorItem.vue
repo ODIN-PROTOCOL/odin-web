@@ -164,7 +164,6 @@ export default defineComponent({
     const getValidator = async () => {
       const response = await callers.getValidator(String(route.params.address))
       validator.value = { ...response.validator }
-      console.log(response.validator)
     }
 
     const getDelegators = async () => {
