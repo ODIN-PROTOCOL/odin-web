@@ -151,7 +151,7 @@
 
     <template v-if="transactionsCount > ITEMS_PER_PAGE">
       <Pagination
-        class="mg-t32"
+        class="mg-t32 mg-b32"
         v-model="currentPage"
         :pages="totalPages"
         @update:modelValue="paginationHandler"
@@ -183,7 +183,7 @@ export default defineComponent({
   components: { Pagination },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 5
+    const ITEMS_PER_PAGE = 25
     const currentPage = ref(1)
     const totalPages = ref()
     const transactionsCount = ref(0)
@@ -194,18 +194,12 @@ export default defineComponent({
     const getTransactions = async () => {
       lockLoading()
       try {
-        // There is no way to get the latest transactions yet
-        const { totalCount } = await callers.getTxSearch({
-          query: 'tx.height >= 0',
-          per_page: 1,
-        })
-
         const { txs } = await callers.getTxSearch({
           query: 'tx.height >= 0',
           per_page: 100,
-          page: totalCount > 100 ? Math.floor(totalCount / 100) : 1,
+          page: currentPage.value,
+          order_by: 'desc',
         })
-
         const preparedTxs = await prepareTransaction(txs)
 
         transactions.value = filterNecessaryTxs(preparedTxs)
@@ -226,7 +220,7 @@ export default defineComponent({
             item.receiver === wallet.account.address) &&
           (item.type === 'Send' ||
             item.type === 'Delegate' ||
-            item.type === 'Withdraw')
+            item.type === 'Withdraw delegator reward')
         )
       })
     }

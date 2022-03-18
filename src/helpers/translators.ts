@@ -5,7 +5,7 @@ import {
   VoteOption,
 } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { ResolveStatus } from '@provider/codec/oracle/v1/oracle'
-import { BondStatus } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
+import { BondStatus } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { formatDate } from './formatters'
 import { ProposalDecoded } from './proposalDecoders'
 

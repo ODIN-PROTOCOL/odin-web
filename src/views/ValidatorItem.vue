@@ -127,7 +127,7 @@ import { defineComponent, onMounted, ref } from 'vue'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
-import { DelegationResponse } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
+import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import BackButton from '@/components/BackButton.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import Tabs from '@/components/tabs/Tabs.vue'
@@ -164,6 +164,7 @@ export default defineComponent({
     const getValidator = async () => {
       const response = await callers.getValidator(String(route.params.address))
       validator.value = { ...response.validator }
+      console.log(response.validator)
     }
 
     const getDelegators = async () => {

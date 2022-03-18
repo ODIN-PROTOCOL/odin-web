@@ -57,7 +57,7 @@ import { handleError } from '@/helpers/errors'
 import { usePoll } from '@/composables/usePoll'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
-import { DelegationDelegatorReward } from '@cosmjs/stargate/build/codec/cosmos/distribution/v1beta1/distribution'
+import { DelegationDelegatorReward } from 'cosmjs-types/cosmos/distribution/v1beta1/distribution'
 import { DecCoin } from 'cosmjs-types/cosmos/base/v1beta1/coin'
 import ModalBase from '@/components/modals/ModalBase.vue'
 

@@ -52,7 +52,7 @@
 import { defineComponent, onMounted, onUnmounted, PropType, ref } from 'vue'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
-import { dialogs } from '@/helpers/dialogs'
+import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { notifySuccess } from '@/helpers/notifications'
@@ -60,7 +60,7 @@ import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import ModalBase from './ModalBase.vue'
 import { usePoll } from '@/composables/usePoll'
 
-export default defineComponent({
+const WithdrawFormDialog = defineComponent({
   props: {
     validator: { type: Object as PropType<ValidatorDecoded>, required: true },
   },
@@ -116,6 +116,13 @@ export default defineComponent({
     }
   },
 })
+export default WithdrawFormDialog
+export function showWithdrawFormDialog(callbacks: {
+  onSubmit?: DialogHandler
+  onClose?: DialogHandler
+}): Promise<unknown | null> {
+  return dialogs.show(WithdrawFormDialog, callbacks)
+}
 </script>
 
 <style lang="scss" scoped></style>

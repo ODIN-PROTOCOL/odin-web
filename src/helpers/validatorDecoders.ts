@@ -1,7 +1,7 @@
 import { Any } from '@provider/codec/google/protobuf/any'
 import { Modify } from '@/shared-types'
-import { PubKey } from '@cosmjs/stargate/build/codec/cosmos/crypto/secp256k1/keys'
-import { Validator } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/staking'
+import { PubKey } from 'cosmjs-types/cosmos/crypto/secp256k1/keys'
+import { Validator } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { toBase64 } from '@cosmjs/encoding'
 
 export type ValidatorDecoded = Modify<Validator, { consensusPubkey?: string }>
