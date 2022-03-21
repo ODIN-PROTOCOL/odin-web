@@ -104,9 +104,7 @@
             </div>
             <div class="app-table__cell validators__table-cell_center">
               <span class="app-table__title">Oracle Status</span>
-              <StatusIcon
-                :status="item.isOracleValidator ? 'success' : 'error'"
-              />
+              <StatusIcon :status="item?.isActive ? 'success' : 'error'" />
             </div>
             <div class="app-table__cell">
               <div class="app-table__activities validators__table-activities">
@@ -209,7 +207,7 @@ import UndelegateFormModal from '@/components/modals/UndelegateFormModal.vue'
 import BecomeValidatorFormModal from '@/components/modals/BecomeValidatorFormModal.vue'
 import ClaimAllRewardsFormModal from '@/components/modals/ClaimAllRewardsFormModal.vue'
 import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
-
+import { isActiveValidator } from '@/helpers/validatorHelpers'
 export default defineComponent({
   components: { Tabs, Tab, TitledLink, StatusIcon, Pagination },
   setup() {
@@ -241,10 +239,27 @@ export default defineComponent({
           ...bonded.validators,
           ...unbonding.validators,
         ])
+
+        activeValidators = await Promise.all(
+          activeValidators.map(async (item) => {
+            return {
+              ...item,
+              isActive: await isActiveValidator(item.operatorAddress),
+            }
+          })
+        )
         inactiveValidators = await getTransformedValidators([
           ...unbonded.validators,
         ])
 
+        inactiveValidators = await Promise.all(
+          inactiveValidators.map(async (item) => {
+            return {
+              ...item,
+              isActive: await isActiveValidator(item.operatorAddress),
+            }
+          })
+        )
         if (validatorsStatus.value === 'Active') {
           validators.value = [...activeValidators]
         } else if (validatorsStatus.value === 'Inactive') {
