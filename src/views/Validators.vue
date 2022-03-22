@@ -235,31 +235,32 @@ export default defineComponent({
         const unbonding = await callers.getValidators('BOND_STATUS_UNBONDING')
         const unbonded = await callers.getValidators('BOND_STATUS_UNBONDED')
 
-        activeValidators = await getTransformedValidators([
-          ...bonded.validators,
-          ...unbonding.validators,
-        ])
-
         activeValidators = await Promise.all(
-          activeValidators.map(async (item) => {
-            return {
-              ...item,
-              isActive: await isActiveValidator(item.operatorAddress),
-            }
-          })
+          await getTransformedValidators([
+            ...bonded.validators,
+            ...unbonding.validators,
+          ]).then((validators) =>
+            validators.map(async (item) => {
+              return {
+                ...item,
+                isActive: await isActiveValidator(item.operatorAddress),
+              }
+            })
+          )
         )
-        inactiveValidators = await getTransformedValidators([
-          ...unbonded.validators,
-        ])
 
         inactiveValidators = await Promise.all(
-          inactiveValidators.map(async (item) => {
-            return {
-              ...item,
-              isActive: await isActiveValidator(item.operatorAddress),
-            }
-          })
+          await getTransformedValidators([...unbonded.validators]).then(
+            (validators) =>
+              validators.map(async (item) => {
+                return {
+                  ...item,
+                  isActive: await isActiveValidator(item.operatorAddress),
+                }
+              })
+          )
         )
+
         if (validatorsStatus.value === 'Active') {
           validators.value = [...activeValidators]
         } else if (validatorsStatus.value === 'Inactive') {
