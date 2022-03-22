@@ -104,9 +104,7 @@
             </div>
             <div class="app-table__cell validators__table-cell_center">
               <span class="app-table__title">Oracle Status</span>
-              <StatusIcon
-                :status="item.isOracleValidator ? 'success' : 'error'"
-              />
+              <StatusIcon :status="item?.isActive ? 'success' : 'error'" />
             </div>
             <div class="app-table__cell">
               <div class="app-table__activities validators__table-activities">
@@ -209,7 +207,7 @@ import UndelegateFormModal from '@/components/modals/UndelegateFormModal.vue'
 import BecomeValidatorFormModal from '@/components/modals/BecomeValidatorFormModal.vue'
 import ClaimAllRewardsFormModal from '@/components/modals/ClaimAllRewardsFormModal.vue'
 import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
-
+import { isActiveValidator } from '@/helpers/validatorHelpers'
 export default defineComponent({
   components: { Tabs, Tab, TitledLink, StatusIcon, Pagination },
   setup() {
@@ -237,13 +235,31 @@ export default defineComponent({
         const unbonding = await callers.getValidators('BOND_STATUS_UNBONDING')
         const unbonded = await callers.getValidators('BOND_STATUS_UNBONDED')
 
-        activeValidators = await getTransformedValidators([
-          ...bonded.validators,
-          ...unbonding.validators,
-        ])
-        inactiveValidators = await getTransformedValidators([
-          ...unbonded.validators,
-        ])
+        activeValidators = await Promise.all(
+          await getTransformedValidators([
+            ...bonded.validators,
+            ...unbonding.validators,
+          ]).then((validators) =>
+            validators.map(async (item) => {
+              return {
+                ...item,
+                isActive: await isActiveValidator(item.operatorAddress),
+              }
+            })
+          )
+        )
+
+        inactiveValidators = await Promise.all(
+          await getTransformedValidators([...unbonded.validators]).then(
+            (validators) =>
+              validators.map(async (item) => {
+                return {
+                  ...item,
+                  isActive: await isActiveValidator(item.operatorAddress),
+                }
+              })
+          )
+        )
 
         if (validatorsStatus.value === 'Active') {
           validators.value = [...activeValidators]
