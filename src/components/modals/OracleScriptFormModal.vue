@@ -115,7 +115,6 @@
 import { defineComponent, ref, computed } from 'vue'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
-import { sendGet } from '@/api/callersHelpers'
 
 import { dialogs } from '@/helpers/dialogs'
 import { readFile } from '@/helpers/files'
@@ -126,7 +125,6 @@ import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import InputFileField from '@/components/fields/InputFileField.vue'
 import TextareaField from '@/components/fields/TextareaField.vue'
-import { API_CONFIG } from '@/api/api-config'
 
 export default defineComponent({
   props: {
@@ -134,26 +132,6 @@ export default defineComponent({
   },
   components: { ModalBase, InputFileField, TextareaField },
   setup(props) {
-    // console.log(props.oracleScript)
-    const b = sendGet(
-      `${API_CONFIG.rpc}api/oracle/data/${props.oracleScript?.filename}`
-    )
-    console.log(b)
-
-    const getRequests = async () => {
-      let a
-      const res = await fetch(
-        `${API_CONFIG.rpc}api/oracle/data/${props.oracleScript?.filename}`
-      )
-      a = res.json()
-      // .then((requests) => requests.json())
-      // .then((data) => {
-      //   a = data.result.result.requests
-      // })
-      console.log(res)
-      console.log(a)
-    }
-    getRequests()
     const form = useForm({
       name: [
         props.oracleScript?.name || '',
