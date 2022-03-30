@@ -129,7 +129,7 @@ export default defineComponent({
       await fetch(
         `${API_CONFIG.rpc}api/oracle/requests?limit=${ITEMS_PER_PAGE}&offset=${
           (currentPage.value - 1) * ITEMS_PER_PAGE
-        }`
+        }&reverse=true`
       )
         .then((requests) => requests.json())
         .then((data) => {

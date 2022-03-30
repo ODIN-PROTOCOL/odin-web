@@ -9,7 +9,7 @@
       <div class="app-table__body">
         <template v-if="blocks.length">
           <div
-            v-for="item in filteredBlocks"
+            v-for="item in blocks"
             :key="item.attributes.block_height"
             class="app-table__row"
           >
@@ -24,7 +24,6 @@
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Date and time</span>
-              <!-- {{ item.attributes.block_time }} -->
               <span>{{
                 $fDate(
                   new Date(item.attributes.block_time * 1000),
@@ -34,8 +33,7 @@
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Transactions</span>
-              <!-- TODO get block tx count -->
-              <span>-</span>
+              <span>{{ item.attributes.tx_number }}</span>
             </div>
           </div>
         </template>
@@ -52,7 +50,7 @@
         class="mg-t32 mg-b32"
         v-model="currentPage"
         :pages="totalPages"
-        @update:modelValue="paginationHandler"
+        @update:modelValue="getProposedBlocks"
       />
     </template>
   </div>
@@ -76,41 +74,17 @@ export default defineComponent({
     const totalPages = ref(0)
     const blocks = ref([])
     const blocksCount = ref()
-    const filteredBlocks = ref()
 
     const getProposedBlocks = async () => {
-      const response = await callers.getProposedBlocks(props.proposerAddress)
+      const response = await callers.getProposedBlocks(
+        props.proposerAddress,
+        currentPage.value,
+        ITEMS_PER_PAGE
+      )
       const _blocks = await response.json()
-
-      blocks.value = _blocks.data
-        ? _blocks.data.sort(
-            (
-              a: { attributes: { block_height: number } },
-              b: { attributes: { block_height: number } }
-            ) => b.attributes.block_height - a.attributes.block_height
-          )
-        : []
-
-      blocksCount.value = blocks.value.length
-      totalPages.value = Math.ceil(blocksCount.value / ITEMS_PER_PAGE)
-      filterBlocks(currentPage.value)
-    }
-    const filterBlocks = (newPage: number) => {
-      let tempArr = blocks.value
-
-      if (newPage === 1) {
-        filteredBlocks.value = tempArr.slice(0, newPage * ITEMS_PER_PAGE)
-      } else {
-        filteredBlocks.value = tempArr.slice(
-          (newPage - 1) * ITEMS_PER_PAGE,
-          (newPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE
-        )
-      }
-      currentPage.value = newPage
-    }
-
-    const paginationHandler = (num: number) => {
-      filterBlocks(num)
+      blocks.value = _blocks.data ? _blocks.data : []
+      blocksCount.value = _blocks?.total_count
+      totalPages.value = Math.ceil(blocksCount.value / ITEMS_PER_PAGE) - 1
     }
 
     onMounted(async () => {
@@ -124,9 +98,8 @@ export default defineComponent({
       totalPages,
       blocks,
       blocksCount,
-      filteredBlocks,
-      paginationHandler,
       toHex,
+      getProposedBlocks,
     }
   },
 })
