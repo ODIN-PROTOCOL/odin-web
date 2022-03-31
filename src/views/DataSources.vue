@@ -94,8 +94,24 @@
             <div class="app-table__cell">
               <span class="app-table__title">Description</span>
               <span>
-                {{ item.description }}
+                {{ item.description || '-' }}
               </span>
+            </div>
+            <div class="app-table__cell">
+              <div class="app-table__activities data-sources__table-activities">
+                <div
+                  class="app-table__activities-item data-sources__table-activities-item"
+                >
+                  <button
+                    v-if="accountAddress === item.owner"
+                    class="app-btn app-btn_small w-min150"
+                    type="button"
+                    @click="editDataSource(item)"
+                  >
+                    Edit
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </template>
@@ -141,6 +157,7 @@ import Pagination from '@/components/Pagination/Pagination.vue'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import DataSourceFormModal from '@/components/modals/DataSourceFormModal.vue'
+import { wallet } from '@/api/wallet'
 
 export default defineComponent({
   components: {
@@ -158,6 +175,8 @@ export default defineComponent({
 
     const sortingActivitiesValue = ref(ACTIVITIES_SORT.LATEST)
     const sortingOwnersValue = ref(OWNERS_SORT.ALL)
+
+    const accountAddress = wallet.account.address
 
     const loadDataSources = async () => {
       lockLoading()
@@ -204,7 +223,18 @@ export default defineComponent({
         },
       })
     }
-
+    const editDataSource = async (dataSource: unknown) => {
+      await showDialogHandler(
+        DataSourceFormModal,
+        {
+          onSubmit: async (d) => {
+            d.kill()
+            await loadDataSources()
+          },
+        },
+        { dataSource }
+      )
+    }
     const paginationHandler = (num: number) => {
       filterDataSources(num)
     }
@@ -232,6 +262,8 @@ export default defineComponent({
       sortingOwnersValue,
       sortingActivities,
       sortingOwners,
+      accountAddress,
+      editDataSource,
     }
   },
 })
@@ -264,13 +296,52 @@ export default defineComponent({
     grid:
       auto /
       minmax(3rem, 0.5fr)
-      minmax(8rem, 2fr)
-      minmax(8rem, 8fr);
+      minmax(8rem, 6fr)
+      minmax(8rem, 6fr)
+      minmax(8rem, 2fr);
+  }
+  &__table-activities {
+    width: 100%;
+
+    & > *:not(:last-child) {
+      margin-bottom: 2.4rem;
+    }
+  }
+
+  &__table-activities-item {
+    display: flex;
+    justify-content: flex-end;
+    gap: 2.4rem;
+  }
+  &__table-cell {
+    &_center {
+      justify-content: center;
+    }
+    &_end {
+      justify-content: flex-end;
+    }
   }
 }
 
 @include respond-to(tablet) {
   .data-sources {
+    &__table-activities {
+      width: 100%;
+    }
+
+    &__table-activities-item {
+      & > * {
+        flex: 1;
+      }
+    }
+    &__table-cell {
+      &_center {
+        justify-content: flex-start;
+      }
+      &_end {
+        justify-content: flex-start;
+      }
+    }
     padding-bottom: 10rem;
     &__title-btn {
       display: none;

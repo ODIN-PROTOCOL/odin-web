@@ -34,7 +34,7 @@
             <TextareaField
               v-model="form.description"
               name="oracle-script-description"
-              :rows="5"
+              :rows="4"
               :disabled="isLoading"
               placeholder="Oracle Script description"
             />
@@ -54,6 +54,19 @@
             />
             <p v-if="form.schemaErr" class="app-form__field-err">
               {{ form.schemaErr }}
+            </p>
+          </div>
+
+          <div class="app-form__field">
+            <label class="app-form__field-lbl"> URL for Oracle Script </label>
+            <TextareaField
+              v-model="form.url"
+              name="oracle-script-url"
+              :disabled="isLoading"
+              placeholder="Oracle Script URL"
+            />
+            <p v-if="form.urlErr" class="app-form__field-err">
+              {{ form.urlErr }}
             </p>
           </div>
 
@@ -90,7 +103,7 @@
             @click="submit()"
             :disabled="!form.isValid || isLoading"
           >
-            Create
+            {{ bntText }}
           </button>
         </div>
       </form>
@@ -99,9 +112,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, computed } from 'vue'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
+
 import { dialogs } from '@/helpers/dialogs'
 import { readFile } from '@/helpers/files'
 import { handleError } from '@/helpers/errors'
@@ -113,17 +127,28 @@ import InputFileField from '@/components/fields/InputFileField.vue'
 import TextareaField from '@/components/fields/TextareaField.vue'
 
 export default defineComponent({
+  props: {
+    oracleScript: { type: Object },
+  },
   components: { ModalBase, InputFileField, TextareaField },
-  setup() {
+  setup(props) {
     const form = useForm({
       name: [
-        '',
+        props.oracleScript?.name || '',
         validators.required,
         validators.withOutSpaceAtStart,
         validators.maxCharacters(128),
       ],
-      description: ['', validators.maxCharacters(256)],
-      schema: ['', validators.required],
+      description: [
+        props.oracleScript?.description || '',
+        validators.maxCharacters(256),
+      ],
+      schema: [props.oracleScript?.schema || '', validators.required],
+      url: [
+        props.oracleScript?.sourceCodeUrl || '',
+        validators.required,
+        validators.validateUrl,
+      ],
       codeFile: [
         null as File | null,
         validators.required,
@@ -131,6 +156,11 @@ export default defineComponent({
         validators.acceptFileFormat('.wasm'),
       ],
     })
+
+    const bntText = computed(() => {
+      return props.oracleScript ? 'Edit' : 'Create'
+    })
+
     const isLoading = ref(false)
     const onSubmit = dialogs.getHandler('onSubmit')
 
@@ -141,15 +171,28 @@ export default defineComponent({
 
       isLoading.value = true
       try {
-        await callers.createOracleScript({
-          name: form.name.val(),
-          description: form.description.val(),
-          code: codeFileParsed,
-          owner: wallet.account.address,
-          sender: wallet.account.address,
-          schema: form.schema.val(),
-          sourceCodeUrl: '',
-        })
+        if (props.oracleScript) {
+          await callers.editOracleScript({
+            oracleScriptId: props.oracleScript?.id,
+            name: form.name.val(),
+            description: form.description.val(),
+            code: codeFileParsed,
+            owner: wallet.account.address,
+            sender: wallet.account.address,
+            schema: form.schema.val(),
+            sourceCodeUrl: form.url.val(),
+          })
+        } else {
+          await callers.createOracleScript({
+            name: form.name.val(),
+            description: form.description.val(),
+            code: codeFileParsed,
+            owner: wallet.account.address,
+            sender: wallet.account.address,
+            schema: form.schema.val(),
+            sourceCodeUrl: form.url.val(),
+          })
+        }
 
         onSubmit()
         notifySuccess('Oracle Script created')
@@ -178,6 +221,7 @@ export default defineComponent({
       isLoading,
       submit,
       onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
+      bntText,
     }
   },
 })

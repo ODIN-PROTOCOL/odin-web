@@ -4,6 +4,8 @@ import {
   MsgCreateDataSource,
   MsgCreateOracleScript,
   MsgRequestData,
+  MsgEditOracleScript,
+  MsgEditDataSource,
 } from '@provider/codec/oracle/v1/tx'
 import { MsgSubmitProposal } from '@provider/codec/cosmos/gov/v1beta1/tx'
 import { MsgExchange } from '@provider/codec/coinswap/tx'
@@ -37,8 +39,12 @@ const makeCallers = () => {
       '/oracle.v1.MsgCreateDataSource',
       MsgCreateDataSource
     ),
+    editDataSource: broadcaster<MsgEditDataSource>(
+      '/oracle.v1.MsgEditDataSource',
+      MsgEditDataSource
+    ),
     getDataSources: querier((qc) => qc.oracle.unverified.dataSources),
-    getSortedDataSources: (activities: string, owner?: string) => {
+    getSortedDataSources: (activities: string, owner?: string | null) => {
       if (owner) {
         return sendGet(
           `${API_CONFIG.telemetryUrl}telemetry/data_sources?sort=${activities}&owner=${owner}`
@@ -53,6 +59,10 @@ const makeCallers = () => {
     createOracleScript: broadcaster<MsgCreateOracleScript>(
       '/oracle.v1.MsgCreateOracleScript',
       MsgCreateOracleScript
+    ),
+    editOracleScript: broadcaster<MsgEditOracleScript>(
+      '/oracle.v1.MsgEditOracleScript',
+      MsgEditOracleScript
     ),
     getOracleScripts: querier((qc) => qc.oracle.unverified.oracleScripts),
     getOracleScript: querier((qc) => qc.oracle.unverified.oracleScript),
@@ -190,9 +200,13 @@ const makeCallers = () => {
     getTxSearch: cacheAnswers(tmQuerier((tc) => tc.txSearch.bind(tc))),
     getBlockchain: tmQuerier((tc) => tc.blockchain.bind(tc)),
     getBlock: cacheAnswers(tmQuerier((tc) => tc.block.bind(tc))),
-    getProposedBlocks: (proposer: string) => {
+    getProposedBlocks: (
+      proposer: string,
+      page_number: number,
+      page_limit: number
+    ) => {
       return sendGet(
-        `${API_CONFIG.telemetryUrl}telemetry/validator/${proposer}/transactions`
+        `${API_CONFIG.telemetryUrl}telemetry/validator/${proposer}/transactions?page[number]=${page_number}&page[limit]=${page_limit}&page[order]=desc`
       )
     },
   }

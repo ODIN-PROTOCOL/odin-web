@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 import { big } from '@/helpers/bigMath'
 import { NumLike } from '@/helpers/casts'
 
@@ -122,6 +123,15 @@ export function oneOf(subset: unknown[]): FormFieldValidator {
 export const erc20Address: FormFieldValidator = (val: unknown) => {
   if (val && typeof val === 'string' && val.length < 8) {
     return 'Invalid address'
+  }
+  return null
+}
+const CHECK_URL =
+  /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/
+
+export const validateUrl: FormFieldValidator = (val: unknown) => {
+  if (typeof val === 'string' && !CHECK_URL.test(val)) {
+    return 'Invalid URL'
   }
   return null
 }

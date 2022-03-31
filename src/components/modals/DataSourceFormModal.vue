@@ -91,7 +91,7 @@
             @click="submit()"
             :disabled="!form.isValid || isLoading"
           >
-            Create
+            {{ bntText }}
           </button>
         </div>
       </form>
@@ -100,7 +100,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, computed } from 'vue'
 import { coins } from '@cosmjs/launchpad'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
@@ -117,19 +117,25 @@ import InputFileField from '@/components/fields/InputFileField.vue'
 import TextareaField from '@/components/fields/TextareaField.vue'
 
 export default defineComponent({
-  props: { dataSourceId: String },
+  props: { dataSource: { type: Object } },
   components: { ModalBase, InputFileField, TextareaField },
-  setup() {
+  setup(props) {
+    const bntText = computed(() => {
+      return props.dataSource ? 'Edit' : 'Create'
+    })
     const form = useForm({
       name: [
-        '',
+        props.dataSource?.name || '',
         validators.required,
         validators.withOutSpaceAtStart,
         validators.maxCharacters(128),
       ],
-      description: ['', validators.maxCharacters(256)],
+      description: [
+        props.dataSource?.description || '',
+        validators.maxCharacters(256),
+      ],
       price: [
-        '',
+        props.dataSource?.fee?.split('loki')[0] || '',
         validators.required,
         validators.number,
         validators.sixDecimalNumber,
@@ -154,15 +160,26 @@ export default defineComponent({
       isLoading.value = true
 
       try {
-        await callers.createDataSource({
-          name: form.name.val(),
-          description: form.description.val(),
-          executable: executableParsed,
-          fee: coins(convertOdinToLoki(form.price.val()), COINS_LIST.LOKI),
-          owner: wallet.account.address,
-          sender: wallet.account.address,
-        })
-
+        if (props.dataSource) {
+          await callers.editDataSource({
+            dataSourceId: props.dataSource?.id,
+            name: form.name.val(),
+            description: form.description.val(),
+            executable: executableParsed,
+            fee: coins(convertOdinToLoki(form.price.val()), COINS_LIST.LOKI),
+            owner: wallet.account.address,
+            sender: wallet.account.address,
+          })
+        } else {
+          await callers.createDataSource({
+            name: form.name.val(),
+            description: form.description.val(),
+            executable: executableParsed,
+            fee: coins(convertOdinToLoki(form.price.val()), COINS_LIST.LOKI),
+            owner: wallet.account.address,
+            sender: wallet.account.address,
+          })
+        }
         onSubmit()
         notifySuccess('Data source created')
       } catch (error) {
@@ -189,6 +206,7 @@ export default defineComponent({
       isLoading,
       submit,
       onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
+      bntText,
     }
   },
 })

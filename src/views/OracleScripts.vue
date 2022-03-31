@@ -21,7 +21,7 @@
       <div class="app-table__head">
         <span>ID</span>
         <span>Oracle Script</span>
-        <span>Description</span>
+        <span class="app-table__head_item">Description</span>
       </div>
       <div class="app-table__body">
         <template v-if="oracleScripts?.length">
@@ -42,11 +42,29 @@
                 :to="`/oracle-scripts/${item.id.toNumber()}`"
               />
             </div>
-            <div class="app-table__cell">
+            <div class="app-table__cell oracle-scripts__table-cell_center">
               <span class="app-table__title">Description</span>
               <span>
-                {{ item.description }}
+                {{ item.description || '-' }}
               </span>
+            </div>
+            <div class="app-table__cell">
+              <div
+                class="app-table__activities oracle-scripts__table-activities"
+              >
+                <div
+                  class="app-table__activities-item oracle-scripts__table-activities-item"
+                >
+                  <button
+                    v-if="accountAddress === item.owner"
+                    class="app-btn app-btn_small w-min150"
+                    type="button"
+                    @click="editOracleScript(item)"
+                  >
+                    Edit
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </template>
@@ -83,6 +101,8 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue'
 import { callers } from '@/api/callers'
+import { wallet } from '@/api/wallet'
+
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
 import TitledLink from '@/components/TitledLink.vue'
@@ -90,6 +110,7 @@ import Pagination from '@/components/Pagination/Pagination.vue'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import OracleScriptFormModal from '@/components/modals/OracleScriptFormModal.vue'
+import { OracleScript } from '@provider/codec/oracle/v1/oracle'
 
 export default defineComponent({
   components: { TitledLink, Pagination },
@@ -100,6 +121,7 @@ export default defineComponent({
     const totalPages = ref()
     const oracleScriptsCount = ref(0)
     const oracleScripts = ref()
+    const accountAddress = wallet.account.address
 
     const loadOracleScripts = async () => {
       lockLoading()
@@ -136,7 +158,18 @@ export default defineComponent({
       currentPage.value = num
       loadOracleScripts()
     }
-
+    const editOracleScript = async (oracleScript: OracleScript) => {
+      await showDialogHandler(
+        OracleScriptFormModal,
+        {
+          onSubmit: async (d) => {
+            d.kill()
+            await loadOracleScripts()
+          },
+        },
+        { oracleScript }
+      )
+    }
     onMounted(async () => {
       await loadOracleScripts()
     })
@@ -150,6 +183,8 @@ export default defineComponent({
       createOracleScript,
       paginationHandler,
       totalPages,
+      editOracleScript,
+      accountAddress,
     }
   },
 })
@@ -166,11 +201,37 @@ export default defineComponent({
 .app-table__row {
   grid:
     auto /
-    minmax(3rem, 0.5fr)
-    minmax(8rem, 2fr)
-    minmax(8rem, 8fr);
+    minmax(2rem, 0.5fr)
+    minmax(4rem, 4fr)
+    minmax(8rem, 6fr)
+    minmax(8rem, 4fr);
 }
+.app-table__head_item {
+  text-align: center;
+}
+.oracle-scripts {
+  &__table-activities {
+    width: 100%;
 
+    & > *:not(:last-child) {
+      margin-bottom: 2.4rem;
+    }
+  }
+
+  &__table-activities-item {
+    display: flex;
+    justify-content: flex-end;
+    gap: 2.4rem;
+  }
+  &__table-cell {
+    &_center {
+      justify-content: center;
+    }
+    &_end {
+      justify-content: flex-end;
+    }
+  }
+}
 @include respond-to(tablet) {
   .view-main {
     padding-bottom: 10rem;
@@ -186,6 +247,26 @@ export default defineComponent({
 
   .app-table__row {
     grid: none;
+  }
+
+  .oracle-scripts {
+    &__table-activities {
+      width: 100%;
+    }
+
+    &__table-activities-item {
+      & > * {
+        flex: 1;
+      }
+    }
+    &__table-cell {
+      &_center {
+        justify-content: flex-start;
+      }
+      &_end {
+        justify-content: flex-start;
+      }
+    }
   }
 }
 </style>
