@@ -11,13 +11,26 @@
         @submit.prevent
       >
         <div class="app-form__main">
-          <div class="app-form__field">
-            <label class="app-form__field-lbl"> Available </label>
-            <p>
-              {{ $convertLokiToOdin(lokiBalance.amount, { withDenom: true }) }}
-            </p>
+          <div class="app-form__field delegate-form-modal__field">
+            <div class="app-form__field-row">
+              <label class="app-form__field-lbl"> Available </label>
+              <p>
+                {{
+                  $convertLokiToOdin(lokiBalance.amount, { withDenom: true })
+                }}
+              </p>
+            </div>
+            <div class="app-form__field-row">
+              <button
+                class="app-btn app-btn_small app-btn_outlined"
+                type="button"
+                @click="maxAmount()"
+                :disabled="isLoading || isEmptyBalance || isBalanceLowerThanFee"
+              >
+                Max amount
+              </button>
+            </div>
           </div>
-
           <div v-if="delegation && delegation.balance" class="app-form__field">
             <label class="app-form__field-lbl"> You delegated </label>
             <p>
@@ -39,11 +52,11 @@
                 type="text"
                 placeholder="1"
                 v-model="form.amount"
-                :disabled="isLoading || isEmptyBalance"
+                :disabled="isLoading || isEmptyBalance || isBalanceLowerThanFee"
               />
             </div>
             <p
-              v-if="form.amountErr || isEmptyBalance"
+              v-if="form.amountErr || isEmptyBalance || isBalanceLowerThanFee"
               class="app-form__field-err"
             >
               {{
@@ -74,7 +87,7 @@
 import { computed, defineComponent, PropType, ref } from 'vue'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
-import { COINS_LIST } from '@/api/api-config'
+import { COINS_LIST, API_CONFIG } from '@/api/api-config'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
@@ -86,6 +99,7 @@ import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { useBalances } from '@/composables/useBalances'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { coin, Coin } from '@cosmjs/amino'
+import { big as bigMath } from '@/helpers/bigMath'
 
 const defaultBalanceBlank: Coin = { amount: '0', denom: COINS_LIST.LOKI }
 
@@ -98,8 +112,14 @@ const DelegateFormDialog = defineComponent({
   setup(props) {
     const { get: getBalance, load: loadBalances } = useBalances()
     const lokiBalance: Coin = getBalance(COINS_LIST.LOKI) || defaultBalanceBlank
+    const fee = ref(API_CONFIG.fee)
+    const ODIN_MULTIPLIER = 0.000001
+
     const isEmptyBalance = computed(() => {
       return !Number(lokiBalance.amount)
+    })
+    const isBalanceLowerThanFee = computed(() => {
+      return Number(lokiBalance.amount) < Number(fee.value)
     })
 
     const form = useForm({
@@ -118,6 +138,10 @@ const DelegateFormDialog = defineComponent({
     const isLoading = ref(false)
     const onSubmit = dialogs.getHandler('onSubmit')
 
+    const maxAmount = () => {
+      const amount = bigMath.multiply(lokiBalance.amount, ODIN_MULTIPLIER)
+      form.amount.val(amount.toString())
+    }
     const submit = async () => {
       isLoading.value = true
       try {
@@ -142,6 +166,8 @@ const DelegateFormDialog = defineComponent({
       isEmptyBalance,
       submit,
       onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
+      maxAmount,
+      isBalanceLowerThanFee,
     }
   },
 })
@@ -157,4 +183,27 @@ export function showDelegateFormDialog(
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.delegate-form-modal {
+  &__field {
+    display: grid;
+    grid:
+      auto/
+      minmax(1rem, 1fr)
+      minmax(1rem, 1fr);
+  }
+}
+
+@include respond-to(small) {
+  .app-form {
+    &__field-row:first-child {
+      margin-bottom: 1rem;
+    }
+  }
+  .delegate-form-modal {
+    &__field {
+      grid: none;
+    }
+  }
+}
+</style>
