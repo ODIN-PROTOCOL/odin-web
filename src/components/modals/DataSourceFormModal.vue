@@ -115,6 +115,7 @@ import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import InputFileField from '@/components/fields/InputFileField.vue'
 import TextareaField from '@/components/fields/TextareaField.vue'
+import Long from 'long'
 
 export default defineComponent({
   props: { dataSource: { type: Object } },
@@ -162,7 +163,7 @@ export default defineComponent({
       try {
         if (props.dataSource) {
           await callers.editDataSource({
-            dataSourceId: props.dataSource?.id,
+            dataSourceId: Long.fromNumber(props.dataSource?.id),
             name: form.name.val(),
             description: form.description.val(),
             executable: executableParsed,

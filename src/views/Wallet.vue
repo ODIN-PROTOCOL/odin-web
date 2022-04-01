@@ -84,7 +84,7 @@
               <span class="app-table__title">Transaction hash</span>
               <a
                 class="app-table__cell-txt app-table__link"
-                :href="`${API_CONFIG.odinScan}/transactions/${item.block}/${item.hash}`"
+                :href="`${API_CONFIG.odinScan}/transactions/${item.hash}`"
               >
                 {{ `0x${item.hash}` }}
               </a>

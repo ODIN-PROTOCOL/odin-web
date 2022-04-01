@@ -68,13 +68,13 @@
             >
               <template #dropdownInner>
                 <div class="_vue-picker__dropdown-custom">
-                  <VuePickerOption value="loki" text="LOKI">
+                  <!-- <VuePickerOption value="loki" text="LOKI">
                     LOKI
-                  </VuePickerOption>
-                  <!-- while only LOKI can be sent, in time it will be possible to send ODIN -->
-                  <!-- <VuePickerOption value="odin" text="ODIN">
-                    ODIN
                   </VuePickerOption> -->
+                  <!-- while only LOKI can be sent, in time it will be possible to send ODIN -->
+                  <VuePickerOption value="odin" text="ODIN">
+                    ODIN
+                  </VuePickerOption>
                 </div>
               </template>
             </VuePicker>

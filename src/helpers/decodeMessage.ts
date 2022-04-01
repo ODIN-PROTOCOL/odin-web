@@ -19,6 +19,7 @@ import {
   MsgReportData,
   MsgRequestData,
   MsgEditOracleScript,
+  MsgEditDataSource,
 } from '@provider/codec/oracle/v1/tx'
 import {
   MsgWithdrawDelegatorReward,
@@ -129,6 +130,9 @@ export function humanizeMessageType(type: string): string {
     case '/cosmos.vesting.v1beta1.MsgCreateVestingAccount':
       return 'Create Vesting Account'
 
+    case '/oracle.v1.MsgEditDataSource':
+      return 'Edit Data Source'
+
     default:
       throw new ReferenceError(`Unknown type ${type}`)
   }
@@ -161,7 +165,8 @@ function decodeMessage(obj: {
   | MsgTransfer
   | MsgWithdrawValidatorCommission
   | MsgUnjail
-  | MsgCreateVestingAccount {
+  | MsgCreateVestingAccount
+  | MsgEditDataSource {
   switch (obj.typeUrl) {
     case '/mint.MsgWithdrawCoinsToAccFromTreasury':
       return MsgWithdrawCoinsToAccFromTreasury.decode(obj.value)
@@ -195,6 +200,9 @@ function decodeMessage(obj: {
 
     case '/oracle.v1.MsgCreateDataSource':
       return MsgCreateDataSource.decode(obj.value)
+
+    case '/oracle.v1.MsgEditDataSource':
+      return MsgEditDataSource.decode(obj.value)
 
     case '/oracle.v1.MsgCreateOracleScript':
       return MsgCreateOracleScript.decode(obj.value)
