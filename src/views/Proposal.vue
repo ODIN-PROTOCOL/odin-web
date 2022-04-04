@@ -4,7 +4,7 @@
       <BackButton :text="'Governance'" />
       <h2 class="view-main__title">Proposal</h2>
       <span class="view-main__subtitle" v-if="proposal">
-        {{ proposal.content?.title }}
+        {{ proposal.content.title }}
       </span>
       <button
         class="view-main__title-btn app-btn app-btn_small fx-sae"
@@ -56,6 +56,44 @@
             :isTitled="true"
           />
         </div>
+        <!-- Wait design -->
+        <!-- <div class="info-table__row">
+          <p class="info-table__row-title">Changes</p>
+          <div
+            v-for="(change, index) in proposal.content.changes"
+            :key="index"
+            class="proposal-modal__section-table-wrp"
+          >
+            <span class="proposal-modal__section-table-idx">
+              #{{ index + 1 }}
+            </span>
+            <div class="proposal-modal__section-table">
+              <div
+                v-for="(value, key) in change"
+                :key="key"
+                class="proposal-modal__section-colum"
+              >
+                <p class="proposal-modal__section-column-head">
+                  {{ key }}
+                </p>
+                <p class="proposal-modal__section-column-body">
+                  {{ value }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="info-table__row">
+          <p class="info-table__row-title">Details</p>
+          <pre class="proposal-modal__section-val">
+          Deposited: {{ $fCoin(proposal.totalDeposit[0]) }}
+          Proposal created: {{ $fDate(proposal.submitTime) }}
+          Deposit end: {{ $fDate(proposal.depositEndTime) }}
+          Voting start: {{ $fDate(proposal.votingStartTime) }}
+          Voting end: {{ $fDate(proposal.votingEndTime) }}
+        </pre
+          >
+        </div> -->
       </div>
     </template>
     <template v-else>
