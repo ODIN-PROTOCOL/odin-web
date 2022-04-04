@@ -33,7 +33,7 @@
               <span class="app-table__title">Proposal</span>
               <TitledLink
                 class="app-table__cell-txt app-table__link"
-                :text="item.content.title"
+                :text="item.content?.title || '-'"
                 :to="`/proposal/${item.proposalId}`"
               />
             </div>

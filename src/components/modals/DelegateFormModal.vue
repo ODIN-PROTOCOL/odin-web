@@ -60,7 +60,7 @@
               class="app-form__field-err"
             >
               {{
-                isEmptyBalance
+                isBalanceLowerThanFee
                   ? 'Not enough tokens! Please make deposit'
                   : form.amountErr
               }}

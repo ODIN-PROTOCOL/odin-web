@@ -4,7 +4,7 @@
       <BackButton :text="'Governance'" />
       <h2 class="view-main__title">Proposal</h2>
       <span class="view-main__subtitle" v-if="proposal">
-        {{ proposal.content.title }}
+        {{ proposal.content?.title }}
       </span>
       <button
         class="view-main__title-btn app-btn app-btn_small fx-sae"
@@ -35,7 +35,7 @@
         <div class="info-table__row">
           <span class="info-table__row-title">Description</span>
           <span class="info-table__row-value">
-            {{ proposal.content.description }}
+            {{ proposal.content?.description }}
           </span>
         </div>
         <div class="info-table__row">
