@@ -271,6 +271,15 @@ export async function getDateFromMessage(
         adjustedData.amount = message.amount[0]?.amount
       }
     }
+  } else {
+    const amount = tx.result.events
+      .find((item) =>
+        adjustedData.type.toLowerCase().includes(item.type.split('_')[0])
+      )
+      ?.attributes.map((item) => new TextDecoder().decode(item.value))
+    adjustedData.amount = amount
+      ?.find((item) => item.includes('loki'))
+      ?.split('loki')[0]
   }
   if ('voter' in message) {
     adjustedData.sender = message?.voter
@@ -307,7 +316,139 @@ export async function getDateFromMessage(
       adjustedData.receiver = message?.receiver
     }
   }
-
+  if (adjustedData.type === 'Withdraw delegator reward') {
+    if ('delegatorAddress' in message) {
+      adjustedData.sender = message?.delegatorAddress
+    }
+    if ('validatorAddress' in message) {
+      adjustedData.receiver = message?.validatorAddress
+    }
+  }
+  if (adjustedData.type === 'Withdraw validator commission') {
+    if ('delegatorAddress' in message) {
+      adjustedData.sender = message?.delegatorAddress
+    }
+    if ('validatorAddress' in message) {
+      adjustedData.receiver = message?.validatorAddress
+    }
+  }
+  if (adjustedData.type === 'Edit OracleScript') {
+    if ('sender' in message) {
+      adjustedData.sender = message.sender
+    }
+  }
+  if (adjustedData.type === 'Edit Data Source') {
+    if ('sender' in message) {
+      adjustedData.sender = message.sender
+    }
+  }
+  if (adjustedData.type === 'Edit Validator') {
+    if ('delegatorAddress' in message) {
+      adjustedData.sender = message.delegatorAddress
+    }
+    if ('validatorAddress' in message) {
+      adjustedData.receiver = message.validatorAddress
+    }
+  }
+  if (adjustedData.type === 'Begin Redelegate') {
+    if ('delegatorAddress' in message) {
+      adjustedData.sender = message.delegatorAddress
+    }
+    if ('validatorDstAddress' in message) {
+      adjustedData.receiver = message.validatorDstAddress
+    }
+  }
+  if (adjustedData.type === 'IBC Transfer') {
+    if ('sender' in message) {
+      adjustedData.sender = message.sender
+    }
+    if ('receiver' in message) {
+      adjustedData.receiver = message.receiver
+    }
+  }
+  if (adjustedData.type === 'Create Validator') {
+    if ('delegatorAddress' in message) {
+      adjustedData.sender = message.delegatorAddress
+    }
+    if ('validatorAddress' in message) {
+      adjustedData.receiver = message.validatorAddress
+    }
+  }
+  if (adjustedData.type === 'Submit Proposal') {
+    if ('delegatorAddress' in message) {
+      adjustedData.sender = message.delegatorAddress
+    }
+    if ('validatorAddress' in message) {
+      adjustedData.receiver = message.validatorAddress
+    }
+  }
+  if (adjustedData.type === 'Report Data') {
+    if ('reporter' in message) {
+      adjustedData.sender = message.reporter
+    }
+    if ('validator' in message) {
+      adjustedData.receiver = message.validator
+    }
+  }
+  if (adjustedData.type === 'Request Data') {
+    if ('sender' in message) {
+      adjustedData.sender = message.sender
+    }
+    if ('validator' in message) {
+      adjustedData.receiver = message.validator
+    }
+  }
+  if (adjustedData.type === 'Update IBC Client') {
+    if ('signer' in message) {
+      adjustedData.sender = message.signer
+    }
+    if ('validatorAddress' in message) {
+      adjustedData.receiver = message.validatorAddress
+    }
+  }
+  if (adjustedData.type === 'Create Oracle Script') {
+    if ('sender' in message) {
+      adjustedData.sender = message.sender
+    }
+  }
+  if (adjustedData.type === 'Create Data Source') {
+    if ('sender' in message) {
+      adjustedData.sender = message.sender
+    }
+  }
+  if (adjustedData.type === 'Create IBC Client') {
+    if ('signer' in message) {
+      adjustedData.sender = message.signer
+    }
+  }
+  if (adjustedData.type === 'Connection Open Init') {
+    if ('signer' in message) {
+      adjustedData.sender = message.signer
+    }
+  }
+  if (adjustedData.type === 'Create Vesting Account') {
+    if ('fromAddress' in message) {
+      adjustedData.sender = message.fromAddress
+    }
+    if ('toAddress' in message) {
+      adjustedData.receiver = message.toAddress
+    }
+  }
+  if (adjustedData.type === 'Unjail') {
+    if ('validatorAddr' in message) {
+      adjustedData.receiver = message.validatorAddr
+    }
+  }
+  if (adjustedData.type === 'Chanel Open Init') {
+    if ('signer' in message) {
+      adjustedData.sender = message.signer
+    }
+  }
+  if (adjustedData.type === 'Activate') {
+    if ('validator' in message) {
+      adjustedData.receiver = message.validator
+    }
+  }
   console.debug(adjustedData.type)
 
   return adjustedData

@@ -76,25 +76,25 @@
         <template v-if="dataSources?.length">
           <div
             v-for="item in filteredDataSources"
-            :key="item.id.toString()"
+            :key="item.attributes.id.toString()"
             class="app-table__row data-sources__table-row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">ID</span>
-              <span>{{ item.id.toString() }}</span>
+              <span>{{ item.attributes.id.toString() }}</span>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Data Source</span>
               <TitledLink
                 class="app-table__cell-txt app-table__link"
-                :text="item.name"
-                :to="`/data-sources/${item.id.toString()}`"
+                :text="item.attributes.name"
+                :to="`/data-sources/${item.attributes.id.toString()}`"
               />
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Description</span>
               <span>
-                {{ item.description || '-' }}
+                {{ item.attributes.description || '-' }}
               </span>
             </div>
             <div class="app-table__cell">
@@ -103,10 +103,10 @@
                   class="app-table__activities-item data-sources__table-activities-item"
                 >
                   <button
-                    v-if="accountAddress === item.owner"
+                    v-if="accountAddress === item.attributes.owner"
                     class="app-btn app-btn_small w-min150"
                     type="button"
-                    @click="editDataSource(item)"
+                    @click="editDataSource(item.attributes)"
                   >
                     Edit
                   </button>
@@ -186,7 +186,9 @@ export default defineComponent({
         )
         const _dataSources = await res.json()
 
-        dataSources.value = _dataSources ? _dataSources : []
+        dataSources.value = _dataSources ? _dataSources.data : []
+        console.log(dataSources.value)
+
         await getDataSourcesCount()
         filterDataSources(currentPage.value)
       } catch (error) {
