@@ -209,6 +209,11 @@ const makeCallers = () => {
         `${API_CONFIG.telemetryUrl}telemetry/validator/${proposer}/transactions?page[number]=${page_number}&page[limit]=${page_limit}&page[order]=desc`
       )
     },
+    getDataSourceCode: (id: string) => {
+      return sendGet(
+        `${API_CONFIG.telemetryUrl}telemetry/data_source_code/${id}`
+      )
+    },
   }
 }
 

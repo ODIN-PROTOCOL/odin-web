@@ -29,6 +29,11 @@
           </div>
         </div>
       </div>
+      <Tabs>
+        <Tab title="Code">
+          <CodeTable :code="dataSourceCode" />
+        </Tab>
+      </Tabs>
     </template>
     <template v-else>
       <div class="view-main__empty-msg">
@@ -47,20 +52,35 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import BackButton from '@/components/BackButton.vue'
+import Tabs from '@/components/tabs/Tabs.vue'
+import Tab from '@/components/tabs/Tab.vue'
+import CodeTable from '@/components/tables/CodeTable.vue'
 
 export default defineComponent({
-  components: { BackButton },
+  components: { BackButton, Tabs, Tab, CodeTable },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const route: RouteLocationNormalizedLoaded = useRoute()
     const dataSourceData = ref()
+    const dataSourceCode = ref('')
 
     const getDataSource = async () => {
       lockLoading()
       try {
         const response = await callers.getDataSource(String(route.params.id))
-
         dataSourceData.value = response.dataSource
+      } catch (error) {
+        handleError(error as Error)
+      }
+      releaseLoading()
+    }
+    const getDataSourceCode = async () => {
+      lockLoading()
+      try {
+        dataSourceCode.value = await callers
+          .getDataSourceCode(String(route.params.id))
+          .then((response) => response.json())
+          .then((data) => data?.executable)
       } catch (error) {
         handleError(error as Error)
       }
@@ -69,12 +89,15 @@ export default defineComponent({
 
     onMounted(async () => {
       await getDataSource()
+      await getDataSourceCode()
     })
 
     return {
       API_CONFIG,
       isLoading,
       dataSourceData,
+      dataSourceCode,
+      getDataSourceCode,
     }
   },
 })

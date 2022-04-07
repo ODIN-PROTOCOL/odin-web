@@ -104,7 +104,7 @@
                 >
                   <button
                     v-if="accountAddress === item.attributes.owner"
-                    class="app-btn app-btn_small w-min150"
+                    class="app-btn app-btn_small app-btn_outlined w-min75"
                     type="button"
                     @click="editDataSource(item.attributes)"
                   >
@@ -187,8 +187,6 @@ export default defineComponent({
         const _dataSources = await res.json()
 
         dataSources.value = _dataSources ? _dataSources.data : []
-        console.log(dataSources.value)
-
         await getDataSourcesCount()
         filterDataSources(currentPage.value)
       } catch (error) {

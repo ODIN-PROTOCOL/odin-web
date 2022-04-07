@@ -195,7 +195,7 @@ export default defineComponent({
       lockLoading()
       try {
         const { txs } = await callers.getTxSearch({
-          query: 'tx.height >= 0',
+          query: `transfer.recipient='${wallet.account.address}' AND transfer.sender='${wallet.account.address}'`,
           per_page: 100,
           page: currentPage.value,
           order_by: 'desc',
@@ -220,7 +220,8 @@ export default defineComponent({
             item.receiver === wallet.account.address) &&
           (item.type === 'Send' ||
             item.type === 'Delegate' ||
-            item.type === 'Withdraw delegator reward')
+            item.type === 'Withdraw delegator reward' ||
+            item.type === 'Withdraw')
         )
       })
     }
