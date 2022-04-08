@@ -27,13 +27,13 @@ import {
 // @ts-ignore
 import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 import { convertLokiToOdin } from './helpers/converters'
-
-import 'highlight.js/styles/atom-one-dark.css'
 import hljs from 'highlight.js/lib/core'
 import python from 'highlight.js/lib/languages/python'
+import rust from 'highlight.js/lib/languages/rust'
 import hljsVuePlugin from '@highlightjs/vue-plugin'
 
 hljs.registerLanguage('python', python)
+hljs.registerLanguage('rust', rust)
 
 async function _main() {
   try {

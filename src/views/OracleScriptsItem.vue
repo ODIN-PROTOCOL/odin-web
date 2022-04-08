@@ -78,10 +78,13 @@ export default defineComponent({
     const getOracleScriptCode = async () => {
       lockLoading()
       try {
-        oracleScriptCode.value = await callers
-          .getDataSourceCode(String(1))
-          .then((response) => response.json())
-          .then((data) => data?.executable)
+        if (oracleScriptData.value.sourceCodeUrl) {
+          await fetch(oracleScriptData.value.sourceCodeUrl).then((response) => {
+            response.text().then((text) => {
+              oracleScriptCode.value = text
+            })
+          })
+        }
       } catch (error) {
         handleError(error as Error)
       }
