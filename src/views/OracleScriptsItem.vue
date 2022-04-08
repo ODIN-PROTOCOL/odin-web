@@ -29,6 +29,11 @@
           </div>
         </div>
       </div>
+      <Tabs>
+        <Tab title="Code">
+          <CodeTable :code="oracleScriptCode" />
+        </Tab>
+      </Tabs>
     </template>
     <template v-else>
       <div class="view-main__empty-msg">
@@ -47,13 +52,17 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import BackButton from '@/components/BackButton.vue'
+import Tabs from '@/components/tabs/Tabs.vue'
+import Tab from '@/components/tabs/Tab.vue'
+import CodeTable from '@/components/tables/CodeTable.vue'
 
 export default defineComponent({
-  components: { BackButton },
+  components: { BackButton, Tabs, Tab, CodeTable },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const route: RouteLocationNormalizedLoaded = useRoute()
     const oracleScriptData = ref()
+    const oracleScriptCode = ref('')
 
     const getOracleScript = async () => {
       lockLoading()
@@ -66,15 +75,32 @@ export default defineComponent({
       }
       releaseLoading()
     }
-
+    const getOracleScriptCode = async () => {
+      lockLoading()
+      try {
+        if (oracleScriptData.value.sourceCodeUrl) {
+          await fetch(oracleScriptData.value.sourceCodeUrl).then((response) => {
+            response.text().then((text) => {
+              oracleScriptCode.value = text
+            })
+          })
+        }
+      } catch (error) {
+        handleError(error as Error)
+      }
+      releaseLoading()
+    }
     onMounted(async () => {
       await getOracleScript()
+      await getOracleScriptCode()
     })
 
     return {
       API_CONFIG,
       isLoading,
       oracleScriptData,
+      getOracleScriptCode,
+      oracleScriptCode,
     }
   },
 })

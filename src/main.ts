@@ -27,6 +27,13 @@ import {
 // @ts-ignore
 import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 import { convertLokiToOdin } from './helpers/converters'
+import hljs from 'highlight.js/lib/core'
+import python from 'highlight.js/lib/languages/python'
+import rust from 'highlight.js/lib/languages/rust'
+import hljsVuePlugin from '@highlightjs/vue-plugin'
+
+hljs.registerLanguage('python', python)
+hljs.registerLanguage('rust', rust)
 
 async function _main() {
   try {
@@ -69,6 +76,7 @@ async function _main() {
   app.config.globalProperties.$convertLokiToOdin = convertLokiToOdin
   app.use(router)
   app.use(Notifications)
+  app.use(hljsVuePlugin)
   app.component('VuePicker', VuePicker)
   app.component('VuePickerOption', VuePickerOption)
   app.mount('#app')

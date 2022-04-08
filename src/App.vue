@@ -93,7 +93,7 @@ export default defineComponent({
 @import '~@/styles/modals.scss';
 @import '~@/styles/vue-notification.scss';
 @import '~@/styles/shortcuts.scss';
-
+@import '~@/styles/atom-one-dark.scss';
 #app {
   width: 100%;
   @include flex-container;

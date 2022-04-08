@@ -2,6 +2,7 @@ import { MsgWithdrawCoinsToAccFromTreasury } from '@provider/codec/mint/tx'
 import {
   MsgSubmitProposal,
   MsgVote,
+  MsgDeposit,
 } from '@provider/codec/cosmos/gov/v1beta1/tx'
 import {
   MsgBeginRedelegate,
@@ -20,6 +21,7 @@ import {
   MsgRequestData,
   MsgEditOracleScript,
   MsgEditDataSource,
+  MsgRemoveReporter,
 } from '@provider/codec/oracle/v1/tx'
 import {
   MsgWithdrawDelegatorReward,
@@ -60,6 +62,9 @@ export function humanizeMessageType(type: string): string {
 
     case '/cosmos.gov.v1beta1.MsgVote':
       return 'Vote'
+
+    case '/cosmos.gov.v1beta1.MsgDeposit':
+      return 'Deposit'
 
     case '/cosmos.gov.v1beta1.MsgSubmitProposal':
       return 'Submit Proposal'
@@ -133,6 +138,9 @@ export function humanizeMessageType(type: string): string {
     case '/oracle.v1.MsgEditDataSource':
       return 'Edit Data Source'
 
+    case '/oracle.v1.MsgRemoveReporter':
+      return 'Remove Reporter'
+
     default:
       throw new ReferenceError(`Unknown type ${type}`)
   }
@@ -166,7 +174,9 @@ function decodeMessage(obj: {
   | MsgWithdrawValidatorCommission
   | MsgUnjail
   | MsgCreateVestingAccount
-  | MsgEditDataSource {
+  | MsgEditDataSource
+  | MsgDeposit
+  | MsgRemoveReporter {
   switch (obj.typeUrl) {
     case '/mint.MsgWithdrawCoinsToAccFromTreasury':
       return MsgWithdrawCoinsToAccFromTreasury.decode(obj.value)
@@ -182,6 +192,9 @@ function decodeMessage(obj: {
 
     case '/cosmos.gov.v1beta1.MsgVote':
       return MsgVote.decode(obj.value)
+
+    case '/cosmos.gov.v1beta1.MsgDeposit':
+      return MsgDeposit.decode(obj.value)
 
     case '/cosmos.gov.v1beta1.MsgSubmitProposal':
       return MsgSubmitProposal.decode(obj.value)
@@ -203,6 +216,9 @@ function decodeMessage(obj: {
 
     case '/oracle.v1.MsgEditDataSource':
       return MsgEditDataSource.decode(obj.value)
+
+    case '/oracle.v1.MsgRemoveReporter':
+      return MsgRemoveReporter.decode(obj.value)
 
     case '/oracle.v1.MsgCreateOracleScript':
       return MsgCreateOracleScript.decode(obj.value)
@@ -447,6 +463,11 @@ export async function getDateFromMessage(
   if (adjustedData.type === 'Activate') {
     if ('validator' in message) {
       adjustedData.receiver = message.validator
+    }
+  }
+  if (adjustedData.type === 'Deposit') {
+    if ('depositor' in message) {
+      adjustedData.receiver = message.depositor
     }
   }
   console.debug(adjustedData.type)
