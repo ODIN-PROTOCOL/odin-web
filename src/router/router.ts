@@ -136,6 +136,13 @@ const routes: Array<RouteRecordRaw> = [
     component: () =>
       import(/* webpackChunkName: "wallet" */ '../views/Wallet.vue'),
   },
+  {
+    path: '/ibc',
+    name: 'IBC',
+    beforeEnter: authorizedOnlyGuard,
+    component: () =>
+      import(/* webpackChunkName: "wallet" */ '../views/IbcView.vue'),
+  },
 ]
 
 const router = createRouter({
