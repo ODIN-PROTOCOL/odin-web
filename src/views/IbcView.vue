@@ -9,50 +9,48 @@
         v-for="(connection, index) in filteredConnections"
         :key="connection?.id"
       >
-        <div class="app-table__head ibc__table-head">
-          <span>Connection</span>
-          <span>Counterparty Chain ID</span>
-          <span>Client ID</span>
-          <span>Counterparty Client ID</span>
-        </div>
-        <div class="app-table__body">
-          <div
-            class="app-table__row ibc__table-row"
-            :class="{ 'ibc__table-row-active': connection.show }"
-          >
+        <div class="app-table__body ibc__body">
+          <div class="app-table__row ibc__table-row">
             <div class="app-table__cell">
               <span class="app-table__title">Connection</span>
-              <span>{{ connection.id }}</span>
+              <span class="app-table__cell-txt">{{ connection.id }}</span>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Counterparty Chain ID</span>
-              <span>{{ chainIdData[index].chainId || '-' }}</span>
+              <span class="app-table__cell-txt">{{
+                chainIdData[index].chainId || '-'
+              }}</span>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Client ID</span>
-              <span> {{ connection.clientId || '-' }} </span>
+              <span class="app-table__cell-txt">
+                {{ connection.clientId || '-' }}
+              </span>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Counterparty Client ID</span>
-              <span> {{ connection.counterparty.clientId || '-' }} </span>
+              <span class="app-table__cell-txt">
+                {{ connection.counterparty.clientId || '-' }}
+              </span>
             </div>
-            <div class="app-table__cell ibc__details">
-              <button
-                @click="connection.show = !connection.show"
-                class="ibc__button"
-              >
-                {{ connection.show ? 'Hidden channels' : 'Show channels' }}
-                <ArrowIcon
-                  :class="{
-                    'nav__dropdown-wrapper-arrow_active': connection.show,
-                  }"
-                />
-              </button>
-            </div>
+          </div>
+          <div class="ibc__show">
+            <button
+              @click="connection.isShow = !connection.isShow"
+              class="ibc__show-button"
+            >
+              {{ connection.isShow ? 'Hidden channels' : 'Show channels' }}
+              <ArrowIcon
+                class="ibc__arrow-icon"
+                :class="{
+                  ['ibc__arrow-icon_active']: connection.isShow,
+                }"
+              />
+            </button>
           </div>
         </div>
         <ChannelDetail
-          v-if="connection.show"
+          v-if="connection.isShow"
           :channelData="channelData"
           :connection="connection"
         />
@@ -65,7 +63,7 @@
         <p v-else>No items yet</p>
       </div>
     </template>
-    <template v-if="connectionsCount > ITEMS_PER_PAGE">
+    <template v-if="connectionsData?.length > ITEMS_PER_PAGE">
       <Pagination
         class="mg-t32 mg-b32"
         v-model="currentPage"
@@ -92,7 +90,6 @@ import { QueryClientStateResponse } from 'cosmjs-types/ibc/core/client/v1/query'
 export default defineComponent({
   components: {
     Pagination,
-
     ArrowIcon,
     ChannelDetail,
   },
@@ -101,13 +98,12 @@ export default defineComponent({
     const ITEMS_PER_PAGE = 4
     const currentPage = ref(1)
     const totalPages = ref()
-    const connectionsCount = ref(0)
     const chainIdData = ref()
     const connectionsData = ref<IdentifiedConnection[] | undefined>()
     const channelData = ref<IdentifiedChannel[] | undefined>()
     const filteredConnections = ref()
 
-    const loadDataSources = async () => {
+    const loadIbc = async () => {
       lockLoading()
       try {
         const { connections } = await callers.getConnections()
@@ -122,8 +118,7 @@ export default defineComponent({
         const { channels } = await callers.getChannel()
         channelData.value = channels
         connectionsData.value = connections
-        connectionsCount.value = connections.length
-        totalPages.value = Math.ceil(connectionsCount.value / ITEMS_PER_PAGE)
+        totalPages.value = Math.ceil(connections.length / ITEMS_PER_PAGE)
         filterConnections(currentPage.value)
       } catch (error) {
         handleError(error as Error)
@@ -133,7 +128,6 @@ export default defineComponent({
 
     const filterConnections = (newPage: number) => {
       let tempArr = connectionsData.value
-
       if (newPage === 1) {
         filteredConnections.value = tempArr?.slice(0, newPage * ITEMS_PER_PAGE)
       } else {
@@ -144,11 +138,13 @@ export default defineComponent({
       }
       currentPage.value = newPage
     }
+
     const paginationHandler = (num: number) => {
       filterConnections(num)
     }
+
     onMounted(async () => {
-      await loadDataSources()
+      await loadIbc()
     })
 
     return {
@@ -156,9 +152,7 @@ export default defineComponent({
       ITEMS_PER_PAGE,
       currentPage,
       totalPages,
-      connectionsCount,
       paginationHandler,
-
       connectionsData,
       channelData,
       chainIdData,
@@ -169,153 +163,77 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.nav__dropdown-wrapper-arrow {
-  fill: #007bff;
-  transform: translate(3px, 0px) rotate(270deg);
-  &_active {
-    transform: translate(-10px, 15px) rotate(90deg);
-    fill: var(--clr__action);
-  }
+.app-table__cell {
+  flex-direction: column;
 }
-.channel {
-  border-top: 1px solid var(--clr__table-border);
-  padding-top: 2.5rem;
+.app-table__title {
+  display: block;
+  margin-bottom: 0.8rem;
+  font-weight: 300;
+  min-width: 13rem;
 }
 .ibc {
   &__table {
-    border: 0.1rem solid #007bff;
+    border: 0.1rem solid var(--clr__action);
     border-radius: 0.8rem;
-    padding: 3rem 0rem 3rem 2rem;
+    padding: 3rem 2rem;
     margin-bottom: 2.4rem;
   }
-  &__details {
-    justify-content: center;
+  &__body {
+    display: grid;
+    align-items: center;
+    grid:
+      auto /
+      minmax(2rem, 0.85fr)
+      minmax(6rem, 0.15fr);
   }
-  &__button {
-    color: #007bff;
-    text-align: center;
-  }
-  &__count-info {
-    margin-bottom: 3.2rem;
-  }
-
-  &__sort-wrapper {
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  &__sort {
-    display: flex;
-    gap: 2.4rem;
-  }
-
-  &__sort-item-title {
-    font-size: 1.4rem;
-    font-weight: 300;
-    margin-right: 0.4rem;
-  }
-
-  &__table-head,
   &__table-row {
     grid:
       auto /
-      minmax(2rem, 0.75fr)
       minmax(2rem, 1fr)
       minmax(2rem, 1fr)
       minmax(2rem, 1fr)
-      minmax(6rem, 0.75fr);
-  }
-  &__table-row {
+      minmax(2rem, 1fr);
     margin-bottom: 1rem;
     padding: 1rem 0 0;
     border-bottom: none;
   }
-  &__table-row-active {
-    margin-bottom: 2.6rem;
+  &__show {
+    text-align: center;
+    white-space: nowrap;
   }
-  &__table-activities {
-    width: 100%;
-
-    & > *:not(:last-child) {
-      margin-bottom: 2.4rem;
-    }
+  &__show-button {
+    color: var(--clr__btn-normal);
+    text-align: center;
   }
-
-  &__table-activities-item {
-    display: flex;
-    justify-content: flex-end;
-    gap: 2.4rem;
-  }
-  &__table-cell {
-    &_center {
-      justify-content: center;
-    }
-    &_end {
-      justify-content: flex-end;
+  &__arrow-icon {
+    fill: var(--clr__btn-normal);
+    transform: translate(0.3rem, 0) rotate(270deg);
+    &_active {
+      transform: translate(-1rem, 1.5rem) rotate(90deg);
+      fill: var(--clr__action);
     }
   }
 }
-@include respond-to(1024px) {
+@include respond-to(medium) {
   .ibc {
-    &__table-head,
-    &__table-row {
+    &__body {
       grid:
         auto /
-        minmax(2rem, 0.6fr)
         minmax(2rem, 0.75fr)
-        minmax(2rem, 0.6fr)
-        minmax(2rem, 0.75fr)
-        minmax(3rem, 0.7fr);
+        minmax(6rem, 0.25fr);
     }
   }
 }
 @include respond-to(tablet) {
+  .app-table__cell {
+    flex-direction: row;
+  }
   .ibc {
-    &__table-activities {
-      width: 100%;
-    }
-
-    &__table-activities-item {
-      & > * {
-        flex: 1;
-      }
-    }
-    &__table-cell {
-      &_center {
-        justify-content: flex-start;
-      }
-      &_end {
-        justify-content: flex-start;
-      }
-    }
     padding-bottom: 10rem;
-    &__title-btn {
-      display: none;
+    &__body {
+      display: block;
     }
-
-    &__count-info {
-      margin-bottom: 0;
-    }
-
-    &__sort {
-      width: 100%;
-      flex-direction: column;
-      gap: 1.6rem;
-    }
-
-    &__sort-item {
-      display: flex;
-      flex-direction: column;
-    }
-
-    &__sort-item-title {
-      margin: 0 0 0.4rem;
-    }
-
-    &__vue-picker {
-      width: 100%;
-    }
-
     &__table-row {
       grid: none;
     }

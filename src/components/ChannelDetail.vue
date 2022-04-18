@@ -1,52 +1,59 @@
 <template>
-  <div class="app-table channel">
-    <div class="app-table__head ibc__table-head">
-      <span>Port &#10141; Counterparty Port</span>
-      <span>Channel &#10141; Counterparty Channel</span>
-      <span>State</span>
-      <span>Order</span>
-    </div>
-    <div
-      v-for="channel in getChannel(connection)"
-      :key="channel"
-      class="app-table__body"
-    >
-      <div class="app-table__row ibc__table-row">
-        <div class="app-table__cell channel-detail__row">
-          <span class="app-table__title">Port &#10141; Counterparty Port</span>
-          <span class="app-table__cell-row">
-            {{ channel.portId }} &#10141;
-          </span>
-          <span class="app-table__cell-row">
-            {{ channel.counterparty.portId }}</span
-          >
+  <div class="app-table channel-detail">
+    <template v-if="channels.length">
+      <div
+        v-for="channel in channels"
+        :key="channel?.portId"
+        class="app-table__row channel-detail__row"
+      >
+        <div class="app-table__cell channel-detail__cell">
+          <div class="app-table__title channel-detail__cell-txt">
+            <span class="channel-detail__cell-txt-row">Port &#10141;</span>
+            <span class="channel-detail__cell-txt-row">Counterparty Port</span>
+          </div>
+          <div class="app-table__cell-row channel-detail__cell-txt">
+            <span class="channel-detail__cell-txt-row"
+              >{{ channel.portId }} &#10141;</span
+            >
+            <span class="channel-detail__cell-txt-row">
+              {{ channel.counterparty.portId }}</span
+            >
+          </div>
+        </div>
+        <div class="app-table__cell channel-detail__cell">
+          <div class="app-table__title channel-detail__cell-txt">
+            <span class="channel-detail__cell-txt-row">Channel &#10141;</span>
+            <span class="channel-detail__cell-txt-row"
+              >Counterparty Channel</span
+            >
+          </div>
+          <div class="app-table__cell-row channel-detail__cell-txt">
+            <span class="channel-detail__cell-txt-row"
+              >{{ channel.channelId }} &#10141;</span
+            >
+            <span class="channel-detail__cell-txt-row">{{
+              channel.counterparty.channelId
+            }}</span>
+          </div>
         </div>
         <div class="app-table__cell">
-          <span class="app-table__title"
-            >Channel &#10141; Counterparty Channel</span
-          >
-          <span class="app-table__cell-row">
-            {{ channel.channelId }} &#10141;
-          </span>
-          <span class="app-table__cell-row">
-            {{ channel.counterparty.channelId }}</span
-          >
-        </div>
-        <div class="app-table__cell">
-          <span class="app-table__title">State</span>
+          <span class="app-table__title channel-detail__cell-txt">State</span>
           <StatusIcon :status="channel?.state === 3 ? 'success' : 'error'" />
         </div>
         <div class="app-table__cell">
-          <span class="app-table__title">Order</span>
+          <span class="app-table__title channel-detail__cell-txt">Order</span>
           <span>{{ getOrder(channel.ordering) }}</span>
         </div>
       </div>
-    </div>
+    </template>
+    <template v-else>
+      <div class="channel-detail__empty">No channels</div>
+    </template>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent, PropType, computed } from 'vue'
 import StatusIcon from '@/components/StatusIcon.vue'
 import { IdentifiedChannel } from 'cosmjs-types/ibc/core/channel/v1/channel'
 import { IdentifiedConnection } from 'cosmjs-types/ibc/core/connection/v1/connection'
@@ -64,12 +71,12 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const getChannel = (connection: IdentifiedConnection) => {
-      return props?.channelData?.filter(
+    const channels = computed(() => {
+      return props.channelData?.filter(
         (channel: IdentifiedChannel) =>
-          channel?.connectionHops[0] === connection?.id
+          channel?.connectionHops[0] === props.connection?.id
       )
-    }
+    })
     const getOrder = (item: number) => {
       if (item === -1) {
         return 'Unrecognized'
@@ -81,13 +88,62 @@ export default defineComponent({
         return 'Ordered'
       }
     }
-    return { getChannel, getOrder }
+    return { channels, getOrder }
   },
 })
 </script>
 
 <style scoped lang="scss">
-.channel-detail__row {
-  display: flex;
+.channel-detail {
+  border-top: 0.1rem solid var(--clr__table-border);
+  padding-top: 2.3rem;
+  margin-top: 2.3rem;
+  &__cell {
+    margin-bottom: 0.5rem;
+  }
+  &__cell-txt-row {
+    padding-right: 0.2rem;
+  }
+  &__row {
+    grid:
+      auto /
+      minmax(3rem, 1fr)
+      minmax(3rem, 1.1fr)
+      minmax(3rem, 1fr)
+      minmax(3rem, 1fr)
+      minmax(2rem, 0.75fr);
+    border: none;
+    padding: 0;
+    margin-bottom: 1rem;
+  }
+  &__empty {
+    text-align: center;
+  }
+}
+@include respond-to(x-medium) {
+  .channel-detail {
+    &__cell-txt {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}
+@include respond-to(tablet) {
+  .channel-detail {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+    & > *:not(:last-child) {
+      padding-bottom: 1.5rem;
+      border-bottom: 0.1rem solid var(--clr__table-border);
+    }
+    &__row {
+      display: block;
+      padding-top: 2.5rem;
+    }
+    &__empty {
+      margin-top: 2.4rem;
+    }
+  }
 }
 </style>
