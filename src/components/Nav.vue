@@ -30,6 +30,9 @@
       >
         <span>Governance</span>
       </router-link>
+      <router-link class="nav__link" data-text="IBCs" :to="{ name: 'IBC' }">
+        <span>IBCs</span>
+      </router-link>
     </div>
     <div class="nav__activities">
       <button

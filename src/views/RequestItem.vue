@@ -81,7 +81,18 @@
         <div class="info-table">
           <div class="info-table__row">
             <span class="info-table__row-title">{{ requestResultName }}</span>
-            <span class="info-table__row-txt">
+            <span
+              class="info-table__row-txt"
+              v-if="requestResultType === 'object'"
+            >
+              <div v-for="(item, i) in requestResult" :key="item">
+                {{ i }}: {{ item }}
+              </div>
+            </span>
+            <span
+              class="info-table__row-txt"
+              v-if="requestResultType === 'string'"
+            >
               {{ requestResult }}
             </span>
           </div>
@@ -109,7 +120,6 @@ import Progressbar from '@/components/Progressbar.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
 import { Obi } from '@bandprotocol/bandchain.js'
 import { handleError } from '@/helpers/errors'
-// import { uint8ArrayToStr } from '@/helpers/casts'
 import isObjectLodash from 'lodash/isObject'
 
 export default defineComponent({
@@ -126,6 +136,7 @@ export default defineComponent({
     const requestCalldata = ref()
     const requestResult = ref()
     const requestResultName = ref()
+    const requestResultType = ref()
     const senderLink = computed(() => {
       return `${API_CONFIG.odinScan}/account/${requestData.value?.requestPacketData?.clientId}`
     })
@@ -153,7 +164,13 @@ export default defineComponent({
         if (isRequestSuccess.value) {
           const res = await _decodeResult(resPacketData.result)
           requestResultName.value = Object.keys(res).toString() || 'Data'
-          requestResult.value = res[Object.keys(res)[0]].join(' ') || '[]'
+          requestResult.value = res[Object.keys(res)[0]].length
+            ? res[Object.keys(res)[0]].reduce(
+                (accumulator: unknown, currentValue: unknown) =>
+                  accumulator + ' ' + currentValue
+              )
+            : '[]'
+          requestResultType.value = typeof requestResult.value
         }
       }
     }
@@ -208,6 +225,7 @@ export default defineComponent({
       isObject,
       isRequestSuccess,
       requestResultName,
+      requestResultType,
     }
   },
 })

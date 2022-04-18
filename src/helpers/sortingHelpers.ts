@@ -26,7 +26,7 @@ export const sortingOwners = [
     value: OWNERS_SORT.ALL,
   },
   {
-    text: 'Mine',
+    text: 'My',
     value: wallet.account.address,
   },
 ]

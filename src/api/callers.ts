@@ -65,6 +65,9 @@ const makeCallers = () => {
       MsgEditOracleScript
     ),
     getOracleScripts: querier((qc) => qc.oracle.unverified.oracleScripts),
+    getChannel: querier((qc) => qc.ibc.channel.allChannels),
+    getConnections: querier((qc) => qc.ibc.connection.allConnections),
+    getClientState: querier((qc) => qc.ibc.client.state),
     getOracleScript: querier((qc) => qc.oracle.unverified.oracleScript),
     createRequest: broadcaster<MsgRequestData>(
       '/oracle.v1.MsgRequestData',

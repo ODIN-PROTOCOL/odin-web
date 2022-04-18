@@ -184,8 +184,8 @@ export default defineComponent({
   setup(props) {
     const _proposalChanges = toRef(props, 'proposalChanges')
     const form = useForm({
-      name: ['', validators.required],
-      description: ['', validators.required],
+      name: ['', validators.required, validators.maxCharacters(128)],
+      description: ['', validators.required, validators.maxCharacters(256)],
       deposit: [
         '',
         validators.required,
@@ -196,7 +196,14 @@ export default defineComponent({
       ],
       changesSubspace: ['', validators.required],
       changesKey: ['', validators.required],
-      changesValue: ['', validators.required],
+      changesValue: [
+        '',
+        validators.required,
+        validators.number,
+        validators.sixDecimalNumber,
+        ...validators.num(0.000001),
+        validators.maxCharacters(32),
+      ],
     })
 
     const changesValueType = computed(() => {

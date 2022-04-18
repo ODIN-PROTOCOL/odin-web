@@ -32,7 +32,7 @@
               class="app-form__field-input"
               name="become-validator-pubkey"
               type="text"
-              placeholder="odinvalconspub1zcj…"
+              placeholder="YVo5TzlCK5Y5C+7lnOKMlHZKoGfLrEKhmpci3xNs5HA="
               v-model="form.pubKey"
               :disabled="isLoading"
             />
@@ -273,7 +273,7 @@ const BecomeValidatorFormModal = defineComponent({
       form.rate.val(big.fromPrecise('100000000000000000').toString())
       form.maxRate.val(big.fromPrecise('200000000000000000').toString())
       form.maxChangeRate.val(big.fromPrecise('100000000000000000').toString())
-      form.pubKey.val('YVo5TzlCK5Y5C+7lnOKMlHZKoGfLrEKhmpci3xNs5HA=')
+      form.pubKey.val('')
       form.minDelegation.val()
       form.selfDelegation.val()
     }
