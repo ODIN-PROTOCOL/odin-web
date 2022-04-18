@@ -36,21 +36,22 @@
           </div>
           <div class="ibc__show">
             <button
-              @click="connection.isShow = !connection.isShow"
+              @click="isShow[index] = !isShow[index]"
+              type="button"
               class="ibc__show-button"
             >
-              {{ connection.isShow ? 'Hidden channels' : 'Show channels' }}
+              {{ isShow[index] ? 'Hidden channels' : 'Show channels' }}
               <ArrowIcon
                 class="ibc__arrow-icon"
                 :class="{
-                  ['ibc__arrow-icon_active']: connection.isShow,
+                  ['ibc__arrow-icon_active']: isShow[index],
                 }"
               />
             </button>
           </div>
         </div>
         <ChannelDetail
-          v-if="connection.isShow"
+          v-if="isShow[index]"
           :channelData="channelData"
           :connection="connection"
         />
@@ -102,6 +103,7 @@ export default defineComponent({
     const connectionsData = ref<IdentifiedConnection[] | undefined>()
     const channelData = ref<IdentifiedChannel[] | undefined>()
     const filteredConnections = ref()
+    const isShow = ref([])
 
     const loadIbc = async () => {
       lockLoading()
@@ -137,6 +139,7 @@ export default defineComponent({
         )
       }
       currentPage.value = newPage
+      isShow.value = []
     }
 
     const paginationHandler = (num: number) => {
@@ -157,6 +160,7 @@ export default defineComponent({
       channelData,
       chainIdData,
       filteredConnections,
+      isShow,
     }
   },
 })
