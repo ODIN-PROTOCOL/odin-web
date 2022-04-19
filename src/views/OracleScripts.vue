@@ -57,7 +57,7 @@
                 >
                   <button
                     v-if="accountAddress === item.owner"
-                    class="app-btn app-btn_small app-btn_outlined w-min75"
+                    class="app-btn app-btn_small app-btn_outlined w-min80"
                     type="button"
                     @click="editOracleScript(item)"
                   >
