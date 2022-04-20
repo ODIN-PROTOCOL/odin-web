@@ -7,7 +7,7 @@
         class="app-table__row channel-detail__row"
       >
         <div class="app-table__cell channel-detail__cell">
-          <div class="app-table__title channel-detail__cell-txt">
+          <div class="app-table__title channel-detail__cell-txt title">
             <span class="channel-detail__cell-txt-row">Port &#10141;</span>
             <span class="channel-detail__cell-txt-row">Counterparty Port</span>
           </div>
@@ -21,7 +21,7 @@
           </div>
         </div>
         <div class="app-table__cell channel-detail__cell">
-          <div class="app-table__title channel-detail__cell-txt">
+          <div class="app-table__title channel-detail__cell-txt title">
             <span class="channel-detail__cell-txt-row">Channel &#10141;</span>
             <span class="channel-detail__cell-txt-row"
               >Counterparty Channel</span
@@ -37,11 +37,15 @@
           </div>
         </div>
         <div class="app-table__cell">
-          <span class="app-table__title channel-detail__cell-txt">State</span>
+          <span class="app-table__title channel-detail__cell-txt title"
+            >State</span
+          >
           <StatusIcon :status="channel?.state === 3 ? 'success' : 'error'" />
         </div>
         <div class="app-table__cell">
-          <span class="app-table__title channel-detail__cell-txt">Order</span>
+          <span class="app-table__title channel-detail__cell-txt title"
+            >Order</span
+          >
           <span>{{ getOrder(channel.ordering) }}</span>
         </div>
       </div>
@@ -94,6 +98,12 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
+.title {
+  display: block;
+  margin-bottom: 0.8rem;
+  font-weight: 300;
+  min-width: 13rem;
+}
 .channel-detail {
   border-top: 0.1rem solid var(--clr__table-border);
   padding-top: 2.3rem;

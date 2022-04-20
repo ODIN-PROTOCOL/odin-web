@@ -16,7 +16,11 @@
             >
               <div class="app-table__cell">
                 <span class="app-table__title">Request ID</span>
-                <span>{{ item.id }}</span>
+                <TitledLink
+                  class="app-table__cell-txt app-table__link"
+                  :text="item.id"
+                  :to="`/requests/${item.id}`"
+                />
               </div>
               <div class="app-table__cell">
                 <span class="app-table__title">Transactions</span>
@@ -107,9 +111,10 @@ export default defineComponent({
     const getRequestItemName = (index: number) => {
       const item = requests.value[index]
       if (!item?.attributes.oracle_script_name) return '-'
-      if (item.id < 10) {
-        return `#0${item.id}${item?.attributes?.oracle_script_name}`
-      } else return `#${item.id}${item?.attributes?.oracle_script_name}`
+      if (item?.attributes?.oracle_script_id < 10) {
+        return `#0${item?.attributes?.oracle_script_id}${item?.attributes?.oracle_script_name}`
+      } else
+        return `#${item?.attributes?.oracle_script_id}${item?.attributes?.oracle_script_name}`
     }
     onMounted(async () => {
       await getDataSourceRequests()

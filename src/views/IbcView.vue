@@ -12,23 +12,27 @@
         <div class="app-table__body ibc__body">
           <div class="app-table__row ibc__table-row">
             <div class="app-table__cell">
-              <span class="app-table__title">Connection</span>
+              <span class="app-table__title ibc__table-title">Connection</span>
               <span class="app-table__cell-txt">{{ connection.id }}</span>
             </div>
             <div class="app-table__cell">
-              <span class="app-table__title">Counterparty Chain ID</span>
+              <span class="app-table__title ibc__table-title"
+                >Counterparty Chain ID</span
+              >
               <span class="app-table__cell-txt">{{
                 chainIdData[index].chainId || '-'
               }}</span>
             </div>
             <div class="app-table__cell">
-              <span class="app-table__title">Client ID</span>
+              <span class="app-table__title ibc__table-title">Client ID</span>
               <span class="app-table__cell-txt">
                 {{ connection.clientId || '-' }}
               </span>
             </div>
             <div class="app-table__cell">
-              <span class="app-table__title">Counterparty Client ID</span>
+              <span class="app-table__title ibc__table-title"
+                >Counterparty Client ID</span
+              >
               <span class="app-table__cell-txt">
                 {{ connection.counterparty.clientId || '-' }}
               </span>
@@ -109,7 +113,7 @@ export default defineComponent({
       lockLoading()
       try {
         const { connections } = await callers.getConnections()
-        const clientState = await Promise.all(
+        const clientState: QueryClientStateResponse[] = await Promise.all(
           connections?.map((item: IdentifiedConnection) =>
             callers.getClientState(item.clientId)
           )
@@ -170,18 +174,18 @@ export default defineComponent({
 .app-table__cell {
   flex-direction: column;
 }
-.app-table__title {
-  display: block;
-  margin-bottom: 0.8rem;
-  font-weight: 300;
-  min-width: 13rem;
-}
 .ibc {
   &__table {
     border: 0.1rem solid var(--clr__action);
     border-radius: 0.8rem;
     padding: 3rem 2rem;
     margin-bottom: 2.4rem;
+  }
+  &__table-title {
+    display: block;
+    margin-bottom: 0.8rem;
+    font-weight: 300;
+    min-width: 13rem;
   }
   &__body {
     display: grid;

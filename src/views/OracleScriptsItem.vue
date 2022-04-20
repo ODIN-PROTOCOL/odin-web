@@ -12,11 +12,11 @@
       >
         <div class="oracle-scripts-item__activities-item">
           <button
-            class="app-btn app-btn_outlined app-btn_small w-min80"
+            class="app-btn app-btn_small w-min180"
             type="button"
             @click="editOracleScript(oracleScriptData)"
           >
-            Edit
+            Edit Script
           </button>
         </div>
       </div>
@@ -67,11 +67,11 @@
       <div class="oracle-scripts-item__activities">
         <div class="oracle-scripts-item__activities-item">
           <button
-            class="app-btn app-btn_outlined"
+            class="app-btn"
             type="button"
             @click="editOracleScript(oracleScriptData)"
           >
-            Edit
+            Edit script
           </button>
         </div>
       </div>

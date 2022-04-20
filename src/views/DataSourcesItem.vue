@@ -12,11 +12,11 @@
       >
         <div class="data-source-item__activities-item">
           <button
-            class="app-btn app-btn_outlined app-btn_small w-min80"
+            class="app-btn app-btn_small w-min180"
             type="button"
             @click="editDataSource(dataSourceData)"
           >
-            Edit
+            Edit Data Source
           </button>
         </div>
       </div>
@@ -62,11 +62,11 @@
       <div class="data-source-item__activities">
         <div class="data-source-item__activities-item">
           <button
-            class="app-btn app-btn_outlined"
+            class="app-btn"
             type="button"
             @click="editDataSource(dataSourceData)"
           >
-            Edit
+            Edit Data Source
           </button>
         </div>
       </div>
