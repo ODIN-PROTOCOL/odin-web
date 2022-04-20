@@ -104,7 +104,7 @@
                 >
                   <button
                     v-if="accountAddress === item.attributes.owner"
-                    class="app-btn app-btn_small app-btn_outlined w-min75"
+                    class="app-btn app-btn_small app-btn_outlined w-min80"
                     type="button"
                     @click="editDataSource(item.attributes)"
                   >

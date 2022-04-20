@@ -196,14 +196,7 @@ export default defineComponent({
       ],
       changesSubspace: ['', validators.required],
       changesKey: ['', validators.required],
-      changesValue: [
-        '',
-        validators.required,
-        validators.number,
-        validators.sixDecimalNumber,
-        ...validators.num(0.000001),
-        validators.maxCharacters(32),
-      ],
+      changesValue: ['', validators.required, validators.maxCharacters(128)],
     })
 
     const changesValueType = computed(() => {

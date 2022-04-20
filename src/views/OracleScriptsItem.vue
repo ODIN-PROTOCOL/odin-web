@@ -6,6 +6,20 @@
       <span class="view-main__subtitle">
         {{ String(oracleScriptData?.name) }}
       </span>
+      <div
+        class="oracle-scripts-item__activities oracle-scripts-item__activities_top fx-sae"
+        v-if="isOracleScriptOwner"
+      >
+        <div class="oracle-scripts-item__activities-item">
+          <button
+            class="app-btn app-btn_small w-min180"
+            type="button"
+            @click="editOracleScript(oracleScriptData)"
+          >
+            Edit Script
+          </button>
+        </div>
+      </div>
     </div>
 
     <template v-if="oracleScriptData">
@@ -30,7 +44,15 @@
         </div>
       </div>
       <Tabs>
-        <Tab title="Code">
+        <Tab
+          title="Requests"
+          :class="{ 'tab-content-mb': isOracleScriptOwner }"
+        >
+          <RequestsOracleScriptTable
+            :oracle-script-id="String($route.params.id)"
+          />
+        </Tab>
+        <Tab title="Code" :class="{ 'tab-content-mb': isOracleScriptOwner }">
           <CodeTable :code="oracleScriptCode" />
         </Tab>
       </Tabs>
@@ -41,11 +63,24 @@
         <p v-else>Data source not found</p>
       </div>
     </template>
+    <div class="view-main__mobile-activities" v-if="isOracleScriptOwner">
+      <div class="oracle-scripts-item__activities">
+        <div class="oracle-scripts-item__activities-item">
+          <button
+            class="app-btn"
+            type="button"
+            @click="editOracleScript(oracleScriptData)"
+          >
+            Edit script
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, ref, onMounted, computed } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
@@ -55,20 +90,26 @@ import BackButton from '@/components/BackButton.vue'
 import Tabs from '@/components/tabs/Tabs.vue'
 import Tab from '@/components/tabs/Tab.vue'
 import CodeTable from '@/components/tables/CodeTable.vue'
+import RequestsOracleScriptTable from '@/components/tables/RequestsOracleScriptTable.vue'
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
+import OracleScriptFormModal from '@/components/modals/OracleScriptFormModal.vue'
+import { OracleScript } from '@provider/codec/oracle/v1/oracle'
+import { wallet } from '@/api/wallet'
 
 export default defineComponent({
-  components: { BackButton, Tabs, Tab, CodeTable },
+  components: { BackButton, Tabs, Tab, CodeTable, RequestsOracleScriptTable },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const route: RouteLocationNormalizedLoaded = useRoute()
     const oracleScriptData = ref()
     const oracleScriptCode = ref('')
-
+    const isOracleScriptOwner = computed(() => {
+      return wallet.account.address === oracleScriptData.value?.owner
+    })
     const getOracleScript = async () => {
       lockLoading()
       try {
         const response = await callers.getOracleScript(String(route.params.id))
-
         oracleScriptData.value = response.oracleScript
       } catch (error) {
         handleError(error as Error)
@@ -90,6 +131,18 @@ export default defineComponent({
       }
       releaseLoading()
     }
+    const editOracleScript = async (oracleScript: OracleScript) => {
+      await showDialogHandler(
+        OracleScriptFormModal,
+        {
+          onSubmit: async (d) => {
+            d.kill()
+            await getOracleScript()
+          },
+        },
+        { oracleScript }
+      )
+    }
     onMounted(async () => {
       await getOracleScript()
       await getOracleScriptCode()
@@ -101,6 +154,8 @@ export default defineComponent({
       oracleScriptData,
       getOracleScriptCode,
       oracleScriptCode,
+      editOracleScript,
+      isOracleScriptOwner,
     }
   },
 })
@@ -116,11 +171,34 @@ export default defineComponent({
     text-align: center;
   }
 }
-
+.oracle-scripts-item {
+  &__activities {
+    display: flex;
+    flex-direction: column;
+    gap: 2.4rem;
+  }
+  &__activities-item {
+    display: flex;
+    flex-direction: row;
+    gap: 2.4rem;
+    & > * {
+      flex: 1;
+    }
+  }
+}
 @include respond-to(tablet) {
   .view-main {
     &__title {
       margin: 0.8rem 0 0.4rem 0;
+    }
+  }
+  .tab-content-mb {
+    margin-bottom: 12rem;
+  }
+  .oracle-scripts-item {
+    padding-bottom: 10rem;
+    &__activities_top {
+      display: none;
     }
   }
 }

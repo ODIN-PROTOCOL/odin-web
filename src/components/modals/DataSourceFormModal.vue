@@ -136,7 +136,9 @@ export default defineComponent({
         validators.maxCharacters(256),
       ],
       price: [
-        props.dataSource?.fee?.split('loki')[0] || '',
+        props.dataSource?.fee[0]?.amount ||
+          props.dataSource?.fee?.split('loki')[0] ||
+          '',
         validators.required,
         validators.number,
         validators.sixDecimalNumber,

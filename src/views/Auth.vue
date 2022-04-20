@@ -123,7 +123,7 @@ export default defineComponent({
           await auth.logInWithOdinWallet(form.mnemonic.val())
         }
 
-        await router.push({ name: 'Redirector' })
+        await router.push({ name: 'Wallet' })
       } catch (error) {
         if (props.loginType === LOGIN_TYPE.MNEMONIC494) {
           handleError(error as Error)
