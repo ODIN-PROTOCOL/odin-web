@@ -11,11 +11,11 @@
       >
         <div class="app-table__body ibc__body">
           <div class="app-table__row ibc__table-row">
-            <div class="app-table__cell">
+            <div class="app-table__cell ibc__table-cell">
               <span class="app-table__title ibc__table-title">Connection</span>
               <span class="app-table__cell-txt">{{ connection.id }}</span>
             </div>
-            <div class="app-table__cell">
+            <div class="app-table__cell ibc__table-cell">
               <span class="app-table__title ibc__table-title"
                 >Counterparty Chain ID</span
               >
@@ -23,13 +23,13 @@
                 chainIdData[index].chainId || '-'
               }}</span>
             </div>
-            <div class="app-table__cell">
+            <div class="app-table__cell ibc__table-cell">
               <span class="app-table__title ibc__table-title">Client ID</span>
               <span class="app-table__cell-txt">
                 {{ connection.clientId || '-' }}
               </span>
             </div>
-            <div class="app-table__cell">
+            <div class="app-table__cell ibc__table-cell">
               <span class="app-table__title ibc__table-title"
                 >Counterparty Client ID</span
               >
@@ -171,15 +171,15 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.app-table__cell {
-  flex-direction: column;
-}
 .ibc {
   &__table {
     border: 0.1rem solid var(--clr__action);
     border-radius: 0.8rem;
     padding: 3rem 2rem;
     margin-bottom: 2.4rem;
+  }
+  &__table-cell {
+    flex-direction: column;
   }
   &__table-title {
     display: block;
@@ -234,13 +234,13 @@ export default defineComponent({
   }
 }
 @include respond-to(tablet) {
-  .app-table__cell {
-    flex-direction: row;
-  }
   .ibc {
     padding-bottom: 10rem;
     &__body {
       display: block;
+    }
+    &__table-cell {
+      flex-direction: row;
     }
     &__table-row {
       grid: none;

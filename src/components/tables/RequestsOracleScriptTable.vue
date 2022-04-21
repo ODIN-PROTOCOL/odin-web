@@ -16,12 +16,11 @@
             >
               <div class="app-table__cell">
                 <span class="app-table__title">Request ID</span>
-                <a
+                <TitledLink
                   class="app-table__cell-txt app-table__link"
-                  :href="`/requests/${item.id}`"
-                >
-                  {{ item.id }}
-                </a>
+                  :text="`#${item.id}`"
+                  :to="`/requests/${item.id}`"
+                />
               </div>
               <div class="app-table__cell">
                 <span class="app-table__title">Transaction hash</span>
@@ -78,9 +77,10 @@ import Pagination from '@/components/Pagination/Pagination.vue'
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
+import TitledLink from '@/components/TitledLink.vue'
 
 export default defineComponent({
-  components: { Pagination },
+  components: { Pagination, TitledLink },
   props: {
     oracleScriptId: { type: String, required: true },
   },

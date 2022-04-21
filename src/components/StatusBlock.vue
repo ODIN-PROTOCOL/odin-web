@@ -34,7 +34,7 @@ export default defineComponent({
   border-radius: 4px;
   background: var(--clr__status-default);
   color: var(--clr__text-on-action);
-
+  text-align: center;
   &_success {
     background: var(--clr__status-success);
   }

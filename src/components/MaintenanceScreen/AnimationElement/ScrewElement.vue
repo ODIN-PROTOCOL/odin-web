@@ -1,0 +1,47 @@
+<template>
+  <svg
+    class="screw-element"
+    :class="className"
+    :width="width"
+    :height="height"
+    :viewBox="`0 0 ${width} ${height}`"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M37.9499 32.5713L19.5074 42.311L1.55667 31.7399L2.00749 11.4687L20.45 1.68942L38.4417 12.2605L37.9499 32.5713ZM19.7943 31.2252L27.9909 26.8305V17.6055L19.7943 12.8148L11.5976 17.2491V26.4741L19.7943 31.2252Z"
+      fill="#66B0FF"
+    />
+    <path
+      fill-rule="evenodd"
+      clip-rule="evenodd"
+      d="M20.4901 0L40 11.4631L39.4679 33.4361L19.4648 44L0 32.5372L0.487729 10.6064L20.4901 0ZM3.52725 12.331L3.11334 30.9425L19.5499 40.622L36.4318 31.7065L36.8834 13.0579L20.4099 3.37883L3.52725 12.331ZM19.8246 11.1221L29.5295 16.7942V27.6781L19.7638 32.9141L10.059 27.2889V16.4052L19.8246 11.1221ZM13.1362 18.0931V25.6594L19.8247 29.5363L26.4523 25.9828V18.4167L19.7639 14.5075L13.1362 18.0931Z"
+      fill="#212529"
+    />
+    <g style="mix-blend-mode: multiply" opacity="0.27">
+      <path
+        d="M25.6965 15.9825L28.3604 17.5662L27.9916 26.8308L19.7949 31.2255L12.7867 27.2663C10.1638 29.4438 7.54087 31.661 4.87695 33.799L19.549 42.4301L37.9915 32.6904L38.4833 12.3796L33.3604 9.37061C30.8194 11.5086 28.2375 13.7653 25.6965 15.9825Z"
+        fill="#66B0FF"
+      />
+    </g>
+    <g style="mix-blend-mode: soft-light" opacity="0.65">
+      <path
+        d="M8.80976 14.9531L14.6704 11.2314C16.3097 10.202 14.6704 7.62855 13.113 8.65794L7.2524 12.3796C5.61307 13.4486 7.25239 16.0221 8.80976 14.9531Z"
+        fill="#B6B9C3"
+      />
+    </g>
+  </svg>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'ScrewElement',
+  props: {
+    className: { type: String },
+    width: { type: [Number, String], default: 40 },
+    height: { type: [Number, String], default: 44 },
+  },
+})
+</script>
