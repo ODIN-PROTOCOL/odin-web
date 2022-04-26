@@ -11,41 +11,66 @@
       </button>
     </div>
 
-    <template v-if="oracleScriptsCount">
-      <div class="view-main__count-info">
-        <p>{{ oracleScriptsCount }} oracle scripts found</p>
+    <template v-if="mostRequestedOracleScripts">
+      <div>
+        <h3 class="view-main__subtitle mg-b24">Most requested</h3>
+        <TopOracleScripts :top-oracle-scripts="mostRequestedOracleScripts" />
       </div>
     </template>
+
+    <template v-if="oracleScriptsCount">
+      <div>
+        <h3 class="view-main__subtitle mg-b24">All oracle scripts</h3>
+        <div class="view-main__count-info">
+          <p>{{ oracleScriptsCount }} Oracle Scripts found</p>
+        </div>
+      </div>
+    </template>
+
+    <SortRow
+      :isLoading="isLoading"
+      :title="'Oracle Scripts'"
+      v-model:oracleScriptsName="oracleScriptsName"
+      v-model:sortingOwnersValue="sortingOwnersValue"
+      v-model:sortingActivitiesValue="sortingActivitiesValue"
+    />
 
     <div class="app-table">
       <div class="app-table__head">
         <span>ID</span>
         <span>Oracle Script</span>
         <span class="app-table__head_item">Description</span>
+        <span class="app-table__head_item">Timestamp</span>
       </div>
       <div class="app-table__body">
         <template v-if="oracleScripts?.length">
           <div
             v-for="item in oracleScripts"
-            :key="item.id.toString()"
+            :key="item.attributes.id.toString()"
             class="app-table__row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">ID</span>
-              <span>{{ item.id.toNumber() }}</span>
+              <span>{{ item.attributes.id }}</span>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Oracle Script</span>
               <TitledLink
                 class="app-table__cell-txt app-table__link"
-                :text="item.name"
-                :to="`/oracle-scripts/${item.id.toNumber()}`"
+                :text="item.attributes.name"
+                :to="`/oracle-scripts/${item.id}`"
               />
             </div>
             <div class="app-table__cell oracle-scripts__table-cell_center">
               <span class="app-table__title">Description</span>
               <span>
-                {{ item.description || '-' }}
+                {{ item.attributes.description || '-' }}
+              </span>
+            </div>
+            <div class="app-table__cell oracle-scripts__table-cell_center">
+              <span class="app-table__title">Timestamp</span>
+              <span>
+                {{ item.attributes.timestamp || '-' }}
               </span>
             </div>
             <div class="app-table__cell">
@@ -56,10 +81,10 @@
                   class="app-table__activities-item oracle-scripts__table-activities-item"
                 >
                   <button
-                    v-if="accountAddress === item.owner"
+                    v-if="accountAddress === item.attributes.owner"
                     class="app-btn app-btn_small app-btn_outlined w-min80"
                     type="button"
-                    @click="editOracleScript(item)"
+                    @click="editOracleScript(item.attributes)"
                   >
                     Edit
                   </button>
@@ -99,7 +124,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue'
+import { defineComponent, onMounted, ref, watch } from 'vue'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 
@@ -112,8 +137,11 @@ import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import OracleScriptFormModal from '@/components/modals/OracleScriptFormModal.vue'
 import { OracleScript } from '@provider/codec/oracle/v1/oracle'
 
+import TopOracleScripts from '@/components/TopOracleScripts.vue'
+import SortRow from '@/components/SortLine.vue'
+
 export default defineComponent({
-  components: { TitledLink, Pagination },
+  components: { TitledLink, Pagination, TopOracleScripts, SortRow },
   setup() {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 4
@@ -122,16 +150,29 @@ export default defineComponent({
     const oracleScriptsCount = ref(0)
     const oracleScripts = ref()
     const accountAddress = wallet.account.address
-
+    const mostRequestedOracleScripts = ref()
+    const oracleScriptsName = ref('')
+    const sortingActivitiesValue = ref('')
+    const sortingOwnersValue = ref('')
     const loadOracleScripts = async () => {
       lockLoading()
       try {
-        const response = await callers.getOracleScripts(
-          ITEMS_PER_PAGE,
-          (currentPage.value - 1) * ITEMS_PER_PAGE
-        )
+        const res = await callers
+          .getSortedOracleScripts('most_requested', 0, 6)
+          .then((response) => response.json())
+          .then((data) => data)
+        mostRequestedOracleScripts.value = [...res.data, ...res.data]
 
-        oracleScripts.value = response.oracleScripts
+        const response = await callers
+          .getSortedOracleScripts(
+            sortingActivitiesValue.value,
+            currentPage.value - 1,
+            ITEMS_PER_PAGE
+          )
+          .then((response) => response.json())
+          .then((data) => data)
+        oracleScripts.value = response.data
+
         await getOracleScriptsCount()
       } catch (error) {
         handleError(error as Error)
@@ -153,7 +194,13 @@ export default defineComponent({
         },
       })
     }
-
+    watch(
+      [sortingActivitiesValue, sortingOwnersValue, oracleScriptsName],
+      async () => {
+        currentPage.value = 1
+        await loadOracleScripts()
+      }
+    )
     const paginationHandler = (num: number) => {
       currentPage.value = num
       loadOracleScripts()
@@ -185,6 +232,11 @@ export default defineComponent({
       totalPages,
       editOracleScript,
       accountAddress,
+
+      sortingActivitiesValue,
+      sortingOwnersValue,
+      mostRequestedOracleScripts,
+      oracleScriptsName,
     }
   },
 })
@@ -202,9 +254,10 @@ export default defineComponent({
   grid:
     auto /
     minmax(2rem, 0.5fr)
-    minmax(4rem, 4fr)
-    minmax(8rem, 6fr)
-    minmax(8rem, 4fr);
+    minmax(4rem, 3fr)
+    minmax(4rem, 2fr)
+    minmax(8rem, 2fr)
+    minmax(8rem, 2fr);
 }
 .app-table__head_item {
   text-align: center;
@@ -237,7 +290,7 @@ export default defineComponent({
     padding-bottom: 10rem;
 
     &__count-info {
-      margin-bottom: 0;
+      margin-bottom: 2.4rem;
     }
 
     &__title-btn {

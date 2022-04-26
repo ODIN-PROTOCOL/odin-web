@@ -1,6 +1,6 @@
 .app-table {
   display: block;
-
+  margin-bottom: 2.4rem;
   &__title {
     display: none;
     font-size: 1.4rem;
@@ -63,6 +63,7 @@
   }
 
   &__row-value {
+    font-weight: 300;
     &_flex {
       display: flex;
       min-width: 0;
@@ -73,6 +74,7 @@
     @include ellipsis(inline-block);
     color: var(--clr__action);
     text-decoration: none;
+    font-weight: 400;
   }
 
   &__row-txt {

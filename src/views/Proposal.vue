@@ -7,7 +7,7 @@
         {{ proposal.content.title }}
       </span>
       <button
-        class="view-main__title-btn app-btn app-btn_small fx-sae"
+        class="view-main__title-btn app-btn app-btn_small fx-sae w-min184"
         :disabled="
           !proposal ||
           proposal?.status !== ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
@@ -19,7 +19,7 @@
     </div>
 
     <template v-if="proposal">
-      <div class="info-table mg-b40">
+      <div class="info-table mg-b32">
         <div class="info-table__row">
           <span class="info-table__row-title">Proposer's account ID</span>
           <div class="info-table__row-value info-table__row-value_flex">
@@ -56,44 +56,50 @@
             :isTitled="true"
           />
         </div>
-        <!-- Wait design -->
-        <!-- <div class="info-table__row">
-          <p class="info-table__row-title">Changes</p>
-          <div
-            v-for="(change, index) in proposal.content.changes"
-            :key="index"
-            class="proposal-modal__section-table-wrp"
-          >
-            <span class="proposal-modal__section-table-idx">
-              #{{ index + 1 }}
-            </span>
-            <div class="proposal-modal__section-table">
-              <div
-                v-for="(value, key) in change"
-                :key="key"
-                class="proposal-modal__section-colum"
-              >
-                <p class="proposal-modal__section-column-head">
-                  {{ key }}
-                </p>
-                <p class="proposal-modal__section-column-body">
-                  {{ value }}
-                </p>
-              </div>
-            </div>
-          </div>
+      </div>
+
+      <h3 class="view-main__subtitle mg-b24">Details</h3>
+      <div class="info-table mg-b32">
+        <div class="info-table__row">
+          <span class="info-table__row-title">Proposal created</span>
+          <span class="info-table__row-value">
+            {{ $fDate(proposal.submitTime) }}
+          </span>
         </div>
         <div class="info-table__row">
-          <p class="info-table__row-title">Details</p>
-          <pre class="proposal-modal__section-val">
-          Deposited: {{ $fCoin(proposal.totalDeposit[0]) }}
-          Proposal created: {{ $fDate(proposal.submitTime) }}
-          Deposit end: {{ $fDate(proposal.depositEndTime) }}
-          Voting start: {{ $fDate(proposal.votingStartTime) }}
-          Voting end: {{ $fDate(proposal.votingEndTime) }}
-        </pre
-          >
-        </div> -->
+          <span class="info-table__row-title">Voting start</span>
+          <span class="info-table__row-value">
+            {{ $fDate(proposal.votingStartTime) }}
+          </span>
+        </div>
+        <div class="info-table__row">
+          <span class="info-table__row-title">Voting end</span>
+          <span class="info-table__row-value">
+            {{ $fDate(proposal.votingEndTime) }}
+          </span>
+        </div>
+        <div class="info-table__row">
+          <span class="info-table__row-title">Deposited</span>
+          <span class="info-table__row-value">
+            {{ $fCoin(proposal.totalDeposit[0]) }}
+          </span>
+        </div>
+      </div>
+
+      <h3 class="view-main__subtitle mg-b24">Changes</h3>
+      <div class="info-table mg-b32">
+        <div
+          v-for="(change, title) in proposal.content.changes[0]"
+          :key="change"
+          class="info-table__row"
+        >
+          <span class="info-table__row-title">{{
+            capitalizeFirstLetter(title)
+          }}</span>
+          <span class="info-table__row-value">
+            {{ change }}
+          </span>
+        </div>
       </div>
     </template>
     <template v-else>
@@ -136,6 +142,7 @@ import Tally from '@/components/Tally.vue'
 import BackButton from '@/components/BackButton.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
 import CopyButton from '@/components/CopyButton.vue'
+import { capitalizeFirstLetter } from '@/helpers/formatters'
 
 export default defineComponent({
   components: { Tally, BackButton, StatusBlock, CopyButton },
@@ -188,6 +195,7 @@ export default defineComponent({
       proposalStatusType,
       proposal,
       tally,
+      capitalizeFirstLetter,
     }
   },
 })
@@ -210,6 +218,12 @@ export default defineComponent({
 
     &__title-btn {
       display: none;
+    }
+  }
+  .info-table {
+    &__row-title {
+      display: inline-block;
+      min-width: 15.4rem;
     }
   }
 }

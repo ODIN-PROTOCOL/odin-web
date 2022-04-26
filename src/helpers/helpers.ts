@@ -29,8 +29,8 @@ export const prepareTransaction = async (
       const { receiver, sender, type, amount, time, fee } =
         await getDateFromMessage(item)
 
-      const odinAmount = convertLokiToOdin(amount, { withDenom: true })
-      const odinFee = convertLokiToOdin(fee, { withDenom: true })
+      const odinAmount = Number(convertLokiToOdin(amount)) + ' ODIN'
+      const odinFee = Number(convertLokiToOdin(fee)) + ' ODIN'
       return {
         type: type ? type : '-',
         hash: item.hash ? toHexFunc(item.hash) : '-',

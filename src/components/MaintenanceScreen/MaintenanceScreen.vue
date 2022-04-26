@@ -69,8 +69,11 @@ html {
   font-family: 'SF Display', Helvetica, Arial, sans-serif;
   text-align: center;
   opacity: 0.9;
-  position: relative;
-  top: 18%;
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
   &__info {
     display: flex;
     flex-direction: column;
@@ -89,8 +92,8 @@ html {
     color: var(--clr__text);
   }
   &__elements {
-    width: 39.6rem;
-    height: 33.8rem;
+    width: 29.6rem;
+    height: 20.8rem;
     position: relative;
     display: flex;
     margin: 2rem auto;
@@ -106,6 +109,22 @@ html {
     }
     .gear-element {
       animation: 16s infinite rotation linear;
+      width: 12.8rem;
+      height: 10.8rem;
+    }
+    .wrench-element {
+      height: 17rem;
+    }
+    .screwdriver-element {
+      height: 17rem;
+    }
+    .screw-element {
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+    .bolt-element {
+      width: 2.5rem;
+      height: 2.5rem;
     }
     .screwdriver-wrapper {
       display: flex;
@@ -138,7 +157,7 @@ html {
     .bolt-element {
       position: absolute;
       bottom: 1rem;
-      right: 0;
+      right: 5rem;
     }
     .screw-wrapper {
       position: absolute;
@@ -147,29 +166,25 @@ html {
       aspect-ratio: 1;
       animation: infinite 7s ease-in-out floating;
 
-      // & > svg {
-      //   width: 100%;
-      // }
-
       &_1 {
-        top: 0;
+        top: 2rem;
         left: 0;
         right: 0;
-        padding-left: 4.8rem;
+        // padding-left: 4.8rem;
       }
       &_2 {
-        top: 0;
+        top: 8rem;
         bottom: 0;
-        left: 0;
-        padding-top: 4.8rem;
+        left: 4rem;
+        // padding-top: 4.8rem;
         animation-delay: -7s;
         animation-duration: 12s;
       }
       &_3 {
-        top: 0;
+        top: 2rem;
         bottom: 0;
-        right: 0;
-        padding-bottom: 4.8rem;
+        right: 3rem;
+        // padding-bottom: 4.8rem;
         animation-delay: -4s;
         animation-duration: 10s;
       }
@@ -216,7 +231,7 @@ html {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(3rem);
+    transform: translateY(2.5rem);
   }
   to {
     transform: translateY(0);
@@ -224,7 +239,7 @@ html {
 }
 @include respond-to(small) {
   .maintenance-screen {
-    top: 15%;
+    // top: 23%;
     &__title {
       font-size: 2rem;
       line-height: 3rem;
@@ -237,37 +252,38 @@ html {
     &__elements {
       width: 24rem;
       height: 22rem;
-      margin: 2rem auto;
+      margin: 1rem auto;
       .wrench-element {
-        height: 16rem;
+        height: 14rem;
       }
       .screwdriver-element {
-        height: 16rem;
+        height: 14rem;
       }
       .gear-element {
-        width: 12rem;
-        height: 12rem;
+        width: 10rem;
+        height: 10rem;
       }
       .screw-element {
-        width: 2rem;
-        height: 2rem;
+        width: 1.5rem;
+        height: 1.5rem;
       }
       .bolt-element {
-        right: 2rem;
-        width: 2rem;
-        height: 2rem;
+        right: 4rem;
+        bottom: 3rem;
+        width: 1.5rem;
+        height: 1.5rem;
       }
       .screw-wrapper {
         &_1 {
-          top: 2.5rem;
+          top: 4.5rem;
         }
         &_2 {
-          left: 2.5rem;
-          top: 1rem;
+          left: 3.5rem;
+          top: 7rem;
         }
         &_3 {
-          top: 12.5rem;
-          right: 1.5rem;
+          top: 3.5rem;
+          right: 3rem;
         }
       }
     }

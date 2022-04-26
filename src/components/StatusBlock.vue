@@ -31,7 +31,7 @@ export default defineComponent({
   font-size: 1.2rem;
   font-weight: 600;
   line-height: 1.6rem;
-  border-radius: 4px;
+  border-radius: 3.2rem;
   background: var(--clr__status-default);
   color: var(--clr__text-on-action);
   text-align: center;
