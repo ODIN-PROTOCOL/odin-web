@@ -58,7 +58,7 @@
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="item.attributes.name"
-                :to="`/oracle-scripts/${item.id}`"
+                :to="`/oracle-scripts/${item.attributes.id}`"
               />
             </div>
             <div class="app-table__cell oracle-scripts__table-cell_center">
@@ -70,7 +70,7 @@
             <div class="app-table__cell oracle-scripts__table-cell_center">
               <span class="app-table__title">Timestamp</span>
               <span>
-                {{ item.attributes.timestamp || '-' }}
+                {{ $fDate(new Date(item.attributes.timestamp * 1000)) || '-' }}
               </span>
             </div>
             <div class="app-table__cell">
@@ -157,17 +157,13 @@ export default defineComponent({
     const loadOracleScripts = async () => {
       lockLoading()
       try {
-        const res = await callers
-          .getSortedOracleScripts('most_requested', 0, 6)
-          .then((response) => response.json())
-          .then((data) => data)
-        mostRequestedOracleScripts.value = [...res.data, ...res.data]
-
         const response = await callers
           .getSortedOracleScripts(
-            sortingActivitiesValue.value,
             currentPage.value - 1,
-            ITEMS_PER_PAGE
+            ITEMS_PER_PAGE,
+            sortingActivitiesValue.value,
+            sortingOwnersValue.value,
+            oracleScriptsName.value
           )
           .then((response) => response.json())
           .then((data) => data)
@@ -179,7 +175,19 @@ export default defineComponent({
       }
       releaseLoading()
     }
-
+    const getMostRequestedOracleScripts = async () => {
+      lockLoading()
+      try {
+        const res = await callers
+          .getSortedOracleScripts(0, 6, 'most_requested', 'null', '')
+          .then((response) => response.json())
+          .then((data) => data)
+        mostRequestedOracleScripts.value = res.data
+      } catch (error) {
+        handleError(error as Error)
+      }
+      releaseLoading()
+    }
     const getOracleScriptsCount = async () => {
       const res = await callers.getCounts()
       oracleScriptsCount.value = res.oracleScriptCount.toNumber()
@@ -219,6 +227,7 @@ export default defineComponent({
     }
     onMounted(async () => {
       await loadOracleScripts()
+      await getMostRequestedOracleScripts()
     })
 
     return {

@@ -45,20 +45,15 @@ const makeCallers = () => {
     ),
     getDataSources: querier((qc) => qc.oracle.unverified.dataSources),
     getSortedDataSources: (
-      activities: string,
       page_number: number,
       page_limit: number,
-      owner?: string | null
+      activities: string,
+      owner: string,
+      name: string
     ) => {
-      if (owner && owner !== 'null') {
-        return sendGet(
-          `${API_CONFIG.telemetryUrl}telemetry/data_sources?sort=${activities}&owner=${owner}`
-        )
-      } else {
-        return sendGet(
-          `${API_CONFIG.telemetryUrl}telemetry/data_sources?sort=${activities}&page[number]=${page_number}&page[limit]=${page_limit}`
-        )
-      }
+      return sendGet(
+        `${API_CONFIG.telemetryUrl}telemetry/data_sources?page[number]=${page_number}&page[limit]=${page_limit}&sort=${activities}&owner=${owner}&name=${name}`
+      )
     },
     getDataSource: querier((qc) => qc.oracle.unverified.dataSource),
     createOracleScript: broadcaster<MsgCreateOracleScript>(
@@ -71,20 +66,15 @@ const makeCallers = () => {
     ),
     getOracleScripts: querier((qc) => qc.oracle.unverified.oracleScripts),
     getSortedOracleScripts: (
-      activities: string,
       page_number: number,
       page_limit: number,
-      owner?: string
+      activities: string,
+      owner: string,
+      name: string
     ) => {
-      if (owner) {
-        return sendGet(
-          `${API_CONFIG.telemetryUrl}telemetry/oracle_scripts?sort=${activities}&owner=${owner}`
-        )
-      } else {
-        return sendGet(
-          `${API_CONFIG.telemetryUrl}telemetry/oracle_scripts?sort=${activities}&page[number]=${page_number}&page[limit]=${page_limit}`
-        )
-      }
+      return sendGet(
+        `${API_CONFIG.telemetryUrl}telemetry/oracle_scripts?page[number]=${page_number}&page[limit]=${page_limit}&sort=${activities}&owner=${owner}&name=${name}`
+      )
     },
     getChannel: querier((qc) => qc.ibc.channel.allChannels),
     getConnections: querier((qc) => qc.ibc.connection.allConnections),

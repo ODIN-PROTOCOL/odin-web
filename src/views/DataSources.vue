@@ -13,7 +13,7 @@
 
     <template v-if="dataSourcesCount">
       <div class="data-sources__count-info">
-        <p>{{ dataSourcesCount }} data sources found</p>
+        <p>{{ dataSourcesCount }} Data Sources found</p>
       </div>
     </template>
 
@@ -30,6 +30,7 @@
         <span>ID</span>
         <span>Data Source</span>
         <span>Description</span>
+        <span>Timestamp</span>
       </div>
       <div class="app-table__body">
         <template v-if="dataSources?.length">
@@ -54,6 +55,12 @@
               <span class="app-table__title">Description</span>
               <span>
                 {{ item.attributes.description || '-' }}
+              </span>
+            </div>
+            <div class="app-table__cell">
+              <span class="app-table__title">Timestamp</span>
+              <span>
+                {{ $fDate(new Date(item.attributes.timestamp * 1000)) || '-' }}
               </span>
             </div>
             <div class="app-table__cell">
@@ -134,14 +141,14 @@ export default defineComponent({
       try {
         const res = await callers
           .getSortedDataSources(
-            sortingActivitiesValue.value,
             currentPage.value - 1,
             ITEMS_PER_PAGE,
-            sortingOwnersValue.value
+            sortingActivitiesValue.value,
+            sortingOwnersValue.value,
+            dataSourceName.value
           )
           .then((response) => response.json())
           .then((data) => data)
-
         dataSources.value = res.data
         await getDataSourcesCount()
       } catch (error) {
@@ -237,9 +244,10 @@ export default defineComponent({
   &__table-row {
     grid:
       auto /
-      minmax(3rem, 0.5fr)
-      minmax(8rem, 6fr)
-      minmax(8rem, 6fr)
+      minmax(2rem, 0.5fr)
+      minmax(4rem, 3fr)
+      minmax(4rem, 3fr)
+      minmax(8rem, 2fr)
       minmax(8rem, 2fr);
   }
   &__table-activities {

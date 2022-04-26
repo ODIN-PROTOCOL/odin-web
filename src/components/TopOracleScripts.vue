@@ -1,29 +1,26 @@
 <template>
-  <div class="oracle-scripts__top">
+  <div class="top-oracle-scripts">
     <div
       v-for="script in topOracleScripts"
       :key="script.attributes.id"
-      class="oracle-scripts__top-item"
+      class="top-oracle-scripts__item"
     >
-      <div class="oracle-scripts__top-item-description">
-        <div class="oracle-scripts__top-item-title">
+      <div class="top-oracle-scripts__item-description">
+        <div class="top-oracle-scripts__item-title">
           {{ script.attributes.name }}
         </div>
-        <span class="oracle-scripts__top-item-text">
-          {{
-            script.attributes.description ||
-            'ODIN Standard Dataset oracle script for querying cryptocurrency prices'
-          }}
+        <span class="top-oracle-scripts__item-text">
+          {{ script.attributes.description || '-' }}
         </span>
       </div>
-      <div class="oracle-scripts__top-item-info">
-        <div class="oracle-scripts__top-item-value">
-          <div class="oracle-scripts__top-item-text">Requests number</div>
-          <div class="oracle-scripts__top-item-text">-</div>
+      <div class="top-oracle-scripts__item-info">
+        <div class="top-oracle-scripts__item-info-value">
+          <div class="top-oracle-scripts__item-info-title">Requests number</div>
+          <div class="top-oracle-scripts__item-info-text">-</div>
         </div>
-        <div class="oracle-scripts__top-item-value">
-          <div class="oracle-scripts__top-item-text">Response time</div>
-          <div class="oracle-scripts__top-item-text">-</div>
+        <div class="top-oracle-scripts__item-info-value">
+          <div class="top-oracle-scripts__item-info-title">Response time</div>
+          <div class="top-oracle-scripts__item-info-text">-</div>
         </div>
       </div>
     </div>
@@ -47,14 +44,16 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.oracle-scripts {
-  &__top {
-    display: grid;
-    grid: auto/ repeat(3, 1fr);
-    gap: 2.4rem;
-    margin-bottom: 4rem;
-  }
-  &__top-item {
+.top-oracle-scripts {
+  display: grid;
+  grid: auto/ repeat(3, 1fr);
+  gap: 2.4rem;
+  margin-bottom: 4rem;
+  font-weight: 400;
+  font-size: 1.6rem;
+  line-height: 24px;
+
+  &__item {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -64,44 +63,42 @@ export default defineComponent({
     border: 0.1rem solid var(--clr__action);
     border-radius: 0.8rem;
   }
-  &__top-item-title {
+  &__item-title {
     font-weight: 600;
     font-size: 1.8rem;
     padding-bottom: 2.4rem;
   }
-  &__top-item-text {
-    font-weight: 400;
-    font-size: 1.6rem;
-  }
-  &__top-item-info {
+
+  &__item-info {
     display: grid;
     grid: auto/ repeat(2, 1fr);
   }
-  &__top-item-description {
+  &__item-info-title {
+    padding-bottom: 0.8rem;
+    color: var(--clr__text-muted);
+  }
+  &__item-description {
     display: flex;
     justify-content: space-between;
     flex-direction: column;
   }
-  &__top-item-value {
+  &__item-value {
     display: flex;
     flex-direction: column;
   }
 }
 @include respond-to(medium) {
-  .oracle-scripts {
-    &__top {
-      grid: auto/repeat(2, 1fr);
-      gap: 2rem;
-    }
+  .top-oracle-scripts {
+    grid: auto/repeat(2, 1fr);
+    gap: 2rem;
   }
 }
 @include respond-to(tablet) {
-  .oracle-scripts {
-    &__top {
-      grid: auto/repeat(6, 1fr);
-      overflow-x: scroll;
-    }
-    &__top-item {
+  .top-oracle-scripts {
+    grid: auto/repeat(6, 1fr);
+    overflow-x: scroll;
+
+    &__item {
       min-width: 28.7rem;
       min-height: 26.5rem;
       justify-content: space-between;
