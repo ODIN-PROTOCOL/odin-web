@@ -58,22 +58,21 @@ html {
   font-size: 10px;
 }
 #app {
+  font-family: 'SF Display', Helvetica, Arial, sans-serif;
   width: 100%;
   height: 90vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  flex: auto;
 }
 .maintenance-screen {
-  font-family: 'SF Display', Helvetica, Arial, sans-serif;
-  text-align: center;
-  opacity: 0.9;
   position: absolute;
   top: 45%;
   left: 50%;
   margin-right: -50%;
   transform: translate(-50%, -50%);
+  text-align: center;
+  opacity: 0.9;
   &__info {
     display: flex;
     flex-direction: column;
@@ -170,13 +169,11 @@ html {
         top: 2rem;
         left: 0;
         right: 0;
-        // padding-left: 4.8rem;
       }
       &_2 {
         top: 8rem;
         bottom: 0;
         left: 4rem;
-        // padding-top: 4.8rem;
         animation-delay: -7s;
         animation-duration: 12s;
       }
@@ -184,7 +181,6 @@ html {
         top: 2rem;
         bottom: 0;
         right: 3rem;
-        // padding-bottom: 4.8rem;
         animation-delay: -4s;
         animation-duration: 10s;
       }
@@ -239,7 +235,6 @@ html {
 }
 @include respond-to(small) {
   .maintenance-screen {
-    // top: 23%;
     &__title {
       font-size: 2rem;
       line-height: 3rem;
