@@ -1,16 +1,15 @@
 <template>
   <div class="sort-row">
     <div class="sort-row__search">
-      <transition name="slide-fade">
-        <div class="sort-row__search-input-wrapper">
-          <InputField
-            v-model="searchValue"
-            placeholder="Search"
-            class="sort-row__search-input"
-            @keydown.enter="inputChange()"
-          />
-        </div>
-      </transition>
+      <div class="sort-row__search-input-wrapper">
+        <InputField
+          v-model="searchValue"
+          placeholder="Search"
+          class="sort-row__search-input"
+          @keydown.enter="inputChange()"
+        />
+      </div>
+
       <button class="sort-row__search-button" @click="inputChange()">
         <SearchIcon />
       </button>
@@ -138,6 +137,29 @@ export default defineComponent({
     display: flex;
     align-items: center;
     border-bottom: 0.1rem solid var(--clr__input-border);
+    transition: all 0.5s ease;
+    color: var(--clr__input-border);
+    svg {
+      transition: all 0.5s ease;
+      fill: var(--clr__input-border);
+    }
+    &:hover,
+    &:active,
+    &:focus,
+    &:focus-within {
+      color: var(--clr__text);
+      border-color: var(--clr__text);
+      svg {
+        fill: var(--clr__text);
+      }
+    }
+    &:disabled {
+      border-color: var(--clr__input-border);
+      color: var(--clr__input-border);
+      svg {
+        fill: var(--clr__input-border);
+      }
+    }
   }
   &__search-input-wrapper {
     position: relative;
@@ -145,6 +167,9 @@ export default defineComponent({
   }
   &__search-input {
     border: none;
+    &:focus::-webkit-input-placeholder {
+      color: transparent;
+    }
     &:active,
     &:hover,
     &:focus {
@@ -159,20 +184,6 @@ export default defineComponent({
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    transition: all 0.5s ease;
-    svg {
-      fill: var(--clr__text);
-    }
-    &:hover {
-      svg {
-        fill: var(--clr__input-border);
-      }
-    }
-    &:active {
-      svg {
-        opacity: 0.5;
-      }
-    }
   }
 }
 @include respond-to(tablet) {
