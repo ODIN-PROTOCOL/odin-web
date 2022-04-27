@@ -36,6 +36,7 @@
           type="text"
           v-model="form.mnemonic"
           :disabled="isLoading"
+          @keydown.enter="submit()"
         />
         <p class="auth__copy-warning" v-if="copyWarning">
           <span class="auth__copy-important">Important! </span>

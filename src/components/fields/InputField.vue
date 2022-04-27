@@ -50,7 +50,7 @@ export default defineComponent({
 .input {
   width: 22.8rem;
   height: 4.8rem;
-  border: 0.1rem solid #ced4da;
+  border: 0.1rem solid var(--clr__input-border);
   border-radius: 0.8rem 0 0 0.8rem;
   text-indent: 1.5rem;
   &:hover,
@@ -61,6 +61,7 @@ export default defineComponent({
     font-size: 16px;
     line-height: 2.4rem;
     font-weight: 400;
+    color: var(--clr__text-muted);
   }
 }
 </style>

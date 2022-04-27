@@ -44,16 +44,16 @@ const makeCallers = () => {
       MsgEditDataSource
     ),
     getDataSources: querier((qc) => qc.oracle.unverified.dataSources),
-    getSortedDataSources: (activities: string, owner?: string | null) => {
-      if (owner) {
-        return sendGet(
-          `${API_CONFIG.telemetryUrl}telemetry/data_sources?sort=${activities}&owner=${owner}`
-        )
-      } else {
-        return sendGet(
-          `${API_CONFIG.telemetryUrl}telemetry/data_sources?sort=${activities}`
-        )
-      }
+    getSortedDataSources: (
+      page_number: number,
+      page_limit: number,
+      activities: string,
+      owner: string,
+      name: string
+    ) => {
+      return sendGet(
+        `${API_CONFIG.telemetryUrl}telemetry/data_sources?page[number]=${page_number}&page[limit]=${page_limit}&sort=${activities}&owner=${owner}&name=${name}`
+      )
     },
     getDataSource: querier((qc) => qc.oracle.unverified.dataSource),
     createOracleScript: broadcaster<MsgCreateOracleScript>(
@@ -65,6 +65,17 @@ const makeCallers = () => {
       MsgEditOracleScript
     ),
     getOracleScripts: querier((qc) => qc.oracle.unverified.oracleScripts),
+    getSortedOracleScripts: (
+      page_number: number,
+      page_limit: number,
+      activities: string,
+      owner: string,
+      name: string
+    ) => {
+      return sendGet(
+        `${API_CONFIG.telemetryUrl}telemetry/oracle_scripts?page[number]=${page_number}&page[limit]=${page_limit}&sort=${activities}&owner=${owner}&name=${name}`
+      )
+    },
     getChannel: querier((qc) => qc.ibc.channel.allChannels),
     getConnections: querier((qc) => qc.ibc.connection.allConnections),
     getClientState: querier((qc) => qc.ibc.client.state),

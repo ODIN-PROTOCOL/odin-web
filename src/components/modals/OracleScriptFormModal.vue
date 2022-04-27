@@ -145,7 +145,9 @@ export default defineComponent({
       ],
       schema: [props.oracleScript?.schema || '', validators.required],
       url: [
-        props.oracleScript?.sourceCodeUrl || '',
+        props.oracleScript?.sourceCodeUrl ||
+          props.oracleScript?.source_code_url ||
+          '',
         validators.required,
         validators.validateUrl,
       ],

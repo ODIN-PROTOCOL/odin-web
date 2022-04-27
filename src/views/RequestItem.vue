@@ -80,7 +80,13 @@
         <h3 class="view-main__subtitle mg-b24">Result</h3>
         <div class="info-table">
           <div class="info-table__row">
-            <span class="info-table__row-title">{{ requestResultName }}</span>
+            <span class="info-table__row-title">KEY</span>
+            <span class="info-table__row-txt">
+              {{ requestResultName }}
+            </span>
+          </div>
+          <div class="info-table__row">
+            <span class="info-table__row-title">Rates</span>
             <span
               class="info-table__row-txt"
               v-if="requestResultType === 'object'"

@@ -31,29 +31,6 @@
           </button>
         </div>
       </div>
-      <div class="info__card">
-        <span class="info__card-title">Current rate</span>
-        <div class="info__card-balance">
-          <div class="info__card-row">
-            <span class="info__card-row-title">1 ODIN</span>
-            <span class="info__card-row-value">
-              ${{ String(rate['odin-protocol']?.usd) }}
-            </span>
-          </div>
-          <div class="info__card-row">
-            <span class="info__card-row-title">1 GEO</span>
-            <span class="info__card-row-value">
-              ${{ String(rate.geodb?.usd) }}
-            </span>
-          </div>
-        </div>
-        <!-- TODO uncomment when the exchange will be ready -->
-        <div class="info__card-activities">
-          <!-- <button class="app-btn app-btn_small" @click="exchange()">
-            Exchange
-          </button> -->
-        </div>
-      </div>
     </div>
 
     <div class="view-main__subtitle mg-b24">

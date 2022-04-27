@@ -1,7 +1,7 @@
 import { StatusTypes } from '@/helpers/Types'
 
 export const requestStatusType: StatusTypes = {
-  1: { name: 'Ok', status: 'success' },
+  1: { name: 'Success', status: 'success' },
   2: { name: 'Failure', status: 'error' },
   3: { name: 'Expired', status: 'pending' },
 }

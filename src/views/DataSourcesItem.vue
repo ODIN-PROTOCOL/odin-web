@@ -12,7 +12,7 @@
       >
         <div class="data-source-item__activities-item">
           <button
-            class="app-btn app-btn_small w-min180"
+            class="app-btn app-btn_small w-min184"
             type="button"
             @click="editDataSource(dataSourceData)"
           >
