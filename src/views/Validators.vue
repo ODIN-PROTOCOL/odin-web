@@ -85,6 +85,7 @@
                   $convertLokiToOdin(item.delegatorShares, {
                     withDenom: true,
                     withPrecise: true,
+                    forTitle: true,
                   })
                 "
               >
@@ -212,7 +213,7 @@ export default defineComponent({
   components: { Tabs, Tab, TitledLink, StatusIcon, Pagination },
   setup() {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 25
+    const ITEMS_PER_PAGE = 50
     const currentPage = ref(1)
     const totalPages = ref()
     const validatorsStatus = ref('Active')
@@ -469,8 +470,8 @@ export default defineComponent({
   &__table-row {
     grid:
       auto /
-      minmax(3rem, 1fr)
-      minmax(8rem, 4fr)
+      minmax(6rem, 0.5fr)
+      minmax(8rem, 3fr)
       minmax(8rem, 4fr)
       minmax(8rem, 3fr)
       minmax(8rem, 2fr)

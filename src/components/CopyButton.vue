@@ -44,6 +44,7 @@ export default defineComponent({
     position: relative;
     display: flex;
     align-items: center;
+    padding-left: 0.4rem;
   }
 
   &__message {

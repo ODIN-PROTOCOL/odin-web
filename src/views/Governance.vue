@@ -104,7 +104,7 @@ export default defineComponent({
   components: { CustomDoughnutChart, TitledLink, StatusBlock, Pagination },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 5
+    const ITEMS_PER_PAGE = 30
     const currentPage = ref(1)
     const totalPages = ref()
     const proposalsCount = ref(0)
@@ -232,7 +232,7 @@ export default defineComponent({
   &__row {
     grid:
       auto /
-      minmax(8rem, 1fr) minmax(8rem, 3fr) minmax(13rem, 0.5fr);
+      minmax(8rem, 1fr) minmax(8rem, 2fr) minmax(11rem, 0.5fr);
   }
 }
 

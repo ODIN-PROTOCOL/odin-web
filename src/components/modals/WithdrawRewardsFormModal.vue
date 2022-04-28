@@ -14,7 +14,17 @@
           <template v-if="rewards?.length">
             <div class="app-form__field">
               <label class="app-form__field-lbl">Your rewards:</label>
-              <p v-for="item in rewards" :key="item.denom">
+              <p
+                v-for="item in rewards"
+                :key="item.denom"
+                :title="
+                  $convertLokiToOdin(item.amount, {
+                    withDenom: true,
+                    withPrecise: true,
+                    forTitle: true,
+                  })
+                "
+              >
                 {{
                   $convertLokiToOdin(item.amount, {
                     withDenom: true,

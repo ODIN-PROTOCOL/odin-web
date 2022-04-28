@@ -3,13 +3,12 @@
     <li
       class="pagination__control"
       :class="{ ['pagination__control_active']: isPrevControlsActive }"
+      @click="goToPrev"
     >
       <ArrowIcon
         class="pagination__control-arrow rotate-left"
         :width="6"
         :height="10"
-        :class="{ 'pagination__control-arrow_active': isPrevControlsActive }"
-        @click="goToPrev"
       />
     </li>
     <li>
@@ -21,6 +20,7 @@
         :value="modelValue"
         :aria-label="`Page ${modelValue}`"
         @keydown.enter="goTo($event)"
+        @blur="goTo($event)"
       />
     </li>
     <li class="pagination__total-page">
@@ -29,13 +29,12 @@
     <li
       class="pagination__control"
       :class="{ ['pagination__control_active']: isNextControlsActive }"
+      @click="goToNext"
     >
       <ArrowIcon
         class="pagination__control-arrow rotate-right"
         :width="6"
         :height="10"
-        :class="{ 'pagination__control-arrow_active': isNextControlsActive }"
-        @click="goToNext"
       />
     </li>
   </ul>
@@ -119,7 +118,19 @@ export default defineComponent({
     border: 0.1rem solid var(--clr__input-border);
     fill: var(--clr__input-border);
     &_active {
+      cursor: pointer;
       border: 0.1rem solid var(--clr__action);
+      fill: var(--clr__action);
+      svg {
+        fill: var(--clr__action);
+        transition: all 0.5s ease;
+      }
+      &:hover {
+        svg {
+          fill: var(--clr__btn-hover);
+        }
+        border-color: var(--clr__btn-hover);
+      }
     }
   }
   &__control-arrow {
@@ -129,15 +140,6 @@ export default defineComponent({
     height: 1.2rem;
     margin: 0 0.2rem;
     fill: var(--clr__input-border);
-    &_active {
-      fill: var(--clr__action);
-      cursor: pointer;
-      transition: fill 0.2s ease-in-out;
-      &:hover {
-        fill: var(--clr__btn-hover);
-        transition: fill 0.2s ease-in-out;
-      }
-    }
   }
   &__total-page {
     display: flex;

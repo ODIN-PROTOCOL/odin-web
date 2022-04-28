@@ -27,11 +27,12 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .status-block {
-  padding: 0.4rem 2.8rem;
+  padding: 0.4rem 0.8rem;
   font-size: 1.2rem;
   font-weight: 600;
   line-height: 1.6rem;
   border-radius: 3.2rem;
+  width: 100px;
   background: var(--clr__status-default);
   color: var(--clr__text-on-action);
   text-align: center;

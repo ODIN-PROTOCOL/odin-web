@@ -5,7 +5,11 @@
       :class="{ 'nav__dropdown-wrapper_active': isActive }"
     >
       <span class="nav__dropdown-wrapper-name">{{ list.name }}</span>
-      <ArrowIcon :class="{ 'nav__dropdown-wrapper-arrow_active': isActive }" />
+      <ArrowIcon
+        :height="12"
+        :width="12"
+        :class="{ 'nav__dropdown-wrapper-arrow_active': isActive }"
+      />
     </span>
     <transition name="fade">
       <div class="nav__dropdown-modal">
@@ -72,7 +76,7 @@ export default defineComponent({
           display: flex;
         }
         &__dropdown-wrapper-arrow {
-          transform: translate(-11px, 9px) rotate(90deg);
+          transform: translate(-0.1rem, 0.3rem) rotate(90deg);
         }
       }
     }
@@ -91,7 +95,7 @@ export default defineComponent({
   }
   &__dropdown-wrapper-arrow {
     fill: #212529;
-    transform: translate(3px, -6px) rotate(270deg);
+    transform: translate(0.3rem, -0.1rem) rotate(270deg);
     &_active {
       fill: var(--clr__action);
     }

@@ -14,9 +14,16 @@
           <div class="app-form__field delegate-form-modal__field">
             <div class="app-form__field-row">
               <label class="app-form__field-lbl"> Available </label>
-              <p>
+              <p
+                :title="
+                  $convertLokiToOdin(lokiBalance?.amount, {
+                    withDenom: true,
+                    forTitle: true,
+                  })
+                "
+              >
                 {{
-                  $convertLokiToOdin(lokiBalance.amount, { withDenom: true })
+                  $convertLokiToOdin(lokiBalance?.amount, { withDenom: true })
                 }}
               </p>
             </div>
@@ -33,9 +40,16 @@
           </div>
           <div v-if="delegation && delegation.balance" class="app-form__field">
             <label class="app-form__field-lbl"> You delegated </label>
-            <p>
+            <p
+              :title="
+                $convertLokiToOdin(delegation.balance?.amount, {
+                  withDenom: true,
+                  forTitle: true,
+                })
+              "
+            >
               {{
-                $convertLokiToOdin(delegation.balance.amount, {
+                $convertLokiToOdin(delegation.balance?.amount, {
                   withDenom: true,
                 })
               }}

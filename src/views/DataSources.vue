@@ -36,12 +36,12 @@
         <template v-if="dataSources?.length">
           <div
             v-for="item in dataSources"
-            :key="item.attributes.id.toString()"
+            :key="item.attributes.id"
             class="app-table__row data-sources__table-row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">ID</span>
-              <span>{{ item.attributes.id.toString() }}</span>
+              <span>#{{ item.attributes.id }}</span>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Data Source</span>
@@ -127,13 +127,13 @@ export default defineComponent({
   },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 4
+    const ITEMS_PER_PAGE = 50
     const currentPage = ref(1)
     const totalPages = ref(0)
     const dataSourcesCount = ref(0)
     const dataSources = ref([])
     const accountAddress = wallet.account.address
-    const sortingActivitiesValue = ref('')
+    const sortingActivitiesValue = ref('latest_updated')
     const sortingOwnersValue = ref('')
     const dataSourceName = ref('')
     const loadDataSources = async () => {

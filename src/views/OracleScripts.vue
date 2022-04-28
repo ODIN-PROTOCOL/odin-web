@@ -51,7 +51,7 @@
           >
             <div class="app-table__cell">
               <span class="app-table__title">ID</span>
-              <span>{{ item.attributes.id }}</span>
+              <span>#{{ item.attributes.id }}</span>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Oracle Script</span>
@@ -144,7 +144,7 @@ export default defineComponent({
   components: { TitledLink, Pagination, TopOracleScripts, SortRow },
   setup() {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 4
+    const ITEMS_PER_PAGE = 50
     const currentPage = ref(1)
     const totalPages = ref()
     const oracleScriptsCount = ref(0)
@@ -152,7 +152,7 @@ export default defineComponent({
     const accountAddress = wallet.account.address
     const mostRequestedOracleScripts = ref()
     const oracleScriptsName = ref('')
-    const sortingActivitiesValue = ref('')
+    const sortingActivitiesValue = ref('latest_updated')
     const sortingOwnersValue = ref('')
     const loadOracleScripts = async () => {
       lockLoading()
@@ -263,9 +263,9 @@ export default defineComponent({
   grid:
     auto /
     minmax(2rem, 0.5fr)
-    minmax(4rem, 3fr)
     minmax(4rem, 2fr)
-    minmax(8rem, 2fr)
+    minmax(4rem, 3fr)
+    minmax(10rem, 2fr)
     minmax(8rem, 2fr);
 }
 .app-table__head_item {

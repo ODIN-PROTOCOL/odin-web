@@ -17,8 +17,8 @@
       </div>
     </template>
 
-    <div class="app-table">
-      <div class="app-table__head">
+    <div class="app-table requests__table">
+      <div class="app-table__head requests__table-head">
         <span>Request ID</span>
         <span>Sender</span>
         <span>Oracle Script ID</span>
@@ -30,13 +30,13 @@
           <div
             v-for="item in requests"
             :key="item.response_packet_data.request_id.toString()"
-            class="app-table__row"
+            class="app-table__row requests__table-row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">Request ID</span>
               <TitledLink
                 class="app-table__cell-txt app-table__link"
-                :text="item.response_packet_data.request_id.toString()"
+                :text="`#${item.response_packet_data.request_id}`"
                 :to="`/requests/${item.response_packet_data.request_id}`"
               />
             </div>
@@ -53,7 +53,7 @@
               <span class="app-table__title">Oracle Script ID</span>
               <TitledLink
                 class="app-table__cell-txt app-table__link"
-                :text="item.request_packet_data.oracle_script_id.toString()"
+                :text="`#${item.request_packet_data.oracle_script_id}`"
                 :to="`/oracle-scripts/${item.request_packet_data.oracle_script_id}`"
               />
             </div>
@@ -120,9 +120,11 @@ export default defineComponent({
     const requests = ref()
     const requestsCount = ref()
     const maxAskCount = ref()
-    const senderLink = computed(() => (item: any) => {
-      return `${API_CONFIG.odinScan}/account/${item.request_packet_data?.client_id}`
-    })
+    const senderLink = computed(
+      () => (item: { request_packet_data: { client_id: number } }) => {
+        return `${API_CONFIG.odinScan}/account/${item.request_packet_data?.client_id}`
+      }
+    )
 
     const getRequests = async () => {
       // TODO: make it work through callers.getRequests
@@ -199,7 +201,18 @@ export default defineComponent({
     margin-bottom: 3.2rem;
   }
 }
-
+.requests {
+  &__table-head,
+  &__table-row {
+    grid:
+      auto /
+      minmax(7rem, 0.5fr)
+      minmax(8rem, 3fr)
+      minmax(10rem, 1fr)
+      minmax(8rem, 2fr)
+      minmax(10rem, 1.5fr);
+  }
+}
 @include respond-to(tablet) {
   .view-main {
     padding-bottom: 10rem;
@@ -210,6 +223,12 @@ export default defineComponent({
 
     &__title-btn {
       display: none;
+    }
+  }
+  .requests {
+    &__table-head,
+    &__table-row {
+      grid: none;
     }
   }
 }

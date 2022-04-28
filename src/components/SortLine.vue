@@ -3,8 +3,9 @@
     <div class="sort-row__search">
       <div class="sort-row__search-input-wrapper">
         <InputField
+          type="search"
           v-model="searchValue"
-          placeholder="Search"
+          placeholder="Search by name"
           class="sort-row__search-input"
           @keydown.enter="inputChange()"
         />
@@ -169,6 +170,10 @@ export default defineComponent({
     border: none;
     &:focus::-webkit-input-placeholder {
       color: transparent;
+    }
+    &::-webkit-search-cancel-button {
+      position: relative;
+      right: 0.2rem;
     }
     &:active,
     &:hover,

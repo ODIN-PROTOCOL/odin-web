@@ -22,7 +22,14 @@
 
           <div class="app-form__field">
             <label class="app-form__field-lbl"> Min delegation </label>
-            <p>
+            <p
+              :title="
+                $convertLokiToOdin(validator.minSelfDelegation, {
+                  withDenom: true,
+                  forTitle: true,
+                })
+              "
+            >
               {{
                 $convertLokiToOdin(validator.minSelfDelegation, {
                   withDenom: true,
@@ -33,7 +40,14 @@
 
           <div v-if="delegation && delegation.balance" class="app-form__field">
             <label class="app-form__field-lbl"> You delegated </label>
-            <p>
+            <p
+              :title="
+                $convertLokiToOdin(delegation.balance.amount, {
+                  withDenom: true,
+                  forTitle: true,
+                })
+              "
+            >
               {{
                 $convertLokiToOdin(delegation.balance.amount, {
                   withDenom: true,

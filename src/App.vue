@@ -7,10 +7,9 @@
       >
         <div class="header-wrapper">
           <img
-            class="logo"
+            class="header-wrapper__logo"
             src="~@/assets/brand/odin-logo-black.png"
             alt="Logo"
-            width="120"
           />
           <Nav :isOpen="isOpen" @changeRoute="changeRoute($event)" />
           <UserWidget class="fx-sae" />
@@ -102,7 +101,10 @@ export default defineComponent({
 .burger-menu {
   display: none;
 }
-
+.header-wrapper__logo {
+  width: 9rem;
+  height: 3.4rem;
+}
 @media (max-width: 768px) {
   .view-header_mobile {
     position: fixed;

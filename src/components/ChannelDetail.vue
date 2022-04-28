@@ -36,13 +36,13 @@
             }}</span>
           </div>
         </div>
-        <div class="app-table__cell">
+        <div class="app-table__cell channel-detail__cell">
           <span class="app-table__title channel-detail__cell-txt title"
             >State</span
           >
           <StatusIcon :status="channel?.state === 3 ? 'success' : 'error'" />
         </div>
-        <div class="app-table__cell">
+        <div class="app-table__cell channel-detail__cell">
           <span class="app-table__title channel-detail__cell-txt title"
             >Order</span
           >
@@ -110,6 +110,7 @@ export default defineComponent({
   margin-top: 2.3rem;
   &__cell {
     margin-bottom: 0.5rem;
+    flex-direction: column;
   }
   &__cell-txt-row {
     padding-right: 0.2rem;
@@ -153,6 +154,9 @@ export default defineComponent({
     }
     &__empty {
       margin-top: 2.4rem;
+    }
+    &__cell {
+      flex-direction: row;
     }
   }
 }

@@ -10,7 +10,16 @@
         <div class="info__card-balance mg-b40">
           <div class="info__card-row">
             <span class="info__card-row-title">ODIN</span>
-            <span class="info__card-row-value">
+            <span
+              class="info__card-row-value"
+              :title="
+                $convertLokiToOdin(lokiCoins.amount, {
+                  withDenom: true,
+                  withPrecise: true,
+                  forTitle: true,
+                })
+              "
+            >
               {{ $convertLokiToOdin(lokiCoins.amount, { withDenom: true }) }}
             </span>
           </div>
@@ -34,10 +43,13 @@
     </div>
 
     <div class="view-main__subtitle mg-b24">
+      <div class="view-main__info">
+        <img src="~@/assets/icons/info.svg" alt="info" />
+        <span class="view-main__subtitle-tooltip">
+          Based on last 100 transactions in system
+        </span>
+      </div>
       <span class="view-main__subtitle-item">Transaction list</span>
-      <span class="view-main__subtitle-tooltip">
-        Based on last 100 transactions in system
-      </span>
     </div>
     <div class="app-table">
       <div class="app-table__head">
@@ -160,7 +172,7 @@ export default defineComponent({
   components: { Pagination },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 25
+    const ITEMS_PER_PAGE = 50
     const currentPage = ref(1)
     const totalPages = ref()
     const transactionsCount = ref(0)
@@ -360,23 +372,28 @@ export default defineComponent({
 
 .view-main {
   &__subtitle {
-    position: relative;
+    display: flex;
+    align-items: center;
   }
-
-  &__subtitle-item {
+  &__info {
+    display: flex;
+    align-items: center;
+    height: 2.3rem;
+    position: relative;
+    cursor: pointer;
+    margin-right: 0.9rem;
     &:hover {
-      & + .view-main__subtitle-tooltip {
+      .view-main__subtitle-tooltip {
         display: block;
       }
     }
   }
-
   &__subtitle-tooltip {
     display: none;
     position: absolute;
     bottom: 130%;
-    left: 0;
-    max-width: 20rem;
+    left: -0.7rem;
+    width: 20rem;
     padding: 1.2rem 2.4rem;
     background: var(--clr__tooltip-bg);
     border-radius: 0.8rem;
@@ -392,7 +409,7 @@ export default defineComponent({
       height: 0.6rem;
       position: absolute;
       bottom: -0.3rem;
-      left: 50%;
+      left: 8%;
       transform: translateX(-50%) rotate(45deg);
       background: var(--clr__tooltip-bg);
     }

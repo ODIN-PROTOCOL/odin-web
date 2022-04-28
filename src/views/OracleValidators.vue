@@ -4,8 +4,8 @@
       <h2 class="view-main__title">Oracle validators</h2>
     </div>
 
-    <div class="app-table">
-      <div class="app-table__head">
+    <div class="app-table oracle-validators__table">
+      <div class="app-table__head oracle-validators__table-head">
         <span>Validator</span>
         <span>Is active</span>
         <span>Validator address</span>
@@ -16,7 +16,7 @@
           <div
             v-for="item in filteredValidators"
             :key="item.operatorAddress"
-            class="app-table__row"
+            class="app-table__row oracle-validators__table-row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">Validator</span>
@@ -89,7 +89,7 @@ export default defineComponent({
   components: { TitledLink, CopyButton, StatusBlock, Pagination },
   setup() {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 5
+    const ITEMS_PER_PAGE = 50
     const currentPage = ref(1)
     const totalPages = ref(0)
     const validatorsCount = ref(0)
@@ -159,18 +159,20 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.app-table {
-  &__head,
-  &__row {
+.oracle-validators {
+  &__table-head,
+  &__table-row {
     grid:
       auto /
-      minmax(10rem, 1fr) minmax(10rem, 1fr) minmax(10rem, 1fr) minmax(10rem, 0.1fr);
+      minmax(10rem, 0.7fr) minmax(10rem, 0.5fr) minmax(10rem, 2fr) minmax(10rem, 0.1fr);
   }
 }
-
 @include respond-to(tablet) {
-  .app-table__row {
-    grid: none;
+  .oracle-validators {
+    &__table-head,
+    &__table-row {
+      grid: none;
+    }
   }
 }
 </style>

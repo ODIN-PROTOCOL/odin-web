@@ -25,11 +25,11 @@
           <div class="info-table__row-value info-table__row-value_flex">
             <a
               class="info-table__row-link"
-              :href="`${API_CONFIG.odinScan}/account/${proposal.proposerAddress}`"
+              :href="`${API_CONFIG.odinScan}/account/${proposal?.proposerAddress}`"
             >
-              {{ proposal.proposerAddress }}
+              {{ proposal?.proposerAddress }}
             </a>
-            <CopyButton :text="proposal.proposerAddress" />
+            <CopyButton :text="proposal?.proposerAddress" />
           </div>
         </div>
         <div class="info-table__row">
@@ -85,20 +85,21 @@
           </span>
         </div>
       </div>
-
-      <h3 class="view-main__subtitle mg-b24">Changes</h3>
-      <div class="info-table mg-b32">
-        <div
-          v-for="(change, title) in proposal.content.changes[0]"
-          :key="change"
-          class="info-table__row"
-        >
-          <span class="info-table__row-title">{{
-            capitalizeFirstLetter(title)
-          }}</span>
-          <span class="info-table__row-value">
-            {{ change }}
-          </span>
+      <div v-if="proposal.content?.changes">
+        <h3 class="view-main__subtitle mg-b24">Changes</h3>
+        <div class="info-table mg-b32">
+          <div
+            v-for="(change, title) in proposal.content.changes[0]"
+            :key="change"
+            class="info-table__row"
+          >
+            <span class="info-table__row-title">{{
+              capitalizeFirstLetter(title)
+            }}</span>
+            <span class="info-table__row-value">
+              {{ change }}
+            </span>
+          </div>
         </div>
       </div>
     </template>
