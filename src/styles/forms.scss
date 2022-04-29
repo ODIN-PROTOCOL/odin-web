@@ -41,6 +41,11 @@
       border: 1px solid var(--clr__input-border);
       border-radius: 0.4rem;
     }
+    @include respond-to(tablet) {
+      ._vue-picker {
+        padding-left: 1rem;
+      }
+  }
   }
   &__field {
     &--wait {

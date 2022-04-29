@@ -82,6 +82,11 @@ body {
       background: rgba(#cce4ff, 0.4);
     }
   }
+  @include respond-to(tablet) {
+    .vue-picker__opener{
+      padding-left: 0;
+    }
+  }
 }
 
 .loading {

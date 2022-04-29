@@ -178,7 +178,6 @@ export default defineComponent({
     const transactionsCount = ref(0)
     const transactions = ref()
     const filteredTransactions = ref()
-    const rate = ref({})
 
     const getTransactions = async () => {
       lockLoading()
@@ -214,15 +213,6 @@ export default defineComponent({
         )
       })
     }
-
-    const getRate = async () => {
-      const response = await fetch(
-        'https://api.coingecko.com/api/v3/simple/price?ids=odin-protocol%2Cgeodb&vs_currencies=usd'
-      )
-      const rateData = await response.json()
-      rate.value = rateData
-    }
-    const ratePoll = usePoll(getRate, 5000)
 
     const {
       coins: [lokiCoins],
@@ -273,21 +263,17 @@ export default defineComponent({
         SendFormModal,
         {},
         {
-          rate: rate.value,
           balance: [lokiCoins.value],
         }
       )
     }
 
     onMounted(async () => {
-      ratePoll.start()
       lokiPoll.start()
-      await getRate()
       await getTransactions()
     })
 
     onUnmounted(() => {
-      ratePoll.stop()
       lokiPoll.stop()
     })
 
@@ -299,7 +285,6 @@ export default defineComponent({
       transactionsCount,
       transactions,
       filteredTransactions,
-      rate,
       isLoading,
       lokiCoins,
       paginationHandler,

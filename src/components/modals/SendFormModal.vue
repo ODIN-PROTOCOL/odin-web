@@ -27,24 +27,6 @@
             </div>
           </div>
 
-          <div class="app-form__info mg-b32">
-            <label class="app-form__info-title">Current rate</label>
-            <div class="app-form__info-content">
-              <div class="app-form__info-row">
-                <span class="app-form__info-row-title">1 ODIN</span>
-                <span class="app-form__info-row-value">
-                  ${{ String(rate['odin-protocol']?.usd) }}
-                </span>
-              </div>
-              <div class="app-form__info-row">
-                <span class="app-form__info-row-title">1 GEO</span>
-                <span class="app-form__info-row-value">
-                  ${{ String(rate.geodb?.usd) }}
-                </span>
-              </div>
-            </div>
-          </div>
-
           <div class="app-form__field">
             <label class="app-form__field-lbl">Receiver</label>
             <input
@@ -68,10 +50,6 @@
             >
               <template #dropdownInner>
                 <div class="_vue-picker__dropdown-custom">
-                  <!-- <VuePickerOption value="loki" text="LOKI">
-                    LOKI
-                  </VuePickerOption> -->
-                  <!-- while only LOKI can be sent, in time it will be possible to send ODIN -->
                   <VuePickerOption value="odin" text="ODIN">
                     ODIN
                   </VuePickerOption>
@@ -156,14 +134,13 @@ import { notifySuccess } from '@/helpers/notifications'
 import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 import ModalBase from '@/components/modals/ModalBase.vue'
 import { Coin } from '@cosmjs/amino'
-import { WalletRate } from '@/helpers/Types'
+
 import { coin } from '@cosmjs/launchpad'
 
 export default defineComponent({
   name: 'SendFormModal',
   components: { ModalBase, VuePicker, VuePickerOption },
   props: {
-    rate: { type: Object as PropType<WalletRate>, required: true },
     balance: { type: Array as PropType<Coin[]>, required: true },
   },
   setup: function (props) {

@@ -2,7 +2,10 @@
   <div class="modal-base">
     <div class="modal-base__backdrop" @click="emitClose()"></div>
     <div class="modal-base__content">
-      <div class="modal-base__content-head fx-row mg-b32">
+      <div
+        class="modal-base__content-head fx-row"
+        :class="{ 'mg-b32': isAddMargin }"
+      >
         <slot name="title"></slot>
 
         <button
@@ -24,6 +27,7 @@ import { defineComponent } from 'vue'
 
 export default defineComponent({
   emits: ['close'],
+  props: { isAddMargin: { type: Boolean, default: true } },
   setup(_, { emit }) {
     if (document.activeElement) {
       const activeEl = document.activeElement as HTMLElement
