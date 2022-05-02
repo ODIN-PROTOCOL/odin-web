@@ -125,6 +125,7 @@ import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import InputFileField from '@/components/fields/InputFileField.vue'
 import TextareaField from '@/components/fields/TextareaField.vue'
+import Long from 'long'
 
 export default defineComponent({
   props: {
@@ -175,7 +176,10 @@ export default defineComponent({
       try {
         if (props.oracleScript) {
           await callers.editOracleScript({
-            oracleScriptId: props.oracleScript?.id,
+            oracleScriptId:
+              props.oracleScript?.id === Long
+                ? props.oracleScript?.id
+                : Long.fromNumber(props.oracleScript?.id),
             name: form.name.val(),
             description: form.description.val(),
             code: codeFileParsed,
