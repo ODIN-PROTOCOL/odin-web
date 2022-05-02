@@ -32,24 +32,21 @@ export default defineComponent({
   font-weight: 600;
   line-height: 1.6rem;
   border-radius: 3.2rem;
-  width: 100px;
+  width: 10rem;
   background: var(--clr__status-default);
   color: var(--clr__text-on-action);
   text-align: center;
-  &_success {
-    background: var(--clr__status-success);
-  }
-
-  &_pending {
-    background: var(--clr__status-pending);
-  }
-
-  &_error {
-    background: var(--clr__status-error);
-  }
-
-  &_progress {
-    background: var(--clr__status-progress);
-  }
+}
+.status-block_success {
+  background: var(--clr__status-success);
+}
+.status-block_pending {
+  background: var(--clr__status-pending);
+}
+.status-block_error {
+  background: var(--clr__status-error);
+}
+.status-block_progress {
+  background: var(--clr__status-progress);
 }
 </style>

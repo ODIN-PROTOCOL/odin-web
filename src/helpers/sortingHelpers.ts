@@ -1,29 +1,29 @@
 import { wallet } from '@/api/wallet'
 
 export enum ACTIVITIES_SORT {
-  LATEST = 'latest_updated',
-  MOST = 'most_requested',
+  latest = 'latest_updated',
+  most = 'most_requested',
 }
 
 export enum OWNERS_SORT {
-  ALL = 'null',
+  all = 'null',
 }
 
 export const sortingActivities = [
   {
     text: 'Latest Update',
-    value: ACTIVITIES_SORT.LATEST,
+    value: ACTIVITIES_SORT.latest,
   },
   {
     text: 'Most Requested',
-    value: ACTIVITIES_SORT.MOST,
+    value: ACTIVITIES_SORT.most,
   },
 ]
 
 export const sortingOwners = [
   {
     text: 'All',
-    value: OWNERS_SORT.ALL,
+    value: OWNERS_SORT.all,
   },
   {
     text: 'My',

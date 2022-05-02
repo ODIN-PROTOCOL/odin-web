@@ -118,7 +118,7 @@ import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import DataSourceFormModal from '@/components/modals/DataSourceFormModal.vue'
 import { wallet } from '@/api/wallet'
 import SortRow from '@/components/SortLine.vue'
-
+import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
 export default defineComponent({
   components: {
     TitledLink,
@@ -133,8 +133,8 @@ export default defineComponent({
     const dataSourcesCount = ref(0)
     const dataSources = ref([])
     const accountAddress = wallet.account.address
-    const sortingActivitiesValue = ref('latest_updated')
-    const sortingOwnersValue = ref('')
+    const sortingActivitiesValue = ref(ACTIVITIES_SORT.latest)
+    const sortingOwnersValue = ref(OWNERS_SORT.all)
     const dataSourceName = ref('')
     const loadDataSources = async () => {
       lockLoading()

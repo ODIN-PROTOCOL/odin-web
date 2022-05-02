@@ -8,7 +8,7 @@
       <ArrowIcon
         :height="12"
         :width="12"
-        :class="{ 'nav__dropdown-wrapper-arrow_active': isActive }"
+        :class="{ 'arrow-icon_active': isActive }"
       />
     </span>
     <transition name="fade">
@@ -53,80 +53,74 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.nav {
-  &__dropdown {
-    position: relative;
-    display: grid;
-    grid-template-columns: 100%;
-    text-decoration: none;
-    white-space: nowrap;
-    color: inherit;
-    font-weight: 400;
-    line-height: 2.4rem;
-    font-size: 1.6rem;
-    cursor: pointer;
+.arrow-icon {
+  fill: #212529;
+  transform: translate(0.3rem, -0.1rem) rotate(270deg);
+}
+.arrow-icon_active {
+  fill: var(--clr__action);
+}
+.nav__dropdown {
+  position: relative;
+  display: grid;
+  grid-template-columns: 100%;
+  text-decoration: none;
+  white-space: nowrap;
+  color: inherit;
+  font-weight: 400;
+  line-height: 2.4rem;
+  font-size: 1.6rem;
+  cursor: pointer;
 
-    :last-child {
-      border-end-start-radius: 0.8rem;
-      border-end-end-radius: 0.8rem;
-    }
-    &:hover {
-      .nav {
-        &__dropdown-modal {
-          display: flex;
-        }
-        &__dropdown-wrapper-arrow {
-          transform: translate(-0.1rem, 0.3rem) rotate(90deg);
-        }
-      }
-    }
-  }
-
-  &__dropdown-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    &_active {
-      .nav__dropdown-wrapper-name {
-        color: var(--clr__action);
-        font-weight: bold;
-      }
-    }
-  }
-  &__dropdown-wrapper-arrow {
-    fill: #212529;
-    transform: translate(0.3rem, -0.1rem) rotate(270deg);
-    &_active {
-      fill: var(--clr__action);
-    }
-  }
-  &__dropdown-modal {
-    display: none;
-    flex-direction: column;
-    align-items: flex-start;
-    position: absolute;
-    top: 100%;
-    left: 0;
+  :last-child {
     border-end-start-radius: 0.8rem;
     border-end-end-radius: 0.8rem;
-    background: var(--clr__main-bg);
-    z-index: 1;
-    box-shadow: 0 0.4rem 2.4rem rgba(8, 87, 172, 0.12);
-    min-width: 16rem;
   }
-  &__dropdown-link {
-    margin: 0;
-    text-decoration: none;
-    color: inherit;
-    width: 100%;
-    padding: 0.8rem 1.2rem;
-    &:hover {
-      background: rgba(204, 228, 255, 0.4);
-      color: var(--clr__action);
+  &:hover {
+    .nav__dropdown-modal {
+      display: flex;
+    }
+    .arrow-icon {
+      transform: translate(-0.1rem, 0.3rem) rotate(90deg);
     }
   }
 }
-
+.nav__dropdown-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  &_active {
+    .nav__dropdown-wrapper-name {
+      color: var(--clr__action);
+      font-weight: bold;
+    }
+  }
+}
+.nav__dropdown-modal {
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  border-end-start-radius: 0.8rem;
+  border-end-end-radius: 0.8rem;
+  background: var(--clr__main-bg);
+  z-index: 1;
+  box-shadow: 0 0.4rem 2.4rem rgba(8, 87, 172, 0.12);
+  min-width: 16rem;
+}
+.nav__dropdown-link {
+  margin: 0;
+  text-decoration: none;
+  color: inherit;
+  width: 100%;
+  padding: 0.8rem 1.2rem;
+  &:hover {
+    background: rgba(204, 228, 255, 0.4);
+    color: var(--clr__action);
+  }
+}
 .nav__link {
   display: grid;
   grid-template-columns: 100%;
@@ -169,53 +163,53 @@ export default defineComponent({
     width: 100%;
     z-index: 9999;
     height: 100vh;
-    &__wrap-cont {
-      flex-direction: column;
-      padding: 0 1.6rem;
-      gap: 0;
-    }
-    &__dropdown {
-      width: 100%;
-    }
-    &__dropdown-modal {
-      position: relative;
-      box-shadow: none;
-      top: initial;
-      padding: 0;
-      gap: 0;
+  }
+  .nav__wrap-cont {
+    flex-direction: column;
+    padding: 0 1.6rem;
+    gap: 0;
+  }
+  .nav__dropdown {
+    width: 100%;
+  }
+  .nav__dropdown-modal {
+    position: relative;
+    box-shadow: none;
+    top: initial;
+    padding: 0;
+    gap: 0;
 
-      :last-child {
-        border-radius: 0;
-      }
+    :last-child {
+      border-radius: 0;
     }
-    &__dropdown-link {
-      width: 100%;
-      padding: 2.4rem 1.2rem 2.4rem 4.8rem;
-      border-bottom: 0.1rem solid #ced4da;
-      &:hover {
-        background: rgba(204, 228, 255, 0.4);
-      }
+  }
+  .nav__dropdown-link {
+    width: 100%;
+    padding: 2.4rem 1.2rem 2.4rem 4.8rem;
+    border-bottom: 0.1rem solid #ced4da;
+    &:hover {
+      background: rgba(204, 228, 255, 0.4);
     }
-    &__dropdown-wrapper {
-      text-align: center;
-      justify-content: space-between;
-      width: 100%;
+  }
+  .nav__dropdown-wrapper {
+    text-align: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 2.4rem 1.2rem;
+    border-bottom: 0.1rem solid #ced4da;
+  }
+  .nav__link {
+    width: 100%;
+    padding: 2.4rem 1.2rem;
+    border-bottom: 0.1rem solid #ced4da;
+    > span {
+      text-align: left;
+    }
+    &:hover {
+      background: rgba(204, 228, 255, 0.4);
+    }
+    &:first-child {
       padding: 2.4rem 1.2rem;
-      border-bottom: 0.1rem solid #ced4da;
-    }
-    &__link {
-      width: 100%;
-      padding: 2.4rem 1.2rem;
-      border-bottom: 0.1rem solid #ced4da;
-      > span {
-        text-align: left;
-      }
-      &:hover {
-        background: rgba(204, 228, 255, 0.4);
-      }
-      &:first-child {
-        padding: 2.4rem 1.2rem;
-      }
     }
   }
   .nav-mob {

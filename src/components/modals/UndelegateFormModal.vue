@@ -1,6 +1,6 @@
 <template>
   <ModalBase
-    class="undelegate-form-modal"
+    class="undelegate-form-modal__wrapper"
     @close="onClose()"
     :isAddMargin="false"
   >
@@ -10,24 +10,27 @@
 
     <template #main>
       <form
-        class="app-form load-fog"
+        class="undelegate-form-modal app-form load-fog"
         :class="{ 'load-fog_show': isLoading }"
         @submit.prevent
       >
         <div class="app-form__main">
-          <div class="app-form__field-title">
-            <label class="app-form__field-lbl">From</label>
+          <div class="undelegate-form-modal__field-title app-form__field-title">
+            <label class="undelegate-form-modal__field-lbl">From</label>
             <CopyText
+              class="copy-text"
               :text="validator.operatorAddress"
               :title="validator.operatorAddress"
               :displayText="$cropAddress(validator.operatorAddress)"
             />
           </div>
-          <div class="app-form__field-wrapper">
-            <div class="app-form__field-balance">
-              <label class="app-form__field-lbl"> Min delegation </label>
+          <div class="undelegate-form-modal__field-wrapper">
+            <div class="undelegate-form-modal__field-balance">
+              <label class="undelegate-form-modal__field-lbl">
+                Min delegation
+              </label>
               <p
-                class="app-form__field-balance-value"
+                class="undelegate-form-modal__field-balance-value"
                 :title="
                   $convertLokiToOdin(validator.minSelfDelegation, {
                     withDenom: true,
@@ -45,11 +48,13 @@
 
             <div
               v-if="delegation && delegation.balance"
-              class="app-form__field-balance"
+              class="undelegate-form-modal__field-balance"
             >
-              <label class="app-form__field-lbl"> You delegated </label>
+              <label class="undelegate-form-modal__field-lbl">
+                You delegated
+              </label>
               <p
-                class="app-form__field-balance-value"
+                class="undelegate-form-modal__field-balance-value"
                 :title="
                   $convertLokiToOdin(delegation.balance.amount, {
                     withDenom: true,
@@ -66,9 +71,13 @@
             </div>
           </div>
 
-          <div class="app-form__field">
-            <label class="app-form__field-lbl_black"> Amount </label>
-            <div class="app-form__field-input-wrapper">
+          <div class="undelegate-form-modal__field">
+            <label class="undelegate-form-modal__field-lbl_black">
+              Amount
+            </label>
+            <div
+              class="undelegate-form-modal__field-input-wrapper app-form__field-input-wrapper"
+            >
               <span>ODIN</span>
               <input
                 class="app-form__field-input"
@@ -79,11 +88,14 @@
                 :disabled="isLoading"
               />
             </div>
-            <p v-if="form.amountErr" class="app-form__field-err">
+            <p
+              v-if="form.amountErr"
+              class="undelegate-form-modal__field-err app-form__field-err"
+            >
               {{ form.amountErr }}
             </p>
           </div>
-          <div class="app-form__field-info">
+          <div class="undelegate-form-modal__field-info">
             <InfoIcon class="info-icon" />
             <span
               >Your funds will be credited in
@@ -197,67 +209,65 @@ export function showUndelegateFormDialog(
 .copy-text {
   margin: 0 1rem;
 }
-.app-form {
+.undelegate-form-modal {
   margin-top: 0.5rem;
   font-size: 1.4rem;
   line-height: 2rem;
-  &__field-wrapper {
-    display: flex;
-    margin-bottom: 2.4rem;
-  }
-  &__field-balance {
-    background: var(--clr__modal-field-bg);
-    border-radius: 0.8rem;
-    padding: 0.8rem;
-    width: 100%;
-    &:first-child {
-      margin-right: 1.6rem;
-    }
-  }
-  &__field-balance-value {
-    font-weight: 600;
-    font-size: 1.6rem;
-    line-height: 2.4rem;
-  }
-  &__field-lbl {
-    font-weight: 400;
-    color: var(--clr__modal-backdrop-bg);
-    margin: 0;
-    &_black {
-      font-size: 1.6rem;
-      line-height: 2.4rem;
-      color: var(--clr__text);
-    }
-  }
-  &__field-title {
-    display: flex;
-    margin-bottom: 2.4rem;
-  }
-  &__field {
-    margin: 0;
-  }
-  &__field-info {
-    font-weight: 400;
-    color: var(--clr__modal-backdrop-bg);
-    display: flex;
-    align-items: center;
-    margin-top: 1.6rem;
-    .info-icon {
-      margin-right: 0.9rem;
-    }
-  }
-  &__field-input-wrapper {
-    margin-top: 0.8rem;
-  }
-  &__field-err {
-    margin-top: 0.8rem;
+}
+.undelegate-form-modal__field-wrapper {
+  display: flex;
+  margin-bottom: 2.4rem;
+}
+.undelegate-form-modal__field-balance {
+  background: var(--clr__modal-field-bg);
+  border-radius: 0.8rem;
+  padding: 0.8rem;
+  width: 100%;
+  &:first-child {
+    margin-right: 1.6rem;
   }
 }
+.undelegate-form-modal__field-balance-value {
+  font-weight: 600;
+  font-size: 1.6rem;
+  line-height: 2.4rem;
+}
+.undelegate-form-modal__field-lbl {
+  font-weight: 400;
+  color: var(--clr__modal-backdrop-bg);
+  margin: 0;
+}
+.undelegate-form-modal__field-lbl_black {
+  font-size: 1.6rem;
+  line-height: 2.4rem;
+  color: var(--clr__text);
+}
+.undelegate-form-modal__field-title {
+  display: flex;
+  margin-bottom: 2.4rem;
+}
+.undelegate-form-modal__field {
+  margin: 0;
+}
+.undelegate-form-modal__field-info {
+  font-weight: 400;
+  color: var(--clr__modal-backdrop-bg);
+  display: flex;
+  align-items: center;
+  margin-top: 1.6rem;
+}
+.info-icon {
+  margin-right: 0.9rem;
+}
+.undelegate-form-modal__field-input-wrapper {
+  margin-top: 0.8rem;
+}
+.undelegate-form-modal__field-err {
+  margin-top: 0.8rem;
+}
 @include respond-to(small) {
-  .app-form {
-    &__field-wrapper {
-      display: flex;
-    }
+  .undelegate-form-modal__field-wrapper {
+    display: flex;
   }
 }
 </style>

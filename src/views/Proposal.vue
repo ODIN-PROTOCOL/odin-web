@@ -20,16 +20,16 @@
 
     <template v-if="proposal">
       <div class="info-table mg-b32">
-        <div class="info-table__row">
+        <div v-if="proposal.proposerAddress" class="info-table__row">
           <span class="info-table__row-title">Proposer's account ID</span>
           <div class="info-table__row-value info-table__row-value_flex">
             <a
               class="info-table__row-link"
-              :href="`${API_CONFIG.odinScan}/account/${proposal?.proposerAddress}`"
+              :href="`${API_CONFIG.odinScan}/account/${proposal.proposerAddress}`"
             >
-              {{ proposal?.proposerAddress }}
+              {{ proposal.proposerAddress }}
             </a>
-            <CopyButton :text="proposal?.proposerAddress" />
+            <CopyButton :text="proposal.proposerAddress" />
           </div>
         </div>
         <div class="info-table__row">

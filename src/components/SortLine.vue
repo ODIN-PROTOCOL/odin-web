@@ -85,8 +85,8 @@ export default defineComponent({
     title: { type: String, required: true },
   },
   setup(props, { emit }) {
-    const sortByActivites = ref(ACTIVITIES_SORT.LATEST)
-    const sortByOwners = ref(OWNERS_SORT.ALL)
+    const sortByActivites = ref(ACTIVITIES_SORT.latest)
+    const sortByOwners = ref(OWNERS_SORT.all)
     const searchValue = ref('')
 
     const inputChange = () => {

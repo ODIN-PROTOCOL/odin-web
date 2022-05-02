@@ -176,10 +176,7 @@ export default defineComponent({
       try {
         if (props.oracleScript) {
           await callers.editOracleScript({
-            oracleScriptId:
-              props.oracleScript?.id === Long
-                ? props.oracleScript?.id
-                : Long.fromNumber(props.oracleScript?.id),
+            oracleScriptId: Long.fromNumber(props.oracleScript?.id),
             name: form.name.val(),
             description: form.description.val(),
             code: codeFileParsed,

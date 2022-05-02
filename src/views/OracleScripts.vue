@@ -139,6 +139,7 @@ import { OracleScript } from '@provider/codec/oracle/v1/oracle'
 
 import TopOracleScripts from '@/components/TopOracleScripts.vue'
 import SortRow from '@/components/SortLine.vue'
+import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
 
 export default defineComponent({
   components: { TitledLink, Pagination, TopOracleScripts, SortRow },
@@ -152,8 +153,8 @@ export default defineComponent({
     const accountAddress = wallet.account.address
     const mostRequestedOracleScripts = ref()
     const oracleScriptsName = ref('')
-    const sortingActivitiesValue = ref('latest_updated')
-    const sortingOwnersValue = ref('')
+    const sortingActivitiesValue = ref(ACTIVITIES_SORT.latest)
+    const sortingOwnersValue = ref(OWNERS_SORT.all)
     const loadOracleScripts = async () => {
       lockLoading()
       try {
