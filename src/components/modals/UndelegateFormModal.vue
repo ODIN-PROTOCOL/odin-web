@@ -2,7 +2,7 @@
   <ModalBase
     class="undelegate-form-modal__wrapper"
     @close="onClose()"
-    :isAddMargin="false"
+    shema="undelegate-form"
   >
     <template #title>
       <h3 class="app-form__title">Undelegate</h3>
