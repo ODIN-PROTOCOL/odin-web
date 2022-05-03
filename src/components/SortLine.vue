@@ -1,25 +1,25 @@
 <template>
-  <div class="sort-row">
-    <div class="sort-row__search">
-      <div class="sort-row__search-input-wrapper">
+  <div class="sort-line">
+    <div class="sort-line__search">
+      <div class="sort-line__search-input-wrapper">
         <InputField
           type="search"
           v-model="searchValue"
           placeholder="Search by name"
-          class="sort-row__search-input"
+          class="sort-line__search-input"
           @keydown.enter="inputChange()"
         />
       </div>
 
-      <button class="sort-row__search-button" @click="inputChange()">
+      <button class="sort-line__search-button" @click="inputChange()">
         <SearchIcon />
       </button>
     </div>
-    <div class="sort-row__selection">
-      <div class="sort-row__selection-item">
-        <span class="sort-row__selection-item-title">Sort by</span>
+    <div class="sort-line__selection">
+      <div class="sort-line__selection-item">
+        <span class="sort-line__selection-item-title">Sort by</span>
         <VuePicker
-          class="sort-row__vue-picker _vue-picker"
+          class="sort-line__vue-picker _vue-picker"
           name="filter"
           :isDisabled="isLoading"
           v-model="sortByActivites"
@@ -38,10 +38,10 @@
           </template>
         </VuePicker>
       </div>
-      <div class="sort-row__selection-item">
-        <span class="sort-row__selection-item-title">{{ title }}</span>
+      <div class="sort-line__selection-item">
+        <span class="sort-line__selection-item-title">{{ title }}</span>
         <VuePicker
-          class="sort-row__vue-picker _vue-picker"
+          class="sort-line__vue-picker _vue-picker"
           name="filter"
           :isDisabled="isLoading"
           v-model="sortByOwners"
@@ -121,107 +121,108 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.sort-row {
+.sort-line {
   display: flex;
   justify-content: space-between;
   margin-bottom: 2.4rem;
-  &__selection {
-    display: flex;
-    gap: 2.4rem;
-  }
-  &__selection-item-title {
-    font-size: 1.4rem;
-    font-weight: 300;
-    margin-right: 0.4rem;
-  }
-  &__search {
-    display: flex;
-    align-items: center;
-    border-bottom: 0.1rem solid var(--clr__input-border);
+}
+.sort-line__selection {
+  display: flex;
+  gap: 2.4rem;
+}
+.sort-line__selection-item-title {
+  font-size: 1.4rem;
+  font-weight: 300;
+  margin-right: 0.4rem;
+}
+.sort-line__search {
+  display: flex;
+  align-items: center;
+  border-bottom: 0.1rem solid var(--clr__input-border);
+  transition: all 0.5s ease;
+  color: var(--clr__input-border);
+  svg {
     transition: all 0.5s ease;
+    fill: var(--clr__input-border);
+  }
+  &:hover,
+  &:active,
+  &:focus,
+  &:focus-within {
+    color: var(--clr__text);
+    border-color: var(--clr__text);
+    svg {
+      fill: var(--clr__text);
+    }
+  }
+  &:disabled {
+    border-color: var(--clr__input-border);
     color: var(--clr__input-border);
     svg {
-      transition: all 0.5s ease;
       fill: var(--clr__input-border);
     }
-    &:hover,
-    &:active,
-    &:focus,
-    &:focus-within {
-      color: var(--clr__text);
-      border-color: var(--clr__text);
-      svg {
-        fill: var(--clr__text);
-      }
-    }
-    &:disabled {
-      border-color: var(--clr__input-border);
-      color: var(--clr__input-border);
-      svg {
-        fill: var(--clr__input-border);
-      }
-    }
-  }
-  &__search-input-wrapper {
-    position: relative;
-    z-index: 0;
-  }
-  &__search-input {
-    border: none;
-    &:focus::-webkit-input-placeholder {
-      color: transparent;
-    }
-    &::-webkit-search-cancel-button {
-      position: relative;
-      right: 0.2rem;
-    }
-    &:active,
-    &:hover,
-    &:focus {
-      border: none;
-    }
-  }
-  &__search-button {
-    position: relative;
-    width: 4.8rem;
-    height: 4.8rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
   }
 }
+.sort-line__search-input-wrapper {
+  position: relative;
+  z-index: 0;
+}
+.sort-line__search-input {
+  border: none;
+  &:focus::-webkit-input-placeholder {
+    color: transparent;
+  }
+  &::-webkit-search-cancel-button {
+    position: relative;
+    right: 0.2rem;
+  }
+  &:active,
+  &:hover,
+  &:focus {
+    border: none;
+  }
+}
+.sort-line__search-button {
+  position: relative;
+  width: 4.8rem;
+  height: 4.8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
 @include respond-to(tablet) {
-  .sort-row {
+  .sort-line {
     margin-bottom: 0;
     flex-direction: column;
-    &__search {
-      margin-bottom: 1.6rem;
-    }
-    &__search-input-wrapper {
-      width: 100%;
-    }
-    &__search-input {
-      width: 100%;
-    }
-    &__selection {
-      width: 100%;
-      flex-direction: column;
-      gap: 1.6rem;
-    }
+  }
+  .sort-line__search {
+    margin-bottom: 1.6rem;
+  }
+  .sort-line__search-input-wrapper {
+    width: 100%;
+  }
+  .sort-line__search-input {
+    width: 100%;
+  }
+  .sort-line__selection {
+    width: 100%;
+    flex-direction: column;
+    gap: 1.6rem;
+  }
 
-    &__selection-item {
-      display: flex;
-      flex-direction: column;
-    }
+  .sort-line__selection-item {
+    display: flex;
+    flex-direction: column;
+  }
 
-    &__selection-item-title {
-      margin: 0 0 0.4rem;
-    }
+  .sort-line__selection-item-title {
+    margin: 0 0 0.4rem;
+  }
 
-    &__vue-picker {
-      width: 100%;
-    }
+  .sort-line__vue-picker {
+    width: 100%;
   }
 }
 </style>

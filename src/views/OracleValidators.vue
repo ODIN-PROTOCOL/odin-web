@@ -59,7 +59,7 @@
       </div>
 
       <template v-if="validatorsCount > ITEMS_PER_PAGE">
-        <Pagination
+        <AppPagination
           class="mg-t32 mg-b32"
           v-model="currentPage"
           :pages="totalPages"
@@ -81,12 +81,12 @@ import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import TitledLink from '@/components/TitledLink.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
-import Pagination from '@/components/Pagination/Pagination.vue'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { handleError } from '@/helpers/errors'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 
 export default defineComponent({
-  components: { TitledLink, CopyButton, StatusBlock, Pagination },
+  components: { TitledLink, CopyButton, StatusBlock, AppPagination },
   setup() {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 50

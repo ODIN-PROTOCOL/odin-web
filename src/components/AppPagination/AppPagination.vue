@@ -1,15 +1,15 @@
 <template>
-  <div class="pagination-wrapper">
-    <VPagination v-model="page" :pages="pages" />
+  <div class="app-pagination__wrapper">
+    <VPagination class="app-pagination" v-model="page" :pages="pages" />
   </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent } from 'vue'
-import VPagination from '@/components/Pagination/VPagination.vue'
+import VPagination from '@/components/AppPagination/VPagination.vue'
 
 export default defineComponent({
-  name: 'pagination',
+  name: 'AppPagination',
   components: { VPagination },
   emits: ['update:modelValue'],
   props: {
@@ -28,10 +28,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.pagination-wrapper {
-  display: flex;
+.app-pagination {
   justify-content: center;
-  align-items: center;
   color: var(--clr-text);
 }
 </style>

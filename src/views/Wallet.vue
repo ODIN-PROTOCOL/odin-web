@@ -1,17 +1,17 @@
 <template>
-  <div class="view-main">
-    <div class="view-main__title-wrapper">
-      <h2 class="view-main__title">Wallet</h2>
+  <div class="wallet view-main">
+    <div class="wallet__title-wrapper view-main__title-wrapper">
+      <h2 class="wallet__title view-main__title">Wallet</h2>
     </div>
 
-    <div class="info mg-b40">
-      <div class="info__card">
-        <span class="info__card-title">Balance</span>
-        <div class="info__card-balance mg-b40">
-          <div class="info__card-row">
-            <span class="info__card-row-title">ODIN</span>
+    <div class="wallet__info mg-b40">
+      <div class="wallet__info-card">
+        <span class="wallet__info-card-title">Balance</span>
+        <div class="wallet__info-card-balance mg-b40">
+          <div class="wallet__info-card-row">
+            <span class="wallet__info-card-row-title">ODIN</span>
             <span
-              class="info__card-row-value"
+              class="wallet__info-card-row-value"
               :title="
                 $convertLokiToOdin(lokiCoins.amount, {
                   withDenom: true,
@@ -24,7 +24,9 @@
             </span>
           </div>
         </div>
-        <div class="info__card-activities info__card-activities_full">
+        <div
+          class="wallet__info-card-activities wallet__info-card-activities--full"
+        >
           <button
             class="app-btn app-btn_outlined app-btn_small"
             @click="receive()"
@@ -42,10 +44,10 @@
       </div>
     </div>
 
-    <div class="view-main__subtitle mg-b24">
-      <div class="view-main__info">
+    <div class="wallet__subtitle view-main__subtitle mg-b24">
+      <div class="wallet__tx-info">
         <img src="~@/assets/icons/info.svg" alt="info" />
-        <span class="view-main__subtitle-tooltip">
+        <span class="wallet__tooltip">
           Based on last 100 transactions in system
         </span>
       </div>
@@ -139,7 +141,7 @@
     </div>
 
     <template v-if="transactionsCount > ITEMS_PER_PAGE">
-      <Pagination
+      <AppPagination
         class="mg-t32 mg-b32"
         v-model="currentPage"
         :pages="totalPages"
@@ -161,7 +163,7 @@ import { useBalances } from '@/composables/useBalances'
 import { adjustedData } from '@/helpers/Types'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
-import Pagination from '@/components/Pagination/Pagination.vue'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import SendFormModal from '@/components/modals/SendFormModal.vue'
@@ -169,7 +171,7 @@ import ReceiveFormModal from '@/components/modals/ReceiveFormModal.vue'
 import WalletExchangeFormModal from '@/components/modals/WalletExchangeFormModal.vue'
 
 export default defineComponent({
-  components: { Pagination },
+  components: { AppPagination },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 50
@@ -299,105 +301,94 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.info {
+.wallet__info {
   display: flex;
   flex-direction: row;
   gap: 2.4rem;
-
-  &__card {
-    display: flex;
-    flex-direction: column;
-    width: 39rem;
-    padding: 3.2rem 2.4rem;
-    border: 0.1rem solid var(--clr__action);
-    border-radius: 0.8rem;
-
-    @include respond-to(tablet) {
-      width: 100%;
-    }
-  }
-
-  &__card-title {
-    display: inline-block;
-    font-size: 2.4rem;
-    margin-bottom: 4rem;
-  }
-
-  &__card-balance {
-    & > *:not(:last-child) {
-      margin-bottom: 2.4rem;
-    }
-  }
-
-  &__card-row-title {
-    display: inline-block;
-    min-width: 10rem;
-  }
-
-  &__card-row-value {
-    font-weight: 600;
-  }
-
-  &__card-activities {
-    display: flex;
-    margin-top: auto;
-
-    &_full {
-      gap: 2.4rem;
-      & > * {
-        flex: 1;
-      }
-    }
-  }
-
-  @include respond-to(tablet) {
-    flex-direction: column;
+}
+.wallet__info-card {
+  display: flex;
+  flex-direction: column;
+  width: 39rem;
+  padding: 3.2rem 2.4rem;
+  border: 0.1rem solid var(--clr__action);
+  border-radius: 0.8rem;
+}
+.wallet__info-card-title {
+  display: inline-block;
+  font-size: 2.4rem;
+  margin-bottom: 4rem;
+}
+.wallet__info-card-balance {
+  & > *:not(:last-child) {
+    margin-bottom: 2.4rem;
   }
 }
-
-.view-main {
-  &__subtitle {
-    display: flex;
-    align-items: center;
+.wallet__info-card-row-title {
+  display: inline-block;
+  min-width: 10rem;
+}
+.wallet__info-card-row-value {
+  font-weight: 600;
+}
+.wallet__info-card-activities {
+  display: flex;
+  margin-top: auto;
+}
+.wallet__info-card-activities--full {
+  gap: 2.4rem;
+  & > * {
+    flex: 1;
   }
-  &__info {
-    display: flex;
-    align-items: center;
-    height: 2.3rem;
-    position: relative;
-    cursor: pointer;
-    margin-right: 0.9rem;
-    &:hover {
-      .view-main__subtitle-tooltip {
-        display: block;
-      }
-    }
-  }
-  &__subtitle-tooltip {
-    display: none;
-    position: absolute;
-    bottom: 130%;
-    left: -0.7rem;
-    width: 20rem;
-    padding: 1.2rem 2.4rem;
-    background: var(--clr__tooltip-bg);
-    border-radius: 0.8rem;
-    font-size: 1.6rem;
-    font-weight: 400;
-    line-height: 1.6rem;
-    color: var(--clr__tooltip-text);
-
-    &:before {
-      content: '';
+}
+.wallet__subtitle {
+  display: flex;
+  align-items: center;
+}
+.wallet__tx-info {
+  display: flex;
+  align-items: center;
+  height: 2.3rem;
+  position: relative;
+  cursor: pointer;
+  margin-right: 0.9rem;
+  &:hover {
+    .wallet__tooltip {
       display: block;
-      width: 0.6rem;
-      height: 0.6rem;
-      position: absolute;
-      bottom: -0.3rem;
-      left: 8%;
-      transform: translateX(-50%) rotate(45deg);
-      background: var(--clr__tooltip-bg);
     }
+  }
+}
+.wallet__tooltip {
+  display: none;
+  position: absolute;
+  bottom: 130%;
+  left: -0.7rem;
+  width: 20rem;
+  padding: 1.2rem 2.4rem;
+  background: var(--clr__tooltip-bg);
+  border-radius: 0.8rem;
+  font-size: 1.6rem;
+  font-weight: 400;
+  line-height: 1.6rem;
+  color: var(--clr__tooltip-text);
+  &:before {
+    content: '';
+    display: block;
+    width: 0.6rem;
+    height: 0.6rem;
+    position: absolute;
+    bottom: -0.3rem;
+    left: 8%;
+    transform: translateX(-50%) rotate(45deg);
+    background: var(--clr__tooltip-bg);
+  }
+}
+@include respond-to(tablet) {
+  .wallet__info-card {
+    width: 100%;
+  }
+  .wallet__info {
+    flex-direction: column;
   }
 }
 </style>

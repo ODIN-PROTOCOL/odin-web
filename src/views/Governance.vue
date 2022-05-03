@@ -65,7 +65,7 @@
     </div>
 
     <template v-if="proposalsCount > ITEMS_PER_PAGE">
-      <Pagination
+      <AppPagination
         class="mg-t32 mg-b32"
         v-model="currentPage"
         :pages="totalPages"
@@ -95,13 +95,13 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import TitledLink from '@/components/TitledLink.vue'
 import CustomDoughnutChart from '@/components/charts/CustomDoughnutChart.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
-import Pagination from '@/components/Pagination/Pagination.vue'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import ProposalFormModal from '@/components/modals/ProposalFormModal.vue'
 
 export default defineComponent({
-  components: { CustomDoughnutChart, TitledLink, StatusBlock, Pagination },
+  components: { CustomDoughnutChart, TitledLink, StatusBlock, AppPagination },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 30

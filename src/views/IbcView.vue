@@ -69,7 +69,7 @@
       </div>
     </template>
     <template v-if="connectionsData?.length > ITEMS_PER_PAGE">
-      <Pagination
+      <AppPagination
         class="mg-t32 mg-b32"
         v-model="currentPage"
         :pages="totalPages"
@@ -86,7 +86,7 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
 import { IdentifiedChannel } from 'cosmjs-types/ibc/core/channel/v1/channel'
 import { IdentifiedConnection } from 'cosmjs-types/ibc/core/connection/v1/connection'
-import Pagination from '@/components/Pagination/Pagination.vue'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import ChannelDetail from '@/components/ChannelDetail.vue'
 import ArrowIcon from '@/components/icons/ArrowIcon.vue'
 import { ClientState } from 'cosmjs-types/ibc/lightclients/tendermint/v1/tendermint'
@@ -94,7 +94,7 @@ import { QueryClientStateResponse } from 'cosmjs-types/ibc/core/client/v1/query'
 
 export default defineComponent({
   components: {
-    Pagination,
+    AppPagination,
     ArrowIcon,
     ChannelDetail,
   },

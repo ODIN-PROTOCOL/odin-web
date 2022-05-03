@@ -83,7 +83,7 @@
     </div>
 
     <template v-if="requestsCount > ITEMS_PER_PAGE">
-      <Pagination
+      <AppPagination
         class="mg-t32 mg-b32"
         v-model="currentPage"
         :pages="totalPages"
@@ -105,14 +105,13 @@ import { callers } from '@/api/callers'
 import { API_CONFIG } from '@/api/api-config'
 import TitledLink from '@/components/TitledLink.vue'
 import Progressbar from '@/components/Progressbar.vue'
-import Pagination from '@/components/Pagination/Pagination.vue'
-// import { RequestResult } from '@provider/codec/oracle/v1/oracle'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import RequestFormModal from '@/components/modals/RequestFormModal.vue'
 
 export default defineComponent({
-  components: { TitledLink, Progressbar, Pagination },
+  components: { TitledLink, Progressbar, AppPagination },
   setup() {
     const ITEMS_PER_PAGE = 5
     const currentPage = ref(1)

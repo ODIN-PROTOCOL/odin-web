@@ -18,7 +18,7 @@
           <div class="undelegate-form-modal__field-title app-form__field-title">
             <label class="undelegate-form-modal__field-lbl">From</label>
             <CopyText
-              class="copy-text"
+              class="undelegate-form-modal__copy-text"
               :text="validator.operatorAddress"
               :title="validator.operatorAddress"
               :displayText="$cropAddress(validator.operatorAddress)"
@@ -206,7 +206,7 @@ export function showUndelegateFormDialog(
 </script>
 
 <style scoped lang="scss">
-.copy-text {
+.undelegate-form-modal__copy-text {
   margin: 0 1rem;
 }
 .undelegate-form-modal {

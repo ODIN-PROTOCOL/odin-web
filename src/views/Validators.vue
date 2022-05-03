@@ -161,7 +161,7 @@
     </div>
 
     <template v-if="filteredValidatorsCount > ITEMS_PER_PAGE">
-      <Pagination
+      <AppPagination
         class="mg-t32"
         v-model="currentPage"
         :pages="totalPages"
@@ -199,7 +199,7 @@ import Tabs from '@/components/tabs/Tabs.vue'
 import Tab from '@/components/tabs/Tab.vue'
 import TitledLink from '@/components/TitledLink.vue'
 import StatusIcon from '@/components/StatusIcon.vue'
-import Pagination from '@/components/Pagination/Pagination.vue'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import WithdrawRewardsFormModal from '@/components/modals/WithdrawRewardsFormModal.vue'
@@ -210,7 +210,7 @@ import ClaimAllRewardsFormModal from '@/components/modals/ClaimAllRewardsFormMod
 import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
 import { isActiveValidator } from '@/helpers/validatorHelpers'
 export default defineComponent({
-  components: { Tabs, Tab, TitledLink, StatusIcon, Pagination },
+  components: { Tabs, Tab, TitledLink, StatusIcon, AppPagination },
   setup() {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 50

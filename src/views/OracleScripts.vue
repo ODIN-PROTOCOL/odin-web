@@ -103,7 +103,7 @@
     </div>
 
     <template v-if="oracleScriptsCount > ITEMS_PER_PAGE">
-      <Pagination
+      <AppPagination
         class="mg-t32 mg-b32"
         v-model="currentPage"
         :pages="totalPages"
@@ -131,7 +131,7 @@ import { wallet } from '@/api/wallet'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
 import TitledLink from '@/components/TitledLink.vue'
-import Pagination from '@/components/Pagination/Pagination.vue'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import OracleScriptFormModal from '@/components/modals/OracleScriptFormModal.vue'
@@ -142,7 +142,7 @@ import SortRow from '@/components/SortLine.vue'
 import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
 
 export default defineComponent({
-  components: { TitledLink, Pagination, TopOracleScripts, SortRow },
+  components: { TitledLink, AppPagination, TopOracleScripts, SortRow },
   setup() {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 50

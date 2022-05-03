@@ -1,5 +1,5 @@
 <template>
-  <div class="status-block" :class="`status-block_${status}`">
+  <div class="status-block" :class="`status-block--${status}`">
     {{ displayText }}
   </div>
 </template>
@@ -37,16 +37,16 @@ export default defineComponent({
   color: var(--clr__text-on-action);
   text-align: center;
 }
-.status-block_success {
+.status-block--success {
   background: var(--clr__status-success);
 }
-.status-block_pending {
+.status-block--pending {
   background: var(--clr__status-pending);
 }
-.status-block_error {
+.status-block--error {
   background: var(--clr__status-error);
 }
-.status-block_progress {
+.status-block--progress {
   background: var(--clr__status-progress);
 }
 </style>

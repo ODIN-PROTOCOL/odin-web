@@ -40,7 +40,7 @@
     </div>
 
     <template v-if="delegatorsCount > ITEMS_PER_PAGE">
-      <Pagination
+      <AppPagination
         class="mg-t32 mg-b32"
         v-model="currentPage"
         :pages="totalPages"
@@ -53,10 +53,10 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref, toRef } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
-import Pagination from '@/components/Pagination/Pagination.vue'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
 
 export default defineComponent({
-  components: { Pagination },
+  components: { AppPagination },
   props: {
     delegators: { type: Array, required: true },
   },

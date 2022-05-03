@@ -1,19 +1,19 @@
 <template>
-  <ul class="pagination">
+  <ul class="v-pagination">
     <li
-      class="pagination__control"
-      :class="{ ['pagination__control_active']: isPrevControlsActive }"
+      class="v-pagination__control"
+      :class="{ ['v-pagination__control--active']: isPrevControlsActive }"
       @click="goToPrev"
     >
       <ArrowIcon
-        class="pagination__control-arrow rotate-left"
+        class="v-pagination__control-arrow rotate-left"
         :width="6"
         :height="10"
       />
     </li>
     <li>
       <input
-        class="pagination__input"
+        class="v-pagination__input"
         type="number"
         :min="1"
         :max="pages"
@@ -23,16 +23,16 @@
         @blur="goTo($event)"
       />
     </li>
-    <li class="pagination__total-page">
+    <li class="v-pagination__total-page">
       <span>of {{ pages }}</span>
     </li>
     <li
-      class="pagination__control"
-      :class="{ ['pagination__control_active']: isNextControlsActive }"
+      class="v-pagination__control"
+      :class="{ ['v-pagination__control--active']: isNextControlsActive }"
       @click="goToNext"
     >
       <ArrowIcon
-        class="pagination__control-arrow rotate-right"
+        class="v-pagination__control-arrow rotate-right"
         :width="6"
         :height="10"
       />
@@ -101,7 +101,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.pagination {
+.v-pagination {
   display: flex;
   flex-flow: row;
   flex-wrap: nowrap;
@@ -109,56 +109,56 @@ export default defineComponent({
   list-style-type: none;
   margin: 0;
   padding: 0;
-  &__control {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 3.6rem;
-    height: 3.6rem;
-    border: 0.1rem solid var(--clr__input-border);
-    fill: var(--clr__input-border);
-    &_active {
-      cursor: pointer;
-      border: 0.1rem solid var(--clr__action);
-      fill: var(--clr__action);
-      svg {
-        fill: var(--clr__action);
-        transition: all 0.5s ease;
-      }
-      &:hover {
-        svg {
-          fill: var(--clr__btn-hover);
-        }
-        border-color: var(--clr__btn-hover);
-      }
+}
+.v-pagination__control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.6rem;
+  height: 3.6rem;
+  border: 0.1rem solid var(--clr__input-border);
+  fill: var(--clr__input-border);
+}
+.v-pagination__control--active {
+  cursor: pointer;
+  border: 0.1rem solid var(--clr__action);
+  fill: var(--clr__action);
+  svg {
+    fill: var(--clr__action);
+    transition: all 0.5s ease;
+  }
+  &:hover {
+    svg {
+      fill: var(--clr__btn-hover);
     }
+    border-color: var(--clr__btn-hover);
   }
-  &__control-arrow {
-    position: absolute;
-    display: block;
-    width: 1rem;
-    height: 1.2rem;
-    margin: 0 0.2rem;
-    fill: var(--clr__input-border);
-  }
-  &__total-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: none;
-    font-size: 1.6rem;
-    margin: 0 0.8rem;
-  }
-  &__input {
-    border: 0.1rem solid var(--clr__input-border);
-    width: 6rem;
-    height: 3.6rem;
-    margin: 0 0.2rem;
-    border-radius: 0.4rem;
-    text-align: center;
-    &:hover {
-      border: 0.1rem solid var(--clr__action);
-    }
+}
+.v-pagination__control-arrow {
+  position: absolute;
+  display: block;
+  width: 1rem;
+  height: 1.2rem;
+  margin: 0 0.2rem;
+  fill: var(--clr__input-border);
+}
+.v-pagination__total-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  font-size: 1.6rem;
+  margin: 0 0.8rem;
+}
+.v-pagination__input {
+  border: 0.1rem solid var(--clr__input-border);
+  width: 6rem;
+  height: 3.6rem;
+  margin: 0 0.2rem;
+  border-radius: 0.4rem;
+  text-align: center;
+  &:hover {
+    border: 0.1rem solid var(--clr__action);
   }
 }
 .rotate-right {

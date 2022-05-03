@@ -91,7 +91,7 @@
     </div>
 
     <template v-if="dataSourcesCount > ITEMS_PER_PAGE">
-      <Pagination
+      <AppPagination
         class="mg-t32 mg-b32"
         v-model="currentPage"
         :pages="totalPages"
@@ -113,7 +113,7 @@ import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
 import TitledLink from '@/components/TitledLink.vue'
-import Pagination from '@/components/Pagination/Pagination.vue'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import DataSourceFormModal from '@/components/modals/DataSourceFormModal.vue'
 import { wallet } from '@/api/wallet'
@@ -122,7 +122,7 @@ import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
 export default defineComponent({
   components: {
     TitledLink,
-    Pagination,
+    AppPagination,
     SortRow,
   },
   setup: function () {
