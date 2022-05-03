@@ -134,11 +134,10 @@ export default defineComponent({
     const getProposalStatistic = async () => {
       lockLoading()
       try {
-        const res = await callers.getProposalsStatistic()
-        const proposalsStatistic = await res.json()
-
-        proposalsDataForChart.value =
-          getProposalsCountByStatus(proposalsStatistic)
+        proposalsDataForChart.value = await callers
+          .getProposalsStatistic()
+          .then((request) => request.json())
+          .then((data) => getProposalsCountByStatus(data))
       } catch (error) {
         handleError(error as Error)
       }
@@ -162,10 +161,9 @@ export default defineComponent({
     const getChangesParams = async () => {
       lockLoading()
       try {
-        const res = await callers.getProposalChanges()
-        const data = await res.json()
-
-        proposalChanges.value = data
+        proposalChanges.value = await callers
+          .getProposalChanges()
+          .then((request) => request.json())
       } catch (error) {
         handleError(error as Error)
       }

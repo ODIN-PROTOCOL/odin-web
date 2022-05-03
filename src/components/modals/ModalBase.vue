@@ -1,14 +1,9 @@
 <template>
   <div :class="`modal-${shema}`">
-    <div
-      :class="`modal-${shema}__backdrop`"
-      class="modal-base__backdrop"
-      @click="emitClose()"
-    ></div>
+    <div :class="`modal-${shema}__backdrop`" @click="emitClose()"></div>
     <div :class="`modal-${shema}__content`">
       <div :class="`modal-${shema}__content-head fx-row`">
         <slot name="title"></slot>
-
         <button
           :class="`modal-${shema}__close-btn app-ico-btn fx-sae`"
           type="button"

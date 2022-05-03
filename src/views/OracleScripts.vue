@@ -27,7 +27,7 @@
       </div>
     </template>
 
-    <SortRow
+    <SortLine
       :isLoading="isLoading"
       :title="'Oracle Scripts'"
       v-model:oracleScriptsName="oracleScriptsName"
@@ -138,11 +138,11 @@ import OracleScriptFormModal from '@/components/modals/OracleScriptFormModal.vue
 import { OracleScript } from '@provider/codec/oracle/v1/oracle'
 
 import TopOracleScripts from '@/components/TopOracleScripts.vue'
-import SortRow from '@/components/SortLine.vue'
+import SortLine from '@/components/SortLine.vue'
 import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
 
 export default defineComponent({
-  components: { TitledLink, AppPagination, TopOracleScripts, SortRow },
+  components: { TitledLink, AppPagination, TopOracleScripts, SortLine },
   setup() {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 50
@@ -158,7 +158,7 @@ export default defineComponent({
     const loadOracleScripts = async () => {
       lockLoading()
       try {
-        const response = await callers
+        oracleScripts.value = await callers
           .getSortedOracleScripts(
             currentPage.value - 1,
             ITEMS_PER_PAGE,
@@ -167,9 +167,7 @@ export default defineComponent({
             oracleScriptsName.value
           )
           .then((response) => response.json())
-          .then((data) => data)
-        oracleScripts.value = response.data
-
+          .then((data) => data.data)
         await getOracleScriptsCount()
       } catch (error) {
         handleError(error as Error)
@@ -179,11 +177,10 @@ export default defineComponent({
     const getMostRequestedOracleScripts = async () => {
       lockLoading()
       try {
-        const res = await callers
+        mostRequestedOracleScripts.value = await callers
           .getSortedOracleScripts(0, 6, 'most_requested', 'null', '')
           .then((response) => response.json())
-          .then((data) => data)
-        mostRequestedOracleScripts.value = res.data
+          .then((data) => data.data)
       } catch (error) {
         handleError(error as Error)
       }

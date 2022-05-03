@@ -12,7 +12,7 @@
       >
         <div class="app-form__main">
           <div class="app-form__field delegate-form-modal__field">
-            <div class="app-form__field-row">
+            <div class="delegate-form-modal__field-row app-form__field-row">
               <label class="app-form__field-lbl"> Available </label>
               <p
                 :title="
@@ -27,7 +27,7 @@
                 }}
               </p>
             </div>
-            <div class="app-form__field-row">
+            <div class="delegate-form-modal__field-row app-form__field-row">
               <button
                 class="app-btn app-btn_small app-btn_outlined"
                 type="button"
@@ -198,21 +198,17 @@ export function showDelegateFormDialog(
 </script>
 
 <style scoped lang="scss">
-.delegate-form-modal {
-  &__field {
-    display: grid;
-    grid:
-      auto/
-      minmax(1rem, 1fr)
-      minmax(1rem, 1fr);
-  }
+.delegate-form-modal__field {
+  display: grid;
+  grid:
+    auto/
+    minmax(1rem, 1fr)
+    minmax(1rem, 1fr);
 }
 
 @include respond-to(small) {
-  .app-form {
-    &__field-row:first-child {
-      margin-bottom: 1rem;
-    }
+  .delegate-form-modal__field-row:first-child {
+    margin-bottom: 1rem;
   }
   .delegate-form-modal {
     &__field {

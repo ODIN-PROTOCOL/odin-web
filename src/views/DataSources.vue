@@ -17,7 +17,7 @@
       </div>
     </template>
 
-    <SortRow
+    <SortLine
       :isLoading="isLoading"
       :title="'Data Source'"
       v-model:oracleScriptsName="dataSourceName"
@@ -117,13 +117,13 @@ import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import DataSourceFormModal from '@/components/modals/DataSourceFormModal.vue'
 import { wallet } from '@/api/wallet'
-import SortRow from '@/components/SortLine.vue'
+import SortLine from '@/components/SortLine.vue'
 import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
 export default defineComponent({
   components: {
     TitledLink,
     AppPagination,
-    SortRow,
+    SortLine,
   },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()

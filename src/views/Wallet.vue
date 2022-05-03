@@ -168,7 +168,6 @@ import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import SendFormModal from '@/components/modals/SendFormModal.vue'
 import ReceiveFormModal from '@/components/modals/ReceiveFormModal.vue'
-import WalletExchangeFormModal from '@/components/modals/WalletExchangeFormModal.vue'
 
 export default defineComponent({
   components: { AppPagination },
@@ -256,10 +255,6 @@ export default defineComponent({
       await showDialogHandler(ReceiveFormModal)
     }
 
-    const exchange = async () => {
-      await showDialogHandler(WalletExchangeFormModal)
-    }
-
     const send = async () => {
       await showDialogHandler(
         SendFormModal,
@@ -292,7 +287,6 @@ export default defineComponent({
       paginationHandler,
       generateAddrLink,
       receive,
-      exchange,
       send,
       isEmptyBalance,
     }

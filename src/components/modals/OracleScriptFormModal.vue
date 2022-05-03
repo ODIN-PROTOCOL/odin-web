@@ -1,6 +1,6 @@
 <template>
   <ModalBase
-    class="oracle-script-form-modal modal-base_right"
+    class="oracle-script-form-modal modal-base--right"
     @close="onClose()"
   >
     <template #title>
