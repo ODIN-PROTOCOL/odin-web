@@ -2,7 +2,7 @@
   <ModalBase
     class="undelegate-form-modal__wrapper"
     @close="onClose()"
-    shema="undelegate-form"
+    shema="undelegate-form-modal"
   >
     <template #title>
       <h3 class="app-form__title">Undelegate</h3>
