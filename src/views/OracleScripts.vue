@@ -11,7 +11,7 @@
       </button>
     </div>
 
-    <template v-if="mostRequestedOracleScripts">
+    <template v-if="false">
       <div>
         <h3 class="view-main__subtitle mg-b24">Most requested</h3>
         <TopOracleScripts :top-oracle-scripts="mostRequestedOracleScripts" />
