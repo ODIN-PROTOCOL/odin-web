@@ -3,7 +3,7 @@
     class="view-main validators load-fog"
     :class="{
       'load-fog_show': isLoading && validators?.length,
-      'validators_large-padding': isDelegator,
+      'validators--large-padding': isDelegator,
     }"
   >
     <div class="view-main__title-wrapper validators__title-wrapper">
@@ -43,17 +43,17 @@
         <span class="validators__table-head-item">Rank</span>
         <span class="validators__table-head-item">Validator</span>
         <span
-          class="validators__table-head-item validators__table-head-item_end"
+          class="validators__table-head-item validators__table-head-item--end"
         >
           Delegated
         </span>
         <span
-          class="validators__table-head-item validators__table-head-item_end"
+          class="validators__table-head-item validators__table-head-item--end"
         >
           Commission
         </span>
         <span
-          class="validators__table-head-item validators__table-head-item_center"
+          class="validators__table-head-item validators__table-head-item--center"
         >
           Oracle Status
         </span>
@@ -78,7 +78,7 @@
                 :to="`/validators/${item.operatorAddress}`"
               />
             </div>
-            <div class="app-table__cell validators__table-cell_end">
+            <div class="app-table__cell validators__table-cell--end">
               <span class="app-table__title">Delegated</span>
               <span
                 :title="
@@ -97,13 +97,13 @@
                 }}
               </span>
             </div>
-            <div class="app-table__cell validators__table-cell_end">
+            <div class="app-table__cell validators__table-cell--end">
               <span class="app-table__title">Commission</span>
               <span>
                 {{ $getPrecisePercents(item.commission.commissionRates.rate) }}
               </span>
             </div>
-            <div class="app-table__cell validators__table-cell_center">
+            <div class="app-table__cell validators__table-cell--center">
               <span class="app-table__title">Oracle Status</span>
               <StatusIcon :status="item?.isActive ? 'success' : 'error'" />
             </div>
@@ -448,120 +448,109 @@ export default defineComponent({
 <style lang="scss" scoped>
 .validators {
   padding-bottom: 10rem;
+}
+.validators__title-wrapper {
+  align-items: flex-start;
+}
 
-  &__title-wrapper {
-    align-items: flex-start;
-  }
+.validators__title-activities {
+  display: flex;
+  flex-direction: column;
 
-  &__title-activities {
-    display: flex;
-    flex-direction: column;
-
-    & > *:not(:last-child) {
-      margin-bottom: 1.6rem;
-    }
-  }
-
-  &__count-info {
-    margin-bottom: 3.2rem;
-  }
-
-  &__table-head,
-  &__table-row {
-    grid:
-      auto /
-      minmax(6rem, 0.5fr)
-      minmax(8rem, 3fr)
-      minmax(8rem, 4fr)
-      minmax(8rem, 3fr)
-      minmax(8rem, 2fr)
-      minmax(32.5rem, 4fr);
-  }
-
-  &__table-activities {
-    width: 100%;
-
-    & > *:not(:last-child) {
-      margin-bottom: 2.4rem;
-    }
-  }
-
-  &__table-activities-item {
-    display: flex;
-    justify-content: flex-end;
-    gap: 2.4rem;
-  }
-
-  &__table-cell {
-    &_center {
-      justify-content: center;
-    }
-    &_end {
-      justify-content: flex-end;
-    }
-  }
-
-  &__table-head-item {
-    &_center {
-      text-align: center;
-    }
-    &_end {
-      text-align: end;
-    }
-  }
-
-  &__mobile-activities {
-    & > *:not(:last-child) {
-      margin-bottom: 1.6rem;
-    }
-  }
-
-  &_large-padding {
-    padding-bottom: 17rem;
+  & > *:not(:last-child) {
+    margin-bottom: 1.6rem;
   }
 }
 
+.validators__count-info {
+  margin-bottom: 3.2rem;
+}
+
+.validators__table-head,
+.validators__table-row {
+  grid:
+    auto /
+    minmax(6rem, 0.5fr)
+    minmax(8rem, 3fr)
+    minmax(8rem, 4fr)
+    minmax(8rem, 3fr)
+    minmax(8rem, 2fr)
+    minmax(32.5rem, 4fr);
+}
+
+.validators__table-activities {
+  width: 100%;
+
+  & > *:not(:last-child) {
+    margin-bottom: 2.4rem;
+  }
+}
+
+.validators__table-activities-item {
+  display: flex;
+  justify-content: flex-end;
+  gap: 2.4rem;
+}
+
+.validators__table-cell--center {
+  justify-content: center;
+}
+.validators__table-cell--end {
+  justify-content: flex-end;
+}
+
+.validators__table-head-item--center {
+  text-align: center;
+}
+.validators__table-head-item--end {
+  text-align: end;
+}
+
+.validators__mobile-activities {
+  & > *:not(:last-child) {
+    margin-bottom: 1.6rem;
+  }
+}
+
+.validators--large-padding {
+  padding-bottom: 17rem;
+}
+
 @include respond-to(tablet) {
-  .validators {
-    &__count-info {
-      margin-bottom: 0;
-    }
+  .validators__count-info {
+    margin-bottom: 0;
+  }
 
-    &__title-activities {
-      display: none;
-    }
+  .validators__title-activities {
+    display: none;
+  }
 
-    &__table-row {
-      grid: none;
-    }
+  .validators__table-row {
+    grid: none;
+  }
 
-    &__table-activities {
-      width: 100%;
-    }
+  .validators__table-activities {
+    width: 100%;
+  }
 
-    &__table-activities-item {
-      & > * {
-        flex: 1;
-      }
+  .validators__table-activities-item {
+    & > * {
+      flex: 1;
     }
+  }
 
-    &__table-cell {
-      &_center {
-        justify-content: flex-start;
-      }
-      &_end {
-        justify-content: flex-start;
-      }
-    }
+  .validators__table-cell--center {
+    justify-content: flex-start;
+  }
+  .validators__table-cell--end {
+    justify-content: flex-start;
+  }
 
-    &__table-head {
-      &_center {
-        text-align: start;
-      }
-      &_end {
-        text-align: start;
-      }
-    }
+  .validators__table-head--center {
+    text-align: start;
+  }
+  .validators__table-head--end {
+    text-align: start;
   }
 }
 </style>

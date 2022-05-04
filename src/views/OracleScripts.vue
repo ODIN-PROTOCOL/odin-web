@@ -1,5 +1,5 @@
 <template>
-  <div class="view-main">
+  <div class="oracle-scripts view-main">
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Oracle Scripts</h2>
       <button
@@ -21,7 +21,7 @@
     <template v-if="oracleScriptsCount">
       <div>
         <h3 class="view-main__subtitle mg-b24">All oracle scripts</h3>
-        <div class="view-main__count-info">
+        <div class="view-main__count-info oracle-scripts__count-info">
           <p>{{ oracleScriptsCount }} Oracle Scripts found</p>
         </div>
       </div>
@@ -36,18 +36,18 @@
     />
 
     <div class="app-table">
-      <div class="app-table__head">
+      <div class="app-table__head oracle-scripts__table-head">
         <span>ID</span>
         <span>Oracle Script</span>
-        <span class="app-table__head_item">Description</span>
-        <span class="app-table__head_item">Timestamp</span>
+        <span class="oracle-scripts__table-head--center">Description</span>
+        <span class="oracle-scripts__table-head--center">Timestamp</span>
       </div>
       <div class="app-table__body">
         <template v-if="oracleScripts?.length">
           <div
             v-for="item in oracleScripts"
             :key="item.attributes.id.toString()"
-            class="app-table__row"
+            class="app-table__row oracle-scripts__table-row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">ID</span>
@@ -61,13 +61,13 @@
                 :to="`/oracle-scripts/${item.attributes.id}`"
               />
             </div>
-            <div class="app-table__cell oracle-scripts__table-cell_center">
+            <div class="app-table__cell oracle-scripts__table-cell--center">
               <span class="app-table__title">Description</span>
               <span>
                 {{ item.attributes.description || '-' }}
               </span>
             </div>
-            <div class="app-table__cell oracle-scripts__table-cell_center">
+            <div class="app-table__cell oracle-scripts__table-cell--center">
               <span class="app-table__title">Timestamp</span>
               <span>
                 {{ $fDate(new Date(item.attributes.timestamp * 1000)) || '-' }}
@@ -250,14 +250,11 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.view-main {
-  &__count-info {
-    margin-bottom: 3.2rem;
-  }
+.oracle-scripts__count-info {
+  margin-bottom: 3.2rem;
 }
-
-.app-table__head,
-.app-table__row {
+.oracle-scripts__table-head,
+.oracle-scripts__table-row {
   grid:
     auto /
     minmax(2rem, 0.5fr)
@@ -266,67 +263,51 @@ export default defineComponent({
     minmax(10rem, 2fr)
     minmax(8rem, 2fr);
 }
-.app-table__head_item {
+.oracle-scripts__table-head--center {
   text-align: center;
 }
-.oracle-scripts {
-  &__table-activities {
-    width: 100%;
 
-    & > *:not(:last-child) {
-      margin-bottom: 2.4rem;
-    }
-  }
+.oracle-scripts__table-activities {
+  width: 100%;
 
-  &__table-activities-item {
-    display: flex;
-    justify-content: flex-end;
-    gap: 2.4rem;
-  }
-  &__table-cell {
-    &_center {
-      justify-content: center;
-    }
-    &_end {
-      justify-content: flex-end;
-    }
+  & > *:not(:last-child) {
+    margin-bottom: 2.4rem;
   }
 }
+
+.oracle-scripts__table-activities-item {
+  display: flex;
+  justify-content: flex-end;
+  gap: 2.4rem;
+}
+
+.oracle-scripts__table-cell--center {
+  justify-content: center;
+}
+
 @include respond-to(tablet) {
-  .view-main {
+  .oracle-scripts {
     padding-bottom: 10rem;
-
-    &__count-info {
-      margin-bottom: 2.4rem;
-    }
-
-    &__title-btn {
-      display: none;
-    }
   }
-
-  .app-table__row {
+  .oracle-scripts__count-info {
+    margin-bottom: 2.4rem;
+  }
+  .oracle-scripts__title-btn {
+    display: none;
+  }
+  .oracle-scripts__table-row {
     grid: none;
   }
-
-  .oracle-scripts {
-    &__table-activities {
-      width: 100%;
+  .oracle-scripts__table-activities {
+    width: 100%;
+  }
+  .oracle-scripts__table-activities-item {
+    & > * {
+      flex: 1;
     }
-
-    &__table-activities-item {
-      & > * {
-        flex: 1;
-      }
-    }
-    &__table-cell {
-      &_center {
-        justify-content: flex-start;
-      }
-      &_end {
-        justify-content: flex-start;
-      }
-    }
+  }
+  .oracle-scripts__table-cell--center {
+    justify-content: flex-start;
   }
 }
 </style>

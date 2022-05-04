@@ -1,14 +1,14 @@
 <template>
-  <div class="view-main">
+  <div class="voting view-main">
     <div class="view-main__title-wrapper">
       <BackButton :text="'Proposal'" />
-      <h2 class="view-main__title">Vote for proposal</h2>
+      <h2 class="voting__title view-main__title">Vote for proposal</h2>
       <span class="view-main__subtitle">{{ proposalName }}</span>
     </div>
 
-    <div class="content-block">
-      <div class="content-block__voting">
-        <div class="content-block__voting-choice mg-b24">
+    <div class="voting__main">
+      <div class="voting__choice">
+        <div class="voting__choice-item mg-b24">
           <div>
             <input
               type="radio"
@@ -17,7 +17,7 @@
               checked
               v-model="pickedOption"
             />
-            <label class="content-block__voting-choice-lbl" for="support">
+            <label class="voting__choice-item-lbl" for="support">
               Support
             </label>
           </div>
@@ -28,9 +28,7 @@
               :value="VoteOption.VOTE_OPTION_NO"
               v-model="pickedOption"
             />
-            <label class="content-block__voting-choice-lbl" for="reject">
-              Reject
-            </label>
+            <label class="voting__choice-item-lbl" for="reject"> Reject </label>
           </div>
           <div>
             <input
@@ -39,9 +37,7 @@
               :value="VoteOption.VOTE_OPTION_NO_WITH_VETO"
               v-model="pickedOption"
             />
-            <label class="content-block__voting-choice-lbl" for="veto">
-              Veto
-            </label>
+            <label class="voting__choice-item-lbl" for="veto"> Veto </label>
           </div>
           <div>
             <input
@@ -50,20 +46,20 @@
               :value="VoteOption.VOTE_OPTION_ABSTAIN"
               v-model="pickedOption"
             />
-            <label class="content-block__voting-choice-lbl" for="abstain">
+            <label class="voting__choice-item-lbl" for="abstain">
               Abstain
             </label>
           </div>
         </div>
         <button
-          class="content-block__voting-btn app-btn app-btn_small"
+          class="voting__btn app-btn app-btn_small"
           @click="confirmation()"
         >
           Vote
         </button>
       </div>
-      <div class="content-block__chart">
-        <h3 class="content-block__chart-title mg-b40">Results of voting</h3>
+      <div class="voting__chart">
+        <h3 class="voting__chart-title mg-b40">Results of voting</h3>
         <CustomDoughnutChart :data="votesDataForChart" />
       </div>
     </div>
@@ -168,63 +164,56 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.view-main {
-  &__title {
-    margin: 0 1.6rem 0 2rem;
-  }
+.voting__title {
+  margin: 0 1.6rem 0 2rem;
 }
 
-.content-block {
+.voting__main {
   display: flex;
   gap: 12.8rem;
   align-items: flex-start;
   flex-direction: row;
+}
+.voting__choice,
+.voting__chart {
+  width: 100%;
+  padding: 3.2rem 2.4rem;
+  border-radius: 0.8rem;
+}
 
-  &__voting,
-  &__chart {
-    width: 100%;
-    padding: 3.2rem 2.4rem;
-    border-radius: 0.8rem;
-  }
+.voting__choice {
+  background: var(--clr__grey-bg);
+}
 
-  &__voting {
-    background: var(--clr__grey-bg);
-  }
+.voting__chart {
+  border: 0.1rem solid var(--clr__action);
+}
 
-  &__chart {
-    border: 0.1rem solid var(--clr__action);
-  }
+.voting__choice-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
 
-  &__voting-choice {
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
-  }
+.voting__choice-item-lbl {
+  margin-left: 0.8rem;
+}
 
-  &__voting-choice-lbl {
-    margin-left: 0.8rem;
-  }
-
-  &__chart-title {
-    font-size: 2.4rem;
-    font-weight: 400;
-  }
+.voting__chart-title {
+  font-size: 2.4rem;
+  font-weight: 400;
 }
 
 @include respond-to(tablet) {
-  .view-main {
-    &__title {
-      margin: 0.8rem 0 0.4rem 0;
-    }
+  .voting__title {
+    margin: 0.8rem 0 0.4rem 0;
   }
-
-  .content-block {
+  .voting__main {
     flex-direction: column-reverse;
     gap: 4rem;
-
-    &__voting-btn {
-      width: 100%;
-    }
+  }
+  .voting__btn {
+    width: 100%;
   }
 }
 </style>

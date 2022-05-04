@@ -1,8 +1,8 @@
 <template>
-  <div class="view-main">
+  <div class="oracle-scripts-item view-main">
     <div class="view-main__title-wrapper">
       <BackButton :text="'Oracle Scripts'" />
-      <h2 class="view-main__title">Oracle Script</h2>
+      <h2 class="view-main__title oracle-scripts-item__title">Oracle Script</h2>
       <span class="view-main__subtitle">
         {{ String(oracleScriptData?.name) }}
       </span>
@@ -46,19 +46,26 @@
       <Tabs>
         <Tab
           title="Requests"
-          :class="{ 'tab-content-mb': isOracleScriptOwner }"
+          :class="{
+            'oracle-scripts-item__tab-content': isOracleScriptOwner,
+          }"
         >
           <RequestsOracleScriptTable
             :oracle-script-id="String($route.params.id)"
           />
         </Tab>
-        <Tab title="Code" :class="{ 'tab-content-mb': isOracleScriptOwner }">
+        <Tab
+          title="Code"
+          :class="{
+            'oracle-scripts-item__tab-content': isOracleScriptOwner,
+          }"
+        >
           <CodeTable :code="oracleScriptCode" />
         </Tab>
       </Tabs>
     </template>
     <template v-else>
-      <div class="view-main__empty-msg">
+      <div class="view-main__empty-msg oracle-scripts-item__empty-msg">
         <p v-if="isLoading">Loading…</p>
         <p v-else>Data source not found</p>
       </div>
@@ -162,44 +169,40 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.view-main {
-  &__title {
-    margin: 0 1.6rem 0 2rem;
-  }
+.oracle-scripts-item__title {
+  margin: 0 1.6rem 0 2rem;
+}
 
-  &__empty-msg {
-    text-align: center;
+.oracle-scripts-item__empty-msg {
+  text-align: center;
+}
+
+.oracle-scripts-item__activities {
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+}
+.oracle-scripts-item__activities-item {
+  display: flex;
+  flex-direction: row;
+  gap: 2.4rem;
+  & > * {
+    flex: 1;
   }
 }
-.oracle-scripts-item {
-  &__activities {
-    display: flex;
-    flex-direction: column;
-    gap: 2.4rem;
-  }
-  &__activities-item {
-    display: flex;
-    flex-direction: row;
-    gap: 2.4rem;
-    & > * {
-      flex: 1;
-    }
-  }
-}
+
 @include respond-to(tablet) {
-  .view-main {
-    &__title {
-      margin: 0.8rem 0 0.4rem 0;
-    }
+  .oracle-scripts-item__title {
+    margin: 0.8rem 0 0.4rem 0;
   }
-  .tab-content-mb {
+  .oracle-scripts-item__tab-content {
     margin-bottom: 12rem;
   }
   .oracle-scripts-item {
     padding-bottom: 10rem;
-    &__activities_top {
-      display: none;
-    }
+  }
+  .oracle-scripts-item__activities_top {
+    display: none;
   }
 }
 </style>

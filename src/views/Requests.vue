@@ -1,9 +1,9 @@
 <template>
-  <div class="view-main">
+  <div class="requests view-main">
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Requests</h2>
       <button
-        class="view-main__title-btn app-btn app-btn_small fx-sae"
+        class="requests__title-btn app-btn app-btn_small fx-sae"
         type="button"
         @click="createRequest()"
       >
@@ -12,7 +12,7 @@
     </div>
 
     <template v-if="requestsCount">
-      <div class="view-main__count-info">
+      <div class="view-main__count-info requests__count-info">
         <p>{{ requestsCount }} requests found</p>
       </div>
     </template>
@@ -195,40 +195,32 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.view-main {
-  &__count-info {
-    margin-bottom: 3.2rem;
-  }
+.requests__count-info {
+  margin-bottom: 3.2rem;
 }
-.requests {
-  &__table-head,
-  &__table-row {
-    grid:
-      auto /
-      minmax(7rem, 0.5fr)
-      minmax(8rem, 3fr)
-      minmax(10rem, 1fr)
-      minmax(8rem, 2fr)
-      minmax(10rem, 1.5fr);
-  }
+.requests__table-head,
+.requests__table-row {
+  grid:
+    auto /
+    minmax(7rem, 0.5fr)
+    minmax(8rem, 3fr)
+    minmax(10rem, 1fr)
+    minmax(8rem, 2fr)
+    minmax(10rem, 1.5fr);
 }
 @include respond-to(tablet) {
-  .view-main {
-    padding-bottom: 10rem;
-
-    &__count-info {
-      margin-bottom: 0;
-    }
-
-    &__title-btn {
-      display: none;
-    }
-  }
   .requests {
-    &__table-head,
-    &__table-row {
-      grid: none;
-    }
+    padding-bottom: 10rem;
+  }
+  .requests__count-info {
+    margin-bottom: 0;
+  }
+  .requests__title-btn {
+    display: none;
+  }
+  .requests__table-head,
+  .requests__table-row {
+    grid: none;
   }
 }
 </style>

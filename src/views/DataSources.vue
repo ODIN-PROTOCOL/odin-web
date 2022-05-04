@@ -218,111 +218,53 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
-.data-sources {
-  &__count-info {
-    margin-bottom: 3.2rem;
-  }
+<style scoped lang="scss">
+.data-sources__count-info {
+  margin-bottom: 3.2rem;
+}
+.data-sources__table-head,
+.data-sources__table-row {
+  grid:
+    auto /
+    minmax(2rem, 0.5fr)
+    minmax(4rem, 3fr)
+    minmax(4rem, 3fr)
+    minmax(8rem, 2fr)
+    minmax(8rem, 2fr);
+}
+.data-sources__table-activities {
+  width: 100%;
 
-  &__sort-wrapper {
-    display: flex;
-    justify-content: flex-end;
+  & > *:not(:last-child) {
+    margin-bottom: 2.4rem;
   }
-
-  &__sort {
-    display: flex;
-    gap: 2.4rem;
-  }
-
-  &__sort-item-title {
-    font-size: 1.4rem;
-    font-weight: 300;
-    margin-right: 0.4rem;
-  }
-
-  &__table-head,
-  &__table-row {
-    grid:
-      auto /
-      minmax(2rem, 0.5fr)
-      minmax(4rem, 3fr)
-      minmax(4rem, 3fr)
-      minmax(8rem, 2fr)
-      minmax(8rem, 2fr);
-  }
-  &__table-activities {
-    width: 100%;
-
-    & > *:not(:last-child) {
-      margin-bottom: 2.4rem;
-    }
-  }
-
-  &__table-activities-item {
-    display: flex;
-    justify-content: flex-end;
-    gap: 2.4rem;
-  }
-  &__table-cell {
-    &_center {
-      justify-content: center;
-    }
-    &_end {
-      justify-content: flex-end;
-    }
-  }
+}
+.data-sources__table-activities-item {
+  display: flex;
+  justify-content: flex-end;
+  gap: 2.4rem;
 }
 
 @include respond-to(tablet) {
   .data-sources {
-    &__table-activities {
-      width: 100%;
-    }
-
-    &__table-activities-item {
-      & > * {
-        flex: 1;
-      }
-    }
-    &__table-cell {
-      &_center {
-        justify-content: flex-start;
-      }
-      &_end {
-        justify-content: flex-start;
-      }
-    }
     padding-bottom: 10rem;
-    &__title-btn {
-      display: none;
+  }
+  .data-sources__table-activities {
+    width: 100%;
+  }
+  .data-sources__table-activities-item {
+    & > * {
+      flex: 1;
     }
-
-    &__count-info {
-      margin-bottom: 2.4rem;
-    }
-
-    &__sort {
-      width: 100%;
-      flex-direction: column;
-      gap: 1.6rem;
-    }
-
-    &__sort-item {
-      display: flex;
-      flex-direction: column;
-    }
-
-    &__sort-item-title {
-      margin: 0 0 0.4rem;
-    }
-
-    &__vue-picker {
-      width: 100%;
-    }
-
-    &__table-row {
-      grid: none;
-    }
+  }
+  .data-sources__title-btn {
+    display: none;
+  }
+  .data-sources__count-info {
+    margin-bottom: 2.4rem;
+  }
+  .data-sources__table-row {
+    grid: none;
   }
 }
 </style>

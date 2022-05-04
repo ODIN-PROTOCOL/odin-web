@@ -1,5 +1,5 @@
 <template>
-  <div class="view-main">
+  <div class="oracle-validators view-main">
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Oracle validators</h2>
     </div>
@@ -159,20 +159,17 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.oracle-validators {
-  &__table-head,
-  &__table-row {
-    grid:
-      auto /
-      minmax(10rem, 0.7fr) minmax(10rem, 0.5fr) minmax(10rem, 2fr) minmax(10rem, 0.1fr);
-  }
+.oracle-validators__table-head,
+.oracle-validators__table-row {
+  grid:
+    auto /
+    minmax(10rem, 0.7fr) minmax(10rem, 0.5fr) minmax(10rem, 2fr) minmax(10rem, 0.1fr);
 }
+
 @include respond-to(tablet) {
-  .oracle-validators {
-    &__table-head,
-    &__table-row {
-      grid: none;
-    }
+  .oracle-validators__table-head,
+  .oracle-validators__table-row {
+    grid: none;
   }
 }
 </style>

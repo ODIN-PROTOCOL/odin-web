@@ -1,5 +1,5 @@
 <template>
-  <div class="view-main">
+  <div class="governance view-main">
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Governance</h2>
       <button
@@ -11,13 +11,15 @@
       </button>
     </div>
 
-    <div class="info-card mg-b40">
-      <h3 class="info-card__title mg-b40">Total number of proposals in ODIN</h3>
+    <div class="info-card governance__info mg-b40">
+      <h3 class="info-card__title governance__info-title mg-b40">
+        Total number of proposals in ODIN
+      </h3>
       <CustomDoughnutChart :data="proposalsDataForChart" />
     </div>
 
     <div class="app-table">
-      <div class="app-table__head">
+      <div class="app-table__head governance__table-head">
         <span>Proposal</span>
         <span>Proposer's account ID</span>
         <span>Proposal status</span>
@@ -27,7 +29,7 @@
           <div
             v-for="item in filteredProposals"
             :key="item.proposalId.toString()"
-            class="app-table__row"
+            class="app-table__row governance__table-row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">Proposal</span>
@@ -212,42 +214,35 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.info-card {
+.governance__info {
   width: 60rem;
   padding: 3.2rem 2.4rem;
   border: 0.1rem solid var(--clr__action);
   border-radius: 0.8rem;
-
-  &__title {
-    font-weight: 400;
-    font-size: 2.4rem;
-    line-height: 2.9rem;
-  }
 }
-
-.app-table {
-  &__head,
-  &__row {
-    grid:
-      auto /
-      minmax(8rem, 1fr) minmax(8rem, 2fr) minmax(11rem, 0.5fr);
-  }
+.governance__info-title {
+  font-weight: 400;
+  font-size: 2.4rem;
+  line-height: 2.9rem;
+}
+.governance__table-head,
+.governance__table-row {
+  grid:
+    auto /
+    minmax(8rem, 1fr) minmax(8rem, 2fr) minmax(11rem, 0.5fr);
 }
 
 @include respond-to(tablet) {
-  .view-main {
+  .governance {
     padding-bottom: 10rem;
-
-    &__title-btn {
-      display: none;
-    }
   }
-
-  .info-card {
+  .governance__title-btn {
+    display: none;
+  }
+  .governance__info {
     width: 100%;
   }
-
-  .app-table__row {
+  .governance__table-row {
     grid: none;
   }
 }

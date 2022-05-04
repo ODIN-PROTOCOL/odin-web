@@ -48,7 +48,7 @@
               <ArrowIcon
                 class="ibc__arrow-icon"
                 :class="{
-                  ['ibc__arrow-icon_active']: isShow[index],
+                  ['ibc__arrow-icon--active']: isShow[index],
                 }"
               />
             </button>
@@ -171,80 +171,77 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.ibc {
-  &__table {
-    border: 0.1rem solid var(--clr__action);
-    border-radius: 0.8rem;
-    padding: 3rem 2rem;
-    margin-bottom: 2.4rem;
-  }
-  &__table-cell {
-    flex-direction: column;
-  }
-  &__table-title {
-    display: block;
-    margin-bottom: 0.8rem;
-    font-weight: 300;
-    min-width: 13rem;
-  }
-  &__body {
-    display: grid;
-    align-items: center;
-    grid:
-      auto /
-      minmax(2rem, 0.85fr)
-      minmax(6rem, 0.15fr);
-  }
-  &__table-row {
-    grid:
-      auto /
-      minmax(2rem, 1fr)
-      minmax(2rem, 1fr)
-      minmax(2rem, 1fr)
-      minmax(2rem, 1fr);
-    margin-bottom: 1rem;
-    padding: 1rem 0 0;
-    border-bottom: none;
-  }
-  &__show {
-    text-align: center;
-    white-space: nowrap;
-  }
-  &__show-button {
-    color: var(--clr__btn-normal);
-    text-align: center;
-  }
-  &__arrow-icon {
-    fill: var(--clr__btn-normal);
-    transform: translate(0.3rem, 0) rotate(270deg);
-    &_active {
-      transform: translate(-1rem, 1.5rem) rotate(90deg);
-      fill: var(--clr__action);
-    }
-  }
+.ibc__table {
+  border: 0.1rem solid var(--clr__action);
+  border-radius: 0.8rem;
+  padding: 3rem 2rem;
+  margin-bottom: 2.4rem;
 }
+.ibc__table-cell {
+  flex-direction: column;
+}
+.ibc__table-title {
+  display: block;
+  margin-bottom: 0.8rem;
+  font-weight: 300;
+  min-width: 13rem;
+}
+.ibc__body {
+  display: grid;
+  align-items: center;
+  grid:
+    auto /
+    minmax(2rem, 0.85fr)
+    minmax(6rem, 0.15fr);
+}
+.ibc__table-row {
+  grid:
+    auto /
+    minmax(2rem, 1fr)
+    minmax(2rem, 1fr)
+    minmax(2rem, 1fr)
+    minmax(2rem, 1fr);
+  margin-bottom: 1rem;
+  padding: 1rem 0 0;
+  border-bottom: none;
+}
+.ibc__show {
+  text-align: center;
+  white-space: nowrap;
+}
+.ibc__show-button {
+  color: var(--clr__btn-normal);
+  text-align: center;
+}
+.ibc__arrow-icon {
+  fill: var(--clr__btn-normal);
+  transform: translate(0.3rem, 0) rotate(270deg);
+}
+.ibc__arrow-icon--active {
+  transform: translate(-1rem, 1.5rem) rotate(90deg);
+  fill: var(--clr__action);
+}
+
 @include respond-to(medium) {
-  .ibc {
-    &__body {
-      grid:
-        auto /
-        minmax(2rem, 0.75fr)
-        minmax(6rem, 0.25fr);
-    }
+  .ibc__body {
+    grid:
+      auto /
+      minmax(2rem, 0.75fr)
+      minmax(6rem, 0.25fr);
   }
 }
 @include respond-to(tablet) {
   .ibc {
     padding-bottom: 10rem;
-    &__body {
-      display: block;
-    }
-    &__table-cell {
-      flex-direction: row;
-    }
-    &__table-row {
-      grid: none;
-    }
+  }
+  .ibc__body {
+    display: block;
+  }
+  .ibc__table-cell {
+    flex-direction: row;
+  }
+  .ibc__table-row {
+    grid: none;
   }
 }
 </style>

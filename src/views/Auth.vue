@@ -10,7 +10,9 @@
 
     <template v-else-if="loginType === LOGIN_TYPE.KEPLR494" #content>
       <div class="app-form__field auth__field">
-        <label class="app-form__field-lbl auth__field-lbl auth__field-lbl_bold">
+        <label
+          class="app-form__field-lbl auth__field-lbl auth__field-lbl--bold"
+        >
           Coin type 494
         </label>
         <button class="app-btn w-full" type="submit" :disabled="isLoading">
@@ -161,35 +163,31 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.auth {
-  &__field-lbl {
-    &_bold {
-      font-weight: 600;
-    }
-  }
+.auth__field-lbl--bold {
+  font-weight: 600;
+}
 
-  &__field-additional {
-    display: flex;
-    justify-content: center;
-    margin-top: 3.2rem;
-  }
+.auth__field-additional {
+  display: flex;
+  justify-content: center;
+  margin-top: 3.2rem;
+}
 
-  &__field-additional-btn {
-    text-decoration: none;
-    font-weight: 600;
-    color: var(--clr__action);
+.auth__field-additional-btn {
+  text-decoration: none;
+  font-weight: 600;
+  color: var(--clr__action);
 
-    &:hover {
-      color: var(--clr__text);
-    }
+  &:hover {
+    color: var(--clr__text);
   }
+}
 
-  &__copy-warning {
-    padding: 3.2rem 0;
-  }
+.auth__copy-warning {
+  padding: 3.2rem 0;
+}
 
-  &__copy-important {
-    font-weight: 700;
-  }
+.auth__copy-important {
+  font-weight: 700;
 }
 </style>
