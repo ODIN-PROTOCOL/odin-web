@@ -2,7 +2,7 @@
   <ModalBase
     class="undelegate-form-modal__wrapper"
     @close="onClose()"
-    shema="undelegate-form-modal"
+    :scheme="SCHEMES.noMarginTitle"
   >
     <template #title>
       <h3 class="app-form__title">Undelegate</h3>
@@ -130,7 +130,7 @@ import { preventIf } from '@/helpers/functions'
 import { convertLokiToOdin, convertOdinToLoki } from '@/helpers/converters'
 import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
-import ModalBase from './ModalBase.vue'
+import ModalBase, { SCHEMES } from './ModalBase.vue'
 import CopyText from '@/components/CopyText.vue'
 import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { coin } from '@cosmjs/amino'
@@ -190,6 +190,7 @@ const UndelegateFormDialog = defineComponent({
       submit,
       onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
       START_VALUE,
+      SCHEMES,
     }
   },
 })

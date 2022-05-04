@@ -89,7 +89,6 @@ export default defineComponent({
 @import '~@/styles/views.scss';
 @import '~@/styles/load-fog.scss';
 @import '~@/styles/forms.scss';
-@import '~@/styles/modals.scss';
 @import '~@/styles/vue-notification.scss';
 @import '~@/styles/shortcuts.scss';
 @import '~@/styles/atom-one-dark.scss';
