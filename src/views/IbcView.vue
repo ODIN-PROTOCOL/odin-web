@@ -1,36 +1,40 @@
 <template>
-  <div class="view-main ibc">
+  <div class="view-main ibc-view">
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">IBCs</h2>
     </div>
     <template v-if="connectionsData?.length">
       <div
-        class="app-table ibc__table"
+        class="app-table ibc-view__table"
         v-for="(connection, index) in filteredConnections"
         :key="connection?.id"
       >
-        <div class="app-table__body ibc__body">
-          <div class="app-table__row ibc__table-row">
-            <div class="app-table__cell ibc__table-cell">
-              <span class="app-table__title ibc__table-title">Connection</span>
+        <div class="app-table__body ibc-view__body">
+          <div class="app-table__row ibc-view__table-row">
+            <div class="app-table__cell ibc-view__table-cell">
+              <span class="app-table__title ibc-view__table-title"
+                >Connection</span
+              >
               <span class="app-table__cell-txt">{{ connection.id }}</span>
             </div>
-            <div class="app-table__cell ibc__table-cell">
-              <span class="app-table__title ibc__table-title"
+            <div class="app-table__cell ibc-view__table-cell">
+              <span class="app-table__title ibc-view__table-title"
                 >Counterparty Chain ID</span
               >
               <span class="app-table__cell-txt">{{
                 chainIdData[index].chainId || '-'
               }}</span>
             </div>
-            <div class="app-table__cell ibc__table-cell">
-              <span class="app-table__title ibc__table-title">Client ID</span>
+            <div class="app-table__cell ibc-view__table-cell">
+              <span class="app-table__title ibc-view__table-title"
+                >Client ID</span
+              >
               <span class="app-table__cell-txt">
                 {{ connection.clientId || '-' }}
               </span>
             </div>
-            <div class="app-table__cell ibc__table-cell">
-              <span class="app-table__title ibc__table-title"
+            <div class="app-table__cell ibc-view__table-cell">
+              <span class="app-table__title ibc-view__table-title"
                 >Counterparty Client ID</span
               >
               <span class="app-table__cell-txt">
@@ -38,17 +42,17 @@
               </span>
             </div>
           </div>
-          <div class="ibc__show">
+          <div class="ibc-view__show">
             <button
               @click="isShow[index] = !isShow[index]"
               type="button"
-              class="ibc__show-button"
+              class="ibc-view__show-button"
             >
               {{ isShow[index] ? 'Hidden channels' : 'Show channels' }}
               <ArrowIcon
-                class="ibc__arrow-icon"
+                class="ibc-view__arrow-icon"
                 :class="{
-                  ['ibc__arrow-icon--active']: isShow[index],
+                  ['ibc-view__arrow-icon--active']: isShow[index],
                 }"
               />
             </button>
@@ -171,22 +175,22 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.ibc__table {
+.ibc-view__table {
   border: 0.1rem solid var(--clr__action);
   border-radius: 0.8rem;
   padding: 3rem 2rem;
   margin-bottom: 2.4rem;
 }
-.ibc__table-cell {
+.ibc-view__table-cell {
   flex-direction: column;
 }
-.ibc__table-title {
+.ibc-view__table-title {
   display: block;
   margin-bottom: 0.8rem;
   font-weight: 300;
   min-width: 13rem;
 }
-.ibc__body {
+.ibc-view__body {
   display: grid;
   align-items: center;
   grid:
@@ -194,7 +198,7 @@ export default defineComponent({
     minmax(2rem, 0.85fr)
     minmax(6rem, 0.15fr);
 }
-.ibc__table-row {
+.ibc-view__table-row {
   grid:
     auto /
     minmax(2rem, 1fr)
@@ -205,25 +209,25 @@ export default defineComponent({
   padding: 1rem 0 0;
   border-bottom: none;
 }
-.ibc__show {
+.ibc-view__show {
   text-align: center;
   white-space: nowrap;
 }
-.ibc__show-button {
+.ibc-view__show-button {
   color: var(--clr__btn-normal);
   text-align: center;
 }
-.ibc__arrow-icon {
+.ibc-view__arrow-icon {
   fill: var(--clr__btn-normal);
   transform: translate(0.3rem, 0) rotate(270deg);
 }
-.ibc__arrow-icon--active {
+.ibc-view__arrow-icon--active {
   transform: translate(-1rem, 1.5rem) rotate(90deg);
   fill: var(--clr__action);
 }
 
 @include respond-to(medium) {
-  .ibc__body {
+  .ibc-view__body {
     grid:
       auto /
       minmax(2rem, 0.75fr)
@@ -231,16 +235,16 @@ export default defineComponent({
   }
 }
 @include respond-to(tablet) {
-  .ibc {
+  .ibc-view {
     padding-bottom: 10rem;
   }
-  .ibc__body {
+  .ibc-view__body {
     display: block;
   }
-  .ibc__table-cell {
+  .ibc-view__table-cell {
     flex-direction: row;
   }
-  .ibc__table-row {
+  .ibc-view__table-row {
     grid: none;
   }
 }
