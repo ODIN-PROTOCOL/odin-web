@@ -1,36 +1,40 @@
 <template>
-  <div class="view-main ibc">
+  <div class="view-main ibc-view">
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">IBCs</h2>
     </div>
     <template v-if="connectionsData?.length">
       <div
-        class="app-table ibc__table"
+        class="app-table ibc-view__table"
         v-for="(connection, index) in filteredConnections"
         :key="connection?.id"
       >
-        <div class="app-table__body ibc__body">
-          <div class="app-table__row ibc__table-row">
-            <div class="app-table__cell ibc__table-cell">
-              <span class="app-table__title ibc__table-title">Connection</span>
+        <div class="app-table__body ibc-view__body">
+          <div class="app-table__row ibc-view__table-row">
+            <div class="app-table__cell ibc-view__table-cell">
+              <span class="app-table__title ibc-view__table-title"
+                >Connection</span
+              >
               <span class="app-table__cell-txt">{{ connection.id }}</span>
             </div>
-            <div class="app-table__cell ibc__table-cell">
-              <span class="app-table__title ibc__table-title"
+            <div class="app-table__cell ibc-view__table-cell">
+              <span class="app-table__title ibc-view__table-title"
                 >Counterparty Chain ID</span
               >
               <span class="app-table__cell-txt">{{
                 chainIdData[index].chainId || '-'
               }}</span>
             </div>
-            <div class="app-table__cell ibc__table-cell">
-              <span class="app-table__title ibc__table-title">Client ID</span>
+            <div class="app-table__cell ibc-view__table-cell">
+              <span class="app-table__title ibc-view__table-title"
+                >Client ID</span
+              >
               <span class="app-table__cell-txt">
                 {{ connection.clientId || '-' }}
               </span>
             </div>
-            <div class="app-table__cell ibc__table-cell">
-              <span class="app-table__title ibc__table-title"
+            <div class="app-table__cell ibc-view__table-cell">
+              <span class="app-table__title ibc-view__table-title"
                 >Counterparty Client ID</span
               >
               <span class="app-table__cell-txt">
@@ -38,17 +42,17 @@
               </span>
             </div>
           </div>
-          <div class="ibc__show">
+          <div class="ibc-view__show">
             <button
               @click="isShow[index] = !isShow[index]"
               type="button"
-              class="ibc__show-button"
+              class="ibc-view__show-button"
             >
               {{ isShow[index] ? 'Hidden channels' : 'Show channels' }}
               <ArrowIcon
-                class="ibc__arrow-icon"
+                class="ibc-view__arrow-icon"
                 :class="{
-                  ['ibc__arrow-icon_active']: isShow[index],
+                  ['ibc-view__arrow-icon--active']: isShow[index],
                 }"
               />
             </button>
@@ -69,7 +73,7 @@
       </div>
     </template>
     <template v-if="connectionsData?.length > ITEMS_PER_PAGE">
-      <Pagination
+      <AppPagination
         class="mg-t32 mg-b32"
         v-model="currentPage"
         :pages="totalPages"
@@ -86,7 +90,7 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
 import { IdentifiedChannel } from 'cosmjs-types/ibc/core/channel/v1/channel'
 import { IdentifiedConnection } from 'cosmjs-types/ibc/core/connection/v1/connection'
-import Pagination from '@/components/Pagination/Pagination.vue'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import ChannelDetail from '@/components/ChannelDetail.vue'
 import ArrowIcon from '@/components/icons/ArrowIcon.vue'
 import { ClientState } from 'cosmjs-types/ibc/lightclients/tendermint/v1/tendermint'
@@ -94,7 +98,7 @@ import { QueryClientStateResponse } from 'cosmjs-types/ibc/core/client/v1/query'
 
 export default defineComponent({
   components: {
-    Pagination,
+    AppPagination,
     ArrowIcon,
     ChannelDetail,
   },
@@ -171,80 +175,77 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.ibc {
-  &__table {
-    border: 0.1rem solid var(--clr__action);
-    border-radius: 0.8rem;
-    padding: 3rem 2rem;
-    margin-bottom: 2.4rem;
-  }
-  &__table-cell {
-    flex-direction: column;
-  }
-  &__table-title {
-    display: block;
-    margin-bottom: 0.8rem;
-    font-weight: 300;
-    min-width: 13rem;
-  }
-  &__body {
-    display: grid;
-    align-items: center;
-    grid:
-      auto /
-      minmax(2rem, 0.85fr)
-      minmax(6rem, 0.15fr);
-  }
-  &__table-row {
-    grid:
-      auto /
-      minmax(2rem, 1fr)
-      minmax(2rem, 1fr)
-      minmax(2rem, 1fr)
-      minmax(2rem, 1fr);
-    margin-bottom: 1rem;
-    padding: 1rem 0 0;
-    border-bottom: none;
-  }
-  &__show {
-    text-align: center;
-    white-space: nowrap;
-  }
-  &__show-button {
-    color: var(--clr__btn-normal);
-    text-align: center;
-  }
-  &__arrow-icon {
-    fill: var(--clr__btn-normal);
-    transform: translate(0.3rem, 0) rotate(270deg);
-    &_active {
-      transform: translate(-1rem, 1.5rem) rotate(90deg);
-      fill: var(--clr__action);
-    }
-  }
+.ibc-view__table {
+  border: 0.1rem solid var(--clr__action);
+  border-radius: 0.8rem;
+  padding: 3rem 2rem;
+  margin-bottom: 2.4rem;
 }
+.ibc-view__table-cell {
+  flex-direction: column;
+}
+.ibc-view__table-title {
+  display: block;
+  margin-bottom: 0.8rem;
+  font-weight: 300;
+  min-width: 13rem;
+}
+.ibc-view__body {
+  display: grid;
+  align-items: center;
+  grid:
+    auto /
+    minmax(2rem, 0.85fr)
+    minmax(6rem, 0.15fr);
+}
+.ibc-view__table-row {
+  grid:
+    auto /
+    minmax(2rem, 1fr)
+    minmax(2rem, 1fr)
+    minmax(2rem, 1fr)
+    minmax(2rem, 1fr);
+  margin-bottom: 1rem;
+  padding: 1rem 0 0;
+  border-bottom: none;
+}
+.ibc-view__show {
+  text-align: center;
+  white-space: nowrap;
+}
+.ibc-view__show-button {
+  color: var(--clr__btn-normal);
+  text-align: center;
+}
+.ibc-view__arrow-icon {
+  fill: var(--clr__btn-normal);
+  transform: translate(0.3rem, 0) rotate(270deg);
+}
+.ibc-view__arrow-icon--active {
+  transform: translate(-1rem, 1.5rem) rotate(90deg);
+  fill: var(--clr__action);
+}
+
 @include respond-to(medium) {
-  .ibc {
-    &__body {
-      grid:
-        auto /
-        minmax(2rem, 0.75fr)
-        minmax(6rem, 0.25fr);
-    }
+  .ibc-view__body {
+    grid:
+      auto /
+      minmax(2rem, 0.75fr)
+      minmax(6rem, 0.25fr);
   }
 }
 @include respond-to(tablet) {
-  .ibc {
+  .ibc-view {
     padding-bottom: 10rem;
-    &__body {
-      display: block;
-    }
-    &__table-cell {
-      flex-direction: row;
-    }
-    &__table-row {
-      grid: none;
-    }
+  }
+  .ibc-view__body {
+    display: block;
+  }
+  .ibc-view__table-cell {
+    flex-direction: row;
+  }
+  .ibc-view__table-row {
+    grid: none;
   }
 }
 </style>

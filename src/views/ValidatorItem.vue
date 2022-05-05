@@ -2,7 +2,9 @@
   <div
     class="view-main validators-item"
     :class="
-      delegations[validator?.operatorAddress] ? 'view-main_large-padding' : ''
+      delegations[validator?.operatorAddress]
+        ? 'validators-item--large-padding'
+        : ''
     "
   >
     <div class="view-main__title-wrapper validators-item__title-wrapper">
@@ -18,7 +20,7 @@
         <CopyButton class="mg-l8" :text="String(validator?.operatorAddress)" />
       </div>
       <div
-        class="validators-item__activities validators-item__activities_top fx-sae"
+        class="validators-item__activities validators-item__activities--top fx-sae"
       >
         <div
           class="validators-item__activities-item"
@@ -174,11 +176,11 @@ export default defineComponent({
     }
 
     const getReports = async () => {
-      const response = await callers.getTxSearch({
-        query: `tx.height>=0 AND report.validator='${validator.value.operatorAddress}'`,
-      })
-      // TODO get the necessary reports from transactions
-      reports.value = response.txs
+      // TODO get reports from telemetry
+      // const response = await callers.getTxSearch({
+      //   query: `tx.height>=0 AND report.validator='${validator.value.operatorAddress}'`,
+      // })
+      // reports.value = response.txs
     }
 
     const getDelegations = async () => {
@@ -286,84 +288,79 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.validators-item {
-  &__title-wrapper {
-    align-items: flex-start;
-  }
+.validators-item__title-wrapper {
+  align-items: flex-start;
+}
 
-  &__title {
-    margin: 0 1.6rem 0 2rem;
-  }
+.validators-item__title {
+  margin: 0 1.6rem 0 2rem;
+}
 
-  &__subtitle {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    line-height: 4.6rem;
-  }
+.validators-item__subtitle {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 4.6rem;
+}
 
-  &__back-btn {
-    height: 4.6rem;
-  }
+.validators-item__back-btn {
+  height: 4.6rem;
+}
 
-  &__validator-address {
-    display: flex;
-    min-width: 10%;
-    margin-right: 1rem;
-  }
+.validators-item__validator-address {
+  display: flex;
+  min-width: 10%;
+  margin-right: 1rem;
+}
 
-  &__activities {
-    display: flex;
-    flex-direction: column;
-    gap: 2.4rem;
-  }
+.validators-item__activities {
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+}
 
-  &__activities-item {
-    display: flex;
-    flex-direction: row;
-    gap: 2.4rem;
+.validators-item__activities-item {
+  display: flex;
+  flex-direction: row;
+  gap: 2.4rem;
 
-    & > * {
-      flex: 1;
-    }
+  & > * {
+    flex: 1;
   }
 }
 
 @include respond-to(tablet) {
   .validators-item {
     padding-bottom: 10rem;
+  }
+  .validators-item__title {
+    margin: 0.8rem 0 0.4rem 0;
+  }
 
-    &__title {
-      margin: 0.8rem 0 0.4rem 0;
-    }
+  .validators-item__subtitle {
+    line-height: 2.4rem;
+  }
 
-    &__subtitle {
-      line-height: 2.4rem;
-    }
+  .validators-item__back-btn {
+    height: 2.4rem;
+  }
 
-    &__back-btn {
-      height: 2.4rem;
-    }
+  .validators-item__validator-address {
+    width: 100%;
+    margin: 0;
+  }
+  .validators-item__activities--top {
+    display: none;
+  }
 
-    &__validator-address {
-      width: 100%;
-      margin: 0;
-    }
-    &__activities_top {
-      display: none;
-    }
-
-    &_large-padding {
-      padding-bottom: 17rem;
-    }
+  .validators-item--large-padding {
+    padding-bottom: 17rem;
   }
 }
 
 @include respond-to(small) {
-  .validators-item {
-    &__activities-btn {
-      font-size: 1.6rem;
-    }
+  .validators-item__activities-btn {
+    font-size: 1.6rem;
   }
 }
 </style>

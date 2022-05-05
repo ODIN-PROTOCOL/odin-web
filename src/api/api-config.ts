@@ -12,6 +12,9 @@ export const API_CONFIG = {
   fee: process.env.VUE_APP_FEE as string,
 }
 
+export const START_VALUE = {
+  delegatePeriod: process.env.VUE_APP_DELEGATE_PERIOD as string,
+}
 // Types of coins used in wallet configurations
 export enum COINS_TYPE {
   MAIN = 118,

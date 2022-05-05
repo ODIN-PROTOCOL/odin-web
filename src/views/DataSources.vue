@@ -17,7 +17,7 @@
       </div>
     </template>
 
-    <SortRow
+    <SortLine
       :isLoading="isLoading"
       :title="'Data Source'"
       v-model:oracleScriptsName="dataSourceName"
@@ -36,12 +36,12 @@
         <template v-if="dataSources?.length">
           <div
             v-for="item in dataSources"
-            :key="item.attributes.id.toString()"
+            :key="item.attributes.id"
             class="app-table__row data-sources__table-row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">ID</span>
-              <span>{{ item.attributes.id.toString() }}</span>
+              <span>#{{ item.attributes.id }}</span>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Data Source</span>
@@ -91,7 +91,7 @@
     </div>
 
     <template v-if="dataSourcesCount > ITEMS_PER_PAGE">
-      <Pagination
+      <AppPagination
         class="mg-t32 mg-b32"
         v-model="currentPage"
         :pages="totalPages"
@@ -113,28 +113,28 @@ import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
 import TitledLink from '@/components/TitledLink.vue'
-import Pagination from '@/components/Pagination/Pagination.vue'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import DataSourceFormModal from '@/components/modals/DataSourceFormModal.vue'
 import { wallet } from '@/api/wallet'
-import SortRow from '@/components/SortLine.vue'
-
+import SortLine from '@/components/SortLine.vue'
+import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
 export default defineComponent({
   components: {
     TitledLink,
-    Pagination,
-    SortRow,
+    AppPagination,
+    SortLine,
   },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 4
+    const ITEMS_PER_PAGE = 50
     const currentPage = ref(1)
     const totalPages = ref(0)
     const dataSourcesCount = ref(0)
     const dataSources = ref([])
     const accountAddress = wallet.account.address
-    const sortingActivitiesValue = ref('')
-    const sortingOwnersValue = ref('')
+    const sortingActivitiesValue = ref(ACTIVITIES_SORT.latest)
+    const sortingOwnersValue = ref(OWNERS_SORT.all)
     const dataSourceName = ref('')
     const loadDataSources = async () => {
       lockLoading()
@@ -218,111 +218,53 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
-.data-sources {
-  &__count-info {
-    margin-bottom: 3.2rem;
-  }
+<style scoped lang="scss">
+.data-sources__count-info {
+  margin-bottom: 3.2rem;
+}
+.data-sources__table-head,
+.data-sources__table-row {
+  grid:
+    auto /
+    minmax(2rem, 0.5fr)
+    minmax(4rem, 3fr)
+    minmax(4rem, 3fr)
+    minmax(8rem, 2fr)
+    minmax(8rem, 2fr);
+}
+.data-sources__table-activities {
+  width: 100%;
 
-  &__sort-wrapper {
-    display: flex;
-    justify-content: flex-end;
+  & > *:not(:last-child) {
+    margin-bottom: 2.4rem;
   }
-
-  &__sort {
-    display: flex;
-    gap: 2.4rem;
-  }
-
-  &__sort-item-title {
-    font-size: 1.4rem;
-    font-weight: 300;
-    margin-right: 0.4rem;
-  }
-
-  &__table-head,
-  &__table-row {
-    grid:
-      auto /
-      minmax(2rem, 0.5fr)
-      minmax(4rem, 3fr)
-      minmax(4rem, 3fr)
-      minmax(8rem, 2fr)
-      minmax(8rem, 2fr);
-  }
-  &__table-activities {
-    width: 100%;
-
-    & > *:not(:last-child) {
-      margin-bottom: 2.4rem;
-    }
-  }
-
-  &__table-activities-item {
-    display: flex;
-    justify-content: flex-end;
-    gap: 2.4rem;
-  }
-  &__table-cell {
-    &_center {
-      justify-content: center;
-    }
-    &_end {
-      justify-content: flex-end;
-    }
-  }
+}
+.data-sources__table-activities-item {
+  display: flex;
+  justify-content: flex-end;
+  gap: 2.4rem;
 }
 
 @include respond-to(tablet) {
   .data-sources {
-    &__table-activities {
-      width: 100%;
-    }
-
-    &__table-activities-item {
-      & > * {
-        flex: 1;
-      }
-    }
-    &__table-cell {
-      &_center {
-        justify-content: flex-start;
-      }
-      &_end {
-        justify-content: flex-start;
-      }
-    }
     padding-bottom: 10rem;
-    &__title-btn {
-      display: none;
+  }
+  .data-sources__table-activities {
+    width: 100%;
+  }
+  .data-sources__table-activities-item {
+    & > * {
+      flex: 1;
     }
-
-    &__count-info {
-      margin-bottom: 2.4rem;
-    }
-
-    &__sort {
-      width: 100%;
-      flex-direction: column;
-      gap: 1.6rem;
-    }
-
-    &__sort-item {
-      display: flex;
-      flex-direction: column;
-    }
-
-    &__sort-item-title {
-      margin: 0 0 0.4rem;
-    }
-
-    &__vue-picker {
-      width: 100%;
-    }
-
-    &__table-row {
-      grid: none;
-    }
+  }
+  .data-sources__title-btn {
+    display: none;
+  }
+  .data-sources__count-info {
+    margin-bottom: 2.4rem;
+  }
+  .data-sources__table-row {
+    grid: none;
   }
 }
 </style>

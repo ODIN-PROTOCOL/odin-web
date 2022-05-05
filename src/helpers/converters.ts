@@ -4,6 +4,7 @@ import { big } from './bigMath'
 type ConverterOptions = {
   withDenom?: boolean
   withPrecise?: boolean
+  forTitle?: boolean
 }
 
 const FORMAT_OPTIONS = {
@@ -27,7 +28,9 @@ export function convertLokiToOdin(
     res = big.multiply(amount, ODIN_MULTIPLIER)
   }
 
-  if (options && options.withDenom) {
+  if (options && options.withDenom && options.forTitle) {
+    return res + ' ' + ODIN_DENOM
+  } else if (options && options.withDenom) {
     return big.format(res, FORMAT_OPTIONS) + ' ' + ODIN_DENOM
   } else {
     return res

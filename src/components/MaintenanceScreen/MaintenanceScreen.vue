@@ -58,7 +58,7 @@ html {
   font-size: 10px;
 }
 #app {
-  font-family: 'SF Display', Helvetica, Arial, sans-serif;
+  font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
   width: 100%;
   height: 90vh;
   display: flex;

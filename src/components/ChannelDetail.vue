@@ -36,13 +36,13 @@
             }}</span>
           </div>
         </div>
-        <div class="app-table__cell">
+        <div class="app-table__cell channel-detail__cell">
           <span class="app-table__title channel-detail__cell-txt title"
             >State</span
           >
           <StatusIcon :status="channel?.state === 3 ? 'success' : 'error'" />
         </div>
-        <div class="app-table__cell">
+        <div class="app-table__cell channel-detail__cell">
           <span class="app-table__title channel-detail__cell-txt title"
             >Order</span
           >
@@ -108,34 +108,33 @@ export default defineComponent({
   border-top: 0.1rem solid var(--clr__table-border);
   padding-top: 2.3rem;
   margin-top: 2.3rem;
-  &__cell {
-    margin-bottom: 0.5rem;
-  }
-  &__cell-txt-row {
-    padding-right: 0.2rem;
-  }
-  &__row {
-    grid:
-      auto /
-      minmax(3rem, 1fr)
-      minmax(3rem, 1.1fr)
-      minmax(3rem, 1fr)
-      minmax(3rem, 1fr)
-      minmax(2rem, 0.75fr);
-    border: none;
-    padding: 0;
-    margin-bottom: 1rem;
-  }
-  &__empty {
-    text-align: center;
-  }
+}
+.channel-detail__cell {
+  margin-bottom: 0.5rem;
+  flex-direction: column;
+}
+.channel-detail__cell-txt-row {
+  padding-right: 0.2rem;
+}
+.channel-detail__row {
+  grid:
+    auto /
+    minmax(3rem, 1fr)
+    minmax(3rem, 1.1fr)
+    minmax(3rem, 1fr)
+    minmax(3rem, 1fr)
+    minmax(2rem, 0.75fr);
+  border: none;
+  padding: 0;
+  margin-bottom: 1rem;
+}
+.channel-detail__empty {
+  text-align: center;
 }
 @include respond-to(x-medium) {
-  .channel-detail {
-    &__cell-txt {
-      display: flex;
-      flex-direction: column;
-    }
+  .channel-detail__cell-txt {
+    display: flex;
+    flex-direction: column;
   }
 }
 @include respond-to(tablet) {
@@ -147,13 +146,16 @@ export default defineComponent({
       padding-bottom: 1.5rem;
       border-bottom: 0.1rem solid var(--clr__table-border);
     }
-    &__row {
-      display: block;
-      padding-top: 2.5rem;
-    }
-    &__empty {
-      margin-top: 2.4rem;
-    }
+  }
+  .channel-detail__row {
+    display: block;
+    padding-top: 2.5rem;
+  }
+  .channel-detail__empty {
+    margin-top: 2.4rem;
+  }
+  .channel-detail__cell {
+    flex-direction: row;
   }
 }
 </style>

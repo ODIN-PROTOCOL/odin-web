@@ -51,7 +51,7 @@
           </template>
         </div>
         <template v-if="requestsCount > ITEMS_PER_PAGE">
-          <Pagination
+          <AppPagination
             class="mg-t32 mg-b32 mb-60"
             v-model="currentPage"
             :pages="totalPages"
@@ -73,14 +73,14 @@
 import { defineComponent, onMounted, ref } from 'vue'
 import { toHex } from '@cosmjs/encoding'
 import { API_CONFIG } from '@/api/api-config'
-import Pagination from '@/components/Pagination/Pagination.vue'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
 import TitledLink from '@/components/TitledLink.vue'
 
 export default defineComponent({
-  components: { Pagination, TitledLink },
+  components: { AppPagination, TitledLink },
   props: {
     oracleScriptId: { type: String, required: true },
   },

@@ -1,6 +1,6 @@
 <template>
   <ModalBase
-    class="oracle-script-form-modal modal-base_right"
+    class="oracle-script-form-modal modal-base--right"
     @close="onClose()"
   >
     <template #title>
@@ -125,6 +125,7 @@ import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import InputFileField from '@/components/fields/InputFileField.vue'
 import TextareaField from '@/components/fields/TextareaField.vue'
+import Long from 'long'
 
 export default defineComponent({
   props: {
@@ -175,7 +176,7 @@ export default defineComponent({
       try {
         if (props.oracleScript) {
           await callers.editOracleScript({
-            oracleScriptId: props.oracleScript?.id,
+            oracleScriptId: Long.fromNumber(props.oracleScript?.id),
             name: form.name.val(),
             description: form.description.val(),
             code: codeFileParsed,

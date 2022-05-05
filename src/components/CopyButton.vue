@@ -39,51 +39,46 @@ export default defineComponent({
   width: 2.2rem;
   height: 2.2rem;
   border-radius: 50%;
-
-  &__wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
-
-  &__message {
-    position: absolute;
-    bottom: 130%;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 1.2rem 2.4rem;
-    background: var(--clr__tooltip-bg);
-    border-radius: 8px;
-    color: var(--clr__tooltip-text);
-
-    &:before {
-      content: '';
-      display: block;
-      width: 0.6rem;
-      height: 0.6rem;
-      position: absolute;
-      bottom: -0.3rem;
-      left: 50%;
-      transform: translateX(-50%) rotate(45deg);
-      background: var(--clr__tooltip-bg);
-    }
-  }
-
   &:hover {
     background: var(--clr__action-disabled);
   }
 }
+.copy-btn__wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-left: 0.4rem;
+}
+.copy-btn__message {
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1.2rem 2.4rem;
+  background: var(--clr__tooltip-bg);
+  border-radius: 8px;
+  color: var(--clr__tooltip-text);
+
+  &:before {
+    content: '';
+    display: block;
+    width: 0.6rem;
+    height: 0.6rem;
+    position: absolute;
+    bottom: -0.3rem;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    background: var(--clr__tooltip-bg);
+  }
+}
 
 @media screen and (max-width: 768px) {
-  .copy-btn {
-    &__message {
-      left: 100%;
-      transform: translateX(-100%);
-
-      &:before {
-        left: 90%;
-        transform: translateX(-90%) rotate(45deg);
-      }
+  .copy-btn__message {
+    left: 100%;
+    transform: translateX(-100%);
+    &:before {
+      left: 90%;
+      transform: translateX(-90%) rotate(45deg);
     }
   }
 }

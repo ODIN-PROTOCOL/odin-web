@@ -4,6 +4,7 @@
   &__title {
     display: none;
     font-size: 1.4rem;
+    font-weight: 300;
   }
 
   &__head,
@@ -97,6 +98,13 @@
     &__row {
       grid: none;
       padding: 3.4rem 0 1.6rem;
+    }
+  }
+}
+@media screen and (max-width: 480px) {
+  .app-table {
+    &__title {
+      min-width: 130px;
     }
   }
 }

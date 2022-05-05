@@ -1,9 +1,9 @@
 <template>
-  <div class="view-main">
+  <div class="requests view-main">
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Requests</h2>
       <button
-        class="view-main__title-btn app-btn app-btn_small fx-sae"
+        class="requests__title-btn app-btn app-btn_small fx-sae"
         type="button"
         @click="createRequest()"
       >
@@ -12,13 +12,13 @@
     </div>
 
     <template v-if="requestsCount">
-      <div class="view-main__count-info">
+      <div class="view-main__count-info requests__count-info">
         <p>{{ requestsCount }} requests found</p>
       </div>
     </template>
 
-    <div class="app-table">
-      <div class="app-table__head">
+    <div class="app-table requests__table">
+      <div class="app-table__head requests__table-head">
         <span>Request ID</span>
         <span>Sender</span>
         <span>Oracle Script ID</span>
@@ -30,13 +30,13 @@
           <div
             v-for="item in requests"
             :key="item.response_packet_data.request_id.toString()"
-            class="app-table__row"
+            class="app-table__row requests__table-row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">Request ID</span>
               <TitledLink
                 class="app-table__cell-txt app-table__link"
-                :text="item.response_packet_data.request_id.toString()"
+                :text="`#${item.response_packet_data.request_id}`"
                 :to="`/requests/${item.response_packet_data.request_id}`"
               />
             </div>
@@ -53,7 +53,7 @@
               <span class="app-table__title">Oracle Script ID</span>
               <TitledLink
                 class="app-table__cell-txt app-table__link"
-                :text="item.request_packet_data.oracle_script_id.toString()"
+                :text="`#${item.request_packet_data.oracle_script_id}`"
                 :to="`/oracle-scripts/${item.request_packet_data.oracle_script_id}`"
               />
             </div>
@@ -83,7 +83,7 @@
     </div>
 
     <template v-if="requestsCount > ITEMS_PER_PAGE">
-      <Pagination
+      <AppPagination
         class="mg-t32 mg-b32"
         v-model="currentPage"
         :pages="totalPages"
@@ -105,14 +105,13 @@ import { callers } from '@/api/callers'
 import { API_CONFIG } from '@/api/api-config'
 import TitledLink from '@/components/TitledLink.vue'
 import Progressbar from '@/components/Progressbar.vue'
-import Pagination from '@/components/Pagination/Pagination.vue'
-// import { RequestResult } from '@provider/codec/oracle/v1/oracle'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import RequestFormModal from '@/components/modals/RequestFormModal.vue'
 
 export default defineComponent({
-  components: { TitledLink, Progressbar, Pagination },
+  components: { TitledLink, Progressbar, AppPagination },
   setup() {
     const ITEMS_PER_PAGE = 5
     const currentPage = ref(1)
@@ -120,9 +119,11 @@ export default defineComponent({
     const requests = ref()
     const requestsCount = ref()
     const maxAskCount = ref()
-    const senderLink = computed(() => (item: any) => {
-      return `${API_CONFIG.odinScan}/account/${item.request_packet_data?.client_id}`
-    })
+    const senderLink = computed(
+      () => (item: { request_packet_data: { client_id: number } }) => {
+        return `${API_CONFIG.odinScan}/account/${item.request_packet_data?.client_id}`
+      }
+    )
 
     const getRequests = async () => {
       // TODO: make it work through callers.getRequests
@@ -194,23 +195,32 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.view-main {
-  &__count-info {
-    margin-bottom: 3.2rem;
-  }
+.requests__count-info {
+  margin-bottom: 3.2rem;
 }
-
+.requests__table-head,
+.requests__table-row {
+  grid:
+    auto /
+    minmax(7rem, 0.5fr)
+    minmax(8rem, 3fr)
+    minmax(10rem, 1fr)
+    minmax(8rem, 2fr)
+    minmax(10rem, 1.5fr);
+}
 @include respond-to(tablet) {
-  .view-main {
+  .requests {
     padding-bottom: 10rem;
-
-    &__count-info {
-      margin-bottom: 0;
-    }
-
-    &__title-btn {
-      display: none;
-    }
+  }
+  .requests__count-info {
+    margin-bottom: 0;
+  }
+  .requests__title-btn {
+    display: none;
+  }
+  .requests__table-head,
+  .requests__table-row {
+    grid: none;
   }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <ModalBase class="request-form-modal modal-base_right" @close="onClose()">
+  <ModalBase class="request-form-modal modal-base--right" @close="onClose()">
     <template #title>
       <h3 class="app-form__title">Create request</h3>
     </template>
@@ -56,7 +56,7 @@
           </div>
 
           <div class="app-form__field request-form-modal__field">
-            <div class="app-form__field-lbl request-form-modal__field-lbl_ext">
+            <div class="app-form__field-lbl request-form-modal__field-lbl--ext">
               <label> Call data(JSON format) </label>
               <div class="request-form-modal__field-info" v-if="callDataSchema">
                 <img
@@ -247,56 +247,52 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.request-form-modal {
-  &__field-info {
-    position: relative;
+.request-form-modal__field-info {
+  position: relative;
 
-    &:hover {
-      .request-form-modal__field-info-tooltip {
-        display: block;
-      }
-    }
-  }
-
-  &__field-info-tooltip {
-    display: none;
-    position: absolute;
-    bottom: 130%;
-    right: -0.5rem;
-    min-width: 15rem;
-    padding: 1.2rem 2.4rem;
-    background: var(--clr__tooltip-bg);
-    border-radius: 0.8rem;
-    font-size: 1.6rem;
-    font-weight: 400;
-    line-height: 1.6rem;
-    color: var(--clr__tooltip-text);
-
-    &:before {
-      content: '';
+  &:hover {
+    .request-form-modal__field-info-tooltip {
       display: block;
-      width: 0.6rem;
-      height: 0.6rem;
-      position: absolute;
-      bottom: -0.3rem;
-      right: 1rem;
-      transform: rotate(45deg);
-      background: var(--clr__tooltip-bg);
     }
   }
+}
 
-  &__field-info-tooltip-txt {
-    display: inline-block;
-    color: var(--clr__input-border);
-    margin-bottom: 1rem;
-  }
+.request-form-modal__field-info-tooltip {
+  display: none;
+  position: absolute;
+  bottom: 130%;
+  right: -0.5rem;
+  min-width: 15rem;
+  padding: 1.2rem 2.4rem;
+  background: var(--clr__tooltip-bg);
+  border-radius: 0.8rem;
+  font-size: 1.6rem;
+  font-weight: 400;
+  line-height: 1.6rem;
+  color: var(--clr__tooltip-text);
 
-  &__field-lbl {
-    &_ext {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+  &:before {
+    content: '';
+    display: block;
+    width: 0.6rem;
+    height: 0.6rem;
+    position: absolute;
+    bottom: -0.3rem;
+    right: 1rem;
+    transform: rotate(45deg);
+    background: var(--clr__tooltip-bg);
   }
+}
+
+.request-form-modal__field-info-tooltip-txt {
+  display: inline-block;
+  color: var(--clr__input-border);
+  margin-bottom: 1rem;
+}
+
+.request-form-modal__field-lbl--ext {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 </style>

@@ -1,11 +1,11 @@
 <template>
-  <div class="view-main">
+  <div class="oracle-validators view-main">
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Oracle validators</h2>
     </div>
 
-    <div class="app-table">
-      <div class="app-table__head">
+    <div class="app-table oracle-validators__table">
+      <div class="app-table__head oracle-validators__table-head">
         <span>Validator</span>
         <span>Is active</span>
         <span>Validator address</span>
@@ -16,7 +16,7 @@
           <div
             v-for="item in filteredValidators"
             :key="item.operatorAddress"
-            class="app-table__row"
+            class="app-table__row oracle-validators__table-row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">Validator</span>
@@ -59,7 +59,7 @@
       </div>
 
       <template v-if="validatorsCount > ITEMS_PER_PAGE">
-        <Pagination
+        <AppPagination
           class="mg-t32 mg-b32"
           v-model="currentPage"
           :pages="totalPages"
@@ -81,15 +81,15 @@ import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import TitledLink from '@/components/TitledLink.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
-import Pagination from '@/components/Pagination/Pagination.vue'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { handleError } from '@/helpers/errors'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 
 export default defineComponent({
-  components: { TitledLink, CopyButton, StatusBlock, Pagination },
+  components: { TitledLink, CopyButton, StatusBlock, AppPagination },
   setup() {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 5
+    const ITEMS_PER_PAGE = 50
     const currentPage = ref(1)
     const totalPages = ref(0)
     const validatorsCount = ref(0)
@@ -159,17 +159,16 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.app-table {
-  &__head,
-  &__row {
-    grid:
-      auto /
-      minmax(10rem, 1fr) minmax(10rem, 1fr) minmax(10rem, 1fr) minmax(10rem, 0.1fr);
-  }
+.oracle-validators__table-head,
+.oracle-validators__table-row {
+  grid:
+    auto /
+    minmax(10rem, 0.7fr) minmax(10rem, 0.5fr) minmax(10rem, 2fr) minmax(10rem, 0.1fr);
 }
 
 @include respond-to(tablet) {
-  .app-table__row {
+  .oracle-validators__table-head,
+  .oracle-validators__table-row {
     grid: none;
   }
 }

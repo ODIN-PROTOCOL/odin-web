@@ -1,8 +1,8 @@
 <template>
-  <div class="view-main">
+  <div class="view-main request-item">
     <div class="view-main__title-wrapper">
       <BackButton :text="'Requests'" />
-      <h2 class="view-main__title">Request</h2>
+      <h2 class="view-main__title request-item__title">Request</h2>
       <span class="view-main__subtitle">
         #{{ String(requestData?.responsePacketData.requestId) }}
       </span>
@@ -106,7 +106,9 @@
       </template>
     </template>
     <template v-else>
-      <p class="view-main__empty-msg">There is no information about request</p>
+      <p class="view-main__empty-msg request-item__empty-msg">
+        There is no information about request
+      </p>
     </template>
   </div>
 </template>
@@ -238,21 +240,16 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.view-main {
-  &__title {
-    margin: 0 1.6rem 0 2rem;
-  }
-
-  &__empty-msg {
-    text-align: center;
-  }
+.request-item__title {
+  margin: 0 1.6rem 0 2rem;
+}
+.request-item__empty-msg {
+  text-align: center;
 }
 
 @include respond-to(tablet) {
-  .view-main {
-    &__title {
-      margin: 0.8rem 0 0.4rem 0;
-    }
+  .request-item__title {
+    margin: 0.8rem 0 0.4rem 0;
   }
 }
 </style>

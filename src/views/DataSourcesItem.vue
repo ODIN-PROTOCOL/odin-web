@@ -1,13 +1,13 @@
 <template>
-  <div class="view-main">
+  <div class="data-source-item view-main">
     <div class="view-main__title-wrapper">
       <BackButton :text="'Data Sources'" />
-      <h2 class="view-main__title">Data Source</h2>
+      <h2 class="view-main__title data-source-item__title">Data Source</h2>
       <span class="view-main__subtitle">
         {{ String(dataSourceData?.name) }}
       </span>
       <div
-        class="data-source-item__activities data-source-item__activities_top fx-sae"
+        class="data-source-item__activities data-source-item__activities--top fx-sae"
         v-if="isDataSourceOwner"
       >
         <div class="data-source-item__activities-item">
@@ -44,16 +44,22 @@
         </div>
       </div>
       <Tabs>
-        <Tab title="Requests" :class="{ 'tab-content-mb': isDataSourceOwner }">
+        <Tab
+          title="Requests"
+          :class="{ 'data-source-item__tab-content': isDataSourceOwner }"
+        >
           <RequestsDataSourceTable :data-source-id="String($route.params.id)" />
         </Tab>
-        <Tab title="Code" :class="{ 'tab-content-mb': isDataSourceOwner }">
+        <Tab
+          title="Code"
+          :class="{ 'data-source-item__tab-content': isDataSourceOwner }"
+        >
           <CodeTable :code="dataSourceCode" />
         </Tab>
       </Tabs>
     </template>
     <template v-else>
-      <div class="view-main__empty-msg">
+      <div class="view-main__empty-msg data-source-item__empty-msg">
         <p v-if="isLoading">Loading…</p>
         <p v-else>Data source not found</p>
       </div>
@@ -156,45 +162,39 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.view-main {
-  &__title {
-    margin: 0 1.6rem 0 2rem;
-  }
+.data-source-item__title {
+  margin: 0 1.6rem 0 2rem;
+}
+.data-source-item__empty-msg {
+  text-align: center;
+}
+.data-source-item__activities {
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+}
+.data-source-item__activities-item {
+  display: flex;
+  flex-direction: row;
+  gap: 2.4rem;
 
-  &__empty-msg {
-    text-align: center;
+  & > * {
+    flex: 1;
   }
 }
-.data-source-item {
-  &__activities {
-    display: flex;
-    flex-direction: column;
-    gap: 2.4rem;
-  }
-  &__activities-item {
-    display: flex;
-    flex-direction: row;
-    gap: 2.4rem;
 
-    & > * {
-      flex: 1;
-    }
-  }
-}
 @include respond-to(tablet) {
-  .view-main {
-    &__title {
-      margin: 0.8rem 0 0.4rem 0;
-    }
+  .data-source-item__title {
+    margin: 0.8rem 0 0.4rem 0;
   }
-  .tab-content-mb {
+  .data-source-item__tab-content {
     margin-bottom: 12rem;
   }
   .data-source-item {
     padding-bottom: 10rem;
-    &__activities_top {
-      display: none;
-    }
+  }
+  .data-source-item__activities--top {
+    display: none;
   }
 }
 </style>

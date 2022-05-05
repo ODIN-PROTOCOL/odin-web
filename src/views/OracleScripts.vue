@@ -1,5 +1,5 @@
 <template>
-  <div class="view-main">
+  <div class="oracle-scripts view-main">
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Oracle Scripts</h2>
       <button
@@ -11,7 +11,7 @@
       </button>
     </div>
 
-    <template v-if="mostRequestedOracleScripts">
+    <template v-if="false">
       <div>
         <h3 class="view-main__subtitle mg-b24">Most requested</h3>
         <TopOracleScripts :top-oracle-scripts="mostRequestedOracleScripts" />
@@ -21,13 +21,13 @@
     <template v-if="oracleScriptsCount">
       <div>
         <h3 class="view-main__subtitle mg-b24">All oracle scripts</h3>
-        <div class="view-main__count-info">
+        <div class="view-main__count-info oracle-scripts__count-info">
           <p>{{ oracleScriptsCount }} Oracle Scripts found</p>
         </div>
       </div>
     </template>
 
-    <SortRow
+    <SortLine
       :isLoading="isLoading"
       :title="'Oracle Scripts'"
       v-model:oracleScriptsName="oracleScriptsName"
@@ -36,22 +36,22 @@
     />
 
     <div class="app-table">
-      <div class="app-table__head">
+      <div class="app-table__head oracle-scripts__table-head">
         <span>ID</span>
         <span>Oracle Script</span>
-        <span class="app-table__head_item">Description</span>
-        <span class="app-table__head_item">Timestamp</span>
+        <span class="oracle-scripts__table-head--center">Description</span>
+        <span class="oracle-scripts__table-head--center">Timestamp</span>
       </div>
       <div class="app-table__body">
         <template v-if="oracleScripts?.length">
           <div
             v-for="item in oracleScripts"
             :key="item.attributes.id.toString()"
-            class="app-table__row"
+            class="app-table__row oracle-scripts__table-row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">ID</span>
-              <span>{{ item.attributes.id }}</span>
+              <span>#{{ item.attributes.id }}</span>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Oracle Script</span>
@@ -61,13 +61,13 @@
                 :to="`/oracle-scripts/${item.attributes.id}`"
               />
             </div>
-            <div class="app-table__cell oracle-scripts__table-cell_center">
+            <div class="app-table__cell oracle-scripts__table-cell--center">
               <span class="app-table__title">Description</span>
               <span>
                 {{ item.attributes.description || '-' }}
               </span>
             </div>
-            <div class="app-table__cell oracle-scripts__table-cell_center">
+            <div class="app-table__cell oracle-scripts__table-cell--center">
               <span class="app-table__title">Timestamp</span>
               <span>
                 {{ $fDate(new Date(item.attributes.timestamp * 1000)) || '-' }}
@@ -103,7 +103,7 @@
     </div>
 
     <template v-if="oracleScriptsCount > ITEMS_PER_PAGE">
-      <Pagination
+      <AppPagination
         class="mg-t32 mg-b32"
         v-model="currentPage"
         :pages="totalPages"
@@ -131,20 +131,21 @@ import { wallet } from '@/api/wallet'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
 import TitledLink from '@/components/TitledLink.vue'
-import Pagination from '@/components/Pagination/Pagination.vue'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import OracleScriptFormModal from '@/components/modals/OracleScriptFormModal.vue'
 import { OracleScript } from '@provider/codec/oracle/v1/oracle'
 
 import TopOracleScripts from '@/components/TopOracleScripts.vue'
-import SortRow from '@/components/SortLine.vue'
+import SortLine from '@/components/SortLine.vue'
+import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
 
 export default defineComponent({
-  components: { TitledLink, Pagination, TopOracleScripts, SortRow },
+  components: { TitledLink, AppPagination, TopOracleScripts, SortLine },
   setup() {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 4
+    const ITEMS_PER_PAGE = 50
     const currentPage = ref(1)
     const totalPages = ref()
     const oracleScriptsCount = ref(0)
@@ -152,12 +153,12 @@ export default defineComponent({
     const accountAddress = wallet.account.address
     const mostRequestedOracleScripts = ref()
     const oracleScriptsName = ref('')
-    const sortingActivitiesValue = ref('')
-    const sortingOwnersValue = ref('')
+    const sortingActivitiesValue = ref(ACTIVITIES_SORT.latest)
+    const sortingOwnersValue = ref(OWNERS_SORT.all)
     const loadOracleScripts = async () => {
       lockLoading()
       try {
-        const response = await callers
+        oracleScripts.value = await callers
           .getSortedOracleScripts(
             currentPage.value - 1,
             ITEMS_PER_PAGE,
@@ -166,9 +167,7 @@ export default defineComponent({
             oracleScriptsName.value
           )
           .then((response) => response.json())
-          .then((data) => data)
-        oracleScripts.value = response.data
-
+          .then((data) => data.data)
         await getOracleScriptsCount()
       } catch (error) {
         handleError(error as Error)
@@ -178,11 +177,10 @@ export default defineComponent({
     const getMostRequestedOracleScripts = async () => {
       lockLoading()
       try {
-        const res = await callers
+        mostRequestedOracleScripts.value = await callers
           .getSortedOracleScripts(0, 6, 'most_requested', 'null', '')
           .then((response) => response.json())
-          .then((data) => data)
-        mostRequestedOracleScripts.value = res.data
+          .then((data) => data.data)
       } catch (error) {
         handleError(error as Error)
       }
@@ -252,83 +250,64 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.view-main {
-  &__count-info {
-    margin-bottom: 3.2rem;
-  }
+.oracle-scripts__count-info {
+  margin-bottom: 3.2rem;
 }
-
-.app-table__head,
-.app-table__row {
+.oracle-scripts__table-head,
+.oracle-scripts__table-row {
   grid:
     auto /
     minmax(2rem, 0.5fr)
-    minmax(4rem, 3fr)
     minmax(4rem, 2fr)
-    minmax(8rem, 2fr)
+    minmax(4rem, 3fr)
+    minmax(10rem, 2fr)
     minmax(8rem, 2fr);
 }
-.app-table__head_item {
+.oracle-scripts__table-head--center {
   text-align: center;
 }
-.oracle-scripts {
-  &__table-activities {
-    width: 100%;
 
-    & > *:not(:last-child) {
-      margin-bottom: 2.4rem;
-    }
-  }
+.oracle-scripts__table-activities {
+  width: 100%;
 
-  &__table-activities-item {
-    display: flex;
-    justify-content: flex-end;
-    gap: 2.4rem;
-  }
-  &__table-cell {
-    &_center {
-      justify-content: center;
-    }
-    &_end {
-      justify-content: flex-end;
-    }
+  & > *:not(:last-child) {
+    margin-bottom: 2.4rem;
   }
 }
+
+.oracle-scripts__table-activities-item {
+  display: flex;
+  justify-content: flex-end;
+  gap: 2.4rem;
+}
+
+.oracle-scripts__table-cell--center {
+  justify-content: center;
+}
+
 @include respond-to(tablet) {
-  .view-main {
+  .oracle-scripts {
     padding-bottom: 10rem;
-
-    &__count-info {
-      margin-bottom: 2.4rem;
-    }
-
-    &__title-btn {
-      display: none;
-    }
   }
-
-  .app-table__row {
+  .oracle-scripts__count-info {
+    margin-bottom: 2.4rem;
+  }
+  .oracle-scripts__title-btn {
+    display: none;
+  }
+  .oracle-scripts__table-row {
     grid: none;
   }
-
-  .oracle-scripts {
-    &__table-activities {
-      width: 100%;
+  .oracle-scripts__table-activities {
+    width: 100%;
+  }
+  .oracle-scripts__table-activities-item {
+    & > * {
+      flex: 1;
     }
-
-    &__table-activities-item {
-      & > * {
-        flex: 1;
-      }
-    }
-    &__table-cell {
-      &_center {
-        justify-content: flex-start;
-      }
-      &_end {
-        justify-content: flex-start;
-      }
-    }
+  }
+  .oracle-scripts__table-cell--center {
+    justify-content: flex-start;
   }
 }
 </style>

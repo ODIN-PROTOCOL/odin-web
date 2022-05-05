@@ -1,5 +1,5 @@
 <template>
-  <ModalBase class="modal-base_right" @close="onClose()">
+  <ModalBase class="modal-base--right" @close="onClose()">
     <template #title>
       <h3 class="app-form__title">Proposal creating</h3>
     </template>

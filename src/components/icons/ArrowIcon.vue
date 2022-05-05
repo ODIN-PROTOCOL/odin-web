@@ -1,6 +1,6 @@
 <template>
   <svg
-    class="nav__dropdown-wrapper-arrow"
+    class="arrow-icon"
     :class="className"
     :width="width"
     :height="height"

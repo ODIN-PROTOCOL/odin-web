@@ -1,5 +1,8 @@
 <template>
-  <ModalBase class="data-source-form-modal modal-base_right" @close="onClose()">
+  <ModalBase
+    class="data-source-form-modal modal-base--right"
+    @close="onClose()"
+  >
     <template #title>
       <h3 class="app-form__title">Data source creating</h3>
     </template>
