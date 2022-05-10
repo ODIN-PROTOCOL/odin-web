@@ -76,6 +76,17 @@ const makeCallers = () => {
         `${API_CONFIG.telemetryUrl}telemetry/oracle_scripts?page[number]=${page_number}&page[limit]=${page_limit}&sort=${activities}&owner=${owner}&name=${name}`
       )
     },
+    getAccountTx: (
+      page_number: number,
+      page_limit: number,
+      owner: string,
+      page_order: string,
+      tx_type: string
+    ) => {
+      return sendGet(
+        `${API_CONFIG.telemetryUrl}telemetry/account_txs/${owner}?page[number]=${page_number}&page[limit]=${page_limit}&page[order]=${page_order}&type=${tx_type}`
+      )
+    },
     getChannel: querier((qc) => qc.ibc.channel.allChannels),
     getConnections: querier((qc) => qc.ibc.connection.allConnections),
     getClientState: querier((qc) => qc.ibc.client.state),

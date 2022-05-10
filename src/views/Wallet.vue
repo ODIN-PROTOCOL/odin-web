@@ -43,16 +43,42 @@
         </div>
       </div>
     </div>
-
-    <div class="wallet__subtitle view-main__subtitle mg-b24">
-      <div class="wallet__tx-info">
-        <img src="~@/assets/icons/info.svg" alt="info" />
-        <span class="wallet__tooltip">
-          Based on last 100 transactions in system
-        </span>
+    <div class="wallet__subtitle-wrapper">
+      <div class="wallet__subtitle view-main__subtitle mg-b32">
+        <div class="wallet__tx-info">
+          <img src="~@/assets/icons/info.svg" alt="info" />
+          <span class="wallet__tooltip">
+            Based on last transactions in system
+          </span>
+        </div>
+        <span class="view-main__subtitle-item">Transaction list</span>
       </div>
-      <span class="view-main__subtitle-item">Transaction list</span>
+      <div class="wallet__selection">
+        <div class="wallet__selection-item">
+          <span class="wallet__selection-item-title">Filter</span>
+          <VuePicker
+            class="wallet__vue-picker _vue-picker"
+            name="filter"
+            v-model="sortingValue"
+            :isDisabled="isLoading"
+          >
+            <template #dropdownInner>
+              <div class="_vue-picker__dropdown-custom">
+                <VuePickerOption
+                  v-for="{ text, value } in sortingTypeTx"
+                  :key="text"
+                  :value="value"
+                  :text="text"
+                >
+                  {{ text }}
+                </VuePickerOption>
+              </div>
+            </template>
+          </VuePicker>
+        </div>
+      </div>
     </div>
+
     <div class="app-table">
       <div class="app-table__head">
         <span>Transaction hash</span>
@@ -66,70 +92,11 @@
       </div>
       <div class="app-table__body">
         <template v-if="transactions?.length">
-          <div
-            v-for="item in filteredTransactions"
-            :key="item.hash"
-            class="app-table__row"
-          >
-            <div class="app-table__cell">
-              <span class="app-table__title">Transaction hash</span>
-              <a
-                class="app-table__cell-txt app-table__link"
-                :href="`${API_CONFIG.odinScan}/transactions/${item.hash}`"
-              >
-                {{ `0x${item.hash}` }}
-              </a>
-            </div>
-            <div class="app-table__cell">
-              <span class="app-table__title">Type</span>
-              <span>{{ item.type }}</span>
-            </div>
-            <div class="app-table__cell">
-              <span class="app-table__title">Block</span>
-              <a
-                class="app-table__cell-txt app-table__link"
-                :href="`${API_CONFIG.odinScan}/blocks/${item.block}`"
-              >
-                {{ item.block.toString() }}
-              </a>
-            </div>
-            <div class="app-table__cell">
-              <span class="app-table__title">Date and time</span>
-              <span>{{ $fDate(item.time) }}</span>
-            </div>
-            <div class="app-table__cell">
-              <span class="app-table__title">Sender</span>
-              <a
-                class="app-table__cell-txt app-table__link"
-                :href="`${API_CONFIG.odinScan}/${generateAddrLink(
-                  item.sender
-                )}`"
-              >
-                {{ item.sender }}
-              </a>
-            </div>
-            <div class="app-table__cell">
-              <span class="app-table__title">Receiver</span>
-              <a
-                class="app-table__cell-txt app-table__link"
-                :href="`${API_CONFIG.odinScan}/${generateAddrLink(
-                  item.receiver
-                )}`"
-              >
-                {{ item.receiver }}
-              </a>
-            </div>
-            <div class="app-table__cell">
-              <span class="app-table__title">Amount</span>
-              <span class="app-table__cell-txt" :title="item.amount">
-                {{ item.amount }}
-              </span>
-            </div>
-            <div class="app-table__cell">
-              <span class="app-table__title">Transaction Fee</span>
-              <span>{{ item.fee }}</span>
-            </div>
-          </div>
+          <TxLine
+            v-for="(item, index) in transactions"
+            :key="index"
+            :tx="item.attributes"
+          />
         </template>
         <template v-else>
           <div class="app-table__empty-stub">
@@ -152,15 +119,20 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, onUnmounted, ref } from 'vue'
+import {
+  computed,
+  defineComponent,
+  onMounted,
+  onUnmounted,
+  ref,
+  watch,
+} from 'vue'
 import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
 import { COINS_LIST } from '@/api/api-config'
 import { wallet } from '@/api/wallet'
-import { prepareTransaction } from '@/helpers/helpers'
 import { usePoll } from '@/composables/usePoll'
 import { useBalances } from '@/composables/useBalances'
-import { adjustedData } from '@/helpers/Types'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
@@ -168,9 +140,10 @@ import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import SendFormModal from '@/components/modals/SendFormModal.vue'
 import ReceiveFormModal from '@/components/modals/ReceiveFormModal.vue'
-
+import TxLine from '@/components/TxLine.vue'
+import { sortingTypeTx, TYPE_TX_SORT } from '@/helpers/sortingHelpers'
 export default defineComponent({
-  components: { AppPagination },
+  components: { AppPagination, TxLine },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 50
@@ -178,41 +151,27 @@ export default defineComponent({
     const totalPages = ref()
     const transactionsCount = ref(0)
     const transactions = ref()
-    const filteredTransactions = ref()
+    const sortingValue = ref(TYPE_TX_SORT.all)
 
     const getTransactions = async () => {
       lockLoading()
       try {
-        const { txs } = await callers.getTxSearch({
-          query: `transfer.recipient='${wallet.account.address}' AND transfer.sender='${wallet.account.address}'`,
-          per_page: 100,
-          page: currentPage.value,
-          order_by: 'desc',
-        })
-        const preparedTxs = await prepareTransaction(txs)
-
-        transactions.value = filterNecessaryTxs(preparedTxs)
-        transactionsCount.value = transactions.value.length
+        const tx = await callers
+          .getAccountTx(
+            currentPage.value - 1,
+            50,
+            wallet.account.address,
+            'desc',
+            sortingValue.value
+          )
+          .then((resp) => resp.json())
+        transactions.value = tx.data
+        transactionsCount.value = tx.total_count
         totalPages.value = Math.ceil(transactionsCount.value / ITEMS_PER_PAGE)
-        filterTransactions(currentPage.value)
       } catch (error) {
         handleError(error as Error)
       }
       releaseLoading()
-    }
-
-    // temporary filtering until the backend filtering is ready
-    const filterNecessaryTxs = (txs: adjustedData[]) => {
-      return txs.filter((item) => {
-        return (
-          (item.sender === wallet.account.address ||
-            item.receiver === wallet.account.address) &&
-          (item.type === 'Send' ||
-            item.type === 'Delegate' ||
-            item.type === 'Withdraw delegator reward' ||
-            item.type === 'Withdraw')
-        )
-      })
     }
 
     const {
@@ -224,33 +183,10 @@ export default defineComponent({
       return lokiCoins.value && !Number(lokiCoins.value.amount)
     })
 
-    const filterTransactions = (newPage: number) => {
-      let tempArr = transactions.value
-
-      if (newPage === 1) {
-        filteredTransactions.value = tempArr.slice(0, newPage * ITEMS_PER_PAGE)
-      } else {
-        filteredTransactions.value = tempArr.slice(
-          (newPage - 1) * ITEMS_PER_PAGE,
-          (newPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE
-        )
-      }
-      currentPage.value = newPage
-    }
-
-    const paginationHandler = (num: number) => {
+    const paginationHandler = async (num: number) => {
       currentPage.value = num
-      filterTransactions(num)
+      await getTransactions()
     }
-
-    const generateAddrLink = (addr: string) => {
-      if (addr.includes('odinvaloper')) {
-        return `validators/${addr}`
-      } else {
-        return `account/${addr}`
-      }
-    }
-
     const receive = async () => {
       await showDialogHandler(ReceiveFormModal)
     }
@@ -273,6 +209,10 @@ export default defineComponent({
     onUnmounted(() => {
       lokiPoll.stop()
     })
+    watch([sortingValue], async () => {
+      currentPage.value = 1
+      await getTransactions()
+    })
 
     return {
       API_CONFIG,
@@ -281,14 +221,15 @@ export default defineComponent({
       currentPage,
       transactionsCount,
       transactions,
-      filteredTransactions,
+
       isLoading,
       lokiCoins,
       paginationHandler,
-      generateAddrLink,
       receive,
       send,
       isEmptyBalance,
+      sortingTypeTx,
+      sortingValue,
     }
   },
 })
@@ -377,12 +318,44 @@ export default defineComponent({
     background: var(--clr__tooltip-bg);
   }
 }
+.wallet__subtitle-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+.wallet__selection {
+  display: flex;
+  justify-content: flex-end;
+}
+.wallet__selection-item-title {
+  font-size: 1.4rem;
+  font-weight: 300;
+  margin-right: 0.4rem;
+}
 @include respond-to(tablet) {
   .wallet__info-card {
     width: 100%;
   }
   .wallet__info {
     flex-direction: column;
+  }
+  .wallet__selection {
+    width: 100%;
+    flex-direction: column;
+    margin-bottom: 0rem;
+  }
+  .wallet__subtitle-wrapper {
+    flex-direction: column;
+  }
+  .wallet__selection-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .wallet__selection-item-title {
+    margin: 0 0 0.4rem;
+  }
+  .wallet__vue-picker {
+    width: 100%;
   }
 }
 </style>

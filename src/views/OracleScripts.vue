@@ -64,7 +64,7 @@
             <div class="app-table__cell oracle-scripts__table-cell--center">
               <span class="app-table__title">Description</span>
               <span>
-                {{ item.attributes.description || '-' }}
+                {{ item.attributes.description || 'No description' }}
               </span>
             </div>
             <div class="app-table__cell oracle-scripts__table-cell--center">
