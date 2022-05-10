@@ -83,7 +83,7 @@ export default defineComponent({
 
 .modal-base__content-head {
   padding: 0 1rem;
-  margin-bottom: 3.2rem;
+  margin-bottom: 2.4rem;
 }
 
 .modal-base--right {

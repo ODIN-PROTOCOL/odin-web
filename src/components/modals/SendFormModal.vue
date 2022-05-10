@@ -1,5 +1,5 @@
 <template>
-  <ModalBase class="modal-base--right" @close="onClose()">
+  <ModalBase class="modal-base" @close="onClose()">
     <template #title>
       <h3 class="app-form__title">Send</h3>
     </template>
@@ -11,18 +11,26 @@
         @submit.prevent
       >
         <div class="app-form__main">
-          <div class="app-form__info mg-b16">
-            <label class="app-form__info-title">Balance</label>
-            <div class="app-form__info-content">
-              <div
-                class="app-form__info-row"
-                v-for="item in balance"
-                :key="item.denom"
+          <div class="send-form-modal__info-balance">
+            <div class="send-form-modal__info-balance-item">
+              <label class="send-form-modal__info-balance-item-lbl"
+                >ODIN balance</label
               >
-                <span class="app-form__info-row-title"> ODIN </span>
-                <span class="app-form__info-row-value">
-                  {{ $convertLokiToOdin(item.amount, { withDenom: true }) }}
-                </span>
+              <div
+                class="send-form-modal__info-balance-item-value"
+                :title="OdinBalance"
+              >
+                {{ OdinBalance }}
+              </div>
+            </div>
+            <div class="send-form-modal__info-balance-item">
+              <label
+                class="send-form-modal__info-balance-item-lbl"
+                :title="GeoBalance"
+                >GEO balance</label
+              >
+              <div class="send-form-modal__info-balance-item-value">
+                {{ GeoBalance }}
               </div>
             </div>
           </div>
@@ -57,7 +65,7 @@
               </template>
             </VuePicker>
           </div>
-          <div class="app-form__field mg-b32">
+          <div class="app-form__field">
             <label class="app-form__field-lbl">Amount</label>
             <div class="app-form__field-input-wrapper">
               <span>{{ sendAsset.toUpperCase() }}</span>
@@ -81,28 +89,13 @@
               }}
             </p>
           </div>
-
-          <div class="app-form__info">
-            <label class="app-form__info-title">Fee amount</label>
-            <div class="app-form__info-content">
-              <div class="app-form__info-row">
-                <span class="app-form__info-row-value">
-                  {{ $convertLokiToOdin(fee, { withDenom: true }) }}
-                </span>
-              </div>
-            </div>
+          <div class="send-form-modal__field-info">
+            <InfoIcon class="send-form-modal__info-icon" />
+            <span>Fee amount: {{ $convertLokiToOdin(fee) }} ODIN</span>
           </div>
         </div>
 
         <div class="app-form__footer">
-          <button
-            class="app-btn app-btn_outlined"
-            type="button"
-            @click="onClose()"
-            :disabled="isLoading"
-          >
-            Cancel
-          </button>
           <button
             class="app-btn"
             type="button"
@@ -136,10 +129,11 @@ import ModalBase from '@/components/modals/ModalBase.vue'
 import { Coin } from '@cosmjs/amino'
 
 import { coin } from '@cosmjs/launchpad'
+import InfoIcon from '@/components/icons/InfoIcon.vue'
 
 export default defineComponent({
   name: 'SendFormModal',
-  components: { ModalBase, VuePicker, VuePickerOption },
+  components: { ModalBase, VuePicker, VuePickerOption, InfoIcon },
   props: {
     balance: { type: Array as PropType<Coin[]>, required: true },
   },
@@ -154,6 +148,18 @@ export default defineComponent({
         return item.denom === COINS_LIST.LOKI
       })
       return balance || coin(0, sendAsset.value)
+    })
+    const OdinBalance = computed(() => {
+      const balance = props.balance.find((item) => {
+        return item.denom === COINS_LIST.LOKI
+      })
+      return balance ? convertLokiToOdin(balance.amount) : 0
+    })
+    const GeoBalance = computed(() => {
+      const balance = props.balance.find((item) => {
+        return item.denom === COINS_LIST.GEO
+      })
+      return balance || 0
     })
     const isEmptyBalance = computed(() => {
       return !Number(selectedBalance.value.amount)
@@ -209,42 +215,49 @@ export default defineComponent({
       isLoading,
       submit,
       onClose,
+      GeoBalance,
+      OdinBalance,
     }
   },
 })
 </script>
 
 <style lang="scss" scoped>
-.app-form {
-  &__info {
-    padding: 1.6rem 1.2rem;
-    border: 1px solid var(--clr__action);
-    border-radius: 0.8rem;
+.send-form-modal__info-balance {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 2.4rem;
+}
+.send-form-modal__info-balance-item {
+  width: 100%;
+  padding: 1.6rem 1.2rem;
+  background: var(--clr__modal-field-bg);
+  padding: 0.8rem;
+  border-radius: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  &:first-child {
+    margin-right: 1.6rem;
   }
-
-  &__info-title {
-    display: block;
-    margin-bottom: 1.6rem;
-  }
-
-  &__info-content {
-    & > *:not(:last-child) {
-      margin-bottom: 0.8rem;
-    }
-  }
-
-  &__info-row {
-    display: flex;
-    flex-direction: row;
-    gap: 2.4rem;
-  }
-
-  &__info-row-title {
-    min-width: 10rem;
-  }
-
-  &__info-row-value {
-    font-weight: 600;
-  }
+}
+.send-form-modal__info-balance-item-lbl {
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--clr__text-muted);
+  margin: 0;
+}
+.send-form-modal__info-balance-item-value {
+  font-weight: 600;
+}
+.send-form-modal__field-info {
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--clr__modal-backdrop-bg);
+  display: flex;
+  align-items: center;
+}
+.send-form-modal__info-icon {
+  margin-right: 0.9rem;
 }
 </style>
