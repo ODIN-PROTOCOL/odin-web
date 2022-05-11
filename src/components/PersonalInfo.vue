@@ -37,30 +37,30 @@
           <span class="personal-info__card-balance-row-title">ODIN</span>
           <div class="personal-info__card-balance-row-value-wrapper">
             <a
-              class="personal-info__card-balance-row-value app-table__link"
+              class="personal-info__card-balance-row-value app-table__cell-txt app-table__link"
               :title="$convertLokiToOdin(lokiCoins.amount)"
               :href="accountLink"
             >
               {{ $convertLokiToOdin(lokiCoins.amount) }}
-              <span class="wallet__tooltip wallet__tooltip--balance">
-                Switching to an account explorer
-              </span>
             </a>
+            <span class="personal-info__tooltip">
+              Switching to an account explorer
+            </span>
           </div>
         </div>
         <div class="personal-info__card-balance-row">
           <span class="personal-info__card-balance-row-title">GEO</span>
-          <div class="app-table__cell-txt app-table__link">
+          <div class="personal-info__card-balance-row-value-wrapper">
             <a
               class="personal-info__card-balance-row-value app-table__cell-txt app-table__link"
               :href="accountLink"
               :title="0"
             >
               {{ 0 }}
-              <span class="wallet__tooltip wallet__tooltip--balance">
-                Switching to an account explorer
-              </span>
             </a>
+            <span class="personal-info__tooltip">
+              Switching to an account explorer
+            </span>
           </div>
         </div>
       </div>
@@ -149,6 +149,9 @@ export default defineComponent({
   display: grid;
   grid: auto/ minmax(10rem, 0.5fr) minmax(10rem, 0.5fr);
   gap: 2.4rem;
+  font-size: 2.4rem;
+  line-height: 3.2rem;
+  font-weight: 400;
 }
 .personal-info__card {
   width: 100%;
@@ -169,7 +172,7 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  //   height: 100%;
 }
 .personal-info__card-balance-row {
   display: flex;
@@ -183,24 +186,25 @@ export default defineComponent({
   }
 }
 .personal-info__card-balance-row-title {
-  line-height: 2.4rem;
+  font-size: 1.6rem;
 }
 .personal-info__card-balance-row-value-wrapper {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  display: flex;
+  flex-direction: column;
+  max-width: 200px;
+  position: relative;
+  &:hover {
+    .personal-info__tooltip {
+      display: block;
+    }
+  }
 }
 .personal-info__card-balance-row-value {
+  width: 100%;
   font-weight: 600;
-  font-size: 2.4rem;
-  line-height: 3.2rem;
-  position: relative;
   cursor: pointer;
   color: var(--clr__text);
   &:hover {
-    .wallet__tooltip {
-      display: block;
-    }
     text-decoration-line: underline;
     color: var(--clr__action);
   }
@@ -210,40 +214,29 @@ export default defineComponent({
   align-items: center;
   gap: 2.4rem;
 }
-.wallet__tooltip {
+.personal-info__tooltip {
   display: none;
   position: absolute;
-  bottom: 130%;
-  left: -0.7rem;
-  width: 20rem;
-  padding: 1.2rem 2.4rem;
   background: var(--clr__tooltip-bg);
   border-radius: 0.8rem;
   font-size: 1.6rem;
   font-weight: 400;
   line-height: 1.6rem;
   color: var(--clr__tooltip-text);
+  top: 125%;
+  padding: 1rem 2.4rem;
+  left: -10rem;
+  width: 27rem;
   &:before {
     content: '';
     display: block;
     width: 0.6rem;
     height: 0.6rem;
     position: absolute;
-    bottom: -0.3rem;
-    left: 8%;
+    top: -0.3rem;
+    left: 40%;
     transform: translateX(-50%) rotate(45deg);
     background: var(--clr__tooltip-bg);
-  }
-  &--balance {
-    top: 130%;
-    right: -0.7rem;
-    width: 27.5rem;
-    height: 4.5rem;
-    &:before {
-      top: -0.3rem;
-      left: 8%;
-      transform: translateX(-50%) rotate(45deg);
-    }
   }
 }
 .personal-info__card-title-wrapper {
@@ -253,8 +246,6 @@ export default defineComponent({
 }
 .personal-info__card-address {
   color: var(--clr__text-muted);
-  font-size: 2.4rem;
-  line-height: 3.2rem;
   margin-bottom: 2rem;
 }
 .personal-info__copy-button-with-text {
@@ -270,6 +261,13 @@ export default defineComponent({
   }
   .personal-info__card-balance-row {
     padding-left: 0.4rem;
+  }
+  .personal-info__tooltip {
+    left: -3rem;
+    width: 13.5rem;
+    &:before {
+      left: 25%;
+    }
   }
 }
 @include respond-to(small) {
