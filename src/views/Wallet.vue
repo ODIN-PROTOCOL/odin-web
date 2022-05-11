@@ -1,48 +1,9 @@
 <template>
   <div class="wallet view-main">
     <div class="wallet__title-wrapper view-main__title-wrapper">
-      <h2 class="wallet__title view-main__title">Wallet</h2>
+      <h1 class="wallet__title view-main__title">Wallet</h1>
     </div>
-
-    <div class="wallet__info mg-b40">
-      <div class="wallet__info-card">
-        <span class="wallet__info-card-title">Balance</span>
-        <div class="wallet__info-card-balance mg-b40">
-          <div class="wallet__info-card-row">
-            <span class="wallet__info-card-row-title">ODIN</span>
-            <span
-              class="wallet__info-card-row-value"
-              :title="
-                $convertLokiToOdin(lokiCoins.amount, {
-                  withDenom: true,
-                  withPrecise: true,
-                  forTitle: true,
-                })
-              "
-            >
-              {{ $convertLokiToOdin(lokiCoins.amount, { withDenom: true }) }}
-            </span>
-          </div>
-        </div>
-        <div
-          class="wallet__info-card-activities wallet__info-card-activities--full"
-        >
-          <button
-            class="app-btn app-btn_outlined app-btn_small"
-            @click="receive()"
-          >
-            Receive
-          </button>
-          <button
-            class="app-btn app-btn_small"
-            @click="send()"
-            :disabled="isEmptyBalance"
-          >
-            Send
-          </button>
-        </div>
-      </div>
-    </div>
+    <PersonalInfo />
     <div class="wallet__subtitle-wrapper">
       <div class="wallet__subtitle view-main__subtitle mg-b32">
         <div class="wallet__tx-info">
@@ -119,31 +80,23 @@
 </template>
 
 <script lang="ts">
-import {
-  computed,
-  defineComponent,
-  onMounted,
-  onUnmounted,
-  ref,
-  watch,
-} from 'vue'
+import { defineComponent, onMounted, ref, watch } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
-import { COINS_LIST } from '@/api/api-config'
 import { wallet } from '@/api/wallet'
-import { usePoll } from '@/composables/usePoll'
-import { useBalances } from '@/composables/useBalances'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
-
-import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
-import SendFormModal from '@/components/modals/SendFormModal.vue'
-import ReceiveFormModal from '@/components/modals/ReceiveFormModal.vue'
 import TxLine from '@/components/TxLine.vue'
+import PersonalInfo from '@/components/PersonalInfo.vue'
 import { sortingTypeTx, TYPE_TX_SORT } from '@/helpers/sortingHelpers'
+
 export default defineComponent({
-  components: { AppPagination, TxLine },
+  components: {
+    AppPagination,
+    TxLine,
+    PersonalInfo,
+  },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 50
@@ -174,41 +127,15 @@ export default defineComponent({
       releaseLoading()
     }
 
-    const {
-      coins: [lokiCoins],
-      load: loadBalances,
-    } = useBalances([COINS_LIST.LOKI])
-    const lokiPoll = usePoll(loadBalances, 5000)
-    const isEmptyBalance = computed(() => {
-      return lokiCoins.value && !Number(lokiCoins.value.amount)
-    })
-
     const paginationHandler = async (num: number) => {
       currentPage.value = num
       await getTransactions()
     }
-    const receive = async () => {
-      await showDialogHandler(ReceiveFormModal)
-    }
-
-    const send = async () => {
-      await showDialogHandler(
-        SendFormModal,
-        {},
-        {
-          balance: [lokiCoins.value],
-        }
-      )
-    }
 
     onMounted(async () => {
-      lokiPoll.start()
       await getTransactions()
     })
 
-    onUnmounted(() => {
-      lokiPoll.stop()
-    })
     watch([sortingValue], async () => {
       currentPage.value = 1
       await getTransactions()
@@ -221,13 +148,8 @@ export default defineComponent({
       currentPage,
       transactionsCount,
       transactions,
-
       isLoading,
-      lokiCoins,
       paginationHandler,
-      receive,
-      send,
-      isEmptyBalance,
       sortingTypeTx,
       sortingValue,
     }
@@ -236,46 +158,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.wallet__info {
-  display: flex;
-  flex-direction: row;
-  gap: 2.4rem;
-}
-.wallet__info-card {
-  display: flex;
-  flex-direction: column;
-  width: 39rem;
-  padding: 3.2rem 2.4rem;
-  border: 0.1rem solid var(--clr__action);
-  border-radius: 0.8rem;
-}
-.wallet__info-card-title {
-  display: inline-block;
-  font-size: 2.4rem;
-  margin-bottom: 4rem;
-}
-.wallet__info-card-balance {
-  & > *:not(:last-child) {
-    margin-bottom: 2.4rem;
-  }
-}
-.wallet__info-card-row-title {
-  display: inline-block;
-  min-width: 10rem;
-}
-.wallet__info-card-row-value {
-  font-weight: 600;
-}
-.wallet__info-card-activities {
-  display: flex;
-  margin-top: auto;
-}
-.wallet__info-card-activities--full {
-  gap: 2.4rem;
-  & > * {
-    flex: 1;
-  }
-}
 .wallet__subtitle {
   display: flex;
   align-items: center;
@@ -332,12 +214,6 @@ export default defineComponent({
   margin-right: 0.4rem;
 }
 @include respond-to(tablet) {
-  .wallet__info-card {
-    width: 100%;
-  }
-  .wallet__info {
-    flex-direction: column;
-  }
   .wallet__selection {
     width: 100%;
     flex-direction: column;
