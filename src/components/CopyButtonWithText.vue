@@ -78,6 +78,9 @@ export default defineComponent({
     }
     .copy-button-with-text__message {
       right: -25%;
+      font-size: 1.6rem;
+      line-height: 2.4rem;
+      padding: 1.2rem;
     }
   }
 }
@@ -114,12 +117,7 @@ export default defineComponent({
   .copy-button-with-text__copy-icon {
     margin-right: 1rem;
   }
-  .copy-button-with-text__wrapper {
-    flex: 1;
-    align-items: stretch;
-  }
   .copy-button-with-text__message {
-    transform: translateX(-100%);
     &:before {
       transform: translateX(-90%) rotate(45deg);
     }

@@ -90,8 +90,9 @@ export default defineComponent({
   components: { ShareIcon, CopyButtonWithText },
   setup: function () {
     const accountAddress = wallet.account.address
+    const validatorPrefix = 'odinvaloper'
     const accountLink = computed(() => {
-      if (accountAddress.includes('odinvaloper')) {
+      if (accountAddress.includes(validatorPrefix)) {
         return `${API_CONFIG.odinScan}/validators/${accountAddress}`
       } else {
         return `${API_CONFIG.odinScan}/account/${accountAddress}`
@@ -172,7 +173,6 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   align-items: center;
-  //   height: 100%;
 }
 .personal-info__card-balance-row {
   display: flex;
@@ -191,7 +191,7 @@ export default defineComponent({
 .personal-info__card-balance-row-value-wrapper {
   display: flex;
   flex-direction: column;
-  max-width: 200px;
+  max-width: 20rem;
   position: relative;
   &:hover {
     .personal-info__tooltip {

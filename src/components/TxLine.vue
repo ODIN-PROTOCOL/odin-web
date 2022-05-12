@@ -31,7 +31,7 @@
     <div class="app-table__cell">
       <span class="app-table__title">Sender</span>
       <a
-        v-if="tx.sender !== ''"
+        v-if="tx.sender"
         class="app-table__cell-txt app-table__link"
         :href="`${API_CONFIG.odinScan}/${generateAddrLink(tx.sender)}`"
       >
@@ -42,7 +42,7 @@
     <div class="app-table__cell">
       <span class="app-table__title">Receiver</span>
       <a
-        v-if="tx.receiver !== ''"
+        v-if="tx.receiver"
         class="app-table__cell-txt app-table__link"
         :href="`${API_CONFIG.odinScan}/${generateAddrLink(tx.receiver)}`"
       >
@@ -65,17 +65,18 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { humanizeMessageType } from '@/helpers/decodeMessage'
 import { convertLokiToOdin } from '@/helpers/converters'
 import { API_CONFIG } from '@/api/api-config'
+import { txFromTelemetry } from '@/helpers/Types'
 
 export default defineComponent({
-  name: 'TransitionLine',
+  name: 'TxLine',
   components: {},
   props: {
     tx: {
-      type: Object,
+      type: Object as PropType<txFromTelemetry>,
       required: true,
     },
   },

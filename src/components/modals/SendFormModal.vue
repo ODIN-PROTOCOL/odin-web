@@ -26,11 +26,11 @@
             <div class="send-form-modal__info-balance-item">
               <label
                 class="send-form-modal__info-balance-item-lbl"
-                :title="GeoBalance"
+                :title="geoBalance"
                 >GEO balance</label
               >
               <div class="send-form-modal__info-balance-item-value">
-                {{ GeoBalance }}
+                {{ geoBalance }}
               </div>
             </div>
           </div>
@@ -155,7 +155,7 @@ export default defineComponent({
       })
       return balance ? convertLokiToOdin(balance.amount) : 0
     })
-    const GeoBalance = computed(() => {
+    const geoBalance = computed(() => {
       const balance = props.balance.find((item) => {
         return item.denom === COINS_LIST.GEO
       })
@@ -215,7 +215,7 @@ export default defineComponent({
       isLoading,
       submit,
       onClose,
-      GeoBalance,
+      geoBalance,
       OdinBalance,
     }
   },
