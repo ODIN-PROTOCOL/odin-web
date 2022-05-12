@@ -156,10 +156,9 @@ import Long from 'long'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
 import { dialogs } from '@/helpers/dialogs'
-// import { COINS_LIST } from '@/api/api-config'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
-// import { convertOdinToLoki } from '@/helpers/converters'
+import { assetsChanges } from '@/helpers/translators'
 import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
@@ -204,24 +203,6 @@ export default defineComponent({
     const callDataSchema = ref()
     const onSubmit = dialogs.getHandler('onSubmit')
     const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
-    const assetsChanges = {
-      // odin: {
-      //   text: 'ODIN',
-      //   value: 'odin',
-      // },
-      // geo: {
-      //   text: 'GEO',
-      //   value: 'geo',
-      // },
-      loki: {
-        text: 'LOKI',
-        value: 'loki',
-      },
-      miniGeo: {
-        text: 'MINIGEO',
-        value: 'minigeo',
-      },
-    }
     const findOracleScript = debounce(async () => {
       if (!form.oracleScriptId.val()) return
       isLoading.value = true

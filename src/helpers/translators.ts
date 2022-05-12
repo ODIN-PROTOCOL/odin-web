@@ -137,3 +137,13 @@ export function translateBondStatus(bondStatus: BondStatus): string {
       return 'Unrecognized'
   }
 }
+export const assetsChanges = {
+  loki: {
+    text: 'LOKI',
+    value: 'loki',
+  },
+  miniGeo: {
+    text: 'MINIGEO',
+    value: 'minigeo',
+  },
+}
