@@ -25,6 +25,17 @@ export type adjustedData = {
   status?: number | string | undefined
 }
 
+export type txFromTelemetry = {
+  amount: string
+  block: number
+  fee: string
+  receiver: string
+  sender: string
+  timestamp: number
+  tx_hash: string
+  type: string
+}
+
 export type TransformedProposal = Modify<
   ProposalDecoded,
   {

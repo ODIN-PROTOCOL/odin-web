@@ -8,6 +8,12 @@ export enum ACTIVITIES_SORT {
 export enum OWNERS_SORT {
   all = 'null',
 }
+export enum TYPE_TX_SORT {
+  all = 'null',
+  delegate = 'delegate',
+  send = 'send',
+  withdraw = 'withdraw',
+}
 
 export const sortingActivities = [
   {
@@ -28,5 +34,23 @@ export const sortingOwners = [
   {
     text: 'My',
     value: wallet.account.address,
+  },
+]
+export const sortingTypeTx = [
+  {
+    text: 'All',
+    value: TYPE_TX_SORT.all,
+  },
+  {
+    text: 'Delegated',
+    value: TYPE_TX_SORT.delegate,
+  },
+  {
+    text: 'Send',
+    value: TYPE_TX_SORT.send,
+  },
+  {
+    text: 'Withdraw',
+    value: TYPE_TX_SORT.withdraw,
   },
 ]

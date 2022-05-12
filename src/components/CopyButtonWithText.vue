@@ -1,32 +1,34 @@
 <template>
-  <div class="copy-btn-with-text__wrapper">
+  <div class="copy-button-with-text__wrapper" :class="modalBaseScheme">
     <button
-      class="copy-btn-with-text app-btn_small w-min150"
+      class="copy-button-with-text app-btn_small"
       type="button"
       @click.prevent="copy()"
     >
-      <img
-        class="copy-btn-with-text__img"
-        src="@/assets/icons/copy.svg"
-        alt="copy"
-      />
-      <span class="copy-btn-with-text__text">{{ text }}</span>
+      <CopyIcon class="copy-button-with-text__copy-icon" />
+      <span class="copy-button-with-text__text">{{ text }}</span>
     </button>
-    <div v-show="isCopiedShown" class="copy-btn-with-text__message">
+    <div v-show="isCopiedShown" class="copy-button-with-text__message">
       Copied!
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, computed } from 'vue'
 import { copyValue } from '@/helpers/helpers'
+import CopyIcon from '@/components/icons/CopyIcon.vue'
 
+export enum SCHEMES {
+  noBorder = 'no-border',
+}
 export default defineComponent({
   props: {
     value: { type: String, required: true },
     text: { type: String, required: true },
+    scheme: { type: String, default: '' },
   },
+  components: { CopyIcon },
   setup: function (props) {
     const isCopiedShown = ref(false)
 
@@ -37,72 +39,87 @@ export default defineComponent({
         isCopiedShown.value = false
       }, 1300)
     }
-
-    return { copy, isCopiedShown }
+    const modalBaseScheme = computed(() => {
+      const scheme = props.scheme as SCHEMES
+      if (!Object.values(SCHEMES).includes(scheme)) return ''
+      return scheme ? `copy-button-with-text__wrapper--${scheme}` : ''
+    })
+    return { copy, isCopiedShown, modalBaseScheme }
   },
 })
 </script>
 
 <style lang="scss" scoped>
-.copy-btn-with-text {
+.copy-button-with-text {
   display: flex;
   align-items: center;
-  justify-content: space-around;
   background: var(--clr__main-bg);
   color: var(--clr__action);
   border: 1px solid var(--clr__btn-normal);
-
-  &__wrapper {
-    display: flex;
-    align-items: flex-end;
-    flex-direction: column;
-    margin-bottom: 2rem;
-    position: relative;
+  &:hover {
+    color: var(--clr__action-disabled);
+    .copy-button-with-text__copy-icon {
+      fill: var(--clr__action-disabled);
+    }
+    border-color: var(--clr__action-disabled);
   }
-
-  &__message {
-    position: absolute;
-    bottom: 120%;
-    right: -5%;
-    transform: translateX(-50%);
-    padding: 1.2rem 2.4rem;
-    background: var(--clr__tooltip-bg);
-    border-radius: 8px;
-    color: var(--clr__tooltip-text);
-
-    &:before {
-      content: '';
-      display: block;
-      width: 0.6rem;
-      height: 0.6rem;
-      position: absolute;
-      bottom: -0.3rem;
-      left: 50%;
-      transform: translateX(-50%) rotate(45deg);
-      background: var(--clr__tooltip-bg);
+}
+.copy-button-with-text__wrapper {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  margin-bottom: 2rem;
+  position: relative;
+  &--no-border {
+    margin-bottom: 0;
+    .copy-button-with-text {
+      border: none;
+      padding: 0;
+    }
+    .copy-button-with-text__message {
+      right: -25%;
+      font-size: 1.6rem;
+      line-height: 2.4rem;
+      padding: 1.2rem;
     }
   }
+}
+.copy-button-with-text__copy-icon {
+  margin-right: 1rem;
+}
+.copy-button-with-text__message {
+  position: absolute;
+  bottom: 120%;
+  right: -5%;
+  transform: translateX(-50%);
+  padding: 1.2rem 2.4rem;
+  background: var(--clr__tooltip-bg);
+  border-radius: 8px;
+  color: var(--clr__tooltip-text);
 
-  &:hover {
-    background: var(--clr__action-disabled);
+  &:before {
+    content: '';
+    display: block;
+    width: 0.6rem;
+    height: 0.6rem;
+    position: absolute;
+    bottom: -0.3rem;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    background: var(--clr__tooltip-bg);
   }
 }
 
 @media screen and (max-width: 768px) {
-  .copy-btn-with-text {
+  .copy-button-with-text {
     justify-content: center;
-    &__img {
-      margin-right: 1rem;
-    }
-    &__wrapper {
-      flex: 1;
-      align-items: stretch;
-    }
-    &__message {
-      transform: translateX(-100%);
-      &:before {
-        transform: translateX(-90%) rotate(45deg);
-      }
+  }
+  .copy-button-with-text__copy-icon {
+    margin-right: 1rem;
+  }
+  .copy-button-with-text__message {
+    &:before {
+      transform: translateX(-90%) rotate(45deg);
     }
   }
 }

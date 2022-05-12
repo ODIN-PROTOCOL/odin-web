@@ -44,9 +44,31 @@
           </div>
 
           <div class="app-form__field">
+            <label class="app-form__field-lbl">Assets</label>
+            <VuePicker
+              class="_vue-picker"
+              placeholder="Assets"
+              v-model="form.assets"
+            >
+              <template #dropdownInner>
+                <div class="_vue-picker__dropdown-custom">
+                  <VuePickerOption
+                    v-for="{ text, value } in assetsChanges"
+                    :key="text"
+                    :value="value"
+                    :text="text"
+                  >
+                    {{ text }}
+                  </VuePickerOption>
+                </div>
+              </template>
+            </VuePicker>
+          </div>
+
+          <div class="app-form__field">
             <label class="app-form__field-lbl">Price</label>
             <div class="app-form__field-input-wrapper">
-              <span>ODIN</span>
+              <span>{{ form.assets.toUpperCase() }}</span>
               <input
                 class="app-form__field-input"
                 name="data-source-price"
@@ -107,22 +129,30 @@ import { defineComponent, ref, computed } from 'vue'
 import { coins } from '@cosmjs/launchpad'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
-import { COINS_LIST } from '@/api/api-config'
 import { dialogs } from '@/helpers/dialogs'
 import { readFile } from '@/helpers/files'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
-import { convertOdinToLoki } from '@/helpers/converters'
+import { assetsChanges } from '@/helpers/translators'
 import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import InputFileField from '@/components/fields/InputFileField.vue'
 import TextareaField from '@/components/fields/TextareaField.vue'
 import Long from 'long'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 
 export default defineComponent({
   props: { dataSource: { type: Object } },
-  components: { ModalBase, InputFileField, TextareaField },
+  components: {
+    ModalBase,
+    InputFileField,
+    TextareaField,
+    VuePicker,
+    VuePickerOption,
+  },
   setup(props) {
     const bntText = computed(() => {
       return props.dataSource ? 'Edit' : 'Create'
@@ -138,6 +168,7 @@ export default defineComponent({
         props.dataSource?.description || '',
         validators.maxCharacters(256),
       ],
+      assets: [props.dataSource?.fee[0]?.denom || 'loki', validators.required],
       price: [
         props.dataSource?.fee[0]?.amount ||
           props.dataSource?.fee?.split('loki')[0] ||
@@ -172,7 +203,7 @@ export default defineComponent({
             name: form.name.val(),
             description: form.description.val(),
             executable: executableParsed,
-            fee: coins(convertOdinToLoki(form.price.val()), COINS_LIST.LOKI),
+            fee: coins(form.price.val(), form.assets.val()),
             owner: wallet.account.address,
             sender: wallet.account.address,
           })
@@ -181,7 +212,7 @@ export default defineComponent({
             name: form.name.val(),
             description: form.description.val(),
             executable: executableParsed,
-            fee: coins(convertOdinToLoki(form.price.val()), COINS_LIST.LOKI),
+            fee: coins(form.price.val(), form.assets.val()),
             owner: wallet.account.address,
             sender: wallet.account.address,
           })
@@ -213,6 +244,7 @@ export default defineComponent({
       submit,
       onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
       bntText,
+      assetsChanges,
     }
   },
 })

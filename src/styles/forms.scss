@@ -64,8 +64,8 @@
   &__field-composed {
     display: block;
 
-    &:not(:first-of-type) {
-      margin-block-start: 1.2rem;
+    &:not(:last-child) {
+      margin-block-end: 1.6rem;
     }
   }
 

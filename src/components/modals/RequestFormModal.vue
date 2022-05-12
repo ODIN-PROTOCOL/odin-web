@@ -87,9 +87,31 @@
           </div>
 
           <div class="app-form__field">
+            <label class="app-form__field-lbl">Assets</label>
+            <VuePicker
+              class="_vue-picker"
+              placeholder="Assets"
+              v-model="form.assets"
+            >
+              <template #dropdownInner>
+                <div class="_vue-picker__dropdown-custom">
+                  <VuePickerOption
+                    v-for="{ text, value } in assetsChanges"
+                    :key="text"
+                    :value="value"
+                    :text="text"
+                  >
+                    {{ text }}
+                  </VuePickerOption>
+                </div>
+              </template>
+            </VuePicker>
+          </div>
+
+          <div class="app-form__field">
             <label class="app-form__field-lbl"> Fee limit </label>
             <div class="app-form__field-input-wrapper">
-              <span>ODIN</span>
+              <span>{{ form.assets.toUpperCase() }}</span>
               <input
                 class="app-form__field-input"
                 name="request-fee-limit"
@@ -134,10 +156,9 @@ import Long from 'long'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
 import { dialogs } from '@/helpers/dialogs'
-import { COINS_LIST } from '@/api/api-config'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
-import { convertOdinToLoki } from '@/helpers/converters'
+import { assetsChanges } from '@/helpers/translators'
 import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
@@ -145,12 +166,15 @@ import { coins } from '@cosmjs/launchpad'
 import debounce from 'lodash/debounce'
 import { Obi } from '@bandprotocol/bandchain.js'
 import TextareaField from '@/components/fields/TextareaField.vue'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 
 export default defineComponent({
   props: {
     maxAskCount: { type: Number, required: true },
   },
-  components: { ModalBase, TextareaField },
+  components: { ModalBase, TextareaField, VuePicker, VuePickerOption },
   setup(props) {
     const form = useForm({
       oracleScriptId: ['', validators.required],
@@ -165,6 +189,7 @@ export default defineComponent({
         ...validators.num(1, props.maxAskCount),
       ],
       calldata: [''],
+      assets: ['loki', validators.required],
       feeLimit: [
         '',
         validators.required,
@@ -178,7 +203,6 @@ export default defineComponent({
     const callDataSchema = ref()
     const onSubmit = dialogs.getHandler('onSubmit')
     const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
-
     const findOracleScript = debounce(async () => {
       if (!form.oracleScriptId.val()) return
       isLoading.value = true
@@ -215,10 +239,7 @@ export default defineComponent({
           askCount: Long.fromNumber(form.askCount.val()),
           minCount: Long.fromNumber(form.minCount.val()),
           calldata: _processCallData(),
-          feeLimit: coins(
-            convertOdinToLoki(form.feeLimit.val()),
-            COINS_LIST.LOKI
-          ),
+          feeLimit: coins(form.feeLimit.val(), form.assets.val()),
           prepareGas: Long.fromNumber(200000),
           executeGas: Long.fromNumber(200000),
           sender: wallet.account.address,
@@ -241,6 +262,7 @@ export default defineComponent({
       onClose,
       callDataSchema,
       findOracleScript,
+      assetsChanges,
     }
   },
 })

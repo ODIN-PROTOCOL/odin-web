@@ -10,7 +10,7 @@
           {{ script.attributes.name }}
         </div>
         <span class="top-oracle-scripts__item-text">
-          {{ script.attributes.description || '-' }}
+          {{ script.attributes.description || 'No description' }}
         </span>
       </div>
       <div class="top-oracle-scripts__item-info">

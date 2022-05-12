@@ -1,7 +1,7 @@
 <template>
   <ModalBase @close="onClose()">
     <template #title>
-      <h3 class="app-form__title">Receive</h3>
+      <h3 class="app-form__title">Share</h3>
     </template>
 
     <template #main>
@@ -22,7 +22,9 @@
           </div>
         </div>
         <div class="receive-modal__footer">
-          <button class="app-btn" type="button" @click="onClose()">OK</button>
+          <button class="app-btn" type="button" @click="onClose()">
+            Share
+          </button>
         </div>
       </div>
     </template>

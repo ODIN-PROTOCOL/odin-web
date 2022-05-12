@@ -141,6 +141,9 @@ export function humanizeMessageType(type: string): string {
     case '/oracle.v1.MsgRemoveReporter':
       return 'Remove Reporter'
 
+    case '/mint.MsgMintCoins':
+      return 'MsgMintCoins'
+
     default:
       throw new ReferenceError(`Unknown type ${type}`)
   }
