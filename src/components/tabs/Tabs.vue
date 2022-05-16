@@ -15,12 +15,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, provide } from 'vue'
+import { defineComponent, ref, provide, computed, watch } from 'vue'
 
 export default defineComponent({
   emits: ['changeTab'],
   setup: function (props, { slots, emit }) {
-    const tabTitles = ref(
+    const tabTitles = computed(() =>
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (slots as any)
         .default()
@@ -35,6 +35,9 @@ export default defineComponent({
 
     provide('selectedTitle', selectedTitle)
 
+    watch([tabTitles], () => {
+      selectedTitle.value = tabTitles.value[0]
+    })
     return {
       selectedTitle,
       tabTitles,

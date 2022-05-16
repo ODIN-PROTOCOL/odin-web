@@ -1,20 +1,25 @@
 <template>
-  <ModalBase class="delegate-form-modal" @close="onClose()">
+  <ModalBase class="delegate-form-modal__wrapper" @close="onClose()">
     <template #title>
       <h3 class="app-form__title">Delegate</h3>
     </template>
 
     <template #main>
       <form
-        class="app-form load-fog"
+        class="app-form load-fog delegate-form-modal"
         :class="{ 'load-fog_show': isLoading }"
         @submit.prevent
       >
         <div class="app-form__main">
-          <div class="app-form__field delegate-form-modal__field">
-            <div class="delegate-form-modal__field-row app-form__field-row">
-              <label class="app-form__field-lbl"> Available </label>
+          <div class="app-form__field delegate-form-modal__field-balance">
+            <div
+              class="delegate-form-modal__field-balance-row app-form__field-row"
+            >
+              <label class="app-form__field-lbl delegate-form-modal__field-lbl">
+                Available
+              </label>
               <p
+                class="delegate-form-modal__field-balance-value"
                 :title="
                   $convertLokiToOdin(lokiBalance?.amount, {
                     withDenom: true,
@@ -27,37 +32,43 @@
                 }}
               </p>
             </div>
-            <div class="delegate-form-modal__field-row app-form__field-row">
-              <button
-                class="app-btn app-btn_small app-btn_outlined"
-                type="button"
-                @click="maxAmount()"
-                :disabled="isLoading || isEmptyBalance || isBalanceLowerThanFee"
+            <div class="app-form__field delegate-form-modal__field-balance-row">
+              <label class="app-form__field-lbl delegate-form-modal__field-lbl">
+                You delegated
+              </label>
+              <p
+                v-if="delegation && delegation.balance"
+                class="delegate-form-modal__field-balance-value"
+                :title="
+                  $convertLokiToOdin(delegation.balance?.amount, {
+                    withDenom: true,
+                    forTitle: true,
+                  })
+                "
               >
-                Max amount
-              </button>
+                {{
+                  $convertLokiToOdin(delegation.balance?.amount, {
+                    withDenom: true,
+                  })
+                }}
+              </p>
+              <p class="delegate-form-modal__field-balance-value" v-else>
+                0 ODIN
+              </p>
             </div>
-          </div>
-          <div v-if="delegation && delegation.balance" class="app-form__field">
-            <label class="app-form__field-lbl"> You delegated </label>
-            <p
-              :title="
-                $convertLokiToOdin(delegation.balance?.amount, {
-                  withDenom: true,
-                  forTitle: true,
-                })
-              "
-            >
-              {{
-                $convertLokiToOdin(delegation.balance?.amount, {
-                  withDenom: true,
-                })
-              }}
-            </p>
           </div>
 
           <div class="app-form__field">
-            <label class="app-form__field-lbl">Amount</label>
+            <div class="delegate-form-modal__field-lbl-wrapper">
+              <label class="app-form__field-lbl">Amount</label>
+              <label
+                class="app-table__link delegate-form-modal__field-lbl--max"
+                @click="maxAmount()"
+                :disabled="isLoading || isEmptyBalance || isBalanceLowerThanFee"
+              >
+                Max Amount
+              </label>
+            </div>
             <div class="app-form__field-input-wrapper">
               <span>ODIN</span>
               <input
@@ -198,22 +209,52 @@ export function showDelegateFormDialog(
 </script>
 
 <style scoped lang="scss">
-.delegate-form-modal__field {
-  display: grid;
-  grid:
-    auto/
-    minmax(1rem, 1fr)
-    minmax(1rem, 1fr);
+.delegate-form-modal {
+  padding-top: 0.8rem;
+}
+.delegate-form-modal__field-lbl-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+.delegate-form-modal__field-balance-row {
+  background: var(--clr__modal-field-bg);
+  border-radius: 0.8rem;
+  padding: 0.8rem;
+  width: 100%;
+
+  &:first-child {
+    margin-right: 1.6rem;
+  }
+}
+.delegate-form-modal__field-balance {
+  display: flex;
+  margin-bottom: 2.4rem;
+  position: relative;
+}
+.delegate-form-modal__field-lbl {
+  font-weight: 400;
+  color: var(--clr__modal-backdrop-bg);
+  margin: 0;
+  &--max {
+    cursor: pointer;
+    &:hover {
+      opacity: 0.7;
+    }
+    &:active {
+      transform: scale(0.9);
+    }
+  }
+}
+.delegate-form-modal__field-balance-value {
+  font-weight: 600;
+  font-size: 1.6rem;
+  line-height: 2.4rem;
 }
 
-@include respond-to(small) {
-  .delegate-form-modal__field-row:first-child {
-    margin-bottom: 1rem;
-  }
-  .delegate-form-modal {
-    &__field {
-      grid: none;
-    }
+@include respond-to(420px) {
+  .delegate-form-modal__field-balance {
+    gap: 1.6rem;
+    flex-direction: column;
   }
 }
 </style>

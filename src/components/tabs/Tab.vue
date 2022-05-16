@@ -8,7 +8,7 @@
 import { defineComponent, inject } from 'vue'
 
 export default defineComponent({
-  props: ['title'],
+  props: { title: { type: String, requred: true } },
   setup: function () {
     const selectedTitle = inject('selectedTitle')
 

@@ -18,7 +18,7 @@
         </button>
         <button
           v-if="isDelegator"
-          class="validators__title-btn app-btn app-btn_small"
+          class="validators__title-btn--white app-btn app-btn_small"
           type="button"
           @click="claimAllRewards"
         >
@@ -32,11 +32,29 @@
         <p>{{ validatorsCount }} validators found</p>
       </div>
     </template>
-
-    <Tabs @changeTab="tabHandler($event)">
-      <Tab title="Active" />
-      <Tab title="Inactive" />
-    </Tabs>
+    <div class="validators__filter">
+      <Tabs @changeTab="tabHandler($event)">
+        <Tab :title="activeValidatorsTitle" />
+        <Tab :title="inactiveValidatorsTitle" />
+      </Tabs>
+      <div class="validators__filter-search">
+        <div class="validators__filter-search-input-wrapper">
+          <InputField
+            type="search"
+            v-model="searchValue"
+            placeholder="Search validator"
+            class="validators__filter-search-input"
+            @keydown.enter="filterValidators()"
+          />
+        </div>
+        <button
+          class="validators__filter-search-button"
+          @click="filterValidators()"
+        >
+          <SearchIcon />
+        </button>
+      </div>
+    </div>
 
     <div class="app-table validators__table">
       <div class="app-table__head validators__table-head">
@@ -49,7 +67,7 @@
         <span class="validators__table-head-item"></span>
       </div>
       <div class="app-table__body">
-        <template v-if="validators?.length">
+        <template v-if="filteredValidators?.length">
           <div
             v-for="item in filteredValidators"
             :key="item.operatorAddress"
@@ -140,7 +158,7 @@
                     Claim rewards
                   </button>
                   <button
-                    class="app-btn app-btn_outlined app-btn--very-small w-min108"
+                    class="app-btn app-btn--outline-red app-btn--very-small w-min108"
                     type="button"
                     @click="undelegate(item)"
                   >
@@ -153,8 +171,8 @@
         </template>
         <template v-else>
           <div class="app-table__empty-stub">
-            <p v-if="isLoading">Loading…</p>
-            <p v-else>No items yet</p>
+            <p v-if="isLoading" class="empty mg-t32">Loading…</p>
+            <p v-else class="empty mg-t32">No items yet</p>
           </div>
         </template>
       </div>
@@ -210,15 +228,25 @@ import ClaimAllRewardsFormModal from '@/components/modals/ClaimAllRewardsFormMod
 import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
 import { isActiveValidator } from '@/helpers/validatorHelpers'
 import Progressbar from '@/components/Progressbar.vue'
+import InputField from '@/components/fields/InputField.vue'
+import SearchIcon from '@/components/icons/SearchIcon.vue'
 
 export default defineComponent({
-  components: { Tabs, Tab, TitledLink, StatusIcon, AppPagination, Progressbar },
+  components: {
+    Tabs,
+    Tab,
+    TitledLink,
+    StatusIcon,
+    AppPagination,
+    Progressbar,
+    InputField,
+    SearchIcon,
+  },
   setup() {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 50
     const currentPage = ref(1)
     const totalPages = ref()
-    const validatorsStatus = ref('Active')
     const filteredValidatorsCount = ref(0)
     const validatorsCount = ref(0)
     const filteredValidators = ref()
@@ -227,9 +255,16 @@ export default defineComponent({
     const isDelegator = computed(
       () => Object.keys(delegations.value).length !== 0
     )
-
-    let activeValidators: ValidatorDecoded[] = []
-    let inactiveValidators: ValidatorDecoded[] = []
+    const activeValidators = ref<ValidatorDecoded[]>([])
+    const inactiveValidators = ref<ValidatorDecoded[]>([])
+    const activeValidatorsTitle = computed(() =>
+      activeValidators.value?.length
+        ? `Active (${activeValidators.value?.length})`
+        : 'Active'
+    )
+    const inactiveValidatorsTitle = ref('Inactive')
+    const tabStatus = ref(activeValidatorsTitle.value)
+    const searchValue = ref('')
 
     const getValidators = async () => {
       lockLoading()
@@ -242,7 +277,7 @@ export default defineComponent({
           .getValidatorUptime()
           .then((resp) => resp.json())
 
-        activeValidators = await Promise.all(
+        activeValidators.value = await Promise.all(
           await getTransformedValidators([
             ...bonded.validators,
             ...unbonding.validators,
@@ -260,7 +295,7 @@ export default defineComponent({
           )
         )
 
-        inactiveValidators = await Promise.all(
+        inactiveValidators.value = await Promise.all(
           await getTransformedValidators([...unbonded.validators]).then(
             (validators) =>
               validators.map(async (item) => {
@@ -275,19 +310,9 @@ export default defineComponent({
               })
           )
         )
-
-        if (validatorsStatus.value === 'Active') {
-          validators.value = [...activeValidators]
-        } else if (validatorsStatus.value === 'Inactive') {
-          validators.value = [...inactiveValidators]
-        }
-
+        validators.value = [...activeValidators.value]
         validatorsCount.value =
-          activeValidators.length + inactiveValidators.length
-        filteredValidatorsCount.value = validators.value.length
-        totalPages.value = Math.ceil(
-          filteredValidatorsCount.value / ITEMS_PER_PAGE
-        )
+          activeValidators.value.length + inactiveValidators.value.length
         filterValidators(currentPage.value)
       } catch (error) {
         handleError(error as Error)
@@ -314,17 +339,27 @@ export default defineComponent({
       releaseLoading()
     }
 
-    const filterValidators = (newPage: number) => {
+    const filterValidators = (newPage = 1) => {
       let tempArr = validators.value
-
+      if (searchValue.value.trim()) {
+        tempArr = tempArr.filter((item: { description: { moniker: string } }) =>
+          item.description.moniker
+            .toLowerCase()
+            .includes(searchValue.value.toLowerCase())
+        )
+      }
       if (newPage === 1) {
-        filteredValidators.value = tempArr.slice(0, newPage * ITEMS_PER_PAGE)
+        filteredValidators.value = tempArr?.slice(0, newPage * ITEMS_PER_PAGE)
       } else {
-        filteredValidators.value = tempArr.slice(
+        filteredValidators.value = tempArr?.slice(
           (newPage - 1) * ITEMS_PER_PAGE,
           (newPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE
         )
       }
+      filteredValidatorsCount.value = tempArr.length
+      totalPages.value = Math.ceil(
+        filteredValidatorsCount.value / ITEMS_PER_PAGE
+      )
       currentPage.value = newPage
     }
 
@@ -333,21 +368,14 @@ export default defineComponent({
     }
 
     const tabHandler = async (title: string) => {
-      if (title !== validatorsStatus.value) {
-        validatorsStatus.value = title
-
-        if (validatorsStatus.value === 'Active') {
-          validators.value = [...activeValidators]
-        } else if (validatorsStatus.value === 'Inactive') {
-          validators.value = [...inactiveValidators]
+      if (title !== tabStatus.value) {
+        tabStatus.value = title
+        if (tabStatus.value === activeValidatorsTitle.value) {
+          validators.value = [...activeValidators.value]
+        } else if (tabStatus.value === inactiveValidatorsTitle.value) {
+          validators.value = [...inactiveValidators.value]
         }
-
-        filteredValidatorsCount.value = validators.value.length
-        totalPages.value = Math.ceil(
-          filteredValidatorsCount.value / ITEMS_PER_PAGE
-        )
-        currentPage.value = 1
-        filterValidators(currentPage.value)
+        filterValidators(1)
       }
     }
 
@@ -454,6 +482,10 @@ export default defineComponent({
       redelegate,
       undelegate,
       isDelegator,
+      activeValidatorsTitle,
+      inactiveValidatorsTitle,
+      searchValue,
+      filterValidators,
     }
   },
 })
@@ -469,8 +501,9 @@ export default defineComponent({
 
 .validators__title-activities {
   display: flex;
-  flex-direction: column;
-
+  flex-direction: row-reverse;
+  align-items: flex-start;
+  gap: 2.4rem;
   & > *:not(:last-child) {
     margin-bottom: 1.6rem;
   }
@@ -530,6 +563,81 @@ export default defineComponent({
 .validators--large-padding {
   padding-bottom: 17rem;
 }
+.validators__filter-search {
+  display: flex;
+  align-items: center;
+  border-bottom: 0.1rem solid var(--clr__input-border);
+  transition: all 0.5s ease;
+  color: var(--clr__input-border);
+  svg {
+    transition: all 0.5s ease;
+    fill: var(--clr__input-border);
+  }
+  &:hover,
+  &:active,
+  &:focus,
+  &:focus-within {
+    color: var(--clr__text);
+    border-color: var(--clr__text);
+    svg {
+      fill: var(--clr__text);
+    }
+  }
+  &:disabled {
+    border-color: var(--clr__input-border);
+    color: var(--clr__input-border);
+    svg {
+      fill: var(--clr__input-border);
+    }
+  }
+}
+.validators__filter-search-input-wrapper {
+  position: relative;
+  z-index: 0;
+}
+.validators__filter-search-input {
+  border: none;
+  &:focus::-webkit-input-placeholder {
+    color: transparent;
+  }
+  &::-webkit-search-cancel-button {
+    position: relative;
+    right: 0.2rem;
+  }
+  &:active,
+  &:hover,
+  &:focus {
+    border: none;
+  }
+}
+.validators__filter-search-button {
+  position: relative;
+  width: 4.8rem;
+  height: 4.8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.validators__filter {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2.4rem;
+  align-items: center;
+}
+.validators__title-btn {
+  &--white {
+    background: var(--clr__main-bg);
+    color: var(--clr__action);
+    &:hover {
+      opacity: 0.7;
+    }
+    &:active {
+      transform: scale(0.9);
+    }
+  }
+}
+
 @include respond-to(medium) {
   .validators__table-head,
   .validators__table-row {
@@ -568,6 +676,20 @@ export default defineComponent({
   }
   .validators__table-head--end {
     text-align: start;
+  }
+  .validators__filter {
+    margin-bottom: 0;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .validators__filter-search {
+    margin-bottom: 1.6rem;
+  }
+  .validators__filter-search-input-wrapper {
+    width: 100%;
+  }
+  .validators__filter-search-input {
+    width: 100%;
   }
 }
 </style>
