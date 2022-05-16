@@ -98,7 +98,6 @@ export default defineComponent({
     }
     return {
       generateAddrLink,
-      humanizeMessageType,
       odinFee,
       odinAmount,
       type,

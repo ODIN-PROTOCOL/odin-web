@@ -38,11 +38,7 @@
                   })
                 "
               >
-                {{
-                  $convertLokiToOdin(validator.minSelfDelegation, {
-                    withDenom: true,
-                  })
-                }}
+                {{ $convertLokiToOdin(validator.minSelfDelegation) }} ODIN
               </p>
             </div>
 

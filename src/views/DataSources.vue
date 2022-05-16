@@ -139,7 +139,7 @@ export default defineComponent({
     const loadDataSources = async () => {
       lockLoading()
       try {
-        const res = await callers
+        const { data, total_count } = await callers
           .getSortedDataSources(
             currentPage.value - 1,
             ITEMS_PER_PAGE,
@@ -148,18 +148,13 @@ export default defineComponent({
             dataSourceName.value
           )
           .then((response) => response.json())
-          .then((data) => data)
-        dataSources.value = res.data
-        await getDataSourcesCount()
+        dataSources.value = data
+        dataSourcesCount.value = total_count
+        totalPages.value = Math.ceil(dataSourcesCount.value / ITEMS_PER_PAGE)
       } catch (error) {
         handleError(error as Error)
       }
       releaseLoading()
-    }
-    const getDataSourcesCount = async () => {
-      const res = await callers.getCounts()
-      dataSourcesCount.value = res.dataSourceCount.toNumber()
-      totalPages.value = Math.ceil(dataSourcesCount.value / ITEMS_PER_PAGE)
     }
     const createDataSource = async () => {
       await showDialogHandler(DataSourceFormModal, {

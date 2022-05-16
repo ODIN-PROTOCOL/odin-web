@@ -158,7 +158,7 @@ export default defineComponent({
     const loadOracleScripts = async () => {
       lockLoading()
       try {
-        oracleScripts.value = await callers
+        const { data, total_count } = await callers
           .getSortedOracleScripts(
             currentPage.value - 1,
             ITEMS_PER_PAGE,
@@ -167,8 +167,9 @@ export default defineComponent({
             oracleScriptsName.value
           )
           .then((response) => response.json())
-          .then((data) => data.data)
-        await getOracleScriptsCount()
+        oracleScripts.value = data
+        oracleScriptsCount.value = total_count
+        totalPages.value = Math.ceil(oracleScriptsCount.value / ITEMS_PER_PAGE)
       } catch (error) {
         handleError(error as Error)
       }
@@ -185,11 +186,6 @@ export default defineComponent({
         handleError(error as Error)
       }
       releaseLoading()
-    }
-    const getOracleScriptsCount = async () => {
-      const res = await callers.getCounts()
-      oracleScriptsCount.value = res.oracleScriptCount.toNumber()
-      totalPages.value = Math.ceil(oracleScriptsCount.value / ITEMS_PER_PAGE)
     }
 
     const createOracleScript = async () => {

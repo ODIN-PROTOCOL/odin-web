@@ -42,21 +42,10 @@
       <div class="app-table__head validators__table-head">
         <span class="validators__table-head-item">Rank</span>
         <span class="validators__table-head-item">Validator</span>
-        <span
-          class="validators__table-head-item validators__table-head-item--end"
-        >
-          Delegated
-        </span>
-        <span
-          class="validators__table-head-item validators__table-head-item--end"
-        >
-          Commission
-        </span>
-        <span
-          class="validators__table-head-item validators__table-head-item--center"
-        >
-          Oracle Status
-        </span>
+        <span class="validators__table-head-item"> Delegated </span>
+        <span class="validators__table-head-item"> Commission </span>
+        <span class="validators__table-head-item"> Uptime </span>
+        <span class="validators__table-head-item"> Oracle Status </span>
         <span class="validators__table-head-item"></span>
       </div>
       <div class="app-table__body">
@@ -78,7 +67,7 @@
                 :to="`/validators/${item.operatorAddress}`"
               />
             </div>
-            <div class="app-table__cell validators__table-cell--end">
+            <div class="app-table__cell app-table__cell-txt">
               <span class="app-table__title">Delegated</span>
               <span
                 :title="
@@ -97,11 +86,22 @@
                 }}
               </span>
             </div>
-            <div class="app-table__cell validators__table-cell--end">
+            <div class="app-table__cell validators__table-cell--center">
               <span class="app-table__title">Commission</span>
               <span>
                 {{ $getPrecisePercents(item.commission.commissionRates.rate) }}
               </span>
+            </div>
+            <div class="app-table__cell">
+              <span class="app-table__title">Uptime</span>
+              <Progressbar
+                v-if="item.uptimeInfo.uptime"
+                :min="0"
+                :max="100"
+                :current="Number(item.uptimeInfo.uptime) || 0"
+                :forValidators="true"
+              />
+              <span v-else>N/A</span>
             </div>
             <div class="app-table__cell validators__table-cell--center">
               <span class="app-table__title">Oracle Status</span>
@@ -114,14 +114,14 @@
                 >
                   <button
                     v-if="delegations[item.operatorAddress]"
-                    class="app-btn app-btn_outlined app-btn_small w-min150"
+                    class="app-btn app-btn_outlined app-btn--very-small w-min108"
                     type="button"
                     @click="redelegate(item)"
                   >
                     Redelegate
                   </button>
                   <button
-                    class="app-btn app-btn_small w-min150"
+                    class="app-btn app-btn--very-small w-min108"
                     type="button"
                     @click="delegate(item)"
                   >
@@ -133,14 +133,14 @@
                   class="app-table__activities-item validators__table-activities-item"
                 >
                   <button
-                    class="app-btn app-btn_outlined app-btn_small w-min150"
+                    class="app-btn app-btn_outlined app-btn--very-small w-min108"
                     type="button"
                     @click="withdrawRewards(item)"
                   >
                     Claim rewards
                   </button>
                   <button
-                    class="app-btn app-btn_outlined app-btn_small w-min150"
+                    class="app-btn app-btn_outlined app-btn--very-small w-min108"
                     type="button"
                     @click="undelegate(item)"
                   >
@@ -209,8 +209,10 @@ import BecomeValidatorFormModal from '@/components/modals/BecomeValidatorFormMod
 import ClaimAllRewardsFormModal from '@/components/modals/ClaimAllRewardsFormModal.vue'
 import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
 import { isActiveValidator } from '@/helpers/validatorHelpers'
+import Progressbar from '@/components/Progressbar.vue'
+
 export default defineComponent({
-  components: { Tabs, Tab, TitledLink, StatusIcon, AppPagination },
+  components: { Tabs, Tab, TitledLink, StatusIcon, AppPagination, Progressbar },
   setup() {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 50
@@ -236,6 +238,10 @@ export default defineComponent({
         const unbonding = await callers.getValidators('BOND_STATUS_UNBONDING')
         const unbonded = await callers.getValidators('BOND_STATUS_UNBONDED')
 
+        const allUptime = await callers
+          .getValidatorUptime()
+          .then((resp) => resp.json())
+
         activeValidators = await Promise.all(
           await getTransformedValidators([
             ...bonded.validators,
@@ -245,6 +251,10 @@ export default defineComponent({
               return {
                 ...item,
                 isActive: await isActiveValidator(item.operatorAddress),
+                uptimeInfo: allUptime.find(
+                  (name: { operator_address: string }) =>
+                    name.operator_address === item.operatorAddress
+                ),
               }
             })
           )
@@ -257,6 +267,10 @@ export default defineComponent({
                 return {
                   ...item,
                   isActive: await isActiveValidator(item.operatorAddress),
+                  uptimeInfo: allUptime.find(
+                    (name: { operator_address: string }) =>
+                      name.operator_address === item.operatorAddress
+                  ),
                 }
               })
           )
@@ -468,35 +482,36 @@ export default defineComponent({
 
 .validators__table-head,
 .validators__table-row {
+  gap: 3.4rem;
   grid:
     auto /
+    minmax(2rem, 5rem)
+    minmax(5rem, 1fr)
     minmax(6rem, 0.5fr)
-    minmax(8rem, 3fr)
-    minmax(8rem, 4fr)
-    minmax(8rem, 3fr)
-    minmax(8rem, 2fr)
-    minmax(32.5rem, 4fr);
+    minmax(8rem, 0.5fr)
+    minmax(7rem, 1fr)
+    minmax(6rem, 8rem)
+    minmax(24rem, 1.5fr);
 }
-
+.validators__table-row {
+  padding: 3.2rem 0 2rem;
+}
 .validators__table-activities {
   width: 100%;
 
   & > *:not(:last-child) {
-    margin-bottom: 2.4rem;
+    margin-bottom: 1.6rem;
   }
 }
 
 .validators__table-activities-item {
   display: flex;
   justify-content: flex-end;
-  gap: 2.4rem;
+  gap: 1.6rem;
 }
 
 .validators__table-cell--center {
   justify-content: center;
-}
-.validators__table-cell--end {
-  justify-content: flex-end;
 }
 
 .validators__table-head-item--center {
@@ -515,7 +530,12 @@ export default defineComponent({
 .validators--large-padding {
   padding-bottom: 17rem;
 }
-
+@include respond-to(medium) {
+  .validators__table-head,
+  .validators__table-row {
+    gap: 1.6rem;
+  }
+}
 @include respond-to(tablet) {
   .validators__count-info {
     margin-bottom: 0;
@@ -540,9 +560,6 @@ export default defineComponent({
   }
 
   .validators__table-cell--center {
-    justify-content: flex-start;
-  }
-  .validators__table-cell--end {
     justify-content: flex-start;
   }
 

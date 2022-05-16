@@ -257,6 +257,9 @@ const makeCallers = () => {
         `${API_CONFIG.telemetryUrl}telemetry/requests/data_sources/${id}?page[number]=${page_number}&page[limit]=${page_limit}`
       )
     },
+    getValidatorUptime: () => {
+      return sendGet(`${API_CONFIG.telemetryUrl}telemetry/validators`)
+    },
   }
 }
 
