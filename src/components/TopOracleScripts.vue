@@ -16,11 +16,15 @@
       <div class="top-oracle-scripts__item-info">
         <div class="top-oracle-scripts__item-info-value">
           <div class="top-oracle-scripts__item-info-title">Requests number</div>
-          <div class="top-oracle-scripts__item-info-text">-</div>
+          <div class="top-oracle-scripts__item-info-text">
+            {{ script.attributes.requests_number }}
+          </div>
         </div>
         <div class="top-oracle-scripts__item-info-value">
           <div class="top-oracle-scripts__item-info-title">Response time</div>
-          <div class="top-oracle-scripts__item-info-text">-</div>
+          <div class="top-oracle-scripts__item-info-text">
+            {{ script.attributes.response_time }} s
+          </div>
         </div>
       </div>
     </div>

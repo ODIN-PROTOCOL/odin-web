@@ -52,7 +52,7 @@ const makeCallers = () => {
       name: string
     ) => {
       return sendGet(
-        `${API_CONFIG.telemetryUrl}telemetry/data_sources?page[number]=${page_number}&page[limit]=${page_limit}&sort=${activities}&owner=${owner}&name=${name}`
+        `${API_CONFIG.telemetryUrl}/data_sources?page[number]=${page_number}&page[limit]=${page_limit}&sort=${activities}&owner=${owner}&name=${name}`
       )
     },
     getDataSource: querier((qc) => qc.oracle.unverified.dataSource),
@@ -73,7 +73,7 @@ const makeCallers = () => {
       name: string
     ) => {
       return sendGet(
-        `${API_CONFIG.telemetryUrl}telemetry/oracle_scripts?page[number]=${page_number}&page[limit]=${page_limit}&sort=${activities}&owner=${owner}&name=${name}`
+        `${API_CONFIG.telemetryUrl}/oracle_scripts?page[number]=${page_number}&page[limit]=${page_limit}&sort=${activities}&owner=${owner}&name=${name}`
       )
     },
     getAccountTx: (
@@ -84,7 +84,7 @@ const makeCallers = () => {
       tx_type: string
     ) => {
       return sendGet(
-        `${API_CONFIG.telemetryUrl}telemetry/account_txs/${owner}?page[number]=${page_number}&page[limit]=${page_limit}&page[order]=${page_order}&type=${tx_type}`
+        `${API_CONFIG.telemetryUrl}/account_txs/${owner}?page[number]=${page_number}&page[limit]=${page_limit}&page[order]=${page_order}&type=${tx_type}`
       )
     },
     getChannel: querier((qc) => qc.ibc.channel.allChannels),
@@ -132,13 +132,11 @@ const makeCallers = () => {
       return sendGet(`${API_CONFIG.api}/gov/proposals/${proposalId}/proposer`)
     },
     getProposalChanges: () => {
-      return sendGet(
-        `${API_CONFIG.telemetryUrl}/telemetry/blocks/vote_proposals`
-      )
+      return sendGet(`${API_CONFIG.telemetryUrl}/blocks/vote_proposals`)
     },
     getProposalsStatistic: () => {
       return sendGet(
-        `${API_CONFIG.telemetryUrl}/telemetry/blocks/vote_proposals_statistics`
+        `${API_CONFIG.telemetryUrl}/blocks/vote_proposals_statistics`
       )
     },
     proposalDeposit: broadcaster<MsgDeposit>(
@@ -231,13 +229,11 @@ const makeCallers = () => {
       page_limit: number
     ) => {
       return sendGet(
-        `${API_CONFIG.telemetryUrl}telemetry/validator/${proposer}/transactions?page[number]=${page_number}&page[limit]=${page_limit}&page[order]=desc`
+        `${API_CONFIG.telemetryUrl}/validator/${proposer}/transactions?page[number]=${page_number}&page[limit]=${page_limit}&page[order]=desc`
       )
     },
     getDataSourceCode: (id: string) => {
-      return sendGet(
-        `${API_CONFIG.telemetryUrl}telemetry/data_source_code/${id}`
-      )
+      return sendGet(`${API_CONFIG.telemetryUrl}/data_source_code/${id}`)
     },
     getOracleScriptRequests: (
       id: string,
@@ -245,7 +241,7 @@ const makeCallers = () => {
       page_limit: number
     ) => {
       return sendGet(
-        `${API_CONFIG.telemetryUrl}telemetry/requests/oracle_scripts/${id}?page[number]=${page_number}&page[limit]=${page_limit}`
+        `${API_CONFIG.telemetryUrl}/requests/oracle_scripts/${id}?page[number]=${page_number}&page[limit]=${page_limit}`
       )
     },
     getDataSourceRequests: (
@@ -254,11 +250,11 @@ const makeCallers = () => {
       page_limit: number
     ) => {
       return sendGet(
-        `${API_CONFIG.telemetryUrl}telemetry/requests/data_sources/${id}?page[number]=${page_number}&page[limit]=${page_limit}`
+        `${API_CONFIG.telemetryUrl}/requests/data_sources/${id}?page[number]=${page_number}&page[limit]=${page_limit}`
       )
     },
     getValidatorUptime: () => {
-      return sendGet(`${API_CONFIG.telemetryUrl}telemetry/validators`)
+      return sendGet(`${API_CONFIG.telemetryUrl}/validators`)
     },
   }
 }

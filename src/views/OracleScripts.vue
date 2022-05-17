@@ -3,7 +3,7 @@
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Oracle Scripts</h2>
       <button
-        class="view-main__title-btn app-btn app-btn_small fx-sae"
+        class="view-main__title-btn app-btn app-btn_small fx-sae oracle-scripts__title-btn"
         type="button"
         @click="createOracleScript()"
       >
@@ -11,7 +11,7 @@
       </button>
     </div>
 
-    <template v-if="false">
+    <template v-if="mostRequestedOracleScripts">
       <div>
         <h3 class="view-main__subtitle mg-b24">Most requested</h3>
         <TopOracleScripts :top-oracle-scripts="mostRequestedOracleScripts" />
@@ -284,6 +284,9 @@ export default defineComponent({
 @include respond-to(tablet) {
   .oracle-scripts {
     padding-bottom: 10rem;
+  }
+  .oracle-scripts__title-btn {
+    display: none;
   }
   .oracle-scripts__count-info {
     margin-bottom: 2.4rem;
