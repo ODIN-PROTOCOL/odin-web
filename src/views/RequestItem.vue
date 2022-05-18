@@ -150,7 +150,7 @@ export default defineComponent({
     const requestResultName = ref()
     const requestResultType = ref()
     const senderLink = computed(() => {
-      return `${API_CONFIG.odinScan}/account/${requestData.value?.requestPacketData?.clientId}`
+      return `${API_CONFIG.odinScan}/account/${requestData.value?.client_id}`
     })
     const isObject = computed(() => {
       return isObjectLodash(requestCalldata.value)

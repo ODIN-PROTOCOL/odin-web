@@ -51,7 +51,7 @@
                 class="app-table__cell-txt app-table__link"
                 :href="senderLink(item)"
               >
-                {{ item.result.client_id }}
+                {{ item.request.client_id }}
               </a>
             </div>
             <div class="app-table__cell">
@@ -128,8 +128,8 @@ export default defineComponent({
     const requestsCount = ref()
     const maxAskCount = ref()
     const senderLink = computed(
-      () => (item: { request_packet_data: { client_id: number } }) => {
-        return `${API_CONFIG.odinScan}/account/${item.request_packet_data?.client_id}`
+      () => (item: { request: { client_id: string } }) => {
+        return `${API_CONFIG.odinScan}/account/${item.request.client_id}`
       }
     )
 
