@@ -241,7 +241,7 @@ export function showDelegateFormDialog(
   line-height: 2.4rem;
 }
 
-@include respond-to(420px) {
+@include respond-to(small) {
   .delegate-form-modal__field-balance {
     gap: 1.6rem;
     flex-direction: column;

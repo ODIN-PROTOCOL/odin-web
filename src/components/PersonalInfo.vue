@@ -24,42 +24,44 @@
     <div class="personal-info__card">
       <div class="personal-info__card-title-wrapper">
         <h2 class="personal-info__card-title">Balance</h2>
-        <button
-          class="app-btn app-btn_small"
-          @click="send()"
-          :disabled="isEmptyBalance"
-        >
-          Send
-        </button>
+        <div class="personal-info__card-btn-wrapper">
+          <a class="personal-info__link-scan" :href="accountLink"
+            >Go to account explorer
+          </a>
+          <a
+            class="personal-info__link-scan personal-info__link-scan--mobile"
+            :href="accountLink"
+            >Account explorer
+          </a>
+          <button
+            class="app-btn app-btn_small"
+            @click="send()"
+            :disabled="isEmptyBalance"
+          >
+            Send
+          </button>
+        </div>
       </div>
       <div class="personal-info__card-balance">
         <div class="personal-info__card-balance-row">
           <span class="personal-info__card-balance-row-title">ODIN</span>
           <div class="personal-info__card-balance-row-value-wrapper">
-            <a
-              class="personal-info__card-balance-row-value app-table__cell-txt app-table__link"
+            <span
+              class="personal-info__card-balance-row-value app-table__cell-txt"
               :title="$convertLokiToOdin(lokiCoins.amount)"
-              :href="accountLink"
             >
-              {{ $convertLokiToOdin(lokiCoins.amount) }}
-            </a>
-            <span class="personal-info__tooltip">
-              Switching to an account explorer
+              {{ $convertLokiToOdin(lokiCoins.amount, { onlyNumber: true }) }}
             </span>
           </div>
         </div>
         <div class="personal-info__card-balance-row">
           <span class="personal-info__card-balance-row-title">GEO</span>
           <div class="personal-info__card-balance-row-value-wrapper">
-            <a
+            <span
               class="personal-info__card-balance-row-value app-table__cell-txt app-table__link"
-              :href="accountLink"
               :title="0"
             >
               {{ 0 }}
-            </a>
-            <span class="personal-info__tooltip">
-              Switching to an account explorer
             </span>
           </div>
         </div>
@@ -154,6 +156,21 @@ export default defineComponent({
   line-height: 3.2rem;
   font-weight: 400;
 }
+.personal-info__card-btn-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+}
+.personal-info__link-scan {
+  text-decoration-line: underline;
+  text-align: center;
+  color: var(--clr__action);
+  font-size: 1.4rem;
+  line-height: 2rem;
+  &--mobile {
+    display: none;
+  }
+}
 .personal-info__card {
   width: 100%;
   display: flex;
@@ -167,6 +184,7 @@ export default defineComponent({
   display: inline-block;
   font-size: 2.4rem;
   font-weight: 400;
+  padding-right: 0.8rem;
   margin-bottom: 3.2rem;
 }
 .personal-info__card-balance {
@@ -193,51 +211,16 @@ export default defineComponent({
   flex-direction: column;
   max-width: 20rem;
   position: relative;
-  &:hover {
-    .personal-info__tooltip {
-      display: block;
-    }
-  }
 }
 .personal-info__card-balance-row-value {
   width: 100%;
   font-weight: 600;
-  cursor: pointer;
   color: var(--clr__text);
-  &:hover {
-    text-decoration-line: underline;
-    color: var(--clr__action);
-  }
 }
 .personal-info__card-activities {
   display: flex;
   align-items: center;
   gap: 2.4rem;
-}
-.personal-info__tooltip {
-  display: none;
-  position: absolute;
-  background: var(--clr__tooltip-bg);
-  border-radius: 0.8rem;
-  font-size: 1.6rem;
-  font-weight: 400;
-  line-height: 1.6rem;
-  color: var(--clr__tooltip-text);
-  top: 125%;
-  padding: 1rem 2.4rem;
-  left: -10rem;
-  width: 27rem;
-  &:before {
-    content: '';
-    display: block;
-    width: 0.6rem;
-    height: 0.6rem;
-    position: absolute;
-    top: -0.3rem;
-    left: 40%;
-    transform: translateX(-50%) rotate(45deg);
-    background: var(--clr__tooltip-bg);
-  }
 }
 .personal-info__card-title-wrapper {
   display: flex;
@@ -262,17 +245,21 @@ export default defineComponent({
   .personal-info__card-balance-row {
     padding-left: 0.4rem;
   }
-  .personal-info__tooltip {
-    left: -3rem;
-    width: 13.5rem;
-    &:before {
-      left: 25%;
+  .personal-info__link-scan {
+    display: none;
+    &--mobile {
+      display: inline-block;
     }
   }
 }
 @include respond-to(small) {
   .personal-info__card {
     padding: 2.2rem;
+  }
+  .personal-info__card-btn-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
   }
 }
 </style>
