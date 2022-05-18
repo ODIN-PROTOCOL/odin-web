@@ -20,12 +20,7 @@
               </label>
               <p
                 class="delegate-form-modal__field-balance-value"
-                :title="
-                  $convertLokiToOdin(lokiBalance?.amount, {
-                    withDenom: true,
-                    forTitle: true,
-                  })
-                "
+                :title="$convertLokiToOdin(lokiBalance?.amount)"
               >
                 {{
                   $convertLokiToOdin(lokiBalance?.amount, { withDenom: true })
@@ -39,12 +34,7 @@
               <p
                 v-if="delegation && delegation.balance"
                 class="delegate-form-modal__field-balance-value"
-                :title="
-                  $convertLokiToOdin(delegation.balance?.amount, {
-                    withDenom: true,
-                    forTitle: true,
-                  })
-                "
+                :title="$convertLokiToOdin(delegation.balance?.amount)"
               >
                 {{
                   $convertLokiToOdin(delegation.balance?.amount, {

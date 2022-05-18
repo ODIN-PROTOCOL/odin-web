@@ -14,14 +14,7 @@
           <template v-if="isAvailableCoin">
             <div class="app-form__field">
               <label class="app-form__field-lbl">Available:</label>
-              <p
-                :title="
-                  $convertLokiToOdin(availableCoinForRedelegate.amount, {
-                    withDenom: true,
-                    forTitle: true,
-                  })
-                "
-              >
+              <p :title="$convertLokiToOdin(availableCoinForRedelegate.amount)">
                 {{
                   $convertLokiToOdin(availableCoinForRedelegate.amount, {
                     withDenom: true,

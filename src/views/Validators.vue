@@ -90,9 +90,7 @@
               <span
                 :title="
                   $convertLokiToOdin(item.delegatorShares, {
-                    withDenom: true,
                     withPrecise: true,
-                    forTitle: true,
                   })
                 "
               >

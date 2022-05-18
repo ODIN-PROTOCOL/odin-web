@@ -19,9 +19,7 @@
                 :key="item.denom"
                 :title="
                   $convertLokiToOdin(item.amount, {
-                    withDenom: true,
                     withPrecise: true,
-                    forTitle: true,
                   })
                 "
               >

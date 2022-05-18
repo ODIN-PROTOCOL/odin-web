@@ -31,12 +31,7 @@
               </label>
               <p
                 class="undelegate-form-modal__field-balance-value"
-                :title="
-                  $convertLokiToOdin(validator.minSelfDelegation, {
-                    withDenom: true,
-                    forTitle: true,
-                  })
-                "
+                :title="$convertLokiToOdin(validator.minSelfDelegation)"
               >
                 {{ $convertLokiToOdin(validator.minSelfDelegation) }} ODIN
               </p>
@@ -51,12 +46,7 @@
               </label>
               <p
                 class="undelegate-form-modal__field-balance-value"
-                :title="
-                  $convertLokiToOdin(delegation.balance.amount, {
-                    withDenom: true,
-                    forTitle: true,
-                  })
-                "
+                :title="$convertLokiToOdin(delegation.balance.amount)"
               >
                 {{
                   $convertLokiToOdin(delegation.balance.amount, {
