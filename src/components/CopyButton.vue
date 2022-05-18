@@ -60,7 +60,7 @@ export default defineComponent({
   padding-left: 0.4rem;
   &--black {
     .copy-button__copy-icon {
-      fill: black;
+      fill: var(--clr__text);
     }
   }
 }
@@ -71,7 +71,7 @@ export default defineComponent({
   transform: translateX(-50%);
   padding: 1.2rem 2.4rem;
   background: var(--clr__tooltip-bg);
-  border-radius: 8px;
+  border-radius: 0.8rem;
   color: var(--clr__tooltip-text);
 
   &:before {

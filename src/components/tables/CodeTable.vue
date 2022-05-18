@@ -4,7 +4,9 @@
       <CopyButtonWithText text="Copy code" :value="code" />
       <highlightjs class="code-table__script" autodetect :code="code" />
     </div>
-    <div class="code-table__empty-msg" v-else>Code not found</div>
+    <div v-else class="app-table__empty-stub">
+      <span class="empty mg-t32">Code not found</span>
+    </div>
   </div>
 </template>
 
@@ -21,14 +23,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.code-table {
-  &__script {
-    margin-bottom: 2rem;
-    white-space: pre;
-  }
-  &__empty-msg {
-    text-align: center;
-    font-size: 2.5rem;
-  }
+.code-table__script {
+  margin-bottom: 2rem;
+  white-space: pre;
 }
 </style>

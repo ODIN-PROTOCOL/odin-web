@@ -193,7 +193,7 @@
       </button>
       <button
         v-if="isDelegator"
-        class="app-btn w-full"
+        class="validators__title-btn--white app-btn w-full"
         type="button"
         @click="claimAllRewards"
       >

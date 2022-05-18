@@ -8,7 +8,7 @@ export const API_CONFIG = {
   exBridgeFee: process.env.VUE_APP_EX_BRIDGE_FEE as string,
   hdDeviation: stringToPath(process.env.VUE_APP_DEVIATION as string),
   odinScan: process.env.VUE_APP_ODIN_SCAN_URL as string,
-  telemetryUrl: process.env.VUE_APP_TELEMETRY_URL.slice(0, -1) as string,
+  telemetryUrl: process.env.VUE_APP_TELEMETRY_URL?.slice(0, -1) as string,
   fee: process.env.VUE_APP_FEE as string,
 }
 

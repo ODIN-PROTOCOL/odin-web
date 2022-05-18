@@ -1,5 +1,10 @@
 <template>
-  <div class="view-main data-sources">
+  <div
+    class="view-main data-sources load-fog"
+    :class="{
+      'load-fog_show': isLoading,
+    }"
+  >
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Data Sources</h2>
       <button
@@ -83,8 +88,8 @@
         </template>
         <template v-else>
           <div class="app-table__empty-stub">
-            <p v-if="isLoading">Loading…</p>
-            <p v-else>No items yet</p>
+            <p v-if="isLoading" class="empty mg-t32">Loading…</p>
+            <p v-else class="empty mg-t32">No items yet</p>
           </div>
         </template>
       </div>

@@ -1,5 +1,10 @@
 <template>
-  <div class="oracle-scripts-item view-main">
+  <div
+    class="oracle-scripts-item view-main load-fog"
+    :class="{
+      'load-fog_show': isLoading,
+    }"
+  >
     <div class="view-main__title-wrapper">
       <BackButton :text="'Oracle Scripts'" />
       <h2 class="view-main__title oracle-scripts-item__title">Oracle Script</h2>
@@ -65,9 +70,9 @@
       </Tabs>
     </template>
     <template v-else>
-      <div class="view-main__empty-msg oracle-scripts-item__empty-msg">
-        <p v-if="isLoading">Loading…</p>
-        <p v-else>Data source not found</p>
+      <div class="app-table__empty-stub">
+        <p v-if="isLoading" class="empty mg-t32">Loading…</p>
+        <p v-else class="empty mg-t32">No items yet</p>
       </div>
     </template>
     <div class="view-main__mobile-activities" v-if="isOracleScriptOwner">
