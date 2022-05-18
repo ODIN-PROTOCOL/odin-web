@@ -115,7 +115,7 @@
                 :min="0"
                 :max="100"
                 :current="Number(item.uptimeInfo.uptime) || 0"
-                :forValidators="true"
+                :isForValidators="true"
               />
               <span v-else>N/A</span>
             </div>

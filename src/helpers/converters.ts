@@ -16,7 +16,7 @@ const ODIN_DENOM = 'ODIN'
 const LOKI_MULTIPLIER = 1000000
 
 export function convertLokiToOdin(
-  amount: string | undefined,
+  amount: string | BigNumber | undefined,
   options?: ConverterOptions
 ): string | BigNumber {
   if (!amount) return '-'
@@ -43,7 +43,7 @@ export function convertOdinToLoki(amount: string): number {
 
   return big.multiply(num, LOKI_MULTIPLIER).toNumber()
 }
-export function getLokiFromString(value: string): string {
+export function getLokiFromString(value: string | undefined): string {
   if (!value) {
     return ''
   }

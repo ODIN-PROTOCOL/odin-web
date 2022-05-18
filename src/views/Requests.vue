@@ -136,15 +136,11 @@ export default defineComponent({
     const getRequests = async () => {
       lockLoading()
       try {
-        requests.value = await fetch(
-          `${
-            API_CONFIG.rpc
-          }api/oracle/requests?limit=${ITEMS_PER_PAGE}&offset=${
-            (currentPage.value - 1) * ITEMS_PER_PAGE
-          }&reverse=true`
+        const req = await callers.getRequests(
+          ITEMS_PER_PAGE,
+          (currentPage.value - 1) * ITEMS_PER_PAGE
         )
-          .then((requests) => requests.json())
-          .then((data) => data.result.result.requests)
+        requests.value = req.data.result.result.requests
         await getRequestsCount()
       } catch (error) {
         handleError(error as Error)

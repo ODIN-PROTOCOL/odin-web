@@ -162,11 +162,9 @@ export default defineComponent({
     const getRequest = async () => {
       lockLoading()
       try {
-        const request = await fetch(
-          `${API_CONFIG.rpc}api/oracle/requests/${route.params.id}`
-        ).then((requests) => requests.json())
-        requestData.value = request?.result.result.request
-        resultData.value = request?.result.result.result
+        const request = await callers.getRequest(Number(route.params.id))
+        requestData.value = request?.data.result.result.request
+        resultData.value = request?.data.result.result.result
         requestStatus.value = resultData.value.resolve_status
         requestTime.value = formatDate(
           new Date(requestData.value.request_time * 1000)

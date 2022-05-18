@@ -102,19 +102,13 @@ body {
 }
 
 .empty {
-  width: 100%;
-  grid-column-start: 1;
-  grid-column-end: -1;
-  color: var(--clr__input-border);
   display: flex;
   justify-content: center;
   align-items: center;
+  text-transform: uppercase;
   font-size: 3.2rem;
   font-weight: 600;
-  text-transform: uppercase;
-  &-loading {
-    margin-right: 2rem;
-  }
+  color: var(--clr__input-border);
 }
 @keyframes spin {
   to { -webkit-transform: rotate(360deg); }

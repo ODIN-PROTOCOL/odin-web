@@ -1,6 +1,6 @@
 <template>
   <div class="progressbar__wrapper">
-    <div class="progressbar__info" v-if="forValidators">
+    <div class="progressbar__info" v-if="isForValidators">
       <span class="progressbar__info-item">{{ current }} %</span>
     </div>
     <div class="progressbar__info" v-else>
@@ -29,7 +29,7 @@ export default defineComponent({
     min: { type: Number, required: true },
     max: { type: Number, required: true },
     current: { type: Number, required: true },
-    forValidators: { type: Boolean, default: false },
+    isForValidators: { type: Boolean, default: false },
   },
   setup: function (props) {
     const _min = toRef(props, 'min')

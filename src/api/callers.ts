@@ -14,7 +14,6 @@ import { api } from './api'
 import { wallet } from './wallet'
 import { mapResponse, sendPost, sendGet } from './callersHelpers'
 import { cacheAnswers } from '@/helpers/requests'
-import { decodeRequestResults } from '@/helpers/requestResultDecoders'
 import { decodeProposal, decodeProposals } from '@/helpers/proposalDecoders'
 import { decodeValidators } from '@/helpers/validatorDecoders'
 import { NumLike } from '@/helpers/casts'
@@ -26,6 +25,7 @@ import {
 } from 'cosmjs-types/cosmos/staking/v1beta1/tx'
 import { Proposal } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { MsgWithdrawDelegatorReward } from 'cosmjs-types/cosmos/distribution/v1beta1/tx'
+import { axiosWrapper } from '@/helpers/functions'
 
 const makeCallers = () => {
   const broadcaster = api.makeBroadcastCaller.bind(api)
@@ -95,15 +95,14 @@ const makeCallers = () => {
       '/oracle.v1.MsgRequestData',
       MsgRequestData
     ),
-    getRequests: querier((qc) =>
-      mapResponse(qc.oracle.unverified.requests, (response) => {
-        return {
-          ...response,
-          requests: decodeRequestResults(response.requests),
-        }
-      })
-    ),
-    getRequest: querier((qc) => qc.oracle.unverified.request),
+    getRequests: (page_limit: number, page_number: number) => {
+      return axiosWrapper.get(
+        `${API_CONFIG.rpc}api/oracle/requests?limit=${page_limit}&offset=${page_number}&reverse=true`
+      )
+    },
+    getRequest: (id: number) => {
+      return axiosWrapper.get(`${API_CONFIG.rpc}api/oracle/requests/${id}`)
+    },
     getOracleParams: querier((qc) => qc.oracle.unverified.params),
     getProposals: querier((qc) =>
       mapResponse(qc.gov.unverified.proposals, (response) => {

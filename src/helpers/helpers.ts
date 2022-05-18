@@ -1,19 +1,9 @@
 import { getDateFromMessage } from '@/helpers/decodeMessage'
 import { toHex } from '@cosmjs/encoding'
 import { adjustedData, IAttributesItem, IEventsItem } from '@/helpers/Types'
-import { TxResponse } from '@cosmjs/tendermint-rpc/build/tendermint34/responses'
 import { convertLokiToOdin } from './converters'
-
-export const _allowedTypes = [
-  'Send',
-  'Receive',
-  'Report Data',
-  'Request Data',
-  'Delegate',
-  'Undelegate',
-  'Redelegate',
-  'Withdraw',
-]
+import { TxTelemetry } from '@/helpers/Types'
+import { formatDate } from '@/helpers/formatters'
 
 export const toHexFunc: (data: Uint8Array) => string = toHex
 
@@ -22,28 +12,41 @@ export const copyValue = (text: string): void => {
 }
 
 export const prepareTransaction = async (
-  txs: readonly TxResponse[]
+  txs: readonly TxTelemetry[]
 ): Promise<Array<adjustedData>> => {
-  const transformedTxs = await Promise.all(
-    txs.map(async (item) => {
-      const { receiver, sender, type, amount, time, fee } =
-        await getDateFromMessage(item)
-
-      const odinAmount = Number(convertLokiToOdin(amount)) + ' ODIN'
-      const odinFee = Number(convertLokiToOdin(fee)) + ' ODIN'
-      return {
+  let tempArr: Array<adjustedData> = []
+  for (const tx of txs) {
+    const {
+      receiver,
+      sender,
+      type,
+      amount,
+      time,
+      fee,
+      memo,
+      status,
+      gasUsed,
+      gasWanted,
+    } = await getDateFromMessage(tx)
+    tempArr = [
+      ...tempArr,
+      {
         type: type ? type : '-',
-        hash: item.hash ? toHexFunc(item.hash) : '-',
-        block: item.height ? item.height : '-',
-        time: time ? time : null,
+        hash: tx.hash ? tx.hash.toLowerCase() : '-',
+        block: tx.height ? tx.height : '-',
+        time: time ? formatDate(Number(time), 'HH:mm dd.MM.yy') : '-',
         sender: sender ? sender : '',
         receiver: receiver ? receiver : '',
-        amount: amount ? String(odinAmount) : '',
-        fee: fee ? String(odinFee) : '-',
-      }
-    })
-  )
-  return transformedTxs
+        amount: convertLokiToOdin(amount),
+        fee: convertLokiToOdin(fee),
+        memo: memo ? memo : '-',
+        status: Number(status) > -1 ? 'Success' : 'Failed',
+        gasUsed: gasUsed ? gasUsed : '-',
+        gasWanted: gasWanted ? gasWanted : '-',
+      },
+    ]
+  }
+  return tempArr
 }
 
 const LOKI_STRING_LENGTH = 4

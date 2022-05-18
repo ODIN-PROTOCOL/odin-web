@@ -42,7 +42,7 @@
                   })
                 }}
               </p>
-              <p class="delegate-form-modal__field-balance-value" v-else>
+              <p v-else class="delegate-form-modal__field-balance-value">
                 0 ODIN
               </p>
             </div>

@@ -173,8 +173,7 @@ export default defineComponent({
       assets: [props.dataSource?.fee[0]?.denom || 'loki', validators.required],
       price: [
         props.dataSource?.fee[0]?.amount ||
-          getLokiFromString(props.dataSource?.fee) ||
-          '',
+          getLokiFromString(props.dataSource?.fee),
         validators.required,
         validators.number,
         validators.sixDecimalNumber,

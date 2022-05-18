@@ -1,5 +1,6 @@
 import { Modify } from '@/shared-types'
 import { ProposalDecoded } from '@/helpers/proposalDecoders'
+import { BigNumber } from 'bignumber.js'
 
 export interface IEventsItem {
   type: string
@@ -17,12 +18,15 @@ export type adjustedData = {
   hash?: string
   block?: string | number | undefined
   delegatorAddress?: string
-  time?: Date | string | null
+  time?: string | void | Date
   sender?: string
   receiver?: string
-  amount?: string
-  fee?: string
+  amount?: string | BigNumber | undefined
+  fee?: string | BigNumber | undefined
   status?: number | string | undefined
+  memo?: string
+  gasWanted?: string | number
+  gasUsed?: string | number
 }
 
 export type txFromTelemetry = {
@@ -94,4 +98,24 @@ type ProposalsStatisticItem = { Name: string; Count: number }
 
 export type ProposalsStatistic = {
   [key: number]: ProposalsStatisticItem
+}
+export interface EventTx {
+  readonly type: string
+  readonly attributes?: [{ readonly key: string; readonly value: string }]
+}
+export interface TxData {
+  readonly code: number
+  readonly codeSpace?: string
+  readonly log?: string
+  readonly data?: string | null
+  readonly events: EventTx[]
+  readonly gas_wanted: string
+  readonly gas_used: string
+}
+export interface TxTelemetry {
+  readonly tx: string
+  readonly hash: string
+  readonly height: number
+  readonly index: number
+  readonly tx_result: TxData
 }
