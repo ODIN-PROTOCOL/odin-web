@@ -1,5 +1,10 @@
 <template>
-  <div class="view-main proposal">
+  <div
+    class="view-main proposal load-fog"
+    :class="{
+      'load-fog_show': isLoading,
+    }"
+  >
     <div class="view-main__title-wrapper">
       <BackButton :text="'Governance'" />
       <h2 class="view-main__title proposal__title">Proposal</h2>
@@ -120,8 +125,10 @@
       </div>
     </template>
     <template v-else>
-      <span v-if="isLoading" class="view-main__subtitle">Loading...</span>
-      <span v-else class="view-main__subtitle">Proposal not found</span>
+      <div class="app-table__empty-stub">
+        <p v-if="isLoading" class="empty mg-t32">Loading…</p>
+        <p v-else class="empty mg-t32">No items yet</p>
+      </div>
     </template>
 
     <div class="view-main__mobile-activities">

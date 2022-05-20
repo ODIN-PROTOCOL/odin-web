@@ -1,33 +1,33 @@
 <template>
-  <div class="view-main request-item">
+  <div
+    class="view-main request-item load-fog"
+    :class="{
+      'load-fog_show': isLoading,
+    }"
+  >
     <div class="view-main__title-wrapper">
       <BackButton :text="'Requests'" />
       <h2 class="view-main__title request-item__title">Request</h2>
-      <span class="view-main__subtitle">
-        #{{ String(requestData?.responsePacketData.requestId) }}
-      </span>
+      <span class="view-main__subtitle"> #{{ requestData?.id }} </span>
     </div>
 
     <h3 class="view-main__subtitle mg-b24">Request info</h3>
-    <template v-if="requestData">
+    <template v-if="requestData && resultData">
       <div class="info-table mg-b32">
         <div class="info-table__row">
           <span class="info-table__row-title">Oracle Script</span>
           <TitledLink
             class="info-table__row-link"
-            :text="String(requestData?.requestPacketData.oracleScriptId)"
-            :to="`/oracle-scripts/${requestData?.requestPacketData.oracleScriptId}`"
+            :text="requestData.oracle_script_id"
+            :to="`/oracle-scripts/${requestData.oracle_script_id}`"
           />
         </div>
         <div class="info-table__row">
           <span class="info-table__row-title">Sender</span>
           <a class="app-table__cell-txt app-table__link" :href="senderLink">
-            {{ requestData?.requestPacketData.clientId }}
+            {{ requestData.client_id }}
           </a>
-          <CopyButton
-            class="mg-l8"
-            :text="String(requestData?.requestPacketData.clientId)"
-          />
+          <CopyButton class="mg-l8" :text="requestData.client_id" />
         </div>
         <div class="info-table__row">
           <span class="info-table__row-title">Request Time</span>
@@ -40,9 +40,9 @@
         <div class="info-table__row">
           <span class="info-table__row-title">Report Status</span>
           <Progressbar
-            :min="Number(requestData?.requestPacketData.minCount)"
-            :max="Number(requestData?.requestPacketData.askCount)"
-            :current="Number(requestData?.responsePacketData.ansCount)"
+            :min="Number(resultData.min_count)"
+            :max="Number(resultData.ans_count)"
+            :current="Number(resultData.ans_count)"
           />
         </div>
         <div class="info-table__row">
@@ -106,9 +106,10 @@
       </template>
     </template>
     <template v-else>
-      <p class="view-main__empty-msg request-item__empty-msg">
-        There is no information about request
-      </p>
+      <div class="app-table__empty-stub">
+        <p v-if="isLoading" class="empty mg-t32">Loading…</p>
+        <p v-else class="empty mg-t32">There is no information about request</p>
+      </div>
     </template>
   </div>
 </template>
@@ -119,7 +120,7 @@ import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import { callers } from '@/api/callers'
 import { API_CONFIG } from '@/api/api-config'
 import { requestStatusType } from '@/helpers/statusTypes'
-import { RequestResult, ResolveStatus } from '@provider/codec/oracle/v1/oracle'
+import { ResolveStatus } from '@provider/codec/oracle/v1/oracle'
 import { formatDate, formatDateDifference } from '@/helpers/formatters'
 import TitledLink from '@/components/TitledLink.vue'
 import CopyButton from '@/components/CopyButton.vue'
@@ -129,13 +130,16 @@ import StatusBlock from '@/components/StatusBlock.vue'
 import { Obi } from '@bandprotocol/bandchain.js'
 import { handleError } from '@/helpers/errors'
 import isObjectLodash from 'lodash/isObject'
+import { fromBase64 } from '@cosmjs/encoding'
+import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 
 export default defineComponent({
   components: { TitledLink, CopyButton, BackButton, Progressbar, StatusBlock },
   setup: function () {
     const route: RouteLocationNormalizedLoaded = useRoute()
-
-    const requestData = ref<RequestResult>()
+    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+    const requestData = ref()
+    const resultData = ref()
     const requestStatus = ref()
     const requestTime = ref()
     const resolveTime = ref()
@@ -146,7 +150,7 @@ export default defineComponent({
     const requestResultName = ref()
     const requestResultType = ref()
     const senderLink = computed(() => {
-      return `${API_CONFIG.odinScan}/account/${requestData.value?.requestPacketData?.clientId}`
+      return `${API_CONFIG.odinScan}/account/${requestData.value?.client_id}`
     })
     const isObject = computed(() => {
       return isObjectLodash(requestCalldata.value)
@@ -156,21 +160,29 @@ export default defineComponent({
     )
 
     const getRequest = async () => {
-      const { request } = await callers.getRequest(String(route.params.id))
-      const reqPacketData = request?.requestPacketData
-      const resPacketData = request?.responsePacketData
-
-      if (request && reqPacketData && resPacketData) {
-        requestData.value = { ...request }
-        requestStatus.value = resPacketData.resolveStatus
-        requestTime.value = formatDate(resPacketData.requestTime)
-        resolveTime.value = formatDate(resPacketData.resolveTime)
-        requestTimeRange.value = formatDateDifference(resPacketData.requestTime)
-        resolveTimeRange.value = formatDateDifference(resPacketData.resolveTime)
-        requestCalldata.value = await _decodeCallData(reqPacketData.calldata)
-
+      lockLoading()
+      try {
+        const request = await callers.getRequest(Number(route.params.id))
+        requestData.value = request?.data.result.result.request
+        resultData.value = request?.data.result.result.result
+        requestStatus.value = resultData.value.resolve_status
+        requestTime.value = formatDate(
+          new Date(requestData.value.request_time * 1000)
+        )
+        resolveTime.value = formatDate(
+          new Date(resultData.value.resolve_time * 1000)
+        )
+        requestTimeRange.value = formatDateDifference(
+          new Date(requestData.value.request_time * 1000)
+        )
+        resolveTimeRange.value = formatDateDifference(
+          new Date(resultData.value.resolve_time * 1000)
+        )
+        requestCalldata.value = await _decodeCallData(
+          fromBase64(requestData.value.calldata)
+        )
         if (isRequestSuccess.value) {
-          const res = await _decodeResult(resPacketData.result)
+          const res = await _decodeResult(fromBase64(resultData.value.result))
           requestResultName.value = Object.keys(res).toString() || 'Data'
           requestResult.value = res[Object.keys(res)[0]].length
             ? res[Object.keys(res)[0]].reduce(
@@ -180,13 +192,16 @@ export default defineComponent({
             : '[]'
           requestResultType.value = typeof requestResult.value
         }
+      } catch (error) {
+        handleError(error as Error)
       }
+      releaseLoading()
     }
 
     const _decodeCallData = async (calldata: Uint8Array) => {
       try {
         const { oracleScript } = await callers.getOracleScript(
-          Number(requestData.value?.requestPacketData?.oracleScriptId)
+          Number(requestData.value.oracle_script_id)
         )
         if (oracleScript) {
           const obi = new Obi(oracleScript.schema)
@@ -199,7 +214,7 @@ export default defineComponent({
     const _decodeResult = async (result: Uint8Array) => {
       try {
         const { oracleScript } = await callers.getOracleScript(
-          Number(requestData.value?.requestPacketData?.oracleScriptId)
+          Number(resultData.value.oracle_script_id)
         )
         if (oracleScript) {
           const obi = new Obi(oracleScript.schema)
@@ -210,11 +225,7 @@ export default defineComponent({
       }
     }
     onMounted(async () => {
-      try {
-        await getRequest()
-      } catch (error) {
-        handleError(error as Error)
-      }
+      await getRequest()
     })
 
     return {
@@ -234,6 +245,8 @@ export default defineComponent({
       isRequestSuccess,
       requestResultName,
       requestResultType,
+      resultData,
+      isLoading,
     }
   },
 })

@@ -101,6 +101,15 @@ body {
   z-index: 1;
 }
 
+.empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-transform: uppercase;
+  font-size: 3.2rem;
+  font-weight: 600;
+  color: var(--clr__input-border);
+}
 @keyframes spin {
   to { -webkit-transform: rotate(360deg); }
 }

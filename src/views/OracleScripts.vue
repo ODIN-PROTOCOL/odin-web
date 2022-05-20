@@ -1,9 +1,14 @@
 <template>
-  <div class="oracle-scripts view-main">
+  <div
+    class="oracle-scripts view-main load-fog"
+    :class="{
+      'load-fog_show': isLoading,
+    }"
+  >
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Oracle Scripts</h2>
       <button
-        class="view-main__title-btn app-btn app-btn_small fx-sae"
+        class="view-main__title-btn app-btn app-btn_small fx-sae oracle-scripts__title-btn"
         type="button"
         @click="createOracleScript()"
       >
@@ -11,7 +16,7 @@
       </button>
     </div>
 
-    <template v-if="false">
+    <template v-if="mostRequestedOracleScripts">
       <div>
         <h3 class="view-main__subtitle mg-b24">Most requested</h3>
         <TopOracleScripts :top-oracle-scripts="mostRequestedOracleScripts" />
@@ -95,8 +100,8 @@
         </template>
         <template v-else>
           <div class="app-table__empty-stub">
-            <p v-if="isLoading">Loading…</p>
-            <p v-else>No items yet</p>
+            <p v-if="isLoading" class="empty mg-t32">Loading…</p>
+            <p v-else class="empty mg-t32">No items yet</p>
           </div>
         </template>
       </div>
@@ -158,7 +163,7 @@ export default defineComponent({
     const loadOracleScripts = async () => {
       lockLoading()
       try {
-        oracleScripts.value = await callers
+        const { data, total_count } = await callers
           .getSortedOracleScripts(
             currentPage.value - 1,
             ITEMS_PER_PAGE,
@@ -167,8 +172,9 @@ export default defineComponent({
             oracleScriptsName.value
           )
           .then((response) => response.json())
-          .then((data) => data.data)
-        await getOracleScriptsCount()
+        oracleScripts.value = data
+        oracleScriptsCount.value = total_count
+        totalPages.value = Math.ceil(oracleScriptsCount.value / ITEMS_PER_PAGE)
       } catch (error) {
         handleError(error as Error)
       }
@@ -185,11 +191,6 @@ export default defineComponent({
         handleError(error as Error)
       }
       releaseLoading()
-    }
-    const getOracleScriptsCount = async () => {
-      const res = await callers.getCounts()
-      oracleScriptsCount.value = res.oracleScriptCount.toNumber()
-      totalPages.value = Math.ceil(oracleScriptsCount.value / ITEMS_PER_PAGE)
     }
 
     const createOracleScript = async () => {
@@ -288,6 +289,9 @@ export default defineComponent({
 @include respond-to(tablet) {
   .oracle-scripts {
     padding-bottom: 10rem;
+  }
+  .oracle-scripts__title-btn {
+    display: none;
   }
   .oracle-scripts__count-info {
     margin-bottom: 2.4rem;

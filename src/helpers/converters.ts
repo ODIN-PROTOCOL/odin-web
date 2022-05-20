@@ -4,7 +4,7 @@ import { big } from './bigMath'
 type ConverterOptions = {
   withDenom?: boolean
   withPrecise?: boolean
-  forTitle?: boolean
+  onlyNumber?: boolean
 }
 
 const FORMAT_OPTIONS = {
@@ -16,10 +16,10 @@ const ODIN_DENOM = 'ODIN'
 const LOKI_MULTIPLIER = 1000000
 
 export function convertLokiToOdin(
-  amount: string | undefined,
+  amount: string | BigNumber | undefined,
   options?: ConverterOptions
 ): string | BigNumber {
-  if (!amount) return '- ' + ODIN_DENOM
+  if (!amount) return '-'
 
   let res = null
   if (options && options.withPrecise) {
@@ -28,12 +28,12 @@ export function convertLokiToOdin(
     res = big.multiply(amount, ODIN_MULTIPLIER)
   }
 
-  if (options && options.withDenom && options.forTitle) {
-    return res + ' ' + ODIN_DENOM
-  } else if (options && options.withDenom) {
+  if (options && options.withDenom) {
     return big.format(res, FORMAT_OPTIONS) + ' ' + ODIN_DENOM
-  } else {
+  } else if (options && options.onlyNumber) {
     return res
+  } else {
+    return res + ' ' + ODIN_DENOM
   }
 }
 
@@ -42,4 +42,10 @@ export function convertOdinToLoki(amount: string): number {
   if (isNaN(num)) throw ReferenceError('Invalid number')
 
   return big.multiply(num, LOKI_MULTIPLIER).toNumber()
+}
+export function getLokiFromString(value: string | undefined): string {
+  if (!value) {
+    return ''
+  }
+  return value.split('loki')[0]
 }

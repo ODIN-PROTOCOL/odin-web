@@ -4,7 +4,7 @@
   line-height: 2.4rem;
   background: var(--clr__btn-normal);
   color: var(--clr__text-on-action);
-  border: 1px solid transparent; // to sync position with the outlined btn
+  border: 0.1rem solid transparent; // to sync position with the outlined btn
   border-radius: 0.4rem;
   padding: 1.1rem 2.3rem;
   white-space: nowrap;
@@ -14,37 +14,77 @@
   &_outlined {
     background: var(--clr__main-bg);
     color: var(--clr__action);
-    border: 1px solid var(--clr__btn-normal);
+    border: 0.1rem solid var(--clr__btn-normal);
   }
 
   &_small {
     font-size: 1.6rem;
     padding: 0.5rem 2.3rem;
   }
-
+  &--very-small{
+    font-size: 1.4rem;
+    padding: 0.6rem 1rem;
+    line-height: 2rem;
+    max-height: 3.2rem;
+  }
   &:focus {
     color: var(--clr__text-on-action);
-    border: 1px solid var(--clr__btn-normal);
+    border: 0.1rem solid var(--clr__btn-normal);
     background: var(--clr__btn-hover);
   }
 
   &:hover {
     color: var(--clr__text-on-action);
-    border: 1px solid transparent;
+    border: 0.1rem solid transparent;
     background: var(--clr__btn-hover);
   }
 
   &:active {
     color: var(--clr__text-on-action);
-    border: 1px solid transparent;
+    border: 0.1rem solid transparent;
     background: var(--clr__btn-pressed);
   }
 
   &:disabled {
     color: var(--clr__text-on-action);
-    border: 1px solid transparent;
+    border: 0.1rem solid transparent;
     background: var(--clr__btn-disabled);
   }
+  &--outline-red {
+    background: var(--clr__main-bg);
+    color: var(--clr__btn-normal-red);
+    border: 0.1rem solid var(--clr__btn-normal-red);
+    &:focus {
+      color: var(--clr__text-on-action);
+      border: 0.1rem solid var(--clr__btn-pressed-red);
+      background: var(--clr__btn-hover-red);
+    }
+
+    &:hover {
+      color: var(--clr__text-on-action);
+      border: 0.1rem solid transparent;
+      background: var(--clr__btn-hover-red);
+    }
+
+    &:active {
+      color: var(--clr__text-on-action);
+      border: 0.1rem solid transparent;
+      background: var(--clr__btn-pressed-red);
+    }
+
+    &:disabled {
+      color: var(--clr__text-on-action);
+      border: 0.1rem solid transparent;
+      background: var(--clr__btn-disabled-red);
+    }
+  }
+   @include respond-to(tablet) {
+      &--very-small{
+        max-height: 3.6rem;
+        line-height: 2.4rem;
+        font-size: 1.6rem;
+      }
+    }
 }
 
 .app-ico-btn {
@@ -68,7 +108,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid transparent;
+  border: 0.1rem solid transparent;
   border-radius: 0.4rem;
   background: var(--clr__action);
   width: 4.8rem;
@@ -78,21 +118,21 @@
 
   &_white {
     background: var(--clr__main-bg);
-    border: 1px solid var(--clr__btn-normal);
+    border: 0.1rem solid var(--clr__btn-normal);
   }
 
   &:hover {
-    border: 1px solid transparent;
+    border: 0.1rem solid transparent;
     background: var(--clr__btn-hover);
   }
 
   &:active {
-    border: 1px solid transparent;
+    border: 0.1rem solid transparent;
     background: var(--clr__btn-pressed);
   }
 
   &:disabled {
-    border: 1px solid transparent;
+    border: 0.1rem solid transparent;
     background: var(--clr__btn-disabled);
   }
 }

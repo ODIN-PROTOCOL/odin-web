@@ -140,6 +140,8 @@ import ModalBase from './ModalBase.vue'
 import InputFileField from '@/components/fields/InputFileField.vue'
 import TextareaField from '@/components/fields/TextareaField.vue'
 import Long from 'long'
+import { getLokiFromString } from '@/helpers/converters'
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
@@ -171,8 +173,7 @@ export default defineComponent({
       assets: [props.dataSource?.fee[0]?.denom || 'loki', validators.required],
       price: [
         props.dataSource?.fee[0]?.amount ||
-          props.dataSource?.fee?.split('loki')[0] ||
-          '',
+          getLokiFromString(props.dataSource?.fee),
         validators.required,
         validators.number,
         validators.sixDecimalNumber,

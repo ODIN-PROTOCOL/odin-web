@@ -1,5 +1,6 @@
 import { AnyFn, DecoratedFn } from '@/shared-types'
 import { Ref } from '@vue/reactivity'
+import axios, { AxiosResponse } from 'axios'
 
 export type ConditionArg = Ref<boolean> | AnyFn<boolean>
 
@@ -42,4 +43,13 @@ export function memoize<T extends AnyFn>(func: T): DecoratedFn<T> {
     memo.set(memoKey, res as ReturnType<T>)
     return res as ReturnType<T>
   }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function getRequest(value: string): Promise<AxiosResponse<any>> {
+  return await axios.get(value)
+}
+
+export const axiosWrapper = {
+  get: getRequest,
 }

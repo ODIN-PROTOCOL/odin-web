@@ -1,67 +1,65 @@
 <template>
-  <div class="requests-data-source">
-    <template v-if="requests">
-      <div class="app-table">
-        <div class="app-table__head">
-          <span>Request ID</span>
-          <span>Oracle Script</span>
-          <span>Timestamp</span>
-        </div>
-        <div class="app-table__body">
-          <template v-if="requests.length">
-            <div
-              v-for="(item, index) in requests"
-              :key="item.attributes?.oracle_script_id"
-              class="app-table__row"
-            >
-              <div class="app-table__cell">
-                <span class="app-table__title">Request ID</span>
-                <TitledLink
-                  class="app-table__cell-txt app-table__link"
-                  :text="`#${item.id}`"
-                  :to="`/requests/${item.id}`"
-                />
-              </div>
-              <div class="app-table__cell">
-                <span class="app-table__title">Transactions</span>
-                <TitledLink
-                  class="app-table__cell-txt app-table__link"
-                  :text="getRequestItemName(index)"
-                  :to="`/oracle-scripts/${item.attributes?.oracle_script_id}`"
-                />
-              </div>
-              <div class="app-table__cell">
-                <span class="app-table__title">Timestamp</span>
-                <span>{{
-                  $fDate(
-                    new Date(item.attributes.timestamp * 1000),
-                    'HH:mm dd.MM.yy'
-                  )
-                }}</span>
-              </div>
-            </div>
-          </template>
-          <template v-else>
-            <div class="app-table__empty-stub">
-              <p>No items yet</p>
-            </div>
-          </template>
-          <template v-if="requestsCount > ITEMS_PER_PAGE">
-            <AppPagination
-              class="mg-t32 mg-b32"
-              v-model="currentPage"
-              :pages="totalPages"
-              @update:modelValue="getDataSourceRequests"
-            />
-          </template>
-        </div>
+  <div
+    class="requests-data-source load-fog"
+    :class="{
+      'load-fog_show': isLoading,
+    }"
+  >
+    <div class="app-table" v-if="requests">
+      <div class="app-table__head">
+        <span>Request ID</span>
+        <span>Oracle Script</span>
+        <span>Timestamp</span>
       </div>
-    </template>
-    <template v-else>
-      <div class="app-table__empty-stub">
-        <p v-if="isLoading">Loading…</p>
-        <p v-else>No items yet</p>
+      <div class="app-table__body">
+        <template v-if="requests.length">
+          <div
+            v-for="(item, index) in requests"
+            :key="item.attributes?.oracle_script_id"
+            class="app-table__row"
+          >
+            <div class="app-table__cell">
+              <span class="app-table__title">Request ID</span>
+              <TitledLink
+                class="app-table__cell-txt app-table__link"
+                :text="`#${item.id}`"
+                :to="`/requests/${item.id}`"
+              />
+            </div>
+            <div class="app-table__cell">
+              <span class="app-table__title">Transactions</span>
+              <TitledLink
+                class="app-table__cell-txt app-table__link"
+                :text="getRequestItemName(index)"
+                :to="`/oracle-scripts/${item.attributes?.oracle_script_id}`"
+              />
+            </div>
+            <div class="app-table__cell">
+              <span class="app-table__title">Timestamp</span>
+              <span>{{
+                $fDate(
+                  new Date(item.attributes.timestamp * 1000),
+                  'HH:mm dd.MM.yy'
+                )
+              }}</span>
+            </div>
+          </div>
+        </template>
+        <template v-else>
+          <div class="app-table__empty-stub">
+            <span v-if="isLoading" class="empty mg-t32">Loading…</span>
+            <span v-else class="empty mg-t32">No items yet</span>
+          </div>
+        </template>
       </div>
+    </div>
+    <template v-if="requestsCount > ITEMS_PER_PAGE">
+      <AppPagination
+        class="mg-t32 mg-b32"
+        v-model="currentPage"
+        :pages="totalPages"
+        @update:modelValue="getDataSourceRequests"
+      />
     </template>
   </div>
 </template>

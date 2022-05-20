@@ -1,5 +1,10 @@
 <template>
-  <div class="data-source-item view-main">
+  <div
+    class="data-source-item view-main load-fog"
+    :class="{
+      'load-fog_show': isLoading,
+    }"
+  >
     <div class="view-main__title-wrapper">
       <BackButton :text="'Data Sources'" />
       <h2 class="view-main__title data-source-item__title">Data Source</h2>
@@ -59,9 +64,9 @@
       </Tabs>
     </template>
     <template v-else>
-      <div class="view-main__empty-msg data-source-item__empty-msg">
-        <p v-if="isLoading">Loading…</p>
-        <p v-else>Data source not found</p>
+      <div class="app-table__empty-stub">
+        <span v-if="isLoading" class="empty mg-t32">Loading…</span>
+        <span v-else class="empty mg-t32">No items yet</span>
       </div>
     </template>
     <div class="view-main__mobile-activities" v-if="isDataSourceOwner">
@@ -164,9 +169,6 @@ export default defineComponent({
 <style lang="scss" scoped>
 .data-source-item__title {
   margin: 0 1.6rem 0 2rem;
-}
-.data-source-item__empty-msg {
-  text-align: center;
 }
 .data-source-item__activities {
   display: flex;

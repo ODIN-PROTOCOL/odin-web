@@ -14,7 +14,6 @@ import { api } from './api'
 import { wallet } from './wallet'
 import { mapResponse, sendPost, sendGet } from './callersHelpers'
 import { cacheAnswers } from '@/helpers/requests'
-import { decodeRequestResults } from '@/helpers/requestResultDecoders'
 import { decodeProposal, decodeProposals } from '@/helpers/proposalDecoders'
 import { decodeValidators } from '@/helpers/validatorDecoders'
 import { NumLike } from '@/helpers/casts'
@@ -26,6 +25,7 @@ import {
 } from 'cosmjs-types/cosmos/staking/v1beta1/tx'
 import { Proposal } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { MsgWithdrawDelegatorReward } from 'cosmjs-types/cosmos/distribution/v1beta1/tx'
+import { axiosWrapper } from '@/helpers/functions'
 
 const makeCallers = () => {
   const broadcaster = api.makeBroadcastCaller.bind(api)
@@ -52,7 +52,7 @@ const makeCallers = () => {
       name: string
     ) => {
       return sendGet(
-        `${API_CONFIG.telemetryUrl}telemetry/data_sources?page[number]=${page_number}&page[limit]=${page_limit}&sort=${activities}&owner=${owner}&name=${name}`
+        `${API_CONFIG.telemetryUrl}/data_sources?page[number]=${page_number}&page[limit]=${page_limit}&sort=${activities}&owner=${owner}&name=${name}`
       )
     },
     getDataSource: querier((qc) => qc.oracle.unverified.dataSource),
@@ -73,7 +73,7 @@ const makeCallers = () => {
       name: string
     ) => {
       return sendGet(
-        `${API_CONFIG.telemetryUrl}telemetry/oracle_scripts?page[number]=${page_number}&page[limit]=${page_limit}&sort=${activities}&owner=${owner}&name=${name}`
+        `${API_CONFIG.telemetryUrl}/oracle_scripts?page[number]=${page_number}&page[limit]=${page_limit}&sort=${activities}&owner=${owner}&name=${name}`
       )
     },
     getAccountTx: (
@@ -84,7 +84,7 @@ const makeCallers = () => {
       tx_type: string
     ) => {
       return sendGet(
-        `${API_CONFIG.telemetryUrl}telemetry/account_txs/${owner}?page[number]=${page_number}&page[limit]=${page_limit}&page[order]=${page_order}&type=${tx_type}`
+        `${API_CONFIG.telemetryUrl}/account_txs/${owner}?page[number]=${page_number}&page[limit]=${page_limit}&page[order]=${page_order}&type=${tx_type}`
       )
     },
     getChannel: querier((qc) => qc.ibc.channel.allChannels),
@@ -95,15 +95,14 @@ const makeCallers = () => {
       '/oracle.v1.MsgRequestData',
       MsgRequestData
     ),
-    getRequests: querier((qc) =>
-      mapResponse(qc.oracle.unverified.requests, (response) => {
-        return {
-          ...response,
-          requests: decodeRequestResults(response.requests),
-        }
-      })
-    ),
-    getRequest: querier((qc) => qc.oracle.unverified.request),
+    getRequests: (page_limit: number, page_number: number) => {
+      return axiosWrapper.get(
+        `${API_CONFIG.rpc}api/oracle/requests?limit=${page_limit}&offset=${page_number}&reverse=true`
+      )
+    },
+    getRequest: (id: number) => {
+      return axiosWrapper.get(`${API_CONFIG.rpc}api/oracle/requests/${id}`)
+    },
     getOracleParams: querier((qc) => qc.oracle.unverified.params),
     getProposals: querier((qc) =>
       mapResponse(qc.gov.unverified.proposals, (response) => {
@@ -132,13 +131,11 @@ const makeCallers = () => {
       return sendGet(`${API_CONFIG.api}/gov/proposals/${proposalId}/proposer`)
     },
     getProposalChanges: () => {
-      return sendGet(
-        `${API_CONFIG.telemetryUrl}/telemetry/blocks/vote_proposals`
-      )
+      return sendGet(`${API_CONFIG.telemetryUrl}/blocks/vote_proposals`)
     },
     getProposalsStatistic: () => {
       return sendGet(
-        `${API_CONFIG.telemetryUrl}/telemetry/blocks/vote_proposals_statistics`
+        `${API_CONFIG.telemetryUrl}/blocks/vote_proposals_statistics`
       )
     },
     proposalDeposit: broadcaster<MsgDeposit>(
@@ -231,13 +228,11 @@ const makeCallers = () => {
       page_limit: number
     ) => {
       return sendGet(
-        `${API_CONFIG.telemetryUrl}telemetry/validator/${proposer}/transactions?page[number]=${page_number}&page[limit]=${page_limit}&page[order]=desc`
+        `${API_CONFIG.telemetryUrl}/validator/${proposer}/transactions?page[number]=${page_number}&page[limit]=${page_limit}&page[order]=desc`
       )
     },
     getDataSourceCode: (id: string) => {
-      return sendGet(
-        `${API_CONFIG.telemetryUrl}telemetry/data_source_code/${id}`
-      )
+      return sendGet(`${API_CONFIG.telemetryUrl}/data_source_code/${id}`)
     },
     getOracleScriptRequests: (
       id: string,
@@ -245,7 +240,7 @@ const makeCallers = () => {
       page_limit: number
     ) => {
       return sendGet(
-        `${API_CONFIG.telemetryUrl}telemetry/requests/oracle_scripts/${id}?page[number]=${page_number}&page[limit]=${page_limit}`
+        `${API_CONFIG.telemetryUrl}/requests/oracle_scripts/${id}?page[number]=${page_number}&page[limit]=${page_limit}`
       )
     },
     getDataSourceRequests: (
@@ -254,8 +249,11 @@ const makeCallers = () => {
       page_limit: number
     ) => {
       return sendGet(
-        `${API_CONFIG.telemetryUrl}telemetry/requests/data_sources/${id}?page[number]=${page_number}&page[limit]=${page_limit}`
+        `${API_CONFIG.telemetryUrl}/requests/data_sources/${id}?page[number]=${page_number}&page[limit]=${page_limit}`
       )
+    },
+    getValidatorUptime: () => {
+      return sendGet(`${API_CONFIG.telemetryUrl}/validators`)
     },
   }
 }

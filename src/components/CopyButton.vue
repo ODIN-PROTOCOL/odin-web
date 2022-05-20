@@ -1,20 +1,26 @@
 <template>
-  <div class="copy-btn__wrapper">
-    <button class="copy-btn" @click.prevent="copy()">
-      <img src="@/assets/icons/copy.svg" alt="copy" />
+  <div class="copy-button__wrapper" :class="modalBaseScheme">
+    <button class="copy-button" @click.prevent="copy()">
+      <CopyIcon class="copy-button__copy-icon" />
     </button>
-    <div v-show="isCopiedShown" class="copy-btn__message">Copied!</div>
+    <div v-show="isCopiedShown" class="copy-button__message">Copied!</div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, computed } from 'vue'
 import { copyValue } from '@/helpers/helpers'
+import CopyIcon from '@/components/icons/CopyIcon.vue'
 
+export enum SCHEMES {
+  black = 'black',
+}
 export default defineComponent({
   props: {
     text: { type: String, required: true },
+    scheme: { type: String, default: '' },
   },
+  components: { CopyIcon },
   setup: function (props) {
     const isCopiedShown = ref(false)
 
@@ -25,14 +31,18 @@ export default defineComponent({
         isCopiedShown.value = false
       }, 1300)
     }
-
-    return { copy, isCopiedShown }
+    const modalBaseScheme = computed(() => {
+      const scheme = props.scheme as SCHEMES
+      if (!Object.values(SCHEMES).includes(scheme)) return ''
+      return scheme ? `copy-button__wrapper--${scheme}` : ''
+    })
+    return { copy, isCopiedShown, modalBaseScheme }
   },
 })
 </script>
 
 <style lang="scss" scoped>
-.copy-btn {
+.copy-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -43,20 +53,25 @@ export default defineComponent({
     background: var(--clr__action-disabled);
   }
 }
-.copy-btn__wrapper {
+.copy-button__wrapper {
   position: relative;
   display: flex;
   align-items: center;
   padding-left: 0.4rem;
+  &--black {
+    .copy-button__copy-icon {
+      fill: var(--clr__text);
+    }
+  }
 }
-.copy-btn__message {
+.copy-button__message {
   position: absolute;
   bottom: 130%;
   left: 50%;
   transform: translateX(-50%);
   padding: 1.2rem 2.4rem;
   background: var(--clr__tooltip-bg);
-  border-radius: 8px;
+  border-radius: 0.8rem;
   color: var(--clr__tooltip-text);
 
   &:before {
@@ -73,7 +88,7 @@ export default defineComponent({
 }
 
 @media screen and (max-width: 768px) {
-  .copy-btn__message {
+  .copy-button__message {
     left: 100%;
     transform: translateX(-100%);
     &:before {

@@ -1,5 +1,10 @@
 <template>
-  <div class="view-main data-sources">
+  <div
+    class="view-main data-sources load-fog"
+    :class="{
+      'load-fog_show': isLoading,
+    }"
+  >
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Data Sources</h2>
       <button
@@ -83,8 +88,8 @@
         </template>
         <template v-else>
           <div class="app-table__empty-stub">
-            <p v-if="isLoading">Loading…</p>
-            <p v-else>No items yet</p>
+            <p v-if="isLoading" class="empty mg-t32">Loading…</p>
+            <p v-else class="empty mg-t32">No items yet</p>
           </div>
         </template>
       </div>
@@ -139,7 +144,7 @@ export default defineComponent({
     const loadDataSources = async () => {
       lockLoading()
       try {
-        const res = await callers
+        const { data, total_count } = await callers
           .getSortedDataSources(
             currentPage.value - 1,
             ITEMS_PER_PAGE,
@@ -148,18 +153,13 @@ export default defineComponent({
             dataSourceName.value
           )
           .then((response) => response.json())
-          .then((data) => data)
-        dataSources.value = res.data
-        await getDataSourcesCount()
+        dataSources.value = data
+        dataSourcesCount.value = total_count
+        totalPages.value = Math.ceil(dataSourcesCount.value / ITEMS_PER_PAGE)
       } catch (error) {
         handleError(error as Error)
       }
       releaseLoading()
-    }
-    const getDataSourcesCount = async () => {
-      const res = await callers.getCounts()
-      dataSourcesCount.value = res.dataSourceCount.toNumber()
-      totalPages.value = Math.ceil(dataSourcesCount.value / ITEMS_PER_PAGE)
     }
     const createDataSource = async () => {
       await showDialogHandler(DataSourceFormModal, {
