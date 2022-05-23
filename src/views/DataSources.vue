@@ -35,6 +35,7 @@
         <span>ID</span>
         <span>Data Source</span>
         <span>Description</span>
+        <span>Price</span>
         <span>Timestamp</span>
       </div>
       <div class="app-table__body">
@@ -60,6 +61,12 @@
               <span class="app-table__title">Description</span>
               <span>
                 {{ item.attributes.description || '-' }}
+              </span>
+            </div>
+            <div class="app-table__cell">
+              <span class="app-table__title">Price</span>
+              <span>
+                {{ convertLokiToOdin(getLokiFromString(item.attributes.fee)) }}
               </span>
             </div>
             <div class="app-table__cell">
@@ -124,6 +131,8 @@ import DataSourceFormModal from '@/components/modals/DataSourceFormModal.vue'
 import { wallet } from '@/api/wallet'
 import SortLine from '@/components/SortLine.vue'
 import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
+import { convertLokiToOdin, getLokiFromString } from '@/helpers/converters'
+
 export default defineComponent({
   components: {
     TitledLink,
@@ -213,6 +222,8 @@ export default defineComponent({
       createDataSource,
       editDataSource,
       dataSourceName,
+      convertLokiToOdin,
+      getLokiFromString,
     }
   },
 })
@@ -227,8 +238,9 @@ export default defineComponent({
   grid:
     auto /
     minmax(2rem, 0.5fr)
-    minmax(4rem, 3fr)
-    minmax(4rem, 3fr)
+    minmax(4rem, 2fr)
+    minmax(4rem, 2fr)
+    minmax(4rem, 2fr)
     minmax(8rem, 2fr)
     minmax(8rem, 2fr);
 }
