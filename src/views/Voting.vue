@@ -8,57 +8,56 @@
 
     <div class="voting__main">
       <div class="voting__choice">
-        <div class="voting__choice-item mg-b24">
-          <div>
-            <input
-              type="radio"
-              id="support"
-              :value="VoteOption.VOTE_OPTION_YES"
-              checked
-              v-model="pickedOption"
-            />
-            <label class="voting__choice-item-lbl" for="support">
-              Support
-            </label>
-          </div>
-          <div>
-            <input
-              type="radio"
-              id="reject"
-              :value="VoteOption.VOTE_OPTION_NO"
-              v-model="pickedOption"
-            />
-            <label class="voting__choice-item-lbl" for="reject"> Reject </label>
-          </div>
-          <div>
-            <input
-              type="radio"
-              id="veto"
-              :value="VoteOption.VOTE_OPTION_NO_WITH_VETO"
-              v-model="pickedOption"
-            />
-            <label class="voting__choice-item-lbl" for="veto"> Veto </label>
-          </div>
-          <div>
-            <input
-              type="radio"
-              id="abstain"
-              :value="VoteOption.VOTE_OPTION_ABSTAIN"
-              v-model="pickedOption"
-            />
-            <label class="voting__choice-item-lbl" for="abstain">
-              Abstain
-            </label>
-          </div>
+        <div class="voting__choice-item">
+          <input
+            class="voting__choice-item-input"
+            type="radio"
+            id="support"
+            :value="VoteOption.VOTE_OPTION_YES"
+            checked
+            v-model="pickedOption"
+          />
+          <label class="voting__choice-item-lbl" for="support"> Support </label>
         </div>
+        <div class="voting__choice-item">
+          <input
+            class="voting__choice-item-input"
+            type="radio"
+            id="reject"
+            :value="VoteOption.VOTE_OPTION_NO"
+            v-model="pickedOption"
+          />
+          <label class="voting__choice-item-lbl" for="reject"> Reject </label>
+        </div>
+        <div class="voting__choice-item">
+          <input
+            class="voting__choice-item-input"
+            type="radio"
+            id="veto"
+            :value="VoteOption.VOTE_OPTION_NO_WITH_VETO"
+            v-model="pickedOption"
+          />
+          <label class="voting__choice-item-lbl" for="veto"> Veto </label>
+        </div>
+        <div class="voting__choice-item">
+          <input
+            class="voting__choice-item-input"
+            type="radio"
+            id="abstain"
+            :value="VoteOption.VOTE_OPTION_ABSTAIN"
+            v-model="pickedOption"
+          />
+          <label class="voting__choice-item-lbl" for="abstain"> Abstain </label>
+        </div>
+
         <button
-          class="voting__btn app-btn app-btn_small"
+          class="voting__btn app-btn app-btn--medium"
           @click="confirmation()"
         >
           Vote
         </button>
       </div>
-      <div class="voting__chart">
+      <div class="voting__chart card-frame">
         <h3 class="voting__chart-title mg-b40">Results of voting</h3>
         <CustomDoughnutChart :data="votesDataForChart" />
       </div>
@@ -185,18 +184,17 @@ export default defineComponent({
   background: var(--clr__grey-bg);
 }
 
-.voting__chart {
-  border: 0.1rem solid var(--clr__action);
-}
-
 .voting__choice-item {
   display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
+  gap: 1rem;
+  margin-bottom: 3.2rem;
 }
-
+.voting__choice-item-input {
+  height: 2rem;
+  width: 2rem;
+}
 .voting__choice-item-lbl {
-  margin-left: 0.8rem;
+  line-height: 2.4rem;
 }
 
 .voting__chart-title {

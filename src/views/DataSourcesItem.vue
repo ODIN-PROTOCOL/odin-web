@@ -28,7 +28,7 @@
     </div>
 
     <template v-if="dataSourceData">
-      <div class="info-card">
+      <div class="data-source-item__card info-card card-frame">
         <div class="info-card__content">
           <div class="info-card__row">
             <span class="info-card__row-title">Owner</span>
@@ -184,7 +184,9 @@ export default defineComponent({
     flex: 1;
   }
 }
-
+.data-source-item__card {
+  margin-bottom: 3.4rem;
+}
 @include respond-to(tablet) {
   .data-source-item__title {
     margin: 0.8rem 0 0.4rem 0;

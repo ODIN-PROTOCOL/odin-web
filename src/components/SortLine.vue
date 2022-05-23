@@ -167,21 +167,6 @@ export default defineComponent({
   position: relative;
   z-index: 0;
 }
-.sort-line__search-input {
-  border: none;
-  &:focus::-webkit-input-placeholder {
-    color: transparent;
-  }
-  &::-webkit-search-cancel-button {
-    position: relative;
-    right: 0.2rem;
-  }
-  &:active,
-  &:hover,
-  &:focus {
-    border: none;
-  }
-}
 .sort-line__search-button {
   position: relative;
   width: 4.8rem;

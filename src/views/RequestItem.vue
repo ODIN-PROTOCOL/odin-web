@@ -184,12 +184,13 @@ export default defineComponent({
         if (isRequestSuccess.value) {
           const res = await _decodeResult(fromBase64(resultData.value.result))
           requestResultName.value = Object.keys(res).toString() || 'Data'
-          requestResult.value = res[Object.keys(res)[0]].length
-            ? res[Object.keys(res)[0]].reduce(
-                (accumulator: unknown, currentValue: unknown) =>
-                  accumulator + ' ' + currentValue
-              )
-            : '[]'
+          requestResult.value =
+            typeof res[Object.keys(res)[0]] !== 'string'
+              ? res[Object.keys(res)[0]].reduce(
+                  (accumulator: unknown, currentValue: unknown) =>
+                    accumulator + ' ' + currentValue
+                )
+              : res[Object.keys(res)[0]]
           requestResultType.value = typeof requestResult.value
         }
       } catch (error) {

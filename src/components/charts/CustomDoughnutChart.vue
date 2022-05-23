@@ -139,47 +139,47 @@ export default defineComponent({
   display: flex;
   align-items: center;
   gap: 3.2rem;
-
-  &__chart {
-    height: 15.8rem;
-    width: 15.8rem;
-  }
-
-  .legend {
-    &__item {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-      font-size: 1.4rem;
-    }
-
-    &__item-percentage {
-      min-width: 3.6rem;
-      font-weight: 600;
-    }
-
-    &__item-color {
-      display: block;
-      width: 0.4rem;
-      height: 1.4rem;
-    }
-
-    & > *:not(:last-child) {
-      margin-bottom: 1.6rem;
-    }
-  }
-
-  &__empty-message {
-    font-size: 3.2rem;
-    color: var(--clr__chart-default);
-    font-weight: 600;
+}
+.chart-block__chart {
+  height: 15.8rem;
+  width: 15.8rem;
+}
+.legend {
+  & > *:not(:last-child) {
+    margin-bottom: 1.6rem;
   }
 }
 
-@media screen and (max-width: 480px) {
+.legend__item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1.4rem;
+}
+
+.legend__item-percentage {
+  min-width: 3.6rem;
+  font-weight: 600;
+}
+
+.legend__item-color {
+  display: block;
+  width: 0.4rem;
+  height: 1.4rem;
+}
+.chart-block__empty-message {
+  font-size: 3.2rem;
+  color: var(--clr__chart-default);
+  font-weight: 600;
+}
+
+@media screen and (max-width: 375px) {
+  .chart-block {
+    flex-direction: column;
+  }
   .chart-block__chart {
-    height: 10.8rem;
-    width: 10.8rem;
+    height: 14.8rem;
+    width: 14.8rem;
   }
 }
 </style>

@@ -28,7 +28,7 @@
     </div>
 
     <template v-if="oracleScriptData">
-      <div class="info-card">
+      <div class="oracle-scripts-item__card info-card card-frame">
         <div class="info-card__content">
           <div class="info-card__row">
             <span class="info-card__row-title">Owner</span>
@@ -129,7 +129,6 @@ export default defineComponent({
       releaseLoading()
     }
     const getOracleScriptCode = async () => {
-      lockLoading()
       try {
         if (oracleScriptData.value.sourceCodeUrl) {
           await fetch(oracleScriptData.value.sourceCodeUrl).then((response) => {
@@ -141,7 +140,6 @@ export default defineComponent({
       } catch (error) {
         handleError(error as Error)
       }
-      releaseLoading()
     }
     const editOracleScript = async (oracleScript: OracleScript) => {
       await showDialogHandler(
@@ -195,7 +193,9 @@ export default defineComponent({
     flex: 1;
   }
 }
-
+.oracle-scripts-item__card {
+  margin-bottom: 3.4rem;
+}
 @include respond-to(tablet) {
   .oracle-scripts-item__title {
     margin: 0.8rem 0 0.4rem 0;

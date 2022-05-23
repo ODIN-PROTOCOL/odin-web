@@ -27,6 +27,13 @@
     line-height: 2rem;
     max-height: 3.2rem;
   }
+  &--medium{
+    padding: 8px 24px;
+    width: 18.4rem;
+    height: 4rem;
+    font-size: 1.6rem;
+    line-height: 2.4rem;
+  }
   &:focus {
     color: var(--clr__text-on-action);
     border: 0.1rem solid var(--clr__btn-normal);

@@ -3,7 +3,7 @@
     <div
       v-for="script in topOracleScripts"
       :key="script.attributes.id"
-      class="top-oracle-scripts__item"
+      class="top-oracle-scripts__item card-frame"
     >
       <div class="top-oracle-scripts__item-description">
         <div class="top-oracle-scripts__item-title">
@@ -56,41 +56,38 @@ export default defineComponent({
   font-weight: 400;
   font-size: 1.6rem;
   line-height: 24px;
-
-  &__item {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-width: 26rem;
-    min-height: 24rem;
-    padding: 3.2rem 2.4rem;
-    border: 0.1rem solid var(--clr__action);
-    border-radius: 0.8rem;
-  }
-  &__item-title {
-    font-weight: 600;
-    font-size: 1.8rem;
-    padding-bottom: 2.4rem;
-  }
-
-  &__item-info {
-    display: grid;
-    grid: auto/ repeat(2, 1fr);
-  }
-  &__item-info-title {
-    padding-bottom: 0.8rem;
-    color: var(--clr__text-muted);
-  }
-  &__item-description {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
-  }
-  &__item-value {
-    display: flex;
-    flex-direction: column;
-  }
 }
+.top-oracle-scripts__item {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 26rem;
+  min-height: 24rem;
+}
+.top-oracle-scripts__item-title {
+  font-weight: 600;
+  font-size: 1.8rem;
+  padding-bottom: 2.4rem;
+}
+
+.top-oracle-scripts__item-info {
+  display: grid;
+  grid: auto/ repeat(2, 1fr);
+}
+.top-oracle-scripts__item-info-title {
+  padding-bottom: 0.8rem;
+  color: var(--clr__text-muted);
+}
+.top-oracle-scripts__item-description {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+}
+.top-oracle-scripts__item-value {
+  display: flex;
+  flex-direction: column;
+}
+
 @include respond-to(medium) {
   .top-oracle-scripts {
     grid: auto/repeat(2, 1fr);
@@ -101,12 +98,16 @@ export default defineComponent({
   .top-oracle-scripts {
     grid: auto/repeat(6, 1fr);
     overflow-x: scroll;
-
-    &__item {
-      min-width: 28.7rem;
-      min-height: 26.5rem;
-      justify-content: space-between;
-      padding: 3.2rem 1.6rem;
+    margin-bottom: 2rem;
+  }
+  .top-oracle-scripts__item {
+    min-width: 28.7rem;
+    min-height: 26.5rem;
+    justify-content: space-between;
+    padding: 3.2rem 1.6rem;
+    margin-bottom: 0.7rem;
+    &:first-child {
+      margin-left: 0.7rem;
     }
   }
 }
