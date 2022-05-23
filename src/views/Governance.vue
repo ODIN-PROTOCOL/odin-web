@@ -8,7 +8,7 @@
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Governance</h2>
       <button
-        class="governance__title-btn app-btn app-btn_small fx-sae"
+        class="governance__title-btn app-btn app-btn--medium"
         type="button"
         @click="createProposal()"
       >
@@ -81,7 +81,11 @@
     </template>
 
     <div class="view-main__mobile-activities">
-      <button class="app-btn w-full" type="button" @click="createProposal()">
+      <button
+        class="app-btn w-full app-btn--medium"
+        type="button"
+        @click="createProposal()"
+      >
         Create a proposal
       </button>
     </div>

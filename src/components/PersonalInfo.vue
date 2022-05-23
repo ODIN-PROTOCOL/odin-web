@@ -9,7 +9,7 @@
         {{ accountAddress }}
       </div>
       <div class="personal-info__card-activities">
-        <button class="app-btn app-btn_small" @click="receive()">
+        <button class="app-btn app-btn--small" @click="receive()">
           <ShareIcon />
           Share
         </button>
@@ -34,7 +34,7 @@
             >Account explorer
           </a>
           <button
-            class="app-btn app-btn_small"
+            class="app-btn app-btn--small"
             @click="send()"
             :disabled="isEmptyBalance"
           >

@@ -6,11 +6,11 @@
       'validators--large-padding': isDelegator,
     }"
   >
-    <div class="view-main__title-wrapper validators__title-wrapper">
+    <div class="view-main__title-wrapper">
       <h2 class="view-main__title">All Validators</h2>
-      <div class="validators__title-activities fx-sae">
+      <div class="validators__title-btn-wrraper">
         <button
-          class="validators__title-btn app-btn app-btn_small"
+          class="validators__title-btn app-btn app-btn--medium"
           type="button"
           @click="becomeValidator()"
         >
@@ -18,7 +18,7 @@
         </button>
         <button
           v-if="isDelegator"
-          class="validators__title-btn--white app-btn app-btn_small"
+          class="validators__title-btn--white"
           type="button"
           @click="claimAllRewards"
         >
@@ -130,7 +130,7 @@
                 >
                   <button
                     v-if="delegations[item.operatorAddress]"
-                    class="app-btn app-btn_outlined app-btn--very-small w-min108"
+                    class="app-btn app-btn--outlined app-btn--very-small w-min108"
                     type="button"
                     @click="redelegate(item)"
                   >
@@ -149,7 +149,7 @@
                   class="app-table__activities-item validators__table-activities-item"
                 >
                   <button
-                    class="app-btn app-btn_outlined app-btn--very-small w-min108"
+                    class="app-btn app-btn--outlined app-btn--very-small w-min108"
                     type="button"
                     @click="withdrawRewards(item)"
                   >
@@ -186,12 +186,16 @@
     </template>
 
     <div class="view-main__mobile-activities validators__mobile-activities">
-      <button class="app-btn w-full" type="button" @click="becomeValidator()">
+      <button
+        class="app-btn w-full app-btn--medium"
+        type="button"
+        @click="becomeValidator()"
+      >
         Become a validator
       </button>
       <button
         v-if="isDelegator"
-        class="validators__title-btn--white app-btn w-full"
+        class="validators__title-btn--white w-full app-btn--medium"
         type="button"
         @click="claimAllRewards"
       >
@@ -493,10 +497,11 @@ export default defineComponent({
 .validators {
   padding-bottom: 10rem;
 }
-.validators__title-wrapper {
-  align-items: flex-start;
-}
 
+.validators__title-btn-wrraper {
+  display: flex;
+  flex-direction: row-reverse;
+}
 .validators__title-activities {
   display: flex;
   flex-direction: row-reverse;
@@ -554,7 +559,7 @@ export default defineComponent({
 
 .validators__mobile-activities {
   & > *:not(:last-child) {
-    margin-bottom: 1.6rem;
+    margin-bottom: 0.8rem;
   }
 }
 
@@ -627,6 +632,7 @@ export default defineComponent({
   &--white {
     background: var(--clr__main-bg);
     color: var(--clr__action);
+    margin-right: 4.8rem;
     &:hover {
       opacity: 0.7;
     }
@@ -647,7 +653,7 @@ export default defineComponent({
     margin-bottom: 0;
   }
 
-  .validators__title-activities {
+  .validators__title-btn-wrraper {
     display: none;
   }
 

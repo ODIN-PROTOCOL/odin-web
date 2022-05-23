@@ -129,7 +129,7 @@
 
         <div class="app-form__footer">
           <button
-            class="app-btn app-btn_outlined"
+            class="app-btn app-btn--outlined app-btn--medium"
             type="button"
             @click="onClose()"
             :disabled="isLoading"
@@ -137,7 +137,7 @@
             Cancel
           </button>
           <button
-            class="app-btn"
+            class="app-btn app-btn--medium"
             type="button"
             @click="submit()"
             :disabled="!form.isValid || isLoading"

@@ -8,7 +8,7 @@
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Data Sources</h2>
       <button
-        class="data-sources__title-btn app-btn app-btn_small fx-sae"
+        class="data-sources__title-btn app-btn app-btn--medium"
         type="button"
         @click="createDataSource()"
       >
@@ -82,7 +82,7 @@
                 >
                   <button
                     v-if="accountAddress === item.attributes.owner"
-                    class="app-btn app-btn_small app-btn_outlined w-min80"
+                    class="app-btn app-btn--edit"
                     type="button"
                     @click="editDataSource(item.attributes)"
                   >
@@ -112,7 +112,11 @@
     </template>
 
     <div class="view-main__mobile-activities">
-      <button class="app-btn w-full" type="button" @click="createDataSource()">
+      <button
+        class="app-btn w-full app-btn--medium"
+        type="button"
+        @click="createDataSource()"
+      >
         Create data source
       </button>
     </div>

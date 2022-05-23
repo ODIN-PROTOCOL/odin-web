@@ -36,7 +36,7 @@
     </div>
     <div class="nav__activities">
       <button
-        class="app-btn log-out-btn"
+        class="app-btn log-out-btn app-btn--medium"
         type="button"
         @click="logOutAndLeave()"
       >

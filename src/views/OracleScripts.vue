@@ -8,7 +8,7 @@
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Oracle Scripts</h2>
       <button
-        class="view-main__title-btn app-btn app-btn_small fx-sae oracle-scripts__title-btn"
+        class="oracle-scripts__title-btn app-btn app-btn--medium"
         type="button"
         @click="createOracleScript()"
       >
@@ -87,7 +87,7 @@
                 >
                   <button
                     v-if="accountAddress === item.attributes.owner"
-                    class="app-btn app-btn_small app-btn_outlined w-min80"
+                    class="app-btn app-btn--edit"
                     type="button"
                     @click="editOracleScript(item.attributes)"
                   >
@@ -295,9 +295,6 @@ export default defineComponent({
   }
   .oracle-scripts__count-info {
     margin-bottom: 2.4rem;
-  }
-  .oracle-scripts__title-btn {
-    display: none;
   }
   .oracle-scripts__table-row {
     grid: none;

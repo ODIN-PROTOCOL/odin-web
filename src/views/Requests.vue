@@ -8,7 +8,7 @@
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Requests</h2>
       <button
-        class="requests__title-btn app-btn app-btn_small fx-sae"
+        class="requests__title-btn app-btn app-btn--medium"
         type="button"
         @click="createRequest()"
       >
@@ -98,7 +98,11 @@
     </template>
 
     <div class="view-main__mobile-activities">
-      <button class="app-btn w-full" type="button" @click="createRequest()">
+      <button
+        class="app-btn w-full app-btn--medium"
+        type="button"
+        @click="createRequest()"
+      >
         Create Request
       </button>
     </div>

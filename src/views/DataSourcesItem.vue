@@ -6,25 +6,21 @@
     }"
   >
     <div class="view-main__title-wrapper">
-      <BackButton :text="'Data Sources'" />
-      <h2 class="view-main__title data-source-item__title">Data Source</h2>
-      <span class="view-main__subtitle">
-        {{ String(dataSourceData?.name) }}
-      </span>
-      <div
-        class="data-source-item__activities data-source-item__activities--top fx-sae"
-        v-if="isDataSourceOwner"
-      >
-        <div class="data-source-item__activities-item">
-          <button
-            class="app-btn app-btn_small w-min184"
-            type="button"
-            @click="editDataSource(dataSourceData)"
-          >
-            Edit Data Source
-          </button>
-        </div>
+      <div class="data-source-item__title-wrapper">
+        <BackButton :text="'Data Sources'" />
+        <h2 class="view-main__title data-source-item__title">Data Source</h2>
+        <span class="view-main__subtitle">
+          {{ String(dataSourceData?.name) }}
+        </span>
       </div>
+      <button
+        v-if="isDataSourceOwner"
+        class="data-source-item__title-btn app-btn app-btn--medium"
+        type="button"
+        @click="editDataSource(dataSourceData)"
+      >
+        Edit Data Source
+      </button>
     </div>
 
     <template v-if="dataSourceData">
@@ -70,17 +66,13 @@
       </div>
     </template>
     <div class="view-main__mobile-activities" v-if="isDataSourceOwner">
-      <div class="data-source-item__activities">
-        <div class="data-source-item__activities-item">
-          <button
-            class="app-btn"
-            type="button"
-            @click="editDataSource(dataSourceData)"
-          >
-            Edit Data Source
-          </button>
-        </div>
-      </div>
+      <button
+        class="app-btn w-full app-btn--medium"
+        type="button"
+        @click="editDataSource(dataSourceData)"
+      >
+        Edit Data Source
+      </button>
     </div>
   </div>
 </template>
@@ -170,24 +162,24 @@ export default defineComponent({
 .data-source-item__title {
   margin: 0 1.6rem 0 2rem;
 }
-.data-source-item__activities {
-  display: flex;
-  flex-direction: column;
-  gap: 2.4rem;
-}
-.data-source-item__activities-item {
-  display: flex;
-  flex-direction: row;
-  gap: 2.4rem;
-
-  & > * {
-    flex: 1;
-  }
-}
 .data-source-item__card {
   margin-bottom: 3.4rem;
 }
+.data-source-item__title-info {
+  display: flex;
+  justify-content: space-between;
+}
+.data-source-item__title-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 @include respond-to(tablet) {
+  .data-source-item__title-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
   .data-source-item__title {
     margin: 0.8rem 0 0.4rem 0;
   }
@@ -197,7 +189,7 @@ export default defineComponent({
   .data-source-item {
     padding-bottom: 10rem;
   }
-  .data-source-item__activities--top {
+  .data-source-item__title-btn {
     display: none;
   }
 }

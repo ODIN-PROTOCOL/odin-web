@@ -1,7 +1,7 @@
 <template>
   <div class="copy-button-with-text__wrapper" :class="modalBaseScheme">
     <button
-      class="copy-button-with-text app-btn_small"
+      class="copy-button-with-text app-btn--medium"
       type="button"
       @click.prevent="copy()"
     >
@@ -53,9 +53,11 @@ export default defineComponent({
 .copy-button-with-text {
   display: flex;
   align-items: center;
+  justify-content: center;
   background: var(--clr__main-bg);
   color: var(--clr__action);
   border: 1px solid var(--clr__btn-normal);
+  border-radius: 0.4rem;
   &:hover {
     color: var(--clr__action-disabled);
     .copy-button-with-text__copy-icon {
@@ -112,7 +114,7 @@ export default defineComponent({
 
 @media screen and (max-width: 768px) {
   .copy-button-with-text {
-    justify-content: center;
+    width: 100%;
   }
   .copy-button-with-text__copy-icon {
     margin-right: 1rem;

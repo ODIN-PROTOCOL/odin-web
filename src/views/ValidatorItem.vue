@@ -7,7 +7,7 @@
         : ''
     "
   >
-    <div class="view-main__title-wrapper validators-item__title-wrapper">
+    <div class="view-main__title-wrapper">
       <BackButton class="validators-item__back-btn" :text="'Validators'" />
       <h2 class="view-main__title validators-item__title">Validator</h2>
       <div class="validators-item__validator-address">
@@ -27,14 +27,14 @@
           v-if="delegations[validator?.operatorAddress]"
         >
           <button
-            class="app-btn app-btn_outlined app-btn_small w-min150"
+            class="app-btn app-btn--outlined app-btn--small w-min150"
             type="button"
             @click="withdrawRewards"
           >
             Claim rewards
           </button>
           <button
-            class="app-btn app-btn_outlined app-btn_small w-min150"
+            class="app-btn app-btn--outlined app-btn--small w-min150"
             type="button"
             @click="undelegate"
           >
@@ -44,14 +44,14 @@
         <div class="validators-item__activities-item">
           <button
             v-if="delegations[validator?.operatorAddress]"
-            class="app-btn app-btn_outlined app-btn_small w-min150"
+            class="app-btn app-btn--outlined app-btn--small w-min150"
             type="button"
             @click="redelegate"
           >
             Redelegate
           </button>
           <button
-            class="app-btn app-btn_small w-min150"
+            class="app-btn app-btn--small w-min150"
             type="button"
             @click="delegate"
           >
@@ -88,14 +88,14 @@
           v-if="delegations[validator?.operatorAddress]"
         >
           <button
-            class="validators-item__activities-btn app-btn app-btn_outlined"
+            class="validators-item__activities-btn app-btn app-btn--outlined"
             type="button"
             @click="withdrawRewards"
           >
             Claim rewards
           </button>
           <button
-            class="validators-item__activities-btn app-btn app-btn_outlined"
+            class="validators-item__activities-btn app-btn app-btn--outlined"
             type="button"
             @click="undelegate"
           >
@@ -105,7 +105,7 @@
         <div class="validators-item__activities-item">
           <button
             v-if="delegations[validator?.operatorAddress]"
-            class="validators-item__activities-btn app-btn app-btn_outlined"
+            class="validators-item__activities-btn app-btn app-btn--outlined"
             type="button"
             @click="redelegate"
           >
@@ -288,10 +288,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.validators-item__title-wrapper {
-  align-items: flex-start;
-}
-
 .validators-item__title {
   margin: 0 1.6rem 0 2rem;
 }
