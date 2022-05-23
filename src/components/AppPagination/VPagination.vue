@@ -114,6 +114,7 @@ export default defineComponent({
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0.8rem;
   width: 3.6rem;
   height: 3.6rem;
   border: 0.1rem solid var(--clr__input-border);
@@ -135,11 +136,8 @@ export default defineComponent({
   }
 }
 .v-pagination__control-arrow {
-  position: absolute;
-  display: block;
   width: 1rem;
   height: 1.2rem;
-  margin: 0 0.2rem;
   fill: var(--clr__input-border);
 }
 .v-pagination__total-page {
@@ -162,10 +160,10 @@ export default defineComponent({
   }
 }
 .rotate-right {
-  transform: rotate(180deg);
+  transform: translateX(0.25rem) rotate(180deg);
 }
 .rotate-left {
-  transform: translateX(-0.3rem) rotate(0deg);
+  transform: translateX(-0.1rem) rotate(0deg);
 }
 li {
   background: var(--clr__main-bg);
