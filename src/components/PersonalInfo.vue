@@ -9,8 +9,11 @@
         {{ accountAddress }}
       </div>
       <div class="personal-info__card-activities">
-        <button class="app-btn app-btn--small" @click="receive()">
-          <ShareIcon />
+        <button
+          class="personal-info__share-btn app-btn app-btn--small"
+          @click="receive()"
+        >
+          <ShareIcon class="personal-info__share-icon" />
           Share
         </button>
         <CopyButtonWithText
@@ -34,7 +37,7 @@
             >Account explorer
           </a>
           <button
-            class="app-btn app-btn--small"
+            class="personal-info__send-btn app-btn app-btn--small"
             @click="send()"
             :disabled="isEmptyBalance"
           >
@@ -229,6 +232,18 @@ export default defineComponent({
 }
 .personal-info__copy-button-with-text {
   align-items: flex-start;
+}
+.personal-info__share-btn {
+  width: 8.9rem;
+  height: 3.2rem;
+  padding: 0.6rem 0;
+}
+.personal-info__send-btn {
+  width: 6.5rem;
+  height: 3.2rem;
+}
+.personal-info__share-icon {
+  margin-right: 0.8rem;
 }
 @include respond-to(tablet) {
   .personal-info {
