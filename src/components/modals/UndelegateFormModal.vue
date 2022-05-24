@@ -33,7 +33,7 @@
                 class="undelegate-form-modal__field-balance-value"
                 :title="$convertLokiToOdin(validator.minSelfDelegation)"
               >
-                {{ $convertLokiToOdin(validator.minSelfDelegation) }} ODIN
+                {{ $convertLokiToOdin(validator.minSelfDelegation) }}
               </p>
             </div>
 

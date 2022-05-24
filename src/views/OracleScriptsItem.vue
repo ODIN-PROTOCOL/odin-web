@@ -7,12 +7,12 @@
   >
     <div class="view-main__title-wrapper">
       <div class="oracle-scripts-item__title-wrapper">
-        <BackButton :text="'Oracle Scripts'" />
+        <BackButton text="Oracle Scripts" />
         <h2 class="view-main__title oracle-scripts-item__title">
           Oracle Script
         </h2>
         <span class="view-main__subtitle">
-          {{ String(oracleScriptData?.name) }}
+          {{ oracleScriptData?.name }}
         </span>
       </div>
 

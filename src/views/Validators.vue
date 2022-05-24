@@ -111,7 +111,7 @@
             <div class="app-table__cell">
               <span class="app-table__title">Uptime</span>
               <Progressbar
-                v-if="item.uptimeInfo.uptime"
+                v-if="item.uptimeInfo?.uptime"
                 :min="0"
                 :max="100"
                 :current="Number(item.uptimeInfo.uptime) || 0"

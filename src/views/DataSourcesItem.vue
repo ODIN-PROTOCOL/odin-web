@@ -7,10 +7,10 @@
   >
     <div class="view-main__title-wrapper">
       <div class="data-source-item__title-wrapper">
-        <BackButton :text="'Data Sources'" />
+        <BackButton text="Data Sources" />
         <h2 class="view-main__title data-source-item__title">Data Source</h2>
         <span class="view-main__subtitle">
-          {{ String(dataSourceData?.name) }}
+          {{ dataSourceData?.name }}
         </span>
       </div>
       <button

@@ -8,61 +8,38 @@
     "
   >
     <div class="view-main__title-wrapper">
-      <BackButton class="validators-item__back-btn" :text="'Validators'" />
-      <h2 class="view-main__title validators-item__title">Validator</h2>
-      <div class="validators-item__validator-address">
-        <p
-          :title="validator?.operatorAddress"
-          class="view-main__subtitle validators-item__subtitle"
-        >
-          {{ validator?.operatorAddress }}
-        </p>
-        <CopyButton class="mg-l8" :text="String(validator?.operatorAddress)" />
+      <div class="validators-item__title-wrapper">
+        <BackButton class="validators-item__back-btn" :text="'Validators'" />
+        <h2 class="view-main__title validators-item__title">Validator</h2>
+        <div class="validators-item__validator-address">
+          <p
+            :title="validator?.operatorAddress"
+            class="view-main__subtitle validators-item__subtitle"
+          >
+            {{ validator?.operatorAddress }}
+          </p>
+          <CopyButton
+            class="mg-l8"
+            :text="String(validator?.operatorAddress)"
+          />
+        </div>
       </div>
       <div
-        class="validators-item__activities validators-item__activities--top fx-sae"
+        class="validators-item__activities validators-item__activities--top"
+        v-if="delegations[validator?.operatorAddress]"
       >
-        <div
-          class="validators-item__activities-item"
-          v-if="delegations[validator?.operatorAddress]"
+        <button
+          class="app-btn app-btn--small w-min150"
+          type="button"
+          @click="withdrawRewards"
         >
-          <button
-            class="app-btn app-btn--outlined app-btn--small w-min150"
-            type="button"
-            @click="withdrawRewards"
-          >
-            Claim rewards
-          </button>
-          <button
-            class="app-btn app-btn--outlined app-btn--small w-min150"
-            type="button"
-            @click="undelegate"
-          >
-            Undelegate
-          </button>
-        </div>
-        <div class="validators-item__activities-item">
-          <button
-            v-if="delegations[validator?.operatorAddress]"
-            class="app-btn app-btn--outlined app-btn--small w-min150"
-            type="button"
-            @click="redelegate"
-          >
-            Redelegate
-          </button>
-          <button
-            class="app-btn app-btn--small w-min150"
-            type="button"
-            @click="delegate"
-          >
-            Delegate
-          </button>
-        </div>
+          Claim rewards
+        </button>
       </div>
     </div>
 
     <template v-if="validator">
-      <ValidatorInfoCard :validator="validator" />
+      <ValidatorInfo :validator="validator" />
 
       <Tabs>
         <Tab title="Oracle Reports">
@@ -88,35 +65,11 @@
           v-if="delegations[validator?.operatorAddress]"
         >
           <button
-            class="validators-item__activities-btn app-btn app-btn--outlined"
+            class="validators-item__activities-btn app-btn"
             type="button"
             @click="withdrawRewards"
           >
             Claim rewards
-          </button>
-          <button
-            class="validators-item__activities-btn app-btn app-btn--outlined"
-            type="button"
-            @click="undelegate"
-          >
-            Undelegate
-          </button>
-        </div>
-        <div class="validators-item__activities-item">
-          <button
-            v-if="delegations[validator?.operatorAddress]"
-            class="validators-item__activities-btn app-btn app-btn--outlined"
-            type="button"
-            @click="redelegate"
-          >
-            Redelegate
-          </button>
-          <button
-            class="validators-item__activities-btn app-btn"
-            type="button"
-            @click="delegate"
-          >
-            Delegate
           </button>
         </div>
       </div>
@@ -134,7 +87,7 @@ import BackButton from '@/components/BackButton.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import Tabs from '@/components/tabs/Tabs.vue'
 import Tab from '@/components/tabs/Tab.vue'
-import ValidatorInfoCard from '@/components/ValidatorInfoCard.vue'
+import ValidatorInfo from '@/components/ValidatorInfo.vue'
 import OracleReportsTable from '@/components/tables/OracleReportsTable.vue'
 import DelegatorsTable from '@/components/tables/DelegatorsTable.vue'
 import ProposedBlocksTable from '@/components/tables/ProposedBlocksTable.vue'
@@ -151,7 +104,7 @@ export default defineComponent({
     CopyButton,
     Tabs,
     Tab,
-    ValidatorInfoCard,
+    ValidatorInfo,
     OracleReportsTable,
     DelegatorsTable,
     ProposedBlocksTable,
@@ -288,6 +241,11 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.validators-item__title-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .validators-item__title {
   margin: 0 1.6rem 0 2rem;
 }
