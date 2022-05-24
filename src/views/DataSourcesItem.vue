@@ -124,7 +124,6 @@ export default defineComponent({
       releaseLoading()
     }
     const getDataSourceCode = async () => {
-      lockLoading()
       try {
         dataSourceCode.value = await callers
           .getDataSourceCode(String(route.params.id))
@@ -133,7 +132,6 @@ export default defineComponent({
       } catch (error) {
         handleError(error as Error)
       }
-      releaseLoading()
     }
     const editDataSource = async (dataSource: unknown) => {
       await showDialogHandler(

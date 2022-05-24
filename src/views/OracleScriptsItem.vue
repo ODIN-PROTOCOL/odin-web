@@ -129,7 +129,6 @@ export default defineComponent({
       releaseLoading()
     }
     const getOracleScriptCode = async () => {
-      lockLoading()
       try {
         if (oracleScriptData.value.sourceCodeUrl) {
           await fetch(oracleScriptData.value.sourceCodeUrl).then((response) => {
@@ -141,7 +140,6 @@ export default defineComponent({
       } catch (error) {
         handleError(error as Error)
       }
-      releaseLoading()
     }
     const editOracleScript = async (oracleScript: OracleScript) => {
       await showDialogHandler(

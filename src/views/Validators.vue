@@ -62,7 +62,7 @@
         <span class="validators__table-head-item">Validator</span>
         <span class="validators__table-head-item"> Delegated </span>
         <span class="validators__table-head-item"> Commission </span>
-        <span class="validators__table-head-item"> Uptime </span>
+        <!-- <span class="validators__table-head-item"> Uptime </span> -->
         <span class="validators__table-head-item"> Oracle Status </span>
         <span class="validators__table-head-item"></span>
       </div>
@@ -108,17 +108,18 @@
                 {{ $getPrecisePercents(item.commission.commissionRates.rate) }}
               </span>
             </div>
-            <div class="app-table__cell">
+            <!-- NOT READY TELEMETRY -->
+            <!-- <div class="app-table__cell">
               <span class="app-table__title">Uptime</span>
               <Progressbar
-                v-if="item.uptimeInfo.uptime"
+                v-if="item.uptimeInfo?.uptime"
                 :min="0"
                 :max="100"
                 :current="Number(item.uptimeInfo.uptime) || 0"
                 :isForValidators="true"
               />
               <span v-else>N/A</span>
-            </div>
+            </div> -->
             <div class="app-table__cell validators__table-cell--center">
               <span class="app-table__title">Oracle Status</span>
               <StatusIcon :status="item?.isActive ? 'success' : 'error'" />
@@ -225,7 +226,7 @@ import BecomeValidatorFormModal from '@/components/modals/BecomeValidatorFormMod
 import ClaimAllRewardsFormModal from '@/components/modals/ClaimAllRewardsFormModal.vue'
 import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
 import { isActiveValidator } from '@/helpers/validatorHelpers'
-import Progressbar from '@/components/Progressbar.vue'
+// import Progressbar from '@/components/Progressbar.vue'
 import InputField from '@/components/fields/InputField.vue'
 import SearchIcon from '@/components/icons/SearchIcon.vue'
 
@@ -236,7 +237,7 @@ export default defineComponent({
     TitledLink,
     StatusIcon,
     AppPagination,
-    Progressbar,
+    // Progressbar,
     InputField,
     SearchIcon,
   },
@@ -520,7 +521,7 @@ export default defineComponent({
     minmax(5rem, 1fr)
     minmax(6rem, 0.5fr)
     minmax(8rem, 0.5fr)
-    minmax(7rem, 1fr)
+    // minmax(7rem, 1fr)
     minmax(6rem, 8rem)
     minmax(24rem, 1.5fr);
 }

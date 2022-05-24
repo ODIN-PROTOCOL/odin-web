@@ -65,14 +65,14 @@
       <ValidatorInfoCard :validator="validator" />
 
       <Tabs>
-        <Tab title="Oracle Reports">
-          <template v-if="reports">
-            <OracleReportsTable :reports="reports" />
-          </template>
-        </Tab>
         <Tab title="Delegators">
           <template v-if="delegators">
             <DelegatorsTable :delegators="delegators" />
+          </template>
+        </Tab>
+        <Tab title="Oracle Reports">
+          <template v-if="reports">
+            <OracleReportsTable :reports="reports" />
           </template>
         </Tab>
         <Tab title="Proposed Blocks">
