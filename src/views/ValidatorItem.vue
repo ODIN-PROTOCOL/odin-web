@@ -7,7 +7,7 @@
         : ''
     "
   >
-    <div class="view-main__title-wrapper">
+    <div class="view-main__title-wrapper w-full">
       <div class="validators-item__title-wrapper">
         <BackButton class="validators-item__back-btn" :text="'Validators'" />
         <h2 class="view-main__title validators-item__title">Validator</h2>
@@ -23,6 +23,7 @@
             :text="String(validator?.operatorAddress)"
           />
         </div>
+        <StatusIcon :status="validator?.isActive ? 'success' : 'error'" />
       </div>
       <div
         class="validators-item__activities validators-item__activities--top"
@@ -91,6 +92,8 @@ import ValidatorInfo from '@/components/ValidatorInfo.vue'
 import OracleReportsTable from '@/components/tables/OracleReportsTable.vue'
 import DelegatorsTable from '@/components/tables/DelegatorsTable.vue'
 import ProposedBlocksTable from '@/components/tables/ProposedBlocksTable.vue'
+import { isActiveValidator } from '@/helpers/validatorHelpers'
+import StatusIcon from '@/components/StatusIcon.vue'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import WithdrawRewardsFormModal from '@/components/modals/WithdrawRewardsFormModal.vue'
@@ -108,6 +111,7 @@ export default defineComponent({
     OracleReportsTable,
     DelegatorsTable,
     ProposedBlocksTable,
+    StatusIcon,
   },
   setup: function () {
     const route: RouteLocationNormalizedLoaded = useRoute()
@@ -118,7 +122,12 @@ export default defineComponent({
 
     const getValidator = async () => {
       const response = await callers.getValidator(String(route.params.address))
-      validator.value = { ...response.validator }
+
+      validator.value = {
+        ...response.validator,
+        isActive: await isActiveValidator(String(route.params.address)),
+      }
+      console.log(validator.value)
     }
 
     const getDelegators = async () => {
@@ -244,7 +253,8 @@ export default defineComponent({
 .validators-item__title-wrapper {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  width: 100%;
 }
 .validators-item__title {
   margin: 0 1.6rem 0 2rem;
@@ -309,6 +319,11 @@ export default defineComponent({
 
   .validators-item--large-padding {
     padding-bottom: 17rem;
+  }
+  .validators-item__title-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 

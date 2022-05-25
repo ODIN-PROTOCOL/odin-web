@@ -26,11 +26,7 @@
         </div>
       </div>
       <div class="validator-info__top-line-item card-frame">
-        <span
-          class="validator-info__top-line-item-title"
-          :title="$fCoin(validator.tokens, 'loki')"
-          >Stake</span
-        >
+        <span class="validator-info__top-line-item-title">Stake</span>
         <div class="validator-info__card-balance-row-value-wrapper">
           <span class="validator-info__top-line-item-value">
             {{ $convertLokiToOdin(validator.tokens, { withDenom: true }) }}
@@ -276,6 +272,10 @@ export default defineComponent({
 .validator-info__top-line-item {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .validator-info__row,
@@ -287,8 +287,8 @@ export default defineComponent({
 }
 
 .validator-info__top-line-item-title {
-  font-size: 16px;
-  line-height: 24px;
+  font-size: 1.6rem;
+  line-height: 2.4rem;
   margin-bottom: 0.4rem;
 }
 .validator-info__top-line-item-value {
@@ -321,8 +321,8 @@ export default defineComponent({
 }
 .validator-info__description-item-value {
   font-weight: 300;
-  font-size: 14px;
-  line-height: 20px;
+  font-size: 1.4rem;
+  line-height: 2rem;
 }
 
 .validator-info__delegetion-balance {
@@ -350,8 +350,8 @@ export default defineComponent({
   position: relative;
 }
 .validator-info__card-balance-row-value {
-  font-size: 24px;
-  line-height: 32px;
+  font-size: 2.4rem;
+  line-height: 3.2rem;
   width: 100%;
   font-weight: 600;
   color: var(--clr__text);
@@ -365,6 +365,7 @@ export default defineComponent({
   .validator-info {
     gap: 2.4rem;
   }
+
   .validator-info__top-line {
     grid-template-columns: 1fr 1fr;
     gap: 1.6rem;
@@ -375,6 +376,10 @@ export default defineComponent({
   }
   .validator-info__delegetion-btn-wrapper {
     gap: 0.8rem;
+  }
+  .validator-info__top-line-item-value {
+    font-size: 2rem;
+    line-height: 2.4rem;
   }
 }
 @media screen and (max-width: 393px) {
