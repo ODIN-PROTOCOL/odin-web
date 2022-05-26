@@ -218,3 +218,34 @@ export const odinValidator: FormFieldValidator = (val: unknown) => {
   }
   return null
 }
+
+export function requiredIf(
+  condition: unknown | (() => unknown)
+): FormFieldValidator {
+  return (val: unknown): FormFieldValidatorResult => {
+    const cond = typeof condition === 'function' ? condition() : condition
+    if (cond) return required(val)
+    return null
+  }
+}
+
+export function shouldMatch(
+  expected: unknown | (() => unknown),
+  errMsg?: string
+): FormFieldValidator {
+  return (val: unknown): FormFieldValidatorResult => {
+    const exp = typeof expected === 'function' ? expected() : expected
+    if (val !== exp) {
+      return errMsg ?? 'Validators should match err'
+    }
+    return null
+  }
+}
+
+const EMAIL_RE = /.+@.+\..+/
+export const email: FormFieldValidator = (val: unknown) => {
+  if (!val || typeof val !== 'string' || !EMAIL_RE.test(val)) {
+    return 'Email err'
+  }
+  return null
+}

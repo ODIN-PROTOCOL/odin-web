@@ -268,7 +268,8 @@ const StakeTransferFormModal = defineComponent({
         validators.required,
         validators.number,
         validators.sixDecimalNumber,
-        ...validators.num(0.000001, maxAmount.value),
+        validators.min(0.000001),
+        validators.max(maxAmount.value),
         validators.maxCharacters(32),
       ],
       from: [
@@ -288,11 +289,15 @@ const StakeTransferFormModal = defineComponent({
       () => form.from.val(),
       () => {
         // How to make reactive in form.amount field
+        form.amount.reset()
         maxAmount.value = Number(
           convertLokiToOdin(props.delegation[form.from.val()].balance?.amount, {
             onlyNumber: true,
           })
         )
+        console.log(maxAmount.value)
+        // form.amount.reset()
+        // form.amount.addValidator(validators.max(maxAmount.value))
       }
     )
     watch(

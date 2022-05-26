@@ -8,6 +8,15 @@ export type FormFieldDefinition = [
   ...validators: FormFieldValidator[]
 ]
 
+type FormDecorated<T extends Record<string, FormFieldDefinition>> = {
+  [P in keyof T]: FormField<T[P][0]>
+} & {
+  isValid: ComputedRef<boolean>
+  validateAll(): boolean
+  flatten(): FormFlattened<T>
+  reset(): void
+}
+
 /* prettier-ignore */
 type FormFlattened<T extends Record<string, FormFieldDefinition>> =
   { [P in keyof T]: FormField<T[P][0]>['current'] } &
@@ -16,11 +25,7 @@ type FormFlattened<T extends Record<string, FormFieldDefinition>> =
 
 export function useForm<T extends Record<string, FormFieldDefinition>>(
   fieldDefinitions: T
-): { [P in keyof T]: FormField<T[P][0]> } & {
-  isValid: ComputedRef<boolean>
-  validateAll(): string | null
-  flatten(): FormFlattened<T>
-} {
+): FormDecorated<T> {
   const fields = mapValues(fieldDefinitions, (fdDef) => {
     return useField(fdDef[0], <FormFieldValidator[]>fdDef.slice(1))
   })
@@ -35,9 +40,11 @@ export function useForm<T extends Record<string, FormFieldDefinition>>(
   })
 
   const validateAll = () => {
-    return _fieldsArr.reduce(
-      (error, field) => error || field.validate(),
-      null as string | null
+    return (
+      _fieldsArr.reduce(
+        (error, field) => error || field.validate(),
+        null as string | null
+      ) === null
     )
   }
 
@@ -51,5 +58,9 @@ export function useForm<T extends Record<string, FormFieldDefinition>>(
     return reactive(unwrapped) as FormFlattened<T>
   }
 
-  return { ...fields, isValid, validateAll, flatten }
+  const reset = (): void => {
+    _fieldsArr.forEach((f) => f.reset())
+  }
+
+  return { ...fields, isValid, validateAll, flatten, reset }
 }
