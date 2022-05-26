@@ -211,3 +211,10 @@ export const odinAddress: FormFieldValidator = (val: unknown) => {
   }
   return null
 }
+const PREFIX_VALIDATOR = /^odinvaloper1/
+export const odinValidator: FormFieldValidator = (val: unknown) => {
+  if (typeof val === 'string' && !PREFIX_VALIDATOR.test(val)) {
+    return 'Invalid address'
+  }
+  return null
+}

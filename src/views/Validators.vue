@@ -18,6 +18,14 @@
         </button>
         <button
           v-if="isDelegator"
+          class="validators__title-btn app-btn app-btn_small"
+          type="button"
+          @click="stakeTransfer"
+        >
+          Stake transfer
+        </button>
+        <button
+          v-if="isDelegator"
           class="validators__title-btn--white app-btn app-btn_small"
           type="button"
           @click="claimAllRewards"
@@ -191,6 +199,14 @@
       </button>
       <button
         v-if="isDelegator"
+        class="validators__title-btn app-btn app-btn_small"
+        type="button"
+        @click="stakeTransfer"
+      >
+        Stake transfer
+      </button>
+      <button
+        v-if="isDelegator"
         class="validators__title-btn--white app-btn w-full"
         type="button"
         @click="claimAllRewards"
@@ -222,6 +238,7 @@ import WithdrawRewardsFormModal from '@/components/modals/WithdrawRewardsFormMod
 import DelegateFormModal from '@/components/modals/DelegateFormModal.vue'
 import UndelegateFormModal from '@/components/modals/UndelegateFormModal.vue'
 import BecomeValidatorFormModal from '@/components/modals/BecomeValidatorFormModal.vue'
+import StakeTransferFormModal from '@/components/modals/StakeTransferFormModal.vue'
 import ClaimAllRewardsFormModal from '@/components/modals/ClaimAllRewardsFormModal.vue'
 import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
 import { isActiveValidator } from '@/helpers/validatorHelpers'
@@ -454,6 +471,22 @@ export default defineComponent({
       )
     }
 
+    const stakeTransfer = async () => {
+      if (!delegations.value) return
+      await showDialogHandler(
+        StakeTransferFormModal,
+        {
+          onSubmit: async (d) => {
+            d.kill()
+            await loadData()
+          },
+        },
+        {
+          validators: activeValidators.value,
+          delegation: delegations.value,
+        }
+      )
+    }
     onMounted(async () => {
       await loadData()
     })
@@ -484,6 +517,7 @@ export default defineComponent({
       inactiveValidatorsTitle,
       searchValue,
       filterValidators,
+      stakeTransfer,
     }
   },
 })
