@@ -289,15 +289,14 @@ const StakeTransferFormModal = defineComponent({
       () => form.from.val(),
       () => {
         // How to make reactive in form.amount field
-        form.amount.reset()
         maxAmount.value = Number(
           convertLokiToOdin(props.delegation[form.from.val()].balance?.amount, {
             onlyNumber: true,
           })
         )
         console.log(maxAmount.value)
-        // form.amount.reset()
-        // form.amount.addValidator(validators.max(maxAmount.value))
+        form.amount.reset()
+        form.amount.addValidator(validators.max(maxAmount.value))
       }
     )
     watch(

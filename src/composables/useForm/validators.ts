@@ -1,6 +1,7 @@
 /* eslint-disable no-useless-escape */
 import { big } from '@/helpers/bigMath'
 import { NumLike } from '@/helpers/casts'
+import { Ref, unref } from 'vue'
 
 export type FormFieldValidator = (...args: unknown[]) => string | null
 export type FormFieldValidatorResult = ReturnType<FormFieldValidator>
@@ -62,8 +63,9 @@ export function num(minimum?: number, maximum?: number): FormFieldValidator[] {
   return validators
 }
 
-export function min(minimum: number): FormFieldValidator {
+export function min(minimum: Ref<number> | number): FormFieldValidator {
   return (val: unknown): FormFieldValidatorResult => {
+    minimum = Number(unref(minimum))
     const num = Number(val)
     if (!Number.isNaN(num) && num < minimum) {
       return `The value should be larger than ${minimum}`
@@ -71,10 +73,10 @@ export function min(minimum: number): FormFieldValidator {
     return null
   }
 }
-
-export function max(maximum: number): FormFieldValidator {
+export function max(maximum: Ref<number> | number): FormFieldValidator {
   return (val: unknown): FormFieldValidatorResult => {
     const num = Number(val)
+    maximum = Number(unref(maximum))
     if (!Number.isNaN(num) && num > maximum) {
       return `The value should be lower than ${maximum}`
     }
