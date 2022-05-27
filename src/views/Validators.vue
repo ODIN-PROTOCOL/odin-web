@@ -199,7 +199,7 @@
       </button>
       <button
         v-if="isDelegator"
-        class="validators__title-btn app-btn app-btn_small"
+        class="app-btn w-full"
         type="button"
         @click="stakeTransfer"
       >

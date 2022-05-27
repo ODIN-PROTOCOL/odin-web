@@ -23,6 +23,7 @@
                     v-for="(val, key) in delegatedValidators"
                     :key="key"
                     :value="val.operatorAddress"
+                    :isDisabled="isHaveSameValue(val)"
                   >
                     <div class="stake-transfer-form-modal__option frame">
                       <div class="stake-transfer-form-modal__option-info">
@@ -74,7 +75,7 @@
               <template #dropdownInner>
                 <div class="vue-picker__dropdown-custom">
                   <VuePickerOption
-                    v-for="(validator, key) in allValidators"
+                    v-for="(validator, key) in filtredValidators"
                     :key="key"
                     :value="validator.operatorAddress"
                   >
@@ -131,7 +132,7 @@
                 {{ form.toErr }}
               </p>
               <div
-                v-if="allValidators[0].delegation"
+                v-if="filtredValidators[0]?.delegation && !form.toErr"
                 class="stake-transfer-form-modal__field-balance"
               >
                 <label class="stake-transfer-form-modal__field-lbl"
@@ -141,7 +142,7 @@
                   class="stake-transfer-form-modal__field-balance-value"
                   :title="
                     $convertLokiToOdin(
-                      allValidators[0].delegation.balance?.amount,
+                      filtredValidators[0].delegation.balance?.amount,
                       {
                         onlyNumber: true,
                       }
@@ -150,7 +151,7 @@
                 >
                   {{
                     $convertLokiToOdin(
-                      allValidators[0].delegation.balance?.amount
+                      filtredValidators[0].delegation.balance?.amount
                     )
                   }}
                 </p>
@@ -200,10 +201,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, watch } from 'vue'
+import { defineComponent, PropType, ref, watch, computed } from 'vue'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
-import { COINS_LIST, START_VALUE } from '@/api/api-config'
+import { COINS_LIST } from '@/api/api-config'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { handleError } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
@@ -211,7 +212,11 @@ import { convertLokiToOdin, convertOdinToLoki } from '@/helpers/converters'
 import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
-import { ValidatorDecoded } from '@/helpers/validatorDecoders'
+import {
+  ValidatorDecoded,
+  TransferValidator,
+  decodeValidators,
+} from '@/helpers/validatorDecoders'
 import { coin } from '@cosmjs/amino'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -236,32 +241,8 @@ const StakeTransferFormModal = defineComponent({
     const delegatedAdress = Object.keys(props.delegation)
     const isShowToAdressOption = ref(true)
     const delegatedValidators = ref()
-    const allValidators = ref()
-    delegatedValidators.value = delegatedAdress.map((item: string) => {
-      return {
-        ...props.validators.find(
-          (validator: ValidatorDecoded) => validator.operatorAddress === item
-        ),
-        delegation: props.delegation[item],
-      }
-    })
-    allValidators.value = props.validators.map((item: ValidatorDecoded) => {
-      return {
-        ...item,
-        delegation: props.delegation[item.operatorAddress] || {},
-      }
-    })
-
-    const maxAmount = ref(
-      Number(
-        convertLokiToOdin(
-          delegatedValidators.value[0].delegation.balance?.amount,
-          {
-            onlyNumber: true,
-          }
-        )
-      )
-    )
+    const allValidators = ref<Array<TransferValidator>>(props.validators)
+    const maxAmount = ref(100)
     const form = useForm({
       amount: [
         '',
@@ -273,64 +254,127 @@ const StakeTransferFormModal = defineComponent({
         validators.maxCharacters(32),
       ],
       from: [
-        delegatedValidators.value[0].operatorAddress,
+        '',
         validators.required,
         validators.odinValidator,
         validators.maxCharacters(64),
       ],
       to: [
-        allValidators.value[0].operatorAddress,
+        '',
         validators.required,
         validators.odinValidator,
         validators.maxCharacters(64),
       ],
     })
+
+    const resetAmount = (newAmount: number) => {
+      form.amount.reset()
+      form.amount.removeValidator(validators.max(newAmount))
+      form.amount.addValidator(validators.max(newAmount))
+    }
+
+    delegatedValidators.value = delegatedAdress.map(
+      (validatorAddress: string) => {
+        return {
+          ...allValidators.value.find(
+            (validator: ValidatorDecoded) =>
+              validator.operatorAddress === validatorAddress
+          ),
+          delegation: props.delegation[validatorAddress],
+        }
+      }
+    )
+
+    form.from.val(delegatedValidators.value[0].operatorAddress)
+
+    const filtredValidators = computed(() =>
+      allValidators.value
+        .map((validator: ValidatorDecoded) => {
+          return {
+            ...validator,
+            delegation: props.delegation[validator.operatorAddress] || {},
+          }
+        })
+        .filter(
+          (validator: ValidatorDecoded) =>
+            validator.operatorAddress !== form.from.val()
+        )
+    )
+
+    form.to.val(filtredValidators.value[0].operatorAddress)
+
+    maxAmount.value = Number(
+      convertLokiToOdin(props.delegation[form.from.val()].balance?.amount, {
+        onlyNumber: true,
+      })
+    )
+
+    resetAmount(maxAmount.value)
+
+    const isHaveSameValue = (validator: ValidatorDecoded) => {
+      return validator.operatorAddress === form.to.val()
+    }
+
+    const findReceiverValidator = () => {
+      if (!isShowToAdressOption.value) {
+        if (form.to.val() === form.from.val()) {
+          form.to.err('Choose another validator')
+          return
+        }
+        setTimeout(async () => {
+          try {
+            const resp = await callers.getValidator(String(form.to.val()))
+            if (isShowToAdressOption.value || !resp.validator) return
+            const decodedValidators = decodeValidators([resp.validator])[0]
+            allValidators.value = [
+              {
+                ...decodedValidators,
+                delegation: props.delegation[resp.validator?.operatorAddress],
+              },
+            ]
+            form.to.err('')
+          } catch (error) {
+            allValidators.value = []
+            form.to.err('Validator not found')
+          }
+        }, 2000)
+      }
+    }
+
     watch(
       () => form.from.val(),
       () => {
-        // How to make reactive in form.amount field
-        maxAmount.value = Number(
-          convertLokiToOdin(props.delegation[form.from.val()].balance?.amount, {
-            onlyNumber: true,
-          })
-        )
-        console.log(maxAmount.value)
-        form.amount.reset()
-        form.amount.addValidator(validators.max(maxAmount.value))
+        try {
+          if (form.to.val() === form.from.val()) {
+            form.to.err('Choose another validator')
+            return
+          } else if (form.to.isDirty.value) {
+            findReceiverValidator()
+          }
+          maxAmount.value = Number(
+            convertLokiToOdin(
+              props.delegation[form.from.val()].balance?.amount,
+              {
+                onlyNumber: true,
+              }
+            )
+          )
+          resetAmount(maxAmount.value)
+        } catch (error) {
+          form.to.err('Validator not found')
+        }
       }
     )
     watch(
       () => form.to.val(),
       async () => {
-        if (!isShowToAdressOption.value) {
-          setTimeout(async () => {
-            try {
-              const resp = await callers.getValidator(String(form.to.val()))
-              if (isShowToAdressOption.value || !resp.validator) return
-              console.log(!resp.validator)
-
-              allValidators.value = [
-                {
-                  ...resp.validator,
-                  delegation: props.delegation[resp.validator?.operatorAddress],
-                },
-              ]
-            } catch (error) {
-              form.from.err('Validator not found')
-            }
-          }, 2000)
-        }
+        await findReceiverValidator()
       }
     )
     const changeField = async () => {
-      form.to.val(props.validators[0].operatorAddress)
+      allValidators.value = props.validators
+      form.to.val(allValidators.value[0].operatorAddress)
       isShowToAdressOption.value = !isShowToAdressOption.value
-      allValidators.value = props.validators.map((item: ValidatorDecoded) => {
-        return {
-          ...item,
-          delegation: props.delegation[item.operatorAddress] || {},
-        }
-      })
     }
     const onSubmit = dialogs.getHandler('onSubmit')
     const submit = async () => {
@@ -356,11 +400,11 @@ const StakeTransferFormModal = defineComponent({
       isLoading,
       submit,
       onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
-      START_VALUE,
       delegatedValidators,
       changeField,
       isShowToAdressOption,
-      allValidators,
+      filtredValidators,
+      isHaveSameValue,
     }
   },
 })
