@@ -242,7 +242,15 @@ const StakeTransferFormModal = defineComponent({
     const isShowToAdressOption = ref(true)
     const delegatedValidators = ref()
     const allValidators = ref<Array<TransferValidator>>(props.validators)
-    const maxAmount = ref(100)
+    // const maxAmount = ref(100)
+    const maxAmount = computed(
+      () =>
+        Number(
+          convertLokiToOdin(props.delegation[form.from.val()].balance?.amount, {
+            onlyNumber: true,
+          })
+        ) || 0
+    )
     const form = useForm({
       amount: [
         '',
@@ -250,7 +258,7 @@ const StakeTransferFormModal = defineComponent({
         validators.number,
         validators.sixDecimalNumber,
         validators.min(0.000001),
-        validators.max(maxAmount.value),
+        validators.max(maxAmount),
         validators.maxCharacters(32),
       ],
       from: [
@@ -266,12 +274,6 @@ const StakeTransferFormModal = defineComponent({
         validators.maxCharacters(64),
       ],
     })
-
-    const resetAmount = (newAmount: number) => {
-      form.amount.reset()
-      form.amount.removeValidator(validators.max(newAmount))
-      form.amount.addValidator(validators.max(newAmount))
-    }
 
     delegatedValidators.value = delegatedAdress.map(
       (validatorAddress: string) => {
@@ -303,13 +305,7 @@ const StakeTransferFormModal = defineComponent({
 
     form.to.val(filtredValidators.value[0].operatorAddress)
 
-    maxAmount.value = Number(
-      convertLokiToOdin(props.delegation[form.from.val()].balance?.amount, {
-        onlyNumber: true,
-      })
-    )
-
-    resetAmount(maxAmount.value)
+    // resetAmount(maxAmount.value)
 
     const isHaveSameValue = (validator: ValidatorDecoded) => {
       return validator.operatorAddress === form.to.val()
@@ -351,15 +347,16 @@ const StakeTransferFormModal = defineComponent({
           } else if (form.to.isDirty.value) {
             findReceiverValidator()
           }
-          maxAmount.value = Number(
-            convertLokiToOdin(
-              props.delegation[form.from.val()].balance?.amount,
-              {
-                onlyNumber: true,
-              }
-            )
-          )
-          resetAmount(maxAmount.value)
+          // form.amount.removeValidator(validators.max(maxAmount))
+          // maxAmount.value = Number(
+          //   convertLokiToOdin(
+          //     props.delegation[form.from.val()].balance?.amount,
+          //     {
+          //       onlyNumber: true,
+          //     }
+          //   )
+          // )
+          form.amount.reset()
         } catch (error) {
           form.to.err('Validator not found')
         }

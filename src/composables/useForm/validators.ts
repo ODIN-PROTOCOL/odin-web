@@ -73,12 +73,12 @@ export function min(minimum: Ref<number> | number): FormFieldValidator {
     return null
   }
 }
-export function max(maximum: Ref<number> | number): FormFieldValidator {
+export function max(maximum: Ref<number>): FormFieldValidator {
   return (val: unknown): FormFieldValidatorResult => {
     const num = Number(val)
-    maximum = Number(unref(maximum))
-    if (!Number.isNaN(num) && num > maximum) {
-      return `The value should be lower than ${maximum}`
+    // maximum = Number(unref(maximum))
+    if (!Number.isNaN(num) && num > maximum.value) {
+      return `The value should be lower than ${maximum.value}`
     }
     return null
   }
