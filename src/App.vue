@@ -24,7 +24,7 @@
     <router-view />
   </template>
   <div class="dialogs-container" ref="dialogsContainerRef"></div>
-  <notifications width="100%" />
+  <notifications width="100%" position="" />
 </template>
 
 <script lang="ts">

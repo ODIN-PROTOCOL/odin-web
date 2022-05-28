@@ -44,7 +44,11 @@
                           })
                         "
                       >
-                        {{ $convertLokiToOdin(val.delegation.balance?.amount) }}
+                        {{
+                          $convertLokiToOdin(val.delegation.balance?.amount, {
+                            withDenom: true,
+                          })
+                        }}
                       </p>
                     </div>
                   </VuePickerOption>
@@ -104,7 +108,10 @@
                       >
                         {{
                           $convertLokiToOdin(
-                            validator.delegation.balance?.amount
+                            validator.delegation.balance?.amount,
+                            {
+                              withDenom: true,
+                            }
                           )
                         }}
                       </p>
@@ -160,9 +167,7 @@
           </div>
 
           <div class="stake-transfer-form-modal__field">
-            <label class="stake-transfer-form-modal__field-lbl_black">
-              Amount
-            </label>
+            <label class="stake-transfer-form-modal__field-lbl">Amount</label>
             <div
               class="stake-transfer-form-modal__field-input-wrapper app-form__field-input-wrapper"
             >
@@ -201,15 +206,22 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, watch, computed } from 'vue'
+import {
+  defineComponent,
+  PropType,
+  ref,
+  watch,
+  computed,
+  ComputedRef,
+} from 'vue'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
 import { COINS_LIST } from '@/api/api-config'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
-import { handleError } from '@/helpers/errors'
+import { STAKE_TRANSFER_WARNING_VALUE } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { convertLokiToOdin, convertOdinToLoki } from '@/helpers/converters'
-import { notifySuccess } from '@/helpers/notifications'
+import { notifySuccess, notifyInfo } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import {
@@ -242,8 +254,7 @@ const StakeTransferFormModal = defineComponent({
     const isShowToAdressOption = ref(true)
     const delegatedValidators = ref()
     const allValidators = ref<Array<TransferValidator>>(props.validators)
-    // const maxAmount = ref(100)
-    const maxAmount = computed(
+    const maxAmount: ComputedRef<number> = computed(
       () =>
         Number(
           convertLokiToOdin(props.delegation[form.from.val()].balance?.amount, {
@@ -258,7 +269,7 @@ const StakeTransferFormModal = defineComponent({
         validators.number,
         validators.sixDecimalNumber,
         validators.min(0.000001),
-        validators.max(maxAmount),
+        validators.maxReactive(maxAmount),
         validators.maxCharacters(32),
       ],
       from: [
@@ -304,8 +315,7 @@ const StakeTransferFormModal = defineComponent({
     )
 
     form.to.val(filtredValidators.value[0].operatorAddress)
-
-    // resetAmount(maxAmount.value)
+    form.amount.val(String(maxAmount.value))
 
     const isHaveSameValue = (validator: ValidatorDecoded) => {
       return validator.operatorAddress === form.to.val()
@@ -347,16 +357,8 @@ const StakeTransferFormModal = defineComponent({
           } else if (form.to.isDirty.value) {
             findReceiverValidator()
           }
-          // form.amount.removeValidator(validators.max(maxAmount))
-          // maxAmount.value = Number(
-          //   convertLokiToOdin(
-          //     props.delegation[form.from.val()].balance?.amount,
-          //     {
-          //       onlyNumber: true,
-          //     }
-          //   )
-          // )
           form.amount.reset()
+          form.amount.val(String(maxAmount.value))
         } catch (error) {
           form.to.err('Validator not found')
         }
@@ -364,8 +366,8 @@ const StakeTransferFormModal = defineComponent({
     )
     watch(
       () => form.to.val(),
-      async () => {
-        await findReceiverValidator()
+      () => {
+        findReceiverValidator()
       }
     )
     const changeField = async () => {
@@ -377,7 +379,6 @@ const StakeTransferFormModal = defineComponent({
     const submit = async () => {
       if (!form.isValid.value) return
       lockLoading()
-
       try {
         await callers.validatorDelegateToAnotherValidator({
           validatorSrcAddress: String(form.from.val()),
@@ -388,20 +389,20 @@ const StakeTransferFormModal = defineComponent({
         onSubmit()
         notifySuccess('Successfully delegated')
       } catch (error) {
-        handleError(error as Error)
+        notifyInfo(STAKE_TRANSFER_WARNING_VALUE)
       }
       releaseLoading()
     }
     return {
       form: form.flatten(),
-      isLoading,
       submit,
       onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
-      delegatedValidators,
       changeField,
+      isHaveSameValue,
+      isLoading,
+      delegatedValidators,
       isShowToAdressOption,
       filtredValidators,
-      isHaveSameValue,
     }
   },
 })
@@ -418,6 +419,13 @@ export function showUndelegateFormDialog(
 </script>
 
 <style scoped lang="scss">
+.frame {
+  padding: 1.2rem 4.8rem 1.2rem 1.6rem;
+  gap: 0.8rem;
+  box-shadow: 0 0 0.2rem var(--clr__wallet-info-box-shadow),
+    0 0.4rem 1.2rem var(--clr__wallet-info-box-shadow);
+  border-radius: 0.8rem;
+}
 .vue-picker__dropdown-custom {
   .frame {
     box-shadow: none;
@@ -426,8 +434,9 @@ export function showUndelegateFormDialog(
 .vue-picker__dropdown-custom .vue-picker-option:hover:not(:disabled),
 .vue-picker__dropdown-custom .vue-picker-option_cur {
   font-weight: 600;
-  color: #007bff;
-  background: rgba(204, 228, 255, 0.4);
+  color: var(--clr__action);
+  background: var(--clr__btn-disabled);
+  opacity: 0.4;
 }
 .stake-transfer-form-modal__select-wrapper {
   margin-bottom: 2.8rem;
@@ -439,34 +448,22 @@ export function showUndelegateFormDialog(
 }
 .stake-transfer-form-modal__select-header-title {
   font-weight: 400;
-  font-size: 20px;
-  line-height: 24px;
+  font-size: 2rem;
+  line-height: 2.4rem;
 }
-
 .stake-transfer-form-modal__select-header-btn {
   display: flex;
   align-items: center;
   text-align: center;
   font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
-  color: #007bff;
-}
-.frame {
-  padding: 12px 48px 12px 16px;
-  gap: 8px;
-  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.08), 0px 4px 12px rgba(0, 0, 0, 0.08);
-  border-radius: 8px;
+  font-size: 1.4rem;
+  line-height: 2rem;
+  color: var(--clr__action);
 }
 .stake-transfer-form-modal__option {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 48px 12px 16px;
-  gap: 8px;
-  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.08), 0px 4px 12px rgba(0, 0, 0, 0.08);
-  border-radius: 8px;
-  // width: 328px;
   height: 68px;
   margin-right: 0;
 }
@@ -474,25 +471,22 @@ export function showUndelegateFormDialog(
   display: flex;
   flex-direction: column;
 }
-.stake-transfer-form-modal__option-moniker {
+.stake-transfer-form-modal__option-moniker,
+.stake-transfer-form-modal__option-balance,
+.stake-transfer-form-modal__field-balance-value {
   font-weight: 600;
-  font-size: 16px;
-  line-height: 24px;
+  font-size: 1.6rem;
+  line-height: 2.4rem;
 }
 
 .stake-transfer-form-modal__option-adress {
   font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
+  font-size: 1.4rem;
+  line-height: 2rem;
 }
-
 .stake-transfer-form-modal__option-balance {
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 24px;
-  color: #6c757d;
+  color: var(--clr__text-muted);
 }
-
 .stake-transfer-form-modal__copy-text {
   margin: 0 1rem;
 }
@@ -514,20 +508,10 @@ export function showUndelegateFormDialog(
     margin-right: 1.6rem;
   }
 }
-.stake-transfer-form-modal__field-balance-value {
-  font-weight: 600;
-  font-size: 1.6rem;
-  line-height: 2.4rem;
-}
 .stake-transfer-form-modal__field-lbl {
   font-weight: 400;
   color: var(--clr__modal-backdrop-bg);
   margin: 0;
-}
-.stake-transfer-form-modal__field-lbl_black {
-  font-size: 1.6rem;
-  line-height: 2.4rem;
-  color: var(--clr__text);
 }
 .stake-transfer-form-modal__field-title {
   display: flex;
@@ -543,12 +527,7 @@ export function showUndelegateFormDialog(
   align-items: center;
   margin-top: 1.6rem;
 }
-.info-icon {
-  margin-right: 0.9rem;
-}
-.stake-transfer-form-modal__field-input-wrapper {
-  margin-top: 0.8rem;
-}
+.stake-transfer-form-modal__field-input-wrapper,
 .stake-transfer-form-modal__field-err {
   margin-top: 0.8rem;
 }
@@ -556,10 +535,5 @@ export function showUndelegateFormDialog(
   display: flex;
   flex-direction: column;
   padding: 1.2rem 1.6rem;
-}
-@include respond-to(small) {
-  .stake-transfer-form-modal__field-wrapper {
-    display: flex;
-  }
 }
 </style>

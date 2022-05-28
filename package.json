@@ -18,7 +18,7 @@
     "@cosmjs/tendermint-rpc": "^0.27.1",
     "@highlightjs/vue-plugin": "^2.1.0",
     "@invisiburu/vue-picker": "^2.0.3",
-    "@kyvg/vue3-notification": "^2.3.0",
+    "@kyvg/vue3-notification": "^2.3.4",
     "bignumber.js": "^9.0.1",
     "buffer": "^4.9.2",
     "chart.js": "^3.5.1",
