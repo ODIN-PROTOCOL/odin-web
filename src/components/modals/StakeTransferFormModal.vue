@@ -18,7 +18,7 @@
             </div>
             <VuePicker class="vue-pick" v-model="form.sender">
               <template #dropdownInner>
-                <div class="vue-picker__dropdown-custom">
+                <div class="vue-pick__dropdown-custom">
                   <VuePickerOption
                     v-for="(validator, key) in delegatedValidators"
                     :key="key"
@@ -29,6 +29,7 @@
                       <div class="stake-transfer-form-modal__option-info">
                         <label
                           class="stake-transfer-form-modal__option-moniker"
+                          :title="validator.description.moniker"
                         >
                           {{ validator.description.moniker }}
                         </label>
@@ -83,7 +84,7 @@
               v-model="form.receiver"
             >
               <template #dropdownInner>
-                <div class="vue-picker__dropdown-custom">
+                <div class="vue-pick__dropdown-custom">
                   <VuePickerOption
                     v-for="(validator, key) in filtredValidators"
                     :key="key"
@@ -94,6 +95,7 @@
                       <div class="stake-transfer-form-modal__option-info">
                         <label
                           class="stake-transfer-form-modal__option-moniker"
+                          :title="validator.description.moniker"
                         >
                           {{ validator.description.moniker }}
                         </label>
@@ -146,7 +148,7 @@
                 {{ form.receiverErr }}
               </p>
               <div
-                v-if="filtredValidators[0]?.delegation && !form.receiverErr"
+                v-if="delegation[form.receiver] && !form.receiverErr"
                 class="stake-transfer-form-modal__field-balance"
               >
                 <label class="stake-transfer-form-modal__field-balance-lbl"
@@ -156,7 +158,7 @@
                   class="stake-transfer-form-modal__field-balance-value"
                   :title="
                     $convertLokiToOdin(
-                      filtredValidators[0].delegation.balance?.amount,
+                      delegation[form.receiver].balance?.amount,
                       {
                         onlyNumber: true,
                       }
@@ -165,7 +167,7 @@
                 >
                   {{
                     $convertLokiToOdin(
-                      filtredValidators[0].delegation.balance?.amount
+                      delegation[form.receiver].balance?.amount
                     )
                   }}
                 </p>
@@ -234,7 +236,6 @@ import ModalBase from './ModalBase.vue'
 import {
   ValidatorDecoded,
   TransferValidator,
-  decodeValidators,
 } from '@/helpers/validatorDecoders'
 import { coin } from '@cosmjs/amino'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
@@ -286,13 +287,15 @@ const StakeTransferFormModal = defineComponent({
         '',
         validators.required,
         validators.odinValidator,
-        validators.maxCharacters(64),
+        validators.maxCharacters(50),
+        validators.minCharacters(50),
       ],
       receiver: [
         '',
         validators.required,
         validators.odinValidator,
-        validators.maxCharacters(64),
+        validators.maxCharacters(50),
+        validators.minCharacters(50),
       ],
     })
     delegatedValidators.value = delegatedAdress.map(
@@ -307,7 +310,6 @@ const StakeTransferFormModal = defineComponent({
       }
     )
     form.sender.val(delegatedValidators.value[0].operatorAddress)
-
     const filtredValidators = computed(() =>
       allValidators.value.map((validator: ValidatorDecoded) => {
         return {
@@ -317,39 +319,26 @@ const StakeTransferFormModal = defineComponent({
       })
     )
 
-    form.receiver.val(filtredValidators.value[0].operatorAddress)
+    if (allValidators.value[0].operatorAddress === form.sender.val()) {
+      form.receiver.val(filtredValidators.value[1].operatorAddress)
+    } else {
+      form.receiver.val(filtredValidators.value[0].operatorAddress)
+    }
     form.amount.val(String(maxAmount.value))
 
-    const isHaveSameValueInReceiver = (validator: ValidatorDecoded) => {
-      return validator.operatorAddress === form.receiver.val()
-    }
-    const isHaveSameValueInSender = (validator: ValidatorDecoded) => {
-      return validator.operatorAddress === form.sender.val()
-    }
-
     const findReceiverValidator = () => {
-      if (!isShowToAdressOption.value) {
+      if (!isShowToAdressOption.value && !form.receiver.errorIfDirty.value) {
         if (form.receiver.val() === form.sender.val()) {
           form.receiver.err('Choose another validator')
-          return
-        }
-        setTimeout(async () => {
-          try {
-            const resp = await callers.getValidator(String(form.receiver.val()))
-            if (isShowToAdressOption.value || !resp.validator) return
-            const decodedValidators = decodeValidators([resp.validator])[0]
-            allValidators.value = [
-              {
-                ...decodedValidators,
-                delegation: props.delegation[resp.validator?.operatorAddress],
-              },
-            ]
-            form.receiver.err('')
-          } catch (error) {
-            allValidators.value = []
+        } else {
+          const findValidator = filtredValidators.value.find(
+            (item: TransferValidator) =>
+              item.operatorAddress === form.receiver.val()
+          )
+          if (!findValidator) {
             form.receiver.err('Validator not found')
           }
-        }, 2000)
+        }
       }
     }
 
@@ -361,6 +350,7 @@ const StakeTransferFormModal = defineComponent({
             form.receiver.err('Choose another validator')
             return
           } else if (form.receiver.isDirty.value) {
+            form.receiver.err(null)
             findReceiverValidator()
           }
           form.amount.reset()
@@ -373,13 +363,25 @@ const StakeTransferFormModal = defineComponent({
     watch(
       () => form.receiver.val(),
       () => {
-        findReceiverValidator()
+        if (!form.receiver.errorIfDirty.value) {
+          findReceiverValidator()
+        }
       }
     )
+    const isHaveSameValueInReceiver = (validator: ValidatorDecoded) => {
+      return validator.operatorAddress === form.receiver.val()
+    }
+    const isHaveSameValueInSender = (validator: ValidatorDecoded) => {
+      return validator.operatorAddress === form.sender.val()
+    }
     const changeField = async () => {
       allValidators.value = props.validators
-      form.receiver.val(allValidators.value[0].operatorAddress)
       isShowToAdressOption.value = !isShowToAdressOption.value
+      if (allValidators.value[0].operatorAddress === form.sender.val()) {
+        form.receiver.val(allValidators.value[1].operatorAddress)
+      } else {
+        form.receiver.val(allValidators.value[0].operatorAddress)
+      }
     }
     const onSubmit = dialogs.getHandler('onSubmit')
     const submit = async () => {
@@ -433,17 +435,10 @@ export function showUndelegateFormDialog(
     0 0.4rem 1.2rem var(--clr__wallet-info-box-shadow);
   border-radius: 0.8rem;
 }
-.vue-picker__dropdown-custom {
+.vue-pick__dropdown-custom {
   .frame {
     box-shadow: none;
   }
-}
-.vue-picker__dropdown-custom .vue-picker-option:hover:not(:disabled),
-.vue-picker__dropdown-custom .vue-picker-option_cur {
-  font-weight: 600;
-  color: var(--clr__action);
-  background: var(--clr__btn-disabled);
-  opacity: 0.4;
 }
 .stake-transfer-form-modal__select-wrapper {
   margin-bottom: 2.8rem;
@@ -471,6 +466,7 @@ export function showUndelegateFormDialog(
 .stake-transfer-form-modal__option-info {
   display: flex;
   flex-direction: column;
+  max-width: 15rem;
 }
 .stake-transfer-form-modal__option-moniker,
 .stake-transfer-form-modal__option-balance,
@@ -482,8 +478,15 @@ export function showUndelegateFormDialog(
   font-size: 1.4rem;
   line-height: 2rem;
 }
+.stake-transfer-form-modal__option-adress,
 .stake-transfer-form-modal__option-balance {
   color: var(--clr__text-muted);
+}
+.stake-transfer-form-modal__option-moniker,
+.stake-transfer-form-modal__option-balance {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .stake-transfer-form-modal {
   margin-top: 0.5rem;
@@ -521,5 +524,10 @@ export function showUndelegateFormDialog(
   display: flex;
   flex-direction: column;
   padding: 1.2rem 1.6rem;
+}
+@include respond-to(tablet) {
+  .stake-transfer-form-modal__option-info {
+    max-width: 7rem;
+  }
 }
 </style>

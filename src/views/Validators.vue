@@ -25,7 +25,7 @@
           Stake transfer
         </button>
         <button
-          v-if="isDelegator"
+          v-if="isDelegator && delegations && validators"
           class="validators__title-btn--white app-btn app-btn_small"
           type="button"
           @click="claimAllRewards"
@@ -206,7 +206,7 @@
         Stake transfer
       </button>
       <button
-        v-if="isDelegator"
+        v-if="isDelegator && delegations && validators"
         class="validators__title-btn--white app-btn w-full"
         type="button"
         @click="claimAllRewards"

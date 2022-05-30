@@ -101,6 +101,14 @@ export function maxCharacters(maximum: number): FormFieldValidator {
     return null
   }
 }
+export function minCharacters(minimum: number): FormFieldValidator {
+  return (val: unknown): FormFieldValidatorResult => {
+    if (String(val).length < minimum) {
+      return `The value should be more than ${minimum} characters`
+    }
+    return null
+  }
+}
 
 export function range(minimum: number, maximum: number): FormFieldValidator {
   const _min = min(minimum)
