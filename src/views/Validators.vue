@@ -17,7 +17,7 @@
           Become a validator
         </button>
         <button
-          v-if="isDelegator"
+          v-if="isDelegator && delegations && validators"
           class="validators__title-btn app-btn app-btn_small"
           type="button"
           @click="stakeTransfer"
@@ -198,7 +198,7 @@
         Become a validator
       </button>
       <button
-        v-if="isDelegator"
+        v-if="isDelegator && delegations && validators"
         class="app-btn w-full"
         type="button"
         @click="stakeTransfer"
