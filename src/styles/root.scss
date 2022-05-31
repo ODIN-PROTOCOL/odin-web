@@ -73,4 +73,7 @@
   --clr__vue-picker-current-option: #{$clr-vue-picker-current-option};
   // Vue Notifications
   --clr__vue-notifications-box-shadow: #{$clr-vue-notifications-box-shadow};
+  --clr__vue-notifications-failed-border: #{$clr-vue-notifications-failed-border};
+  --clr__vue-notifications-success-border: #{$clr-vue-notifications-success-border};
+  --clr__vue-notifications-info-border: #{$clr-vue-notifications-info-border};
 }

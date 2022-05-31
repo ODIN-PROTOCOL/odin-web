@@ -26,7 +26,11 @@
   <div class="dialogs-container" ref="dialogsContainerRef"></div>
   <notifications width="100%" position="" animation-name="v-fade-left" :max="3">
     <template v-slot:body="props">
-      <div class="app__notification" @click="props.close">
+      <div
+        class="app__notification"
+        @click="props.close"
+        :class="notification?.typeNotification.toLowerCase()"
+      >
         <div>
           <InfoNotificationIcon
             class="app__notification-icon"
