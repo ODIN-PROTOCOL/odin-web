@@ -115,7 +115,7 @@ import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import RequestFormModal from '@/components/modals/RequestFormModal.vue'
-import { handleError } from '@/helpers/errors'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 
 export default defineComponent({
   components: { TitledLink, Progressbar, AppPagination },
@@ -143,7 +143,7 @@ export default defineComponent({
         requests.value = req.data.result.result.requests
         await getRequestsCount()
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }
@@ -155,7 +155,7 @@ export default defineComponent({
         requestsCount.value = Number(res.requestCount)
         totalPages.value = Math.ceil(requestsCount.value / ITEMS_PER_PAGE)
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }
@@ -166,7 +166,7 @@ export default defineComponent({
         const response = await callers.getOracleParams()
         maxAskCount.value = response.params?.maxAskCount.toNumber()
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }

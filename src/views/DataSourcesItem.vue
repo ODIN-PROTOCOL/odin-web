@@ -90,7 +90,7 @@ import { defineComponent, ref, onMounted, computed } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
-import { handleError } from '@/helpers/errors'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import BackButton from '@/components/BackButton.vue'
 import Tabs from '@/components/tabs/Tabs.vue'
@@ -119,7 +119,7 @@ export default defineComponent({
         const response = await callers.getDataSource(String(route.params.id))
         dataSourceData.value = response.dataSource
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }
@@ -130,7 +130,7 @@ export default defineComponent({
           .then((response) => response.json())
           .then((data) => data?.executable)
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
     }
     const editDataSource = async (dataSource: unknown) => {

@@ -133,7 +133,7 @@ import BackButton from '@/components/BackButton.vue'
 import Progressbar from '@/components/Progressbar.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
 import { Obi } from '@bandprotocol/bandchain.js'
-import { handleError } from '@/helpers/errors'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import isObjectLodash from 'lodash/isObject'
 import { fromBase64 } from '@cosmjs/encoding'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
@@ -207,7 +207,7 @@ export default defineComponent({
           }
         }
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }
@@ -222,7 +222,7 @@ export default defineComponent({
           return obi.decodeInput(Buffer.from(calldata))
         }
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
     }
     const _decodeResult = async (result: Uint8Array) => {
@@ -235,7 +235,7 @@ export default defineComponent({
           return obi.decodeOutput(Buffer.from(result))
         }
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
     }
     onMounted(async () => {

@@ -93,7 +93,7 @@ import { useAuthorization } from '@/composables/useAuthorization'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import InfoModal from '@/components/modals/InfoModal.vue'
 import AuthBase from '@/components/Auth/AuthBase.vue'
-import { handleError } from '@/helpers/errors'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { useForm, validators } from '@/composables/useForm'
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing'
 
@@ -129,7 +129,7 @@ export default defineComponent({
         await router.push({ name: 'Wallet' })
       } catch (error) {
         if (props.loginType === LOGIN_TYPE.MNEMONIC494) {
-          handleError(error as Error)
+          handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
         } else {
           showInfo('Ooops!', (error as Error).message)
         }
