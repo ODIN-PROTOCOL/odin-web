@@ -227,10 +227,8 @@ import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
 import { COINS_LIST } from '@/api/api-config'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
-import { STAKE_TRANSFER_WARNING_VALUE } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { convertLokiToOdin, convertOdinToLoki } from '@/helpers/converters'
-import { notifySuccess, notifyInfo } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import {
@@ -243,6 +241,7 @@ import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 // @ts-ignore
 import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 
 const StakeTransferFormModal = defineComponent({
   props: {
@@ -395,9 +394,12 @@ const StakeTransferFormModal = defineComponent({
           amount: coin(convertOdinToLoki(form.amount.val()), COINS_LIST.LOKI),
         })
         onSubmit()
-        notifySuccess('Successfully delegated')
+        handleNotificationInfo(
+          'Successfully delegated',
+          TYPE_NOTIFICATION.success
+        )
       } catch (error) {
-        notifyInfo(STAKE_TRANSFER_WARNING_VALUE)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.info)
       }
       releaseLoading()
     }

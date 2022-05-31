@@ -77,8 +77,7 @@ import { wallet } from '@/api/wallet'
 import Long from 'long'
 import { VoteOption } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { voteStatusType } from '@/helpers/statusTypes'
-import { handleError } from '@/helpers/errors'
-import { notifySuccess } from '@/helpers/notifications'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import BackButton from '@/components/BackButton.vue'
 import CustomDoughnutChart from '@/components/charts/CustomDoughnutChart.vue'
 import Loader from '@/components/Loader.vue'
@@ -119,11 +118,12 @@ export default defineComponent({
 
         await getProposal()
         await getVotes()
-        notifySuccess(
-          `Successfully voted for ${voteStatusType[pickedOption.value].name}`
+        handleNotificationInfo(
+          `Successfully voted for ${voteStatusType[pickedOption.value].name}`,
+          TYPE_NOTIFICATION.success
         )
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       isLoading.value = false
     }

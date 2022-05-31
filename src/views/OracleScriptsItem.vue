@@ -96,7 +96,7 @@ import { defineComponent, ref, onMounted, computed } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
-import { handleError } from '@/helpers/errors'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import BackButton from '@/components/BackButton.vue'
 import Tabs from '@/components/tabs/Tabs.vue'
@@ -124,7 +124,7 @@ export default defineComponent({
         const response = await callers.getOracleScript(String(route.params.id))
         oracleScriptData.value = response.oracleScript
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }
@@ -139,7 +139,7 @@ export default defineComponent({
           })
         }
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }
