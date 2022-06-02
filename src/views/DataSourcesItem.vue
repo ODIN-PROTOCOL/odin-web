@@ -44,20 +44,20 @@
           </div>
         </div>
       </div>
-      <Tabs>
-        <Tab
+      <AppTabs>
+        <AppTab
           title="Requests"
           :class="{ 'data-source-item__tab-content': isDataSourceOwner }"
         >
           <RequestsDataSourceTable :data-source-id="String($route.params.id)" />
-        </Tab>
-        <Tab
+        </AppTab>
+        <AppTab
           title="Code"
           :class="{ 'data-source-item__tab-content': isDataSourceOwner }"
         >
           <CodeTable :code="dataSourceCode" />
-        </Tab>
-      </Tabs>
+        </AppTab>
+      </AppTabs>
     </template>
     <template v-else>
       <div class="app-table__empty-stub">
@@ -85,8 +85,8 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import BackButton from '@/components/BackButton.vue'
-import Tabs from '@/components/tabs/Tabs.vue'
-import Tab from '@/components/tabs/Tab.vue'
+import AppTabs from '@/components/tabs/AppTabs.vue'
+import AppTab from '@/components/tabs/AppTab.vue'
 import CodeTable from '@/components/tables/CodeTable.vue'
 import RequestsDataSourceTable from '@/components/tables/RequestsDataSourceTable.vue'
 
@@ -95,7 +95,13 @@ import DataSourceFormModal from '@/components/modals/DataSourceFormModal.vue'
 import { wallet } from '@/api/wallet'
 
 export default defineComponent({
-  components: { BackButton, Tabs, Tab, CodeTable, RequestsDataSourceTable },
+  components: {
+    BackButton,
+    AppTabs,
+    AppTab,
+    CodeTable,
+    RequestsDataSourceTable,
+  },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const route: RouteLocationNormalizedLoaded = useRoute()

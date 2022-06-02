@@ -47,8 +47,8 @@
           </div>
         </div>
       </div>
-      <Tabs>
-        <Tab
+      <AppTabs>
+        <AppTab
           title="Requests"
           :class="{
             'oracle-scripts-item__tab-content': isOracleScriptOwner,
@@ -57,16 +57,16 @@
           <RequestsOracleScriptTable
             :oracle-script-id="String($route.params.id)"
           />
-        </Tab>
-        <Tab
+        </AppTab>
+        <AppTab
           title="Code"
           :class="{
             'oracle-scripts-item__tab-content': isOracleScriptOwner,
           }"
         >
           <CodeTable :code="oracleScriptCode" />
-        </Tab>
-      </Tabs>
+        </AppTab>
+      </AppTabs>
     </template>
     <template v-else>
       <div class="app-table__empty-stub">
@@ -94,8 +94,8 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleError } from '@/helpers/errors'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import BackButton from '@/components/BackButton.vue'
-import Tabs from '@/components/tabs/Tabs.vue'
-import Tab from '@/components/tabs/Tab.vue'
+import AppTabs from '@/components/tabs/AppTabs.vue'
+import AppTab from '@/components/tabs/AppTab.vue'
 import CodeTable from '@/components/tables/CodeTable.vue'
 import RequestsOracleScriptTable from '@/components/tables/RequestsOracleScriptTable.vue'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
@@ -104,7 +104,13 @@ import { OracleScript } from '@provider/codec/oracle/v1/oracle'
 import { wallet } from '@/api/wallet'
 
 export default defineComponent({
-  components: { BackButton, Tabs, Tab, CodeTable, RequestsOracleScriptTable },
+  components: {
+    BackButton,
+    AppTabs,
+    AppTab,
+    CodeTable,
+    RequestsOracleScriptTable,
+  },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const route: RouteLocationNormalizedLoaded = useRoute()

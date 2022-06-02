@@ -33,10 +33,10 @@
       </div>
     </template>
     <div class="validators__filter">
-      <Tabs @changeTab="tabHandler($event)">
-        <Tab :title="activeValidatorsTitle" />
-        <Tab :title="inactiveValidatorsTitle" />
-      </Tabs>
+      <AppTabs @changeTab="tabHandler($event)">
+        <AppTab :title="activeValidatorsTitle" />
+        <AppTab :title="inactiveValidatorsTitle" />
+      </AppTabs>
       <div class="validators__filter-search">
         <div class="validators__filter-search-input-wrapper">
           <InputField
@@ -215,8 +215,8 @@ import { getTransformedValidators } from '@/helpers/validatorHelpers'
 import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
-import Tabs from '@/components/tabs/Tabs.vue'
-import Tab from '@/components/tabs/Tab.vue'
+import AppTabs from '@/components/tabs/AppTabs.vue'
+import AppTab from '@/components/tabs/AppTab.vue'
 import TitledLink from '@/components/TitledLink.vue'
 import StatusIcon from '@/components/StatusIcon.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
@@ -235,8 +235,8 @@ import SearchIcon from '@/components/icons/SearchIcon.vue'
 
 export default defineComponent({
   components: {
-    Tabs,
-    Tab,
+    AppTabs,
+    AppTab,
     TitledLink,
     StatusIcon,
     AppPagination,

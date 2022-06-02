@@ -53,17 +53,17 @@
 
     <template v-if="validator">
       <ValidatorInfo :validator="validator" />
-      <Tabs>
-        <Tab title="Oracle Reports">
+      <AppTabs>
+        <AppTab title="Oracle Reports">
           <OracleReportsTable :proposerAddress="validator.operatorAddress" />
-        </Tab>
-        <Tab :title="delegatorsTitle">
+        </AppTab>
+        <AppTab :title="delegatorsTitle">
           <DelegatorsTable :delegators="delegators" />
-        </Tab>
-        <Tab title="Proposed Blocks">
+        </AppTab>
+        <AppTab title="Proposed Blocks">
           <ProposedBlocksTable :proposerAddress="validator?.operatorAddress" />
-        </Tab>
-      </Tabs>
+        </AppTab>
+      </AppTabs>
     </template>
     <div class="view-main__mobile-activities">
       <div class="validators-item__activities">
@@ -92,8 +92,8 @@ import { wallet } from '@/api/wallet'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import BackButton from '@/components/BackButton.vue'
 import CopyButton from '@/components/CopyButton.vue'
-import Tabs from '@/components/tabs/Tabs.vue'
-import Tab from '@/components/tabs/Tab.vue'
+import AppTabs from '@/components/tabs/AppTabs.vue'
+import AppTab from '@/components/tabs/AppTab.vue'
 import ValidatorInfo from '@/components/ValidatorInfo.vue'
 import OracleReportsTable from '@/components/tables/OracleReportsTable.vue'
 import DelegatorsTable from '@/components/tables/DelegatorsTable.vue'
@@ -111,8 +111,8 @@ export default defineComponent({
   components: {
     BackButton,
     CopyButton,
-    Tabs,
-    Tab,
+    AppTabs,
+    AppTab,
     ValidatorInfo,
     OracleReportsTable,
     DelegatorsTable,

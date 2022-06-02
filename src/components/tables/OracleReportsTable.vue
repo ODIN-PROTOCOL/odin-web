@@ -72,7 +72,7 @@ export default defineComponent({
         currentPage.value - 1,
         ITEMS_PER_PAGE
       )
-      if (response.data.length) {
+      if (response.data.data) {
         reportsCount.value = response.data.tx_count
         totalPages.value = Math.ceil(reportsCount.value / ITEMS_PER_PAGE)
         reports.value = response.data.data
