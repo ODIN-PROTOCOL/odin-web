@@ -5,7 +5,7 @@
       'load-fog_show': isLoading,
     }"
   >
-    <div class="view-main__title-wrapper">
+    <div class="view-main__title-wrapper request-item__title-wrapper">
       <BackButton :text="'Requests'" />
       <h2 class="view-main__title request-item__title">Request</h2>
       <span class="view-main__subtitle"> #{{ requestData?.id }} </span>
@@ -260,7 +260,9 @@ export default defineComponent({
 .request-item__empty-msg {
   text-align: center;
 }
-
+.request-item__title-wrapper {
+  justify-content: flex-start;
+}
 @include respond-to(tablet) {
   .request-item__title {
     margin: 0.8rem 0 0.4rem 0;
