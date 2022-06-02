@@ -40,7 +40,6 @@
       <div class="validators__filter-search">
         <div class="validators__filter-search-input-wrapper">
           <InputField
-            type="search"
             v-model="searchValue"
             placeholder="Search validator"
             class="validators__filter-search-input"

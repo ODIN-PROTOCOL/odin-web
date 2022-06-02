@@ -3,7 +3,6 @@
     <div class="sort-line__search">
       <div class="sort-line__search-input-wrapper">
         <InputField
-          type="search"
           v-model="searchValue"
           placeholder="Search by name"
           class="sort-line__search-input"
