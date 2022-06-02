@@ -1,9 +1,77 @@
 .vue-notification-group {
-  max-width: 100vw;
-  padding: 2rem 2rem 0 2rem;
-  max-width: 32rem;
-
-  .vue-notification {
-    margin: 0 0 0.8rem;
+  width: 100%;
+  max-width: 52rem;
+  min-width: 30rem;
+  bottom: 5%;
+  right: 4%;
+  .app__notification {
+    display: flex;
+    max-width: 49.6rem;
+    min-width: 28rem;
+    margin: 1rem;
+    background: var(--clr__main-bg);
+    color: var(--clr__text);
+    box-shadow: 0 0.4rem 1.6rem var(--clr__vue-notifications-box-shadow);
+    border-radius: 1.6rem;
+    padding: 2.4rem 3.2rem;
   }
+  .failed {
+    border: 0.1rem solid var(--clr__vue-notifications-failed-border);
+  }
+  .success {
+    border: 0.1rem solid var(--clr__vue-notifications-success-border);
+  }
+  .info {
+    border: 0.1rem solid var(--clr__vue-notifications-info-border);
+  }
+  .app__notification-icon {
+    width: 4.8rem;
+    margin-right: 2.7rem;
+  }
+  .app__notification-title {
+    font-weight: 400;
+    font-size: 2.4rem;
+    line-height: 3.2rem;
+    color: var(--clr__text);
+  }
+  .app__notification-content-wrapper {
+    width: 100%;
+    margin-right: 2rem;
+  }
+  .app__notification-content {
+    font-weight: 400;
+    font-size: 1.4rem;
+    line-height: 2rem;
+    color: var(--clr__text-muted);
+  }
+  .app__cancel-icon {
+    height: 100%;
+  }
+  @include respond-to(tablet) {
+    top: 0;
+    right: 0;
+    bottom: 100%;
+    .app__notification-icon {
+      width: 2.8rem;
+      height: 2.8rem;
+      margin-right: 1.8rem;
+    }
+    .app__notification {
+      padding: 1.6rem 2.4rem;
+    }
+    .app__notification-title {
+      font-size: 2rem;
+      line-height: 2.4rem;
+    }
+  }
+}
+.v-fade-left-enter-active,
+.v-fade-left-leave-active,
+.v-fade-left-move {
+  transition: all 0.5s;
+}
+.v-fade-left-enter,
+.v-fade-left-leave-to {
+  opacity: 0;
+  transform: translateX(-50rem) scale(0.2);
 }

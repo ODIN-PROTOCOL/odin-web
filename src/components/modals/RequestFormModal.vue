@@ -156,10 +156,9 @@ import Long from 'long'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
 import { dialogs } from '@/helpers/dialogs'
-import { handleError } from '@/helpers/errors'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { assetsChanges } from '@/helpers/translators'
-import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import { coins } from '@cosmjs/launchpad'
@@ -247,9 +246,9 @@ export default defineComponent({
         })
 
         onSubmit()
-        notifySuccess('Request created')
+        handleNotificationInfo('Request created', TYPE_NOTIFICATION.success)
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       } finally {
         isLoading.value = false
       }

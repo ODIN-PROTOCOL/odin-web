@@ -8,26 +8,31 @@
     <div class="view-main__title-wrapper">
       <BackButton :text="'Requests'" />
       <h2 class="view-main__title request-item__title">Request</h2>
-      <span class="view-main__subtitle"> #{{ requestData?.id }} </span>
+      <span class="view-main__subtitle">
+        #{{ responsePacketData?.request_id }}
+      </span>
     </div>
 
     <h3 class="view-main__subtitle mg-b24">Request info</h3>
-    <template v-if="requestData && resultData">
+    <template v-if="requestPacketData && responsePacketData">
       <div class="info-table mg-b32">
         <div class="info-table__row">
           <span class="info-table__row-title">Oracle Script</span>
           <TitledLink
             class="info-table__row-link"
-            :text="requestData.oracle_script_id"
-            :to="`/oracle-scripts/${requestData.oracle_script_id}`"
+            :text="String(requestPacketData.oracle_script_id)"
+            :to="`/oracle-scripts/${requestPacketData.oracle_script_id}`"
           />
         </div>
         <div class="info-table__row">
           <span class="info-table__row-title">Sender</span>
           <a class="app-table__cell-txt app-table__link" :href="senderLink">
-            {{ requestData.client_id }}
+            {{ requestPacketData.client_id }}
           </a>
-          <CopyButton class="mg-l8" :text="requestData.client_id" />
+          <CopyButton
+            class="mg-l8"
+            :text="String(requestPacketData.client_id)"
+          />
         </div>
         <div class="info-table__row">
           <span class="info-table__row-title">Request Time</span>
@@ -40,9 +45,9 @@
         <div class="info-table__row">
           <span class="info-table__row-title">Report Status</span>
           <Progressbar
-            :min="Number(resultData.min_count)"
-            :max="Number(resultData.ans_count)"
-            :current="Number(resultData.ans_count)"
+            :min="Number(requestPacketData.min_count)"
+            :max="Number(requestPacketData.ask_count)"
+            :current="Number(responsePacketData.ans_count)"
           />
         </div>
         <div class="info-table__row">
@@ -128,7 +133,7 @@ import BackButton from '@/components/BackButton.vue'
 import Progressbar from '@/components/Progressbar.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
 import { Obi } from '@bandprotocol/bandchain.js'
-import { handleError } from '@/helpers/errors'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import isObjectLodash from 'lodash/isObject'
 import { fromBase64 } from '@cosmjs/encoding'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
@@ -138,7 +143,7 @@ export default defineComponent({
   setup: function () {
     const route: RouteLocationNormalizedLoaded = useRoute()
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const requestData = ref()
+    // const requestData = ref()
     const resultData = ref()
     const requestStatus = ref()
     const requestTime = ref()
@@ -149,8 +154,10 @@ export default defineComponent({
     const requestResult = ref()
     const requestResultName = ref()
     const requestResultType = ref()
+    const responsePacketData = ref()
+    const requestPacketData = ref()
     const senderLink = computed(() => {
-      return `${API_CONFIG.odinScan}/account/${requestData.value?.client_id}`
+      return `${API_CONFIG.odinScan}/account/${requestPacketData.value.client_id}`
     })
     const isObject = computed(() => {
       return isObjectLodash(requestCalldata.value)
@@ -163,37 +170,44 @@ export default defineComponent({
       lockLoading()
       try {
         const request = await callers.getRequest(Number(route.params.id))
-        requestData.value = request?.data.result.result.request
-        resultData.value = request?.data.result.result.result
-        requestStatus.value = resultData.value.resolve_status
-        requestTime.value = formatDate(
-          new Date(requestData.value.request_time * 1000)
-        )
-        resolveTime.value = formatDate(
-          new Date(resultData.value.resolve_time * 1000)
-        )
-        requestTimeRange.value = formatDateDifference(
-          new Date(requestData.value.request_time * 1000)
-        )
-        resolveTimeRange.value = formatDateDifference(
-          new Date(resultData.value.resolve_time * 1000)
-        )
-        requestCalldata.value = await _decodeCallData(
-          fromBase64(requestData.value.calldata)
-        )
-        if (isRequestSuccess.value) {
-          const res = await _decodeResult(fromBase64(resultData.value.result))
-          requestResultName.value = Object.keys(res).toString() || 'Data'
-          requestResult.value = res[Object.keys(res)[0]].length
-            ? res[Object.keys(res)[0]].reduce(
-                (accumulator: unknown, currentValue: unknown) =>
-                  accumulator + ' ' + currentValue
-              )
-            : '[]'
-          requestResultType.value = typeof requestResult.value
+        requestPacketData.value =
+          request.data.result.result.request?.request_packet_data
+        responsePacketData.value =
+          request.data.result.result.request?.response_packet_data
+        if (requestPacketData.value && responsePacketData.value) {
+          requestStatus.value = responsePacketData.value.resolve_status
+          requestTime.value = formatDate(
+            new Date(responsePacketData.value.request_time * 1000)
+          )
+          resolveTime.value = formatDate(
+            new Date(responsePacketData.value.resolve_time * 1000)
+          )
+          requestTimeRange.value = formatDateDifference(
+            new Date(responsePacketData.value.request_time * 1000)
+          )
+          resolveTimeRange.value = formatDateDifference(
+            new Date(responsePacketData.value.resolve_time * 1000)
+          )
+          requestCalldata.value = await _decodeCallData(
+            fromBase64(requestPacketData.value.calldata)
+          )
+          if (isRequestSuccess.value) {
+            const res = await _decodeResult(
+              fromBase64(responsePacketData.value.result)
+            )
+            requestResultName.value = Object.keys(res).toString() || 'Data'
+            requestResult.value =
+              typeof res[Object.keys(res)[0]] !== 'string'
+                ? res[Object.keys(res)[0]].reduce(
+                    (accumulator: unknown, currentValue: unknown) =>
+                      accumulator + ' ' + currentValue
+                  )
+                : res[Object.keys(res)[0]]
+            requestResultType.value = typeof requestResult.value
+          }
         }
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }
@@ -201,27 +215,27 @@ export default defineComponent({
     const _decodeCallData = async (calldata: Uint8Array) => {
       try {
         const { oracleScript } = await callers.getOracleScript(
-          Number(requestData.value.oracle_script_id)
+          Number(requestPacketData.value?.oracle_script_id)
         )
         if (oracleScript) {
           const obi = new Obi(oracleScript.schema)
           return obi.decodeInput(Buffer.from(calldata))
         }
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
     }
     const _decodeResult = async (result: Uint8Array) => {
       try {
         const { oracleScript } = await callers.getOracleScript(
-          Number(resultData.value.oracle_script_id)
+          Number(requestPacketData.value?.oracle_script_id)
         )
         if (oracleScript) {
           const obi = new Obi(oracleScript.schema)
           return obi.decodeOutput(Buffer.from(result))
         }
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
     }
     onMounted(async () => {
@@ -232,7 +246,6 @@ export default defineComponent({
       API_CONFIG,
       ResolveStatus,
       requestStatusType,
-      requestData,
       requestStatus,
       requestTime,
       resolveTime,
@@ -247,6 +260,8 @@ export default defineComponent({
       requestResultType,
       resultData,
       isLoading,
+      responsePacketData,
+      requestPacketData,
     }
   },
 })

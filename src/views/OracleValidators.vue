@@ -87,7 +87,7 @@ import TitledLink from '@/components/TitledLink.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
-import { handleError } from '@/helpers/errors'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 
 export default defineComponent({
@@ -122,7 +122,7 @@ export default defineComponent({
         totalPages.value = Math.ceil(validatorsCount.value / ITEMS_PER_PAGE)
         filterValidators(currentPage.value)
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }

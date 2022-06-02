@@ -1,26 +1,26 @@
-$clr-main-bg: #fff;
+$clr-main-bg: #ffffff;
 $clr-splash-bg: #66b0ff;
 $clr-text: #212529;
 $clr-text-muted: #6c757d;
-$clr-text-on-action: #fff;
+$clr-text-on-action: #ffffff;
 $clr-action: #007bff;
 $clr-action-disabled: #bfdefb;
 $clr-danger: #a30000;
 $clr-action-extra-muted: #e4f2fc;
-$clr-grey-bg: #F7F7F7;
+$clr-grey-bg: #f7f7f7;
 
 // Buttons
-$clr-btn-normal: #007BFF;
-$clr-btn-hover: #66B0FF;
-$clr-btn-pressed: #053F7D;
-$clr-btn-disabled: #CCE4FF;
-$clr-btn-normal-red: #F65160;
-$clr-btn-hover-red: #F8808B;
-$clr-btn-pressed-red: #F54050;
-$clr-btn-disabled-red: #FCCED2;
+$clr-btn-normal: #007bff;
+$clr-btn-hover: #66b0ff;
+$clr-btn-pressed: #053f7d;
+$clr-btn-disabled: #cce4ff;
+$clr-btn-normal-red: #f65160;
+$clr-btn-hover-red: #f8808b;
+$clr-btn-pressed-red: #f54050;
+$clr-btn-disabled-red: #fcced2;
 
 // Inputs
-$clr-input-bg: #fff;
+$clr-input-bg: #ffffff;
 $clr-input-bg-disabled: #fafafa;
 $clr-input-border: #ced4da;
 
@@ -29,37 +29,47 @@ $clr-table-border: #cce4ff;
 $clr-table-row-hover: #cce4ff;
 
 // Dropdowns
-$clr-dropdown-shadow: #0857AC14;
-$clr-dropdown-link: #CCE4FF66;
+$clr-dropdown-shadow: #0857ac14;
+$clr-dropdown-link: #cce4ff66;
 
 // Tips
-$clr-tooltip-bg: #053F7D;
-$clr-tooltip-text: #fff;
+$clr-tooltip-bg: #053f7d;
+$clr-tooltip-text: #ffffff;
 
 // Modals
 $clr-modal-backdrop-bg: #6c757d;
-$clr-modal-content-bg: #fff;
+$clr-modal-content-bg: #ffffff;
 $clr-modal-content-shadow: #00193314;
-$clr-modal-field-bg:#f5f6f7;
+$clr-modal-field-bg: #f5f6f7;
 // Scrollbar
-$clr-scrollbar-thumb: #D8E0F0;
+$clr-scrollbar-thumb: #d8e0f0;
 $clr-scrollbar-track: #f5f8ff;
 
 // Progressbar
-$clr-progressbar-track: #EDF5FF;
-$clr-progressbar-positive: #007BFF;
-$clr-progressbar-negative: #F65160;
+$clr-progressbar-track: #edf5ff;
+$clr-progressbar-positive: #007bff;
+$clr-progressbar-negative: #f65160;
 
 // Status
 $clr-status-default: #6c757d;
-$clr-status-success: #00D097;
-$clr-status-pending: #FDC748;
-$clr-status-error: #F65160;
-$clr-status-progress: #66B0FF;
+$clr-status-success: #00d097;
+$clr-status-pending: #fdc748;
+$clr-status-error: #f65160;
+$clr-status-progress: #66b0ff;
 
 // Chart
-$clr-chart-default: #CED4DA;
+$clr-chart-default: #ced4da;
 
 // Wallet
 $clr-wallet-info-border: #e1e5e9;
 $clr-wallet-info-box-shadow: #00000029;
+
+// Vue Picker
+$clr-vue-picker-box-shadow: #00000014;
+$clr-vue-picker-current-option: #cce4ff66;
+
+// Vue Notifications
+$clr-vue-notifications-box-shadow: #00193329;
+$clr-vue-notifications-failed-border: #fcced2;
+$clr-vue-notifications-success-border: #64ffd5;
+$clr-vue-notifications-info-border: #66b0ff;

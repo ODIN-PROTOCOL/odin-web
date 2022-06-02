@@ -92,7 +92,7 @@
 import { defineComponent, onMounted, ref } from 'vue'
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
-import { handleError } from '@/helpers/errors'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { IdentifiedChannel } from 'cosmjs-types/ibc/core/channel/v1/channel'
 import { IdentifiedConnection } from 'cosmjs-types/ibc/core/connection/v1/connection'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
@@ -136,7 +136,7 @@ export default defineComponent({
         totalPages.value = Math.ceil(connections.length / ITEMS_PER_PAGE)
         filterConnections(currentPage.value)
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }

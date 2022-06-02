@@ -90,7 +90,7 @@ import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
-import { handleError } from '@/helpers/errors'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import TxLine from '@/components/TxLine.vue'
 import PersonalInfo from '@/components/PersonalInfo.vue'
@@ -127,7 +127,7 @@ export default defineComponent({
         transactionsCount.value = tx.total_count
         totalPages.value = Math.ceil(transactionsCount.value / ITEMS_PER_PAGE)
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }

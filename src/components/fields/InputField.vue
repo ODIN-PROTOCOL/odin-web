@@ -1,6 +1,6 @@
 <template>
   <input
-    class="input"
+    class="input-field"
     :class="classString"
     :type="type"
     :min="min"
@@ -19,7 +19,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-
 export default defineComponent({
   emits: ['update:modelValue'],
   props: {
@@ -47,15 +46,18 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.input {
+.input-field {
   width: 22.8rem;
   height: 4.8rem;
-  border: 0.1rem solid var(--clr__input-border);
-  border-radius: 0.8rem 0 0 0.8rem;
   text-indent: 1.5rem;
-  &:hover,
-  &:focus {
-    border: 0.1rem solid var(--clr__action);
+  border: none;
+  outline: none;
+  &:focus::-webkit-input-placeholder {
+    color: transparent;
+  }
+  &::-webkit-search-cancel-button {
+    position: relative;
+    right: 0.2rem;
   }
   &::placeholder {
     font-size: 16px;

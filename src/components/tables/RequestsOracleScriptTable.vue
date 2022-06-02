@@ -75,7 +75,7 @@ import { API_CONFIG } from '@/api/api-config'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
-import { handleError } from '@/helpers/errors'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import TitledLink from '@/components/TitledLink.vue'
 
 export default defineComponent({
@@ -107,7 +107,7 @@ export default defineComponent({
         requestsCount.value = response.total_count || 0
         totalPages.value = Math.ceil(requestsCount.value / ITEMS_PER_PAGE)
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }

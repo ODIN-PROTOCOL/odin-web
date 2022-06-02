@@ -116,7 +116,7 @@
 import { defineComponent, onMounted, ref, watch } from 'vue'
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
-import { handleError } from '@/helpers/errors'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import TitledLink from '@/components/TitledLink.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
@@ -157,7 +157,7 @@ export default defineComponent({
         dataSourcesCount.value = total_count
         totalPages.value = Math.ceil(dataSourcesCount.value / ITEMS_PER_PAGE)
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }

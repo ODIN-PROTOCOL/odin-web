@@ -97,7 +97,7 @@ import {
   getProposalsCountByStatus,
 } from '@/helpers/proposalHelpers'
 import { proposalStatusType } from '@/helpers/statusTypes'
-import { handleError } from '@/helpers/errors'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import TitledLink from '@/components/TitledLink.vue'
 import CustomDoughnutChart from '@/components/charts/CustomDoughnutChart.vue'
@@ -133,7 +133,7 @@ export default defineComponent({
         totalPages.value = Math.ceil(proposalsCount.value / ITEMS_PER_PAGE)
         filterProposals(currentPage.value)
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }
@@ -146,7 +146,7 @@ export default defineComponent({
           .then((request) => request.json())
           .then((data) => getProposalsCountByStatus(data))
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }
@@ -172,7 +172,7 @@ export default defineComponent({
           .getProposalChanges()
           .then((request) => request.json())
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }
