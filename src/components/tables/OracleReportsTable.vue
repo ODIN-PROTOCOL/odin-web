@@ -8,33 +8,31 @@
       </div>
       <div class="app-table__body">
         <template v-if="reports.length">
-          <div
-            v-for="item in filteredReports"
-            :key="item.delegation.delegatorAddress"
-            class="app-table__row"
-          >
+          <div v-for="item in reports" :key="item.id" class="app-table__row">
             <div class="app-table__cell">
               <span class="app-table__title">Oracle report</span>
-              <!-- TODO get oracle report id from reports -->
-              <TitledLink class="app-table__cell-txt app-table__link" />
+              {{ item.id }}
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Oracle script</span>
               <span class="app-table__cell-txt">
-                <!-- TODO get oracle script id from report -->
+                {{ item.oracle_script }}
               </span>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Tx hash</span>
-              <span class="app-table__cell-txt">
-                <!-- TODO get tx hash from report -->
-              </span>
+              <a
+                class="app-table__cell-txt app-table__link"
+                :href="`${API_CONFIG.odinScan}/transactions/${item.tx_hash}`"
+              >
+                {{ '0x' + item.tx_hash.toLowerCase() }}
+              </a>
             </div>
           </div>
         </template>
         <template v-else>
           <div class="app-table__empty-stub">
-            <p>No items yet</p>
+            <p class="empty mg-t32">No items yet</p>
           </div>
         </template>
       </div>
@@ -52,55 +50,49 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref, toRef } from 'vue'
-import TitledLink from '@/components/TitledLink.vue'
+import { defineComponent, onMounted, ref } from 'vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
+import { callers } from '@/api/callers'
+import { API_CONFIG } from '@/api/api-config'
 
 export default defineComponent({
-  components: { TitledLink, AppPagination },
+  components: { AppPagination },
   props: {
-    reports: { type: Array, required: true },
+    proposerAddress: { type: String, required: true },
   },
-  setup: function (props) {
+  setup(props) {
     const ITEMS_PER_PAGE = 5
     const currentPage = ref(1)
     const totalPages = ref(0)
-    const reportsCount = ref()
-    const filteredReports = ref()
-
-    const _reports = toRef(props, 'reports')
-
-    const filterReports = (newPage: number) => {
-      let tempArr = _reports.value
-
-      if (newPage === 1) {
-        filteredReports.value = tempArr.slice(0, newPage * ITEMS_PER_PAGE)
-      } else {
-        filteredReports.value = tempArr.slice(
-          (newPage - 1) * ITEMS_PER_PAGE,
-          (newPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE
-        )
+    const reportsCount = ref(0)
+    const reports = ref([])
+    const getReports = async () => {
+      const response = await callers.getOracleReports(
+        props.proposerAddress,
+        currentPage.value - 1,
+        ITEMS_PER_PAGE
+      )
+      if (response.data.length) {
+        reportsCount.value = response.data.tx_count
+        totalPages.value = Math.ceil(reportsCount.value / ITEMS_PER_PAGE)
+        reports.value = response.data.data
       }
-      currentPage.value = newPage
     }
-
-    const paginationHandler = (num: number) => {
-      filterReports(num)
+    const paginationHandler = async (num: number) => {
+      currentPage.value = num
+      await getReports()
     }
-
-    onMounted(() => {
-      filterReports(currentPage.value)
-      reportsCount.value = _reports.value.length
-      totalPages.value = Math.ceil(reportsCount.value / ITEMS_PER_PAGE)
+    onMounted(async () => {
+      await getReports()
     })
-
     return {
       ITEMS_PER_PAGE,
       currentPage,
       totalPages,
       reportsCount,
-      filteredReports,
+      reports,
       paginationHandler,
+      API_CONFIG,
     }
   },
 })

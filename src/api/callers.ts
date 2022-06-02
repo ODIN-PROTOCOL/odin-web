@@ -255,6 +255,11 @@ const makeCallers = () => {
     getValidatorUptime: () => {
       return sendGet(`${API_CONFIG.telemetryUrl}/validators`)
     },
+    getOracleReports: (id: string, page_number: number, page_limit: number) => {
+      return axiosWrapper.get(
+        `${API_CONFIG.telemetryUrl}/validator/${id}/reports?page[number]=${page_number}&page[limit]=${page_limit}`
+      )
+    },
   }
 }
 

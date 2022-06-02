@@ -180,10 +180,8 @@ export default defineComponent({
           ) {
             delegationsBalance.value = String(delegation.balance?.amount)
             delegations.value = delegation
-            console.log(delegations.value)
           }
         }
-        console.log(delegations.value)
       } catch (error) {
         console.log(error)
       }
@@ -320,7 +318,6 @@ export default defineComponent({
   width: 100%;
 }
 .validator-info__description-item-value {
-  font-weight: 300;
   font-size: 1.4rem;
   line-height: 2rem;
 }
