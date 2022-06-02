@@ -1,23 +1,29 @@
 <template>
-  <div class="chart-block">
-    <div class="chart-block__chart">
+  <div class="custom-doughnut-chart">
+    <div class="custom-doughnut-chart__chart-wrapper">
       <DoughnutChart v-bind="doughnutChartProps" />
     </div>
-    <template v-if="data">
-      <div class="legend">
-        <div v-for="(item, idx) in data" :key="item.name" class="legend__item">
-          <span class="legend__item-percentage">{{ percentage[idx] }}%</span>
-          <span
-            class="legend__item-color"
-            :style="`background-color: ${item.color}`"
-          />
-          <span class="legend__item-lable">{{ item.name }}</span>
-        </div>
+    <div v-if="data" class="custom-doughnut-chart__legend">
+      <div
+        v-for="(item, idx) in data"
+        :key="item.name"
+        class="custom-doughnut-chart__legend-item"
+      >
+        <span class="custom-doughnut-chart__legend-item-percentage"
+          >{{ percentage[idx] }}%</span
+        >
+        <span
+          class="custom-doughnut-chart__legend-item-color"
+          :style="`background-color: ${item.color}`"
+        />
+        <span class="custom-doughnut-chart__legend-item-lable">{{
+          item.name
+        }}</span>
       </div>
-    </template>
-    <template v-else>
-      <span class="chart-block__empty-message">No data</span>
-    </template>
+    </div>
+    <div v-else>
+      <span class="custom-doughnut-chart__empty-message">No data</span>
+    </div>
   </div>
 </template>
 
@@ -135,49 +141,47 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.chart-block {
+.custom-doughnut-chart {
   display: flex;
   align-items: center;
   gap: 3.2rem;
 }
-.chart-block__chart {
+.custom-doughnut-chart__chart-wrapper {
   height: 15.8rem;
   width: 15.8rem;
 }
-.legend {
-  & > *:not(:last-child) {
-    margin-bottom: 1.6rem;
-  }
-}
-
-.legend__item {
+.custom-doughnut-chart__legend-item {
   display: flex;
   align-items: center;
   gap: 0.8rem;
   font-size: 1.4rem;
+  margin-bottom: 1.6rem;
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
-.legend__item-percentage {
+.custom-doughnut-chart__legend-item-percentage {
   min-width: 3.6rem;
   font-weight: 600;
 }
 
-.legend__item-color {
+.custom-doughnut-chart__legend-item-color {
   display: block;
   width: 0.4rem;
   height: 1.4rem;
 }
-.chart-block__empty-message {
+.custom-doughnut-chart__empty-message {
   font-size: 3.2rem;
   color: var(--clr__chart-default);
   font-weight: 600;
 }
 
 @media screen and (max-width: 375px) {
-  .chart-block {
+  .custom-doughnut-chart {
     flex-direction: column;
   }
-  .chart-block__chart {
+  .custom-doughnut-chart__chart-wrapper {
     height: 14.8rem;
     width: 14.8rem;
   }
