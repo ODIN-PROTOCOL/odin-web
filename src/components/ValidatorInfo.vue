@@ -165,6 +165,7 @@ import DelegateFormModal from '@/components/modals/DelegateFormModal.vue'
 import UndelegateFormModal from '@/components/modals/UndelegateFormModal.vue'
 import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 
 export default defineComponent({
   components: {},
@@ -189,7 +190,7 @@ export default defineComponent({
           }
         }
       } catch (error) {
-        console.log(error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
     }
     const getProposedBlocks = async () => {

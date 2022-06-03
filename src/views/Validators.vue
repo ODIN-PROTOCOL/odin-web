@@ -17,9 +17,8 @@
           Become a validator
         </button>
         <button
-
           v-if="isDelegator && delegations && validators"
-          class="validators__title-btn app-btn app-btn_small"
+          class="validators__title-btn app-btn app-btn--medium"
           type="button"
           @click="stakeTransfer"
         >
@@ -27,7 +26,7 @@
         </button>
         <button
           v-if="isDelegator && delegations && validators"
-          class="validators__title-btn--white app-btn app-btn_small"
+          class="validators__title-btn--white app-btn app-btn--medium"
           type="button"
           @click="claimAllRewards"
         >
@@ -70,7 +69,7 @@
         <span class="validators__table-head-item">Validator</span>
         <span class="validators__table-head-item"> Delegated </span>
         <span class="validators__table-head-item"> Commission </span>
-        <!-- <span class="validators__table-head-item"> Uptime </span> -->
+        <span class="validators__table-head-item"> Uptime </span>
         <span class="validators__table-head-item"> Oracle Status </span>
         <span class="validators__table-head-item"></span>
       </div>
@@ -116,8 +115,7 @@
                 {{ $getPrecisePercents(item.commission.commissionRates.rate) }}
               </span>
             </div>
-            <!-- NOT READY TELEMETRY -->
-            <!-- <div class="app-table__cell">
+            <div class="app-table__cell">
               <span class="app-table__title">Uptime</span>
               <Progressbar
                 v-if="item.uptimeInfo?.uptime"
@@ -127,7 +125,7 @@
                 :isForValidators="true"
               />
               <span v-else>N/A</span>
-            </div> -->
+            </div>
             <div class="app-table__cell validators__table-cell--center">
               <span class="app-table__title">Oracle Status</span>
               <StatusIcon :status="item?.isActive ? 'success' : 'error'" />
@@ -204,7 +202,7 @@
       </button>
       <button
         v-if="isDelegator && delegations && validators"
-        class="app-btn w-full"
+        class="app-btn w-full app-btn--medium"
         type="button"
         @click="stakeTransfer"
       >
@@ -212,7 +210,7 @@
       </button>
       <button
         v-if="isDelegator && delegations && validators"
-        class="validators__title-btn--white app-btn w-full"
+        class="validators__title-btn--white app-btn w-full app-btn--medium"
         type="button"
         @click="claimAllRewards"
       >
@@ -247,7 +245,7 @@ import StakeTransferFormModal from '@/components/modals/StakeTransferFormModal.v
 import ClaimAllRewardsFormModal from '@/components/modals/ClaimAllRewardsFormModal.vue'
 import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
 import { isActiveValidator } from '@/helpers/validatorHelpers'
-// import Progressbar from '@/components/Progressbar.vue'
+import Progressbar from '@/components/Progressbar.vue'
 import InputField from '@/components/fields/InputField.vue'
 import SearchIcon from '@/components/icons/SearchIcon.vue'
 
@@ -258,7 +256,7 @@ export default defineComponent({
     TitledLink,
     StatusIcon,
     AppPagination,
-    // Progressbar,
+    Progressbar,
     InputField,
     SearchIcon,
   },
@@ -536,6 +534,7 @@ export default defineComponent({
 .validators__title-btn-wrraper {
   display: flex;
   flex-direction: row-reverse;
+  gap: 2.4rem;
 }
 .validators__title-activities {
   display: flex;
@@ -560,7 +559,7 @@ export default defineComponent({
     minmax(5rem, 1fr)
     minmax(6rem, 0.5fr)
     minmax(8rem, 0.5fr)
-    // minmax(7rem, 1fr)
+    minmax(7rem, 1fr)
     minmax(6rem, 8rem)
     minmax(24rem, 1.5fr);
 }
@@ -667,7 +666,7 @@ export default defineComponent({
   &--white {
     background: var(--clr__main-bg);
     color: var(--clr__action);
-    margin-right: 4.8rem;
+
     &:hover {
       opacity: 0.7;
     }

@@ -1,6 +1,6 @@
 <template>
   <div class="voting view-main">
-    <div class="view-main__title-wrapper">
+    <div class="view-main__title-wrapper voting__title-wrapper">
       <BackButton :text="'Proposal'" />
       <h2 class="voting__title view-main__title">Vote for proposal</h2>
       <span class="view-main__subtitle">{{ proposalName }}</span>
@@ -166,7 +166,9 @@ export default defineComponent({
 .voting__title {
   margin: 0 1.6rem 0 2rem;
 }
-
+.voting__title-wrapper {
+  justify-content: flex-start;
+}
 .voting__main {
   display: flex;
   gap: 12.8rem;
