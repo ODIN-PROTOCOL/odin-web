@@ -8,7 +8,7 @@
     "
   >
     <div class="view-main__title-wrapper validators-item__title-wrapper">
-      <BackButton class="validators-item__back-btn" :text="'Validators'" />
+      <BackButton text="Validators" class="validators-item__back-btn" />
       <h2 class="view-main__title validators-item__title">Validator</h2>
       <div class="validators-item__validator-address">
         <p
@@ -17,14 +17,14 @@
         >
           {{ validator?.operatorAddress }}
         </p>
-        <CopyButton class="mg-l8" :text="String(validator?.operatorAddress)" />
+        <CopyButton :text="String(validator?.operatorAddress)" class="mg-l8" />
       </div>
       <div class="validators-item__oracle-status">
         <StatusIcon
           :width="14"
           :height="14"
-          class="validators-item__oracle-status-icon"
           :status="validator?.isActive ? 'success' : 'error'"
+          class="validators-item__oracle-status-icon"
         />
 
         <span
@@ -38,13 +38,13 @@
         >
       </div>
       <div
-        class="validators-item__activities validators-item__activities--top fx-sae"
         v-if="delegations[validator?.operatorAddress]"
+        class="validators-item__activities validators-item__activities--top fx-sae"
       >
         <button
-          class="app-btn app-btn--small w-min150"
-          type="button"
           @click="withdrawRewards"
+          type="button"
+          class="app-btn app-btn--small w-min150"
         >
           Claim rewards
         </button>
@@ -65,16 +65,16 @@
         </AppTab>
       </AppTabs>
     </template>
-    <div class="view-main__mobile-activities">
+    <div
+      v-if="delegations[validator?.operatorAddress]"
+      class="view-main__mobile-activities"
+    >
       <div class="validators-item__activities">
-        <div
-          class="validators-item__activities-item"
-          v-if="delegations[validator?.operatorAddress]"
-        >
+        <div class="validators-item__activities-item">
           <button
-            class="validators-item__activities-btn app-btn"
-            type="button"
             @click="withdrawRewards"
+            type="button"
+            class="validators-item__activities-btn app-btn"
           >
             Claim rewards
           </button>

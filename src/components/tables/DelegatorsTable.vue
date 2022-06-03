@@ -15,8 +15,8 @@
             <div class="app-table__cell">
               <span class="app-table__title">Delegator</span>
               <a
-                class="app-table__cell-txt app-table__link"
                 :href="`${API_CONFIG.odinScan}/account/${item.delegation.delegatorAddress}`"
+                class="app-table__cell-txt app-table__link"
               >
                 {{ item.delegation.delegatorAddress }}
               </a>
@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref, PropType, computed } from 'vue'
+import { defineComponent, ref, PropType, computed } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
@@ -67,8 +67,12 @@ export default defineComponent({
   setup(props) {
     const ITEMS_PER_PAGE = 5
     const currentPage = ref(1)
-    const totalPages = ref(0)
-    const delegatorsCount = ref(0)
+    const delegatorsCount = computed(() => {
+      return props.delegators.length
+    })
+    const totalPages = computed(() => {
+      return Math.ceil(delegatorsCount.value / ITEMS_PER_PAGE)
+    })
 
     const filteredDelegators = computed(() => {
       let tempArr = props.delegators
@@ -85,11 +89,6 @@ export default defineComponent({
     const paginationHandler = (num: number) => {
       currentPage.value = num
     }
-
-    onMounted(() => {
-      delegatorsCount.value = props.delegators.length
-      totalPages.value = Math.ceil(delegatorsCount.value / ITEMS_PER_PAGE)
-    })
 
     return {
       API_CONFIG,

@@ -52,8 +52,8 @@
             >
             <div class="validator-info__card-balance-row-value-wrapper">
               <span
-                class="validator-info__card-balance-row-value app-table__cell-txt"
                 :title="$convertLokiToOdin(validator.minSelfDelegation)"
+                class="validator-info__card-balance-row-value app-table__cell-txt"
               >
                 {{ $convertLokiToOdin(validator.minSelfDelegation) }}
               </span>
@@ -80,25 +80,25 @@
         </div>
         <div class="validator-info__delegetion-btn-wrapper">
           <button
+            v-if="delegations?.balance"
+            @click="undelegate"
             class="validator-info__delegetion-btn app-btn app-btn--outline-red app-btn--very-small"
             type="button"
-            @click="undelegate"
-            v-if="delegations"
           >
             Undelegate
           </button>
           <button
-            class="validator-info__delegetion-btn app-btn app-btn--outlined app-btn--very-small"
-            type="button"
+            v-if="delegations?.balance"
             @click="redelegate"
-            v-if="delegations"
+            type="button"
+            class="validator-info__delegetion-btn app-btn app-btn--outlined app-btn--very-small"
           >
             Redelegate
           </button>
           <button
-            class="validator-info__delegetion-btn app-btn app-btn--very-small"
-            type="button"
             @click="delegate"
+            type="button"
+            class="validator-info__delegetion-btn app-btn app-btn--very-small"
           >
             Delegate
           </button>
@@ -121,10 +121,13 @@
         </div>
         <div class="validator-info__description-item">
           <span class="validator-info__description-item-title"
-            >Amount of create blocks</span
+            >Amount of proposed blocks</span
           >
-          <span class="validator-info__description-item-value" :title="0">
-            {{ 0 }}
+          <span
+            :title="proposedBlocksCount"
+            class="validator-info__description-item-value"
+          >
+            {{ proposedBlocksCount }}
           </span>
         </div>
         <div class="validator-info__description-item">
@@ -161,6 +164,7 @@ import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import DelegateFormModal from '@/components/modals/DelegateFormModal.vue'
 import UndelegateFormModal from '@/components/modals/UndelegateFormModal.vue'
 import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
+import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 
 export default defineComponent({
   components: {},
@@ -169,7 +173,9 @@ export default defineComponent({
   },
   setup(props) {
     const delegationsBalance = ref('0')
-    const delegations = ref()
+    const proposedBlocksCount = ref(0)
+    const delegations = ref<DelegationResponse>({})
+
     const getDelegations = async () => {
       try {
         const response = await callers.getDelegations(wallet.account.address)
@@ -186,6 +192,13 @@ export default defineComponent({
         console.log(error)
       }
     }
+    const getProposedBlocks = async () => {
+      const response = await callers
+        .getProposedBlocks(props.validator.operatorAddress, 0, 1)
+        .then((req) => req.json())
+      proposedBlocksCount.value = response?.total_count || 0
+    }
+
     const delegate = async () => {
       await showDialogHandler(
         DelegateFormModal,
@@ -235,8 +248,16 @@ export default defineComponent({
     }
     onMounted(async () => {
       await getDelegations()
+      await getProposedBlocks()
     })
-    return { delegationsBalance, delegate, redelegate, undelegate, delegations }
+    return {
+      delegationsBalance,
+      delegate,
+      redelegate,
+      undelegate,
+      delegations,
+      proposedBlocksCount,
+    }
   },
 })
 </script>
@@ -314,7 +335,7 @@ export default defineComponent({
   font-size: 1.6rem;
   line-height: 2.4rem;
   min-width: 17rem;
-  max-width: 20rem;
+  max-width: 21rem;
   width: 100%;
 }
 .validator-info__description-item-value {
