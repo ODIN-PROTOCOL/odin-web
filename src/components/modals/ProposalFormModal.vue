@@ -160,10 +160,9 @@ import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
 import { COINS_LIST } from '@/api/api-config'
 import { dialogs } from '@/helpers/dialogs'
-import { handleError } from '@/helpers/errors'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { convertOdinToLoki } from '@/helpers/converters'
-import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import { ProposalChanges, ProposalChangesItem } from '@/helpers/Types'
 import { ParameterChangeProposal } from '@provider/codec/cosmos/params/v1beta1/params'
@@ -234,9 +233,9 @@ export default defineComponent({
           proposer: wallet.account.address,
         })
         onSubmit()
-        notifySuccess('Proposal created!')
+        handleNotificationInfo('Proposal created!', TYPE_NOTIFICATION.success)
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       isLoading.value = false
     }

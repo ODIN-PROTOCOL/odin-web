@@ -1,6 +1,7 @@
 /* eslint-disable no-useless-escape */
 import { big } from '@/helpers/bigMath'
 import { NumLike } from '@/helpers/casts'
+import { Ref, unref } from 'vue'
 
 export type FormFieldValidator = (...args: unknown[]) => string | null
 export type FormFieldValidatorResult = ReturnType<FormFieldValidator>
@@ -62,8 +63,9 @@ export function num(minimum?: number, maximum?: number): FormFieldValidator[] {
   return validators
 }
 
-export function min(minimum: number): FormFieldValidator {
+export function min(minimum: Ref<number> | number): FormFieldValidator {
   return (val: unknown): FormFieldValidatorResult => {
+    minimum = Number(unref(minimum))
     const num = Number(val)
     if (!Number.isNaN(num) && num < minimum) {
       return `The value should be larger than ${minimum}`
@@ -71,12 +73,22 @@ export function min(minimum: number): FormFieldValidator {
     return null
   }
 }
-
-export function max(maximum: number): FormFieldValidator {
+export function max(maximum: Ref<number> | number): FormFieldValidator {
   return (val: unknown): FormFieldValidatorResult => {
     const num = Number(val)
+    maximum = Number(unref(maximum))
     if (!Number.isNaN(num) && num > maximum) {
       return `The value should be lower than ${maximum}`
+    }
+    return null
+  }
+}
+export function maxReactive(maximum: Ref<number>): FormFieldValidator {
+  return (val: unknown): FormFieldValidatorResult => {
+    const num = Number(val)
+    // maximum = Number(unref(maximum))
+    if (!Number.isNaN(num) && num > maximum.value) {
+      return `The value should be lower than ${maximum.value}`
     }
     return null
   }
@@ -85,6 +97,14 @@ export function maxCharacters(maximum: number): FormFieldValidator {
   return (val: unknown): FormFieldValidatorResult => {
     if (String(val).length > maximum) {
       return `The value should be lower than ${maximum} characters`
+    }
+    return null
+  }
+}
+export function minCharacters(minimum: number): FormFieldValidator {
+  return (val: unknown): FormFieldValidatorResult => {
+    if (String(val).length < minimum) {
+      return `The value should be more than ${minimum} characters`
     }
     return null
   }
@@ -208,6 +228,44 @@ const ADDRESS_RE = /^odin1/
 export const odinAddress: FormFieldValidator = (val: unknown) => {
   if (typeof val === 'string' && !ADDRESS_RE.test(val)) {
     return 'Invalid address'
+  }
+  return null
+}
+const PREFIX_VALIDATOR = /^odinvaloper1/
+export const odinValidator: FormFieldValidator = (val: unknown) => {
+  if (typeof val === 'string' && !PREFIX_VALIDATOR.test(val)) {
+    return 'Invalid address'
+  }
+  return null
+}
+
+export function requiredIf(
+  condition: unknown | (() => unknown)
+): FormFieldValidator {
+  return (val: unknown): FormFieldValidatorResult => {
+    const cond = typeof condition === 'function' ? condition() : condition
+    if (cond) return required(val)
+    return null
+  }
+}
+
+export function shouldMatch(
+  expected: unknown | (() => unknown),
+  errMsg?: string
+): FormFieldValidator {
+  return (val: unknown): FormFieldValidatorResult => {
+    const exp = typeof expected === 'function' ? expected() : expected
+    if (val !== exp) {
+      return errMsg ?? 'Validators should match err'
+    }
+    return null
+  }
+}
+
+const EMAIL_RE = /.+@.+\..+/
+export const email: FormFieldValidator = (val: unknown) => {
+  if (!val || typeof val !== 'string' || !EMAIL_RE.test(val)) {
+    return 'Email err'
   }
   return null
 }

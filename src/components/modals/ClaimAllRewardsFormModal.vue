@@ -53,10 +53,9 @@ import { defineComponent, onMounted, onUnmounted, ref } from 'vue'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 import { dialogs } from '@/helpers/dialogs'
-import { handleError } from '@/helpers/errors'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { usePoll } from '@/composables/usePoll'
 import { preventIf } from '@/helpers/functions'
-import { notifySuccess } from '@/helpers/notifications'
 import { DelegationDelegatorReward } from 'cosmjs-types/cosmos/distribution/v1beta1/distribution'
 import { DecCoin } from 'cosmjs-types/cosmos/base/v1beta1/coin'
 import ModalBase from '@/components/modals/ModalBase.vue'
@@ -77,7 +76,7 @@ export default defineComponent({
         totalRewards.value = response.total
         rewards.value = response.rewards
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
     }
 
@@ -93,9 +92,9 @@ export default defineComponent({
           }))
         )
         onSubmit()
-        notifySuccess('Successfully claimed')
+        handleNotificationInfo('Successfully claimed', TYPE_NOTIFICATION.info)
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       isLoading.value = false
     }

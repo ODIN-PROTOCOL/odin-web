@@ -161,7 +161,7 @@ import {
 import { ProposalDecoded } from '@/helpers/proposalDecoders'
 import { ProposalStatus } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
-import { handleError } from '@/helpers/errors'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { getTransformedProposals } from '@/helpers/proposalHelpers'
 import { proposalStatusType } from '@/helpers/statusTypes'
 import Tally from '@/components/Tally.vue'
@@ -190,7 +190,7 @@ export default defineComponent({
         proposal.value = transformedProposals[0]
         await getTally(proposal.value)
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }

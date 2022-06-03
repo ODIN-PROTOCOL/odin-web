@@ -69,4 +69,18 @@
   // Frame
   --clr__frame-border: #{$clr-frame-border};
   --clr__frame-box-shadow: #{$clr-frame-box-shadow};
+  
+  // Wallet 
+  --clr__wallet-info-border: #{$clr-wallet-info-border};
+  --clr__wallet-info-box-shadow: #{$clr-wallet-info-box-shadow};
+
+  // Vue Picker 
+  --clr__vue-picker-box-shadow: #{$clr-vue-picker-box-shadow};
+  --clr__vue-picker-current-option: #{$clr-vue-picker-current-option};
+  
+  // Vue Notifications
+  --clr__vue-notifications-box-shadow: #{$clr-vue-notifications-box-shadow};
+  --clr__vue-notifications-failed-border: #{$clr-vue-notifications-failed-border};
+  --clr__vue-notifications-success-border: #{$clr-vue-notifications-success-border};
+  --clr__vue-notifications-info-border: #{$clr-vue-notifications-info-border};
 }

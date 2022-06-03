@@ -22,6 +22,7 @@ import {
   MsgCreateValidator,
   MsgDelegate,
   MsgUndelegate,
+  MsgBeginRedelegate,
 } from 'cosmjs-types/cosmos/staking/v1beta1/tx'
 import { Proposal } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { MsgWithdrawDelegatorReward } from 'cosmjs-types/cosmos/distribution/v1beta1/tx'
@@ -184,6 +185,10 @@ const makeCallers = () => {
     validatorDelegate: broadcaster<MsgDelegate>(
       '/cosmos.staking.v1beta1.MsgDelegate',
       MsgDelegate
+    ),
+    validatorDelegateToAnotherValidator: broadcaster<MsgBeginRedelegate>(
+      '/cosmos.staking.v1beta1.MsgBeginRedelegate',
+      MsgBeginRedelegate
     ),
     validatorUndelegate: broadcaster<MsgUndelegate>(
       '/cosmos.staking.v1beta1.MsgUndelegate',

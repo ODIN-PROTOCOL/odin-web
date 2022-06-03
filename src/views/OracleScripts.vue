@@ -134,7 +134,7 @@ import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
-import { handleError } from '@/helpers/errors'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import TitledLink from '@/components/TitledLink.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 
@@ -176,7 +176,7 @@ export default defineComponent({
         oracleScriptsCount.value = total_count
         totalPages.value = Math.ceil(oracleScriptsCount.value / ITEMS_PER_PAGE)
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }
@@ -188,7 +188,7 @@ export default defineComponent({
           .then((response) => response.json())
           .then((data) => data.data)
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }

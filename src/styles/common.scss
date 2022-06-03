@@ -17,11 +17,11 @@ body {
 }
 
 .slide-fade-enter-active {
-  transition: all .3s ease-out;
+  transition: all 0.3s ease-out;
 }
 
 .slide-fade-leave-active {
-  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
 }
 
 .slide-fade-enter-from,
@@ -32,18 +32,15 @@ body {
 // transition for <transition> END
 
 ._vue-picker {
-  width: 140px;
+  width: 14rem;
   font-weight: 400;
   .vue-picker__opener,
   .vue-picker__opener:focus {
-    // "Properties may be safely replaced with 'border' shorthand"
-    // this words is lie! I need to reset the css rules with a separate rule
-    border-color: transparent;
     border: none;
-    box-shadow: inset 0 0 0 1px transparent;
+    box-shadow: inset 0 0 0 0.1rem transparent;
   }
   .vue-picker__dropdown {
-    box-shadow: 0 0.4rem 2.4rem rgba(8, 87, 172, 0.08);
+    box-shadow: 0 0.4rem 2.4rem var(--clr__dropdown-shadow);
     border-radius: 0.4rem;
     border: none;
     padding: 0;
@@ -64,13 +61,13 @@ body {
   &.vue-picker_open {
     .vue-picker__opener-ico {
       &:after {
-        border: solid #007bff;
-        border-width: 0 2px 2px 0;
+        border: solid var(--clr__action);
+        border-width: 0 0.2rem 0.2rem 0;
         transform: rotate(225deg);
       }
     }
     .vue-picker__opener-txt {
-      color: #007bff;
+      color: var(--clr__action);
       font-weight: bold;
     }
   }
@@ -78,22 +75,83 @@ body {
     .vue-picker-option:hover:not(:disabled),
     .vue-picker-option_cur {
       font-weight: 600;
-      color: #007bff;
-      background: rgba(#cce4ff, 0.4);
+      color: var(--clr__action);
+      background: var(--clr__vue-picker-current-option);
     }
   }
   @include respond-to(tablet) {
-    .vue-picker__opener{
+    .vue-picker__opener {
       padding-left: 0;
     }
   }
 }
-
+.vue-pick {
+  width: 100%;
+  .vue-picker__opener,
+  .vue-picker__opener:focus {
+    border: none;
+    box-shadow: inset 0 0 0 0.1rem transparent;
+    padding: 0;
+    gap: 0;
+  }
+  .vue-picker__dropdown {
+    box-shadow: 0 0 0.2rem var(--clr__vue-picker-box-shadow),
+      0 0.4rem 1.2rem var(--clr__vue-picker-box-shadow);
+    background: var(--clr__main-bg);
+    border-radius: 0.8rem;
+    border: none;
+    padding: 0;
+    margin-top: 0.8rem;
+  }
+  .vue-picker__opener-txt,
+  .vue-picker-option {
+    white-space: nowrap;
+    transition: all 0.5s ease;
+  }
+  .vue-picker-option {
+    padding: 0;
+  }
+  .vue-picker__opener-ico {
+    height: 100%;
+    width: 1.2rem;
+    position: absolute;
+    display: flex;
+    right: 1.8rem;
+    align-items: center;
+    &:after {
+      transition: all 0.5s ease;
+    }
+  }
+  &.vue-picker_open {
+    .vue-picker__opener-ico {
+      &:after {
+        border: solid var(--clr__action);
+        border-width: 0 0.2rem 0.2rem 0;
+        transform: rotate(225deg);
+      }
+    }
+    .vue-picker__opener-txt {
+      font-weight: bold;
+    }
+  }
+  &__dropdown-custom {
+    .vue-picker-option_cur {
+      font-weight: 600;
+      color: var(--clr__action);
+      background: var(--clr__vue-picker-current-option);
+    }
+    .vue-picker-option:hover:not(:disabled) {
+      font-weight: 600;
+      color: var(--clr__action);
+      background: var(--clr__vue-picker-current-option);
+    }
+  }
+}
 .loading {
   display: inline-block;
-  width: 50px;
-  height: 50px;
-  border: 3px solid rgba($clr-action, .3);
+  width: 5rem;
+  height: 5rem;
+  border: 0.3rem solid rgba($clr-action, 0.3);
   border-radius: 50%;
   border-top-color: var(--clr__action);
   animation: spin 1s ease-in-out infinite;
@@ -111,8 +169,12 @@ body {
   color: var(--clr__input-border);
 }
 @keyframes spin {
-  to { -webkit-transform: rotate(360deg); }
+  to {
+    -webkit-transform: rotate(360deg);
+  }
 }
 @-webkit-keyframes spin {
-  to { -webkit-transform: rotate(360deg); }
+  to {
+    -webkit-transform: rotate(360deg);
+  }
 }

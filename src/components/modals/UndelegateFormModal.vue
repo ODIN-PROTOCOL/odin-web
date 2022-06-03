@@ -111,10 +111,9 @@ import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
 import { COINS_LIST, START_VALUE } from '@/api/api-config'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
-import { handleError } from '@/helpers/errors'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { convertLokiToOdin, convertOdinToLoki } from '@/helpers/converters'
-import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase, { SCHEMES } from './ModalBase.vue'
 import CopyText from '@/components/CopyText.vue'
@@ -163,9 +162,12 @@ const UndelegateFormDialog = defineComponent({
         })
         await useBalances().load()
         onSubmit()
-        notifySuccess('Successfully undelegated')
+        handleNotificationInfo(
+          'Successfully undelegated',
+          TYPE_NOTIFICATION.success
+        )
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       isLoading.value = false
     }

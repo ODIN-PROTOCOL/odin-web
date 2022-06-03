@@ -61,9 +61,8 @@ import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { Coin, DecCoin } from 'cosmjs-types/cosmos/base/v1beta1/coin'
 import { dialogs } from '@/helpers/dialogs'
-import { handleError } from '@/helpers/errors'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
-import { notifySuccess } from '@/helpers/notifications'
 import { usePoll } from '@/composables/usePoll'
 import { big } from '@/helpers/bigMath'
 import { coin } from '@cosmjs/amino'
@@ -102,7 +101,7 @@ export default defineComponent({
         )
         rewards.value = deductFee(response.rewards)
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
     }
 
@@ -145,9 +144,12 @@ export default defineComponent({
           amount: coin(Number(claimedAmount), COINS_LIST.LOKI),
         })
         onSubmit()
-        notifySuccess('Successfully redelegated')
+        handleNotificationInfo(
+          'Successfully redelegated',
+          TYPE_NOTIFICATION.success
+        )
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       isLoading.value = false
     }

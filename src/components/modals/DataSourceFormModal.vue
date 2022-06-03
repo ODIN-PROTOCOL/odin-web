@@ -131,10 +131,9 @@ import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
 import { dialogs } from '@/helpers/dialogs'
 import { readFile } from '@/helpers/files'
-import { handleError } from '@/helpers/errors'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { assetsChanges } from '@/helpers/translators'
-import { notifySuccess } from '@/helpers/notifications'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import InputFileField from '@/components/fields/InputFileField.vue'
@@ -219,9 +218,9 @@ export default defineComponent({
           })
         }
         onSubmit()
-        notifySuccess('Data source created')
+        handleNotificationInfo('Data source created', TYPE_NOTIFICATION.success)
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       isLoading.value = false
     }

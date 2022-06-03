@@ -17,8 +17,17 @@
           Become a validator
         </button>
         <button
-          v-if="isDelegator"
-          class="validators__title-btn--white"
+
+          v-if="isDelegator && delegations && validators"
+          class="validators__title-btn app-btn app-btn_small"
+          type="button"
+          @click="stakeTransfer"
+        >
+          Stake transfer
+        </button>
+        <button
+          v-if="isDelegator && delegations && validators"
+          class="validators__title-btn--white app-btn app-btn_small"
           type="button"
           @click="claimAllRewards"
         >
@@ -61,7 +70,7 @@
         <span class="validators__table-head-item">Validator</span>
         <span class="validators__table-head-item"> Delegated </span>
         <span class="validators__table-head-item"> Commission </span>
-        <span class="validators__table-head-item"> Uptime </span>
+        <!-- <span class="validators__table-head-item"> Uptime </span> -->
         <span class="validators__table-head-item"> Oracle Status </span>
         <span class="validators__table-head-item"></span>
       </div>
@@ -107,7 +116,8 @@
                 {{ $getPrecisePercents(item.commission.commissionRates.rate) }}
               </span>
             </div>
-            <div class="app-table__cell">
+            <!-- NOT READY TELEMETRY -->
+            <!-- <div class="app-table__cell">
               <span class="app-table__title">Uptime</span>
               <Progressbar
                 v-if="item.uptimeInfo?.uptime"
@@ -117,7 +127,7 @@
                 :isForValidators="true"
               />
               <span v-else>N/A</span>
-            </div>
+            </div> -->
             <div class="app-table__cell validators__table-cell--center">
               <span class="app-table__title">Oracle Status</span>
               <StatusIcon :status="item?.isActive ? 'success' : 'error'" />
@@ -193,8 +203,16 @@
         Become a validator
       </button>
       <button
-        v-if="isDelegator"
-        class="validators__title-btn--white w-full app-btn--medium"
+        v-if="isDelegator && delegations && validators"
+        class="app-btn w-full"
+        type="button"
+        @click="stakeTransfer"
+      >
+        Stake transfer
+      </button>
+      <button
+        v-if="isDelegator && delegations && validators"
+        class="validators__title-btn--white app-btn w-full"
         type="button"
         @click="claimAllRewards"
       >
@@ -209,7 +227,7 @@ import { defineComponent, ref, onMounted, computed } from 'vue'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 import { COINS_LIST } from '@/api/api-config'
-import { handleError } from '@/helpers/errors'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { getTransformedValidators } from '@/helpers/validatorHelpers'
 import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
@@ -225,10 +243,11 @@ import WithdrawRewardsFormModal from '@/components/modals/WithdrawRewardsFormMod
 import DelegateFormModal from '@/components/modals/DelegateFormModal.vue'
 import UndelegateFormModal from '@/components/modals/UndelegateFormModal.vue'
 import BecomeValidatorFormModal from '@/components/modals/BecomeValidatorFormModal.vue'
+import StakeTransferFormModal from '@/components/modals/StakeTransferFormModal.vue'
 import ClaimAllRewardsFormModal from '@/components/modals/ClaimAllRewardsFormModal.vue'
 import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
 import { isActiveValidator } from '@/helpers/validatorHelpers'
-import Progressbar from '@/components/Progressbar.vue'
+// import Progressbar from '@/components/Progressbar.vue'
 import InputField from '@/components/fields/InputField.vue'
 import SearchIcon from '@/components/icons/SearchIcon.vue'
 
@@ -239,7 +258,7 @@ export default defineComponent({
     TitledLink,
     StatusIcon,
     AppPagination,
-    Progressbar,
+    // Progressbar,
     InputField,
     SearchIcon,
   },
@@ -316,7 +335,7 @@ export default defineComponent({
           activeValidators.value.length + inactiveValidators.value.length
         filterValidators(currentPage.value)
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }
@@ -457,6 +476,22 @@ export default defineComponent({
       )
     }
 
+    const stakeTransfer = async () => {
+      if (!delegations.value) return
+      await showDialogHandler(
+        StakeTransferFormModal,
+        {
+          onSubmit: async (d) => {
+            d.kill()
+            await loadData()
+          },
+        },
+        {
+          validators: activeValidators.value,
+          delegation: delegations.value,
+        }
+      )
+    }
     onMounted(async () => {
       await loadData()
     })
@@ -487,6 +522,7 @@ export default defineComponent({
       inactiveValidatorsTitle,
       searchValue,
       filterValidators,
+      stakeTransfer,
     }
   },
 })
@@ -524,7 +560,7 @@ export default defineComponent({
     minmax(5rem, 1fr)
     minmax(6rem, 0.5fr)
     minmax(8rem, 0.5fr)
-    minmax(7rem, 1fr)
+    // minmax(7rem, 1fr)
     minmax(6rem, 8rem)
     minmax(24rem, 1.5fr);
 }

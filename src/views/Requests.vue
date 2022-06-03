@@ -34,15 +34,15 @@
         <template v-if="requests?.length">
           <div
             v-for="item in requests"
-            :key="item.request.id.toString()"
+            :key="item.response_packet_data.request_id"
             class="app-table__row requests__table-row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">Request ID</span>
               <TitledLink
                 class="app-table__cell-txt app-table__link"
-                :text="`#${item.request.id}`"
-                :to="`/requests/${item.request.id}`"
+                :text="`#${item.response_packet_data.request_id}`"
+                :to="`/requests/${item.response_packet_data.request_id}`"
               />
             </div>
             <div class="app-table__cell">
@@ -51,30 +51,30 @@
                 class="app-table__cell-txt app-table__link"
                 :href="senderLink(item)"
               >
-                {{ item.request.client_id }}
+                {{ item.request_packet_data.client_id }}
               </a>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Oracle Script ID</span>
               <TitledLink
                 class="app-table__cell-txt app-table__link"
-                :text="`#${item.request.oracle_script_id}`"
-                :to="`/oracle-scripts/${item.request.oracle_script_id}`"
+                :text="`#${item.request_packet_data.oracle_script_id}`"
+                :to="`/oracle-scripts/${item.request_packet_data.oracle_script_id}`"
               />
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Report Status</span>
               <Progressbar
-                :min="Number(item.result.min_count)"
-                :max="Number(item.result.ask_count)"
-                :current="Number(item.result.ans_count) || 0"
+                :min="Number(item.request_packet_data.min_count)"
+                :max="Number(item.request_packet_data.ask_count)"
+                :current="Number(item.response_packet_data.ans_count) || 0"
               />
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Timestamp</span>
               <div>{{}}</div>
               <span>{{
-                $fDate(new Date(item.result.request_time * 1000))
+                $fDate(new Date(item.response_packet_data.request_time * 1000))
               }}</span>
             </div>
           </div>
@@ -119,7 +119,7 @@ import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import RequestFormModal from '@/components/modals/RequestFormModal.vue'
-import { handleError } from '@/helpers/errors'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 
 export default defineComponent({
   components: { TitledLink, Progressbar, AppPagination },
@@ -132,8 +132,8 @@ export default defineComponent({
     const requestsCount = ref()
     const maxAskCount = ref()
     const senderLink = computed(
-      () => (item: { request: { client_id: string } }) => {
-        return `${API_CONFIG.odinScan}/account/${item.request.client_id}`
+      () => (item: { request_packet_data: { client_id: number } }) => {
+        return `${API_CONFIG.odinScan}/account/${item.request_packet_data?.client_id}`
       }
     )
 
@@ -147,7 +147,7 @@ export default defineComponent({
         requests.value = req.data.result.result.requests
         await getRequestsCount()
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }
@@ -159,7 +159,7 @@ export default defineComponent({
         requestsCount.value = Number(res.requestCount)
         totalPages.value = Math.ceil(requestsCount.value / ITEMS_PER_PAGE)
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }
@@ -170,7 +170,7 @@ export default defineComponent({
         const response = await callers.getOracleParams()
         maxAskCount.value = response.params?.maxAskCount.toNumber()
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }

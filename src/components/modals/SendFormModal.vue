@@ -123,8 +123,7 @@ import { useForm, validators } from '@/composables/useForm'
 import { dialogs } from '@/helpers/dialogs'
 import { preventIf } from '@/helpers/functions'
 import { convertLokiToOdin, convertOdinToLoki } from '@/helpers/converters'
-import { handleError } from '@/helpers/errors'
-import { notifySuccess } from '@/helpers/notifications'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
@@ -204,9 +203,9 @@ export default defineComponent({
           amount: coins(convertOdinToLoki(form.amount.val()), COINS_LIST.LOKI),
         })
         onSubmit()
-        notifySuccess('Successfully sent')
+        handleNotificationInfo('Successfully sent', TYPE_NOTIFICATION.success)
       } catch (error) {
-        handleError(error as Error)
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       isLoading.value = false
     }
