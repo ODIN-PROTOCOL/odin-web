@@ -66,7 +66,7 @@
             <div class="app-table__cell">
               <span class="app-table__title">Price</span>
               <span>
-                {{ convertLokiToOdin(getLokiFromString(item.attributes.fee)) }}
+                {{ convertLokiToOdin(item.attributes.fee_amount) }}
               </span>
             </div>
             <div class="app-table__cell">
@@ -135,7 +135,7 @@ import DataSourceFormModal from '@/components/modals/DataSourceFormModal.vue'
 import { wallet } from '@/api/wallet'
 import SortLine from '@/components/SortLine.vue'
 import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
-import { convertLokiToOdin, getLokiFromString } from '@/helpers/converters'
+import { convertLokiToOdin } from '@/helpers/converters'
 
 export default defineComponent({
   components: {
@@ -227,7 +227,6 @@ export default defineComponent({
       editDataSource,
       dataSourceName,
       convertLokiToOdin,
-      getLokiFromString,
     }
   },
 })
