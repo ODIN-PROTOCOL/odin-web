@@ -125,7 +125,7 @@ export default defineComponent({
   components: { TitledLink, Progressbar, AppPagination },
   setup() {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 5
+    const ITEMS_PER_PAGE = 25
     const currentPage = ref(1)
     const totalPages = ref(0)
     const requests = ref()
