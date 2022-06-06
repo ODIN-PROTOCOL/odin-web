@@ -6,29 +6,25 @@
     }"
   >
     <div class="view-main__title-wrapper">
-      <BackButton :text="'Data Sources'" />
-      <h2 class="view-main__title data-source-item__title">Data Source</h2>
-      <span class="view-main__subtitle">
-        {{ String(dataSourceData?.name) }}
-      </span>
-      <div
-        class="data-source-item__activities data-source-item__activities--top fx-sae"
-        v-if="isDataSourceOwner"
-      >
-        <div class="data-source-item__activities-item">
-          <button
-            class="app-btn app-btn_small w-min184"
-            type="button"
-            @click="editDataSource(dataSourceData)"
-          >
-            Edit Data Source
-          </button>
-        </div>
+      <div class="data-source-item__title-wrapper">
+        <BackButton text="Data Sources" />
+        <h2 class="view-main__title data-source-item__title">Data Source</h2>
+        <span class="view-main__subtitle">
+          {{ dataSourceData?.name }}
+        </span>
       </div>
+      <button
+        v-if="isDataSourceOwner"
+        class="data-source-item__title-btn app-btn app-btn--medium"
+        type="button"
+        @click="editDataSource(dataSourceData)"
+      >
+        Edit Data Source
+      </button>
     </div>
 
     <template v-if="dataSourceData">
-      <div class="info-card">
+      <div class="data-source-item__card info-card card-frame">
         <div class="info-card__content">
           <div class="info-card__row">
             <span class="info-card__row-title">Owner</span>
@@ -48,20 +44,20 @@
           </div>
         </div>
       </div>
-      <Tabs>
-        <Tab
+      <AppTabs>
+        <AppTab
           title="Requests"
           :class="{ 'data-source-item__tab-content': isDataSourceOwner }"
         >
           <RequestsDataSourceTable :data-source-id="String($route.params.id)" />
-        </Tab>
-        <Tab
+        </AppTab>
+        <AppTab
           title="Code"
           :class="{ 'data-source-item__tab-content': isDataSourceOwner }"
         >
           <CodeTable :code="dataSourceCode" />
-        </Tab>
-      </Tabs>
+        </AppTab>
+      </AppTabs>
     </template>
     <template v-else>
       <div class="app-table__empty-stub">
@@ -70,17 +66,13 @@
       </div>
     </template>
     <div class="view-main__mobile-activities" v-if="isDataSourceOwner">
-      <div class="data-source-item__activities">
-        <div class="data-source-item__activities-item">
-          <button
-            class="app-btn"
-            type="button"
-            @click="editDataSource(dataSourceData)"
-          >
-            Edit Data Source
-          </button>
-        </div>
-      </div>
+      <button
+        class="app-btn w-full app-btn--medium"
+        type="button"
+        @click="editDataSource(dataSourceData)"
+      >
+        Edit Data Source
+      </button>
     </div>
   </div>
 </template>
@@ -93,8 +85,8 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import BackButton from '@/components/BackButton.vue'
-import Tabs from '@/components/tabs/Tabs.vue'
-import Tab from '@/components/tabs/Tab.vue'
+import AppTabs from '@/components/tabs/AppTabs.vue'
+import AppTab from '@/components/tabs/AppTab.vue'
 import CodeTable from '@/components/tables/CodeTable.vue'
 import RequestsDataSourceTable from '@/components/tables/RequestsDataSourceTable.vue'
 
@@ -103,7 +95,13 @@ import DataSourceFormModal from '@/components/modals/DataSourceFormModal.vue'
 import { wallet } from '@/api/wallet'
 
 export default defineComponent({
-  components: { BackButton, Tabs, Tab, CodeTable, RequestsDataSourceTable },
+  components: {
+    BackButton,
+    AppTabs,
+    AppTab,
+    CodeTable,
+    RequestsDataSourceTable,
+  },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const route: RouteLocationNormalizedLoaded = useRoute()
@@ -168,22 +166,24 @@ export default defineComponent({
 .data-source-item__title {
   margin: 0 1.6rem 0 2rem;
 }
-.data-source-item__activities {
-  display: flex;
-  flex-direction: column;
-  gap: 2.4rem;
+.data-source-item__card {
+  margin-bottom: 3.4rem;
 }
-.data-source-item__activities-item {
+.data-source-item__title-info {
   display: flex;
-  flex-direction: row;
-  gap: 2.4rem;
-
-  & > * {
-    flex: 1;
-  }
+  justify-content: space-between;
 }
-
+.data-source-item__title-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 @include respond-to(tablet) {
+  .data-source-item__title-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
   .data-source-item__title {
     margin: 0.8rem 0 0.4rem 0;
   }
@@ -193,7 +193,7 @@ export default defineComponent({
   .data-source-item {
     padding-bottom: 10rem;
   }
-  .data-source-item__activities--top {
+  .data-source-item__title-btn {
     display: none;
   }
 }

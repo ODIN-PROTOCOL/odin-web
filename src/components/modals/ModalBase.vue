@@ -72,17 +72,16 @@ export default defineComponent({
 .modal-base__content {
   background: var(--clr__modal-content-bg);
   border-radius: 0.8rem;
-  padding: 3.2rem 2rem;
+  padding: 3.2rem 2.2rem 2.4rem 3.2rem;
   z-index: 1;
   width: 100%;
-  max-width: 41.2rem;
+  max-width: 39.2rem;
   max-height: 100%;
   overflow: visible;
   box-shadow: 0 0.4rem 2.4rem var(--clr__modal-content-shadow);
 }
 
 .modal-base__content-head {
-  padding: 0 1rem;
   margin-bottom: 2.4rem;
 }
 

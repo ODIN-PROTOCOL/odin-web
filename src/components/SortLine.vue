@@ -3,7 +3,6 @@
     <div class="sort-line__search">
       <div class="sort-line__search-input-wrapper">
         <InputField
-          type="search"
           v-model="searchValue"
           placeholder="Search by name"
           class="sort-line__search-input"
@@ -166,21 +165,6 @@ export default defineComponent({
 .sort-line__search-input-wrapper {
   position: relative;
   z-index: 0;
-}
-.sort-line__search-input {
-  border: none;
-  &:focus::-webkit-input-placeholder {
-    color: transparent;
-  }
-  &::-webkit-search-cancel-button {
-    position: relative;
-    right: 0.2rem;
-  }
-  &:active,
-  &:hover,
-  &:focus {
-    border: none;
-  }
 }
 .sort-line__search-button {
   position: relative;

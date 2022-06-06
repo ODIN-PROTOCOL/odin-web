@@ -1,5 +1,7 @@
 .app-btn {
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 2rem;
   line-height: 2.4rem;
   background: var(--clr__btn-normal);
@@ -11,13 +13,13 @@
 
   @include transition(background);
 
-  &_outlined {
+  &--outlined {
     background: var(--clr__main-bg);
     color: var(--clr__action);
     border: 0.1rem solid var(--clr__btn-normal);
   }
 
-  &_small {
+  &--small {
     font-size: 1.6rem;
     padding: 0.5rem 2.3rem;
   }
@@ -27,6 +29,23 @@
     line-height: 2rem;
     max-height: 3.2rem;
   }
+  &--medium{
+    padding: 0.8rem;
+    width: 18.4rem;
+    height: 4rem;
+    font-size: 1.6rem;
+    line-height: 2.4rem;
+  }
+  &--edit{
+    width: 7.4rem;
+    height: 4rem;
+    background: var(--clr__main-bg);
+    color: var(--clr__action);
+    border: 0.1rem solid var(--clr__btn-normal);
+    font-size: 1.6rem;
+    padding: 0.8rem;
+  }
+
   &:focus {
     color: var(--clr__text-on-action);
     border: 0.1rem solid var(--clr__btn-normal);

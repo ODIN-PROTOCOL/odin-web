@@ -6,11 +6,11 @@
       'validators--large-padding': isDelegator,
     }"
   >
-    <div class="view-main__title-wrapper validators__title-wrapper">
+    <div class="view-main__title-wrapper">
       <h2 class="view-main__title">All Validators</h2>
-      <div class="validators__title-activities fx-sae">
+      <div class="validators__title-btn-wrraper">
         <button
-          class="validators__title-btn app-btn app-btn_small"
+          class="validators__title-btn app-btn app-btn--medium"
           type="button"
           @click="becomeValidator()"
         >
@@ -18,7 +18,7 @@
         </button>
         <button
           v-if="isDelegator && delegations && validators"
-          class="validators__title-btn app-btn app-btn_small"
+          class="validators__title-btn app-btn app-btn--medium"
           type="button"
           @click="stakeTransfer"
         >
@@ -26,7 +26,7 @@
         </button>
         <button
           v-if="isDelegator && delegations && validators"
-          class="validators__title-btn--white app-btn app-btn_small"
+          class="validators__title-btn--white app-btn app-btn--medium"
           type="button"
           @click="claimAllRewards"
         >
@@ -41,14 +41,13 @@
       </div>
     </template>
     <div class="validators__filter">
-      <Tabs @changeTab="tabHandler($event)">
-        <Tab :title="activeValidatorsTitle" />
-        <Tab :title="inactiveValidatorsTitle" />
-      </Tabs>
+      <AppTabs @changeTab="tabHandler($event)">
+        <AppTab :title="activeValidatorsTitle" />
+        <AppTab :title="inactiveValidatorsTitle" />
+      </AppTabs>
       <div class="validators__filter-search">
         <div class="validators__filter-search-input-wrapper">
           <InputField
-            type="search"
             v-model="searchValue"
             placeholder="Search validator"
             class="validators__filter-search-input"
@@ -70,7 +69,7 @@
         <span class="validators__table-head-item">Validator</span>
         <span class="validators__table-head-item"> Delegated </span>
         <span class="validators__table-head-item"> Commission </span>
-        <!-- <span class="validators__table-head-item"> Uptime </span> -->
+        <span class="validators__table-head-item"> Uptime </span>
         <span class="validators__table-head-item"> Oracle Status </span>
         <span class="validators__table-head-item"></span>
       </div>
@@ -116,8 +115,7 @@
                 {{ $getPrecisePercents(item.commission.commissionRates.rate) }}
               </span>
             </div>
-            <!-- NOT READY TELEMETRY -->
-            <!-- <div class="app-table__cell">
+            <div class="app-table__cell">
               <span class="app-table__title">Uptime</span>
               <Progressbar
                 v-if="item.uptimeInfo?.uptime"
@@ -127,7 +125,7 @@
                 :isForValidators="true"
               />
               <span v-else>N/A</span>
-            </div> -->
+            </div>
             <div class="app-table__cell validators__table-cell--center">
               <span class="app-table__title">Oracle Status</span>
               <StatusIcon :status="item?.isActive ? 'success' : 'error'" />
@@ -139,7 +137,7 @@
                 >
                   <button
                     v-if="delegations[item.operatorAddress]"
-                    class="app-btn app-btn_outlined app-btn--very-small w-min108"
+                    class="app-btn app-btn--outlined app-btn--very-small w-min108"
                     type="button"
                     @click="redelegate(item)"
                   >
@@ -158,7 +156,7 @@
                   class="app-table__activities-item validators__table-activities-item"
                 >
                   <button
-                    class="app-btn app-btn_outlined app-btn--very-small w-min108"
+                    class="app-btn app-btn--outlined app-btn--very-small w-min108"
                     type="button"
                     @click="withdrawRewards(item)"
                   >
@@ -195,12 +193,16 @@
     </template>
 
     <div class="view-main__mobile-activities validators__mobile-activities">
-      <button class="app-btn w-full" type="button" @click="becomeValidator()">
+      <button
+        class="app-btn w-full app-btn--medium"
+        type="button"
+        @click="becomeValidator()"
+      >
         Become a validator
       </button>
       <button
         v-if="isDelegator && delegations && validators"
-        class="app-btn w-full"
+        class="app-btn w-full app-btn--medium"
         type="button"
         @click="stakeTransfer"
       >
@@ -208,7 +210,7 @@
       </button>
       <button
         v-if="isDelegator && delegations && validators"
-        class="validators__title-btn--white app-btn w-full"
+        class="validators__title-btn--white app-btn w-full app-btn--medium"
         type="button"
         @click="claimAllRewards"
       >
@@ -228,8 +230,8 @@ import { getTransformedValidators } from '@/helpers/validatorHelpers'
 import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
-import Tabs from '@/components/tabs/Tabs.vue'
-import Tab from '@/components/tabs/Tab.vue'
+import AppTabs from '@/components/tabs/AppTabs.vue'
+import AppTab from '@/components/tabs/AppTab.vue'
 import TitledLink from '@/components/TitledLink.vue'
 import StatusIcon from '@/components/StatusIcon.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
@@ -243,18 +245,18 @@ import StakeTransferFormModal from '@/components/modals/StakeTransferFormModal.v
 import ClaimAllRewardsFormModal from '@/components/modals/ClaimAllRewardsFormModal.vue'
 import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
 import { isActiveValidator } from '@/helpers/validatorHelpers'
-// import Progressbar from '@/components/Progressbar.vue'
+import Progressbar from '@/components/Progressbar.vue'
 import InputField from '@/components/fields/InputField.vue'
 import SearchIcon from '@/components/icons/SearchIcon.vue'
 
 export default defineComponent({
   components: {
-    Tabs,
-    Tab,
+    AppTabs,
+    AppTab,
     TitledLink,
     StatusIcon,
     AppPagination,
-    // Progressbar,
+    Progressbar,
     InputField,
     SearchIcon,
   },
@@ -528,10 +530,12 @@ export default defineComponent({
 .validators {
   padding-bottom: 10rem;
 }
-.validators__title-wrapper {
-  align-items: flex-start;
-}
 
+.validators__title-btn-wrraper {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 2.4rem;
+}
 .validators__title-activities {
   display: flex;
   flex-direction: row-reverse;
@@ -555,7 +559,7 @@ export default defineComponent({
     minmax(5rem, 1fr)
     minmax(6rem, 0.5fr)
     minmax(8rem, 0.5fr)
-    // minmax(7rem, 1fr)
+    minmax(7rem, 1fr)
     minmax(6rem, 8rem)
     minmax(24rem, 1.5fr);
 }
@@ -589,7 +593,7 @@ export default defineComponent({
 
 .validators__mobile-activities {
   & > *:not(:last-child) {
-    margin-bottom: 1.6rem;
+    margin-bottom: 0.8rem;
   }
 }
 
@@ -662,6 +666,7 @@ export default defineComponent({
   &--white {
     background: var(--clr__main-bg);
     color: var(--clr__action);
+
     &:hover {
       opacity: 0.7;
     }
@@ -682,7 +687,7 @@ export default defineComponent({
     margin-bottom: 0;
   }
 
-  .validators__title-activities {
+  .validators__title-btn-wrraper {
     display: none;
   }
 

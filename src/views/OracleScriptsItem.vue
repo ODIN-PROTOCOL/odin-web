@@ -6,29 +6,28 @@
     }"
   >
     <div class="view-main__title-wrapper">
-      <BackButton :text="'Oracle Scripts'" />
-      <h2 class="view-main__title oracle-scripts-item__title">Oracle Script</h2>
-      <span class="view-main__subtitle">
-        {{ String(oracleScriptData?.name) }}
-      </span>
-      <div
-        class="oracle-scripts-item__activities oracle-scripts-item__activities_top fx-sae"
-        v-if="isOracleScriptOwner"
-      >
-        <div class="oracle-scripts-item__activities-item">
-          <button
-            class="app-btn app-btn_small w-min184"
-            type="button"
-            @click="editOracleScript(oracleScriptData)"
-          >
-            Edit Script
-          </button>
-        </div>
+      <div class="oracle-scripts-item__title-wrapper">
+        <BackButton text="Oracle Scripts" />
+        <h2 class="view-main__title oracle-scripts-item__title">
+          Oracle Script
+        </h2>
+        <span class="view-main__subtitle">
+          {{ oracleScriptData?.name }}
+        </span>
       </div>
+
+      <button
+        v-if="isOracleScriptOwner"
+        class="oracle-scripts-item__title-btn app-btn app-btn--medium"
+        type="button"
+        @click="editOracleScript(oracleScriptData)"
+      >
+        Edit Script
+      </button>
     </div>
 
     <template v-if="oracleScriptData">
-      <div class="info-card">
+      <div class="oracle-scripts-item__card info-card card-frame">
         <div class="info-card__content">
           <div class="info-card__row">
             <span class="info-card__row-title">Owner</span>
@@ -48,8 +47,8 @@
           </div>
         </div>
       </div>
-      <Tabs>
-        <Tab
+      <AppTabs>
+        <AppTab
           title="Requests"
           :class="{
             'oracle-scripts-item__tab-content': isOracleScriptOwner,
@@ -58,16 +57,16 @@
           <RequestsOracleScriptTable
             :oracle-script-id="String($route.params.id)"
           />
-        </Tab>
-        <Tab
+        </AppTab>
+        <AppTab
           title="Code"
           :class="{
             'oracle-scripts-item__tab-content': isOracleScriptOwner,
           }"
         >
           <CodeTable :code="oracleScriptCode" />
-        </Tab>
-      </Tabs>
+        </AppTab>
+      </AppTabs>
     </template>
     <template v-else>
       <div class="app-table__empty-stub">
@@ -76,17 +75,13 @@
       </div>
     </template>
     <div class="view-main__mobile-activities" v-if="isOracleScriptOwner">
-      <div class="oracle-scripts-item__activities">
-        <div class="oracle-scripts-item__activities-item">
-          <button
-            class="app-btn"
-            type="button"
-            @click="editOracleScript(oracleScriptData)"
-          >
-            Edit script
-          </button>
-        </div>
-      </div>
+      <button
+        class="app-btn w-full app-btn--medium"
+        type="button"
+        @click="editOracleScript(oracleScriptData)"
+      >
+        Edit script
+      </button>
     </div>
   </div>
 </template>
@@ -99,8 +94,8 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import BackButton from '@/components/BackButton.vue'
-import Tabs from '@/components/tabs/Tabs.vue'
-import Tab from '@/components/tabs/Tab.vue'
+import AppTabs from '@/components/tabs/AppTabs.vue'
+import AppTab from '@/components/tabs/AppTab.vue'
 import CodeTable from '@/components/tables/CodeTable.vue'
 import RequestsOracleScriptTable from '@/components/tables/RequestsOracleScriptTable.vue'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
@@ -109,7 +104,13 @@ import { OracleScript } from '@provider/codec/oracle/v1/oracle'
 import { wallet } from '@/api/wallet'
 
 export default defineComponent({
-  components: { BackButton, Tabs, Tab, CodeTable, RequestsOracleScriptTable },
+  components: {
+    BackButton,
+    AppTabs,
+    AppTab,
+    CodeTable,
+    RequestsOracleScriptTable,
+  },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const route: RouteLocationNormalizedLoaded = useRoute()
@@ -175,28 +176,24 @@ export default defineComponent({
 .oracle-scripts-item__title {
   margin: 0 1.6rem 0 2rem;
 }
-
 .oracle-scripts-item__empty-msg {
   text-align: center;
 }
-
-.oracle-scripts-item__activities {
-  display: flex;
-  flex-direction: column;
-  gap: 2.4rem;
+.oracle-scripts-item__card {
+  margin-bottom: 3.4rem;
 }
-.oracle-scripts-item__activities-item {
+.oracle-scripts-item__title-wrapper {
   display: flex;
-  flex-direction: row;
-  gap: 2.4rem;
-  & > * {
-    flex: 1;
-  }
+  align-items: center;
 }
-
 @include respond-to(tablet) {
   .oracle-scripts-item__title {
     margin: 0.8rem 0 0.4rem 0;
+  }
+  .oracle-scripts-item__title-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
   }
   .oracle-scripts-item__tab-content {
     margin-bottom: 12rem;
@@ -204,7 +201,7 @@ export default defineComponent({
   .oracle-scripts-item {
     padding-bottom: 10rem;
   }
-  .oracle-scripts-item__activities_top {
+  .oracle-scripts-item__title-btn {
     display: none;
   }
 }

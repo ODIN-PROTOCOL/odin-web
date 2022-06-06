@@ -8,7 +8,7 @@
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Governance</h2>
       <button
-        class="view-main__title-btn app-btn app-btn_small fx-sae"
+        class="governance__title-btn app-btn app-btn--medium"
         type="button"
         @click="createProposal()"
       >
@@ -16,7 +16,7 @@
       </button>
     </div>
 
-    <div class="info-card governance__info mg-b40">
+    <div class="info-card card-frame governance__info mg-b40">
       <h3 class="info-card__title governance__info-title mg-b40">
         Total number of proposals in ODIN
       </h3>
@@ -81,7 +81,11 @@
     </template>
 
     <div class="view-main__mobile-activities">
-      <button class="app-btn w-full" type="button" @click="createProposal()">
+      <button
+        class="app-btn w-full app-btn--medium"
+        type="button"
+        @click="createProposal()"
+      >
         Create a proposal
       </button>
     </div>
@@ -221,9 +225,6 @@ export default defineComponent({
 <style lang="scss" scoped>
 .governance__info {
   width: 60rem;
-  padding: 3.2rem 2.4rem;
-  border: 0.1rem solid var(--clr__action);
-  border-radius: 0.8rem;
 }
 .governance__info-title {
   font-weight: 400;
@@ -238,6 +239,9 @@ export default defineComponent({
 }
 
 @include respond-to(tablet) {
+  .governance__title-btn {
+    display: none;
+  }
   .governance {
     padding-bottom: 10rem;
   }

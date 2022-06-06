@@ -56,34 +56,27 @@
           </div>
 
           <div class="app-form__field request-form-modal__field">
-            <div class="app-form__field-lbl request-form-modal__field-lbl--ext">
-              <label> Call data(JSON format) </label>
-              <div class="request-form-modal__field-info" v-if="callDataSchema">
-                <img
-                  class="request-form-modal__field-info-icon"
-                  src="~@/assets/icons/info.svg"
-                  alt="info"
-                />
-                <div class="request-form-modal__field-info-tooltip">
-                  <span class="request-form-modal__field-info-tooltip-txt">
-                    Schema:
-                  </span>
-                  <p>
-                    {{ callDataSchema }}
-                  </p>
-                </div>
-              </div>
+            <div class="app-form__field-lbl">
+              <label>Call data(JSON format)</label>
             </div>
             <TextareaField
               v-model="form.calldata"
               name="request-calldata"
               :rows="7"
-              :disabled="isLoading || form.oracleScriptIdErr"
+              :disabled="isLoading || Boolean(form.oracleScriptIdErr)"
               placeholder="Call data"
             />
             <p v-if="form.feeLimitErr" class="app-form__field-err">
               {{ form.calldataErr }}
             </p>
+            <div v-if="callDataSchema" class="request-form-modal__field-info">
+              <div class="request-form-modal__field-lbl--info">
+                <label>Required input format:</label>
+              </div>
+              <div class="request-form-modal__calldata-example">
+                {{ callDataSchema }}
+              </div>
+            </div>
           </div>
 
           <div class="app-form__field">
@@ -129,7 +122,7 @@
 
         <div class="app-form__footer">
           <button
-            class="app-btn app-btn_outlined"
+            class="app-btn app-btn--outlined app-btn--medium"
             type="button"
             @click="onClose()"
             :disabled="isLoading"
@@ -137,7 +130,7 @@
             Cancel
           </button>
           <button
-            class="app-btn"
+            class="app-btn app-btn--medium"
             type="button"
             @click="submit()"
             :disabled="!form.isValid || isLoading"
@@ -269,51 +262,16 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .request-form-modal__field-info {
-  position: relative;
-
-  &:hover {
-    .request-form-modal__field-info-tooltip {
-      display: block;
-    }
-  }
+  margin-top: 0.4rem;
+  color: var(--clr__text-muted);
+  font-size: 1.4rem;
+  line-height: 2rem;
 }
-
-.request-form-modal__field-info-tooltip {
-  display: none;
-  position: absolute;
-  bottom: 130%;
-  right: -0.5rem;
-  min-width: 15rem;
-  padding: 1.2rem 2.4rem;
-  background: var(--clr__tooltip-bg);
-  border-radius: 0.8rem;
-  font-size: 1.6rem;
+.request-form-modal__field-lbl--info {
   font-weight: 400;
-  line-height: 1.6rem;
-  color: var(--clr__tooltip-text);
-
-  &:before {
-    content: '';
-    display: block;
-    width: 0.6rem;
-    height: 0.6rem;
-    position: absolute;
-    bottom: -0.3rem;
-    right: 1rem;
-    transform: rotate(45deg);
-    background: var(--clr__tooltip-bg);
-  }
 }
-
-.request-form-modal__field-info-tooltip-txt {
-  display: inline-block;
-  color: var(--clr__input-border);
-  margin-bottom: 1rem;
-}
-
-.request-form-modal__field-lbl--ext {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.request-form-modal__calldata-example {
+  overflow-wrap: break-word;
+  font-weight: 300;
 }
 </style>

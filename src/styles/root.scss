@@ -28,6 +28,7 @@
   // Tables
   --clr__table-border: #{$clr-table-border};
   --clr__table-row-hover: #{$clr-table-row-hover};
+  --clr__table-head: #{$clr-table-head};
 
   // Dropdown
 
@@ -60,9 +61,14 @@
   --clr__status-pending: #{$clr-status-pending};
   --clr__status-error: #{$clr-status-error};
   --clr__status-progress: #{$clr-status-progress};
-
+  --clr__oracle-status-success: #{$clr-oracle-status-success};
+  --clr__oracle-status-error: #{$clr-oracle-status-error};
   // Chart
   --clr__chart-default: #{$clr-chart-default};
+
+  // Frame
+  --clr__frame-border: #{$clr-frame-border};
+  --clr__frame-box-shadow: #{$clr-frame-box-shadow};
   
   // Wallet 
   --clr__wallet-info-border: #{$clr-wallet-info-border};
@@ -71,6 +77,7 @@
   // Vue Picker 
   --clr__vue-picker-box-shadow: #{$clr-vue-picker-box-shadow};
   --clr__vue-picker-current-option: #{$clr-vue-picker-current-option};
+  
   // Vue Notifications
   --clr__vue-notifications-box-shadow: #{$clr-vue-notifications-box-shadow};
   --clr__vue-notifications-failed-border: #{$clr-vue-notifications-failed-border};

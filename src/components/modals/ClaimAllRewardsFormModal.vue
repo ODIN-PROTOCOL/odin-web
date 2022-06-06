@@ -35,7 +35,7 @@
 
         <div class="app-form__footer">
           <button
-            class="app-btn"
+            class="app-btn app-btn--medium w-full"
             type="button"
             @click="submit"
             :disabled="!totalRewards.length || isLoading"

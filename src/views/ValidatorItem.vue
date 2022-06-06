@@ -8,7 +8,7 @@
     "
   >
     <div class="view-main__title-wrapper validators-item__title-wrapper">
-      <BackButton class="validators-item__back-btn" :text="'Validators'" />
+      <BackButton text="Validators" class="validators-item__back-btn" />
       <h2 class="view-main__title validators-item__title">Validator</h2>
       <div class="validators-item__validator-address">
         <p
@@ -17,106 +17,66 @@
         >
           {{ validator?.operatorAddress }}
         </p>
-        <CopyButton class="mg-l8" :text="String(validator?.operatorAddress)" />
+        <CopyButton :text="String(validator?.operatorAddress)" class="mg-l8" />
+      </div>
+      <div class="validators-item__oracle-status">
+        <StatusIcon
+          :width="14"
+          :height="14"
+          :status="validator?.isActive ? 'success' : 'error'"
+          class="validators-item__oracle-status-icon"
+        />
+
+        <span
+          class="validators-item__oracle-status-text"
+          :class="
+            validator?.isActive
+              ? 'validators-item__oracle-status-text--success'
+              : 'validators-item__oracle-status-text--error'
+          "
+          >Oracle</span
+        >
       </div>
       <div
+        v-if="delegations[validator?.operatorAddress]"
         class="validators-item__activities validators-item__activities--top fx-sae"
       >
-        <div
-          class="validators-item__activities-item"
-          v-if="delegations[validator?.operatorAddress]"
+        <button
+          @click="withdrawRewards"
+          type="button"
+          class="app-btn app-btn--small w-min150"
         >
-          <button
-            class="app-btn app-btn_outlined app-btn_small w-min150"
-            type="button"
-            @click="withdrawRewards"
-          >
-            Claim rewards
-          </button>
-          <button
-            class="app-btn app-btn_outlined app-btn_small w-min150"
-            type="button"
-            @click="undelegate"
-          >
-            Undelegate
-          </button>
-        </div>
-        <div class="validators-item__activities-item">
-          <button
-            v-if="delegations[validator?.operatorAddress]"
-            class="app-btn app-btn_outlined app-btn_small w-min150"
-            type="button"
-            @click="redelegate"
-          >
-            Redelegate
-          </button>
-          <button
-            class="app-btn app-btn_small w-min150"
-            type="button"
-            @click="delegate"
-          >
-            Delegate
-          </button>
-        </div>
+          Claim rewards
+        </button>
       </div>
     </div>
 
     <template v-if="validator">
-      <ValidatorInfoCard :validator="validator" />
-
-      <Tabs>
-        <Tab title="Delegators">
-          <template v-if="delegators">
-            <DelegatorsTable :delegators="delegators" />
-          </template>
-        </Tab>
-        <Tab title="Oracle Reports">
-          <template v-if="reports">
-            <OracleReportsTable :reports="reports" />
-          </template>
-        </Tab>
-        <Tab title="Proposed Blocks">
-          <ProposedBlocksTable :proposerAddress="validator.operatorAddress" />
-        </Tab>
-      </Tabs>
+      <ValidatorInfo :validator="validator" />
+      <AppTabs>
+        <AppTab title="Oracle Reports">
+          <OracleReportsTable :proposerAddress="validator.operatorAddress" />
+        </AppTab>
+        <AppTab :title="delegatorsTitle">
+          <DelegatorsTable :delegators="delegators" />
+        </AppTab>
+        <AppTab title="Proposed Blocks">
+          <ProposedBlocksTable :proposerAddress="validator?.operatorAddress" />
+        </AppTab>
+      </AppTabs>
     </template>
-
-    <div class="view-main__mobile-activities">
+    <div
+      v-if="delegations[validator?.operatorAddress]"
+      class="view-main__mobile-activities"
+    >
       <div class="validators-item__activities">
-        <div
-          class="validators-item__activities-item"
-          v-if="delegations[validator?.operatorAddress]"
-        >
-          <button
-            class="validators-item__activities-btn app-btn app-btn_outlined"
-            type="button"
-            @click="withdrawRewards"
-          >
-            Claim rewards
-          </button>
-          <button
-            class="validators-item__activities-btn app-btn app-btn_outlined"
-            type="button"
-            @click="undelegate"
-          >
-            Undelegate
-          </button>
-        </div>
         <div class="validators-item__activities-item">
           <button
-            v-if="delegations[validator?.operatorAddress]"
-            class="validators-item__activities-btn app-btn app-btn_outlined"
+            @click="withdrawRewards"
             type="button"
-            @click="redelegate"
-          >
-            Redelegate
-          </button>
-          <button
             class="validators-item__activities-btn app-btn"
-            type="button"
-            @click="delegate"
           >
-            Delegate
+            Claim rewards
           </button>
         </div>
       </div>
@@ -125,19 +85,21 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue'
+import { computed, defineComponent, onMounted, ref } from 'vue'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import BackButton from '@/components/BackButton.vue'
 import CopyButton from '@/components/CopyButton.vue'
-import Tabs from '@/components/tabs/Tabs.vue'
-import Tab from '@/components/tabs/Tab.vue'
-import ValidatorInfoCard from '@/components/ValidatorInfoCard.vue'
+import AppTabs from '@/components/tabs/AppTabs.vue'
+import AppTab from '@/components/tabs/AppTab.vue'
+import ValidatorInfo from '@/components/ValidatorInfo.vue'
 import OracleReportsTable from '@/components/tables/OracleReportsTable.vue'
 import DelegatorsTable from '@/components/tables/DelegatorsTable.vue'
 import ProposedBlocksTable from '@/components/tables/ProposedBlocksTable.vue'
+import { isActiveValidator } from '@/helpers/validatorHelpers'
+import StatusIcon from '@/components/StatusIcon.vue'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import WithdrawRewardsFormModal from '@/components/modals/WithdrawRewardsFormModal.vue'
@@ -149,38 +111,40 @@ export default defineComponent({
   components: {
     BackButton,
     CopyButton,
-    Tabs,
-    Tab,
-    ValidatorInfoCard,
+    AppTabs,
+    AppTab,
+    ValidatorInfo,
     OracleReportsTable,
     DelegatorsTable,
     ProposedBlocksTable,
+    StatusIcon,
   },
   setup: function () {
     const route: RouteLocationNormalizedLoaded = useRoute()
     const validator = ref()
-    const delegators = ref()
-    const reports = ref()
-    const delegations = ref<{ [k: string]: DelegationResponse }>({})
+    const delegators = ref<DelegationResponse[]>([])
 
+    const delegations = ref<{ [k: string]: DelegationResponse }>({})
+    const delegatorsTitle = computed(() =>
+      delegators.value?.length
+        ? `Delegators (${delegators.value?.length})`
+        : 'Delegators'
+    )
     const getValidator = async () => {
       const response = await callers.getValidator(String(route.params.address))
-      validator.value = { ...response.validator }
+      validator.value = {
+        ...response.validator,
+        isActive: await isActiveValidator(String(route.params.address)),
+      }
     }
 
     const getDelegators = async () => {
       const response = await callers.getValidatorDelegations(
         String(route.params.address)
       )
-      delegators.value = [...response.delegationResponses]
-    }
-
-    const getReports = async () => {
-      // TODO get reports from telemetry
-      // const response = await callers.getTxSearch({
-      //   query: `tx.height>=0 AND report.validator='${validator.value.operatorAddress}'`,
-      // })
-      // reports.value = response.txs
+      if (response.delegationResponses) {
+        delegators.value = response.delegationResponses
+      }
     }
 
     const getDelegations = async () => {
@@ -202,7 +166,6 @@ export default defineComponent({
     const loadData = async () => {
       await getValidator()
       await getDelegators()
-      await getReports()
       await getDelegations()
     }
 
@@ -277,11 +240,11 @@ export default defineComponent({
       validator,
       delegators,
       delegations,
-      reports,
       withdrawRewards,
       delegate,
       redelegate,
       undelegate,
+      delegatorsTitle,
     }
   },
 })
@@ -289,9 +252,12 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .validators-item__title-wrapper {
-  align-items: flex-start;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  margin-right: 2rem;
 }
-
 .validators-item__title {
   margin: 0 1.6rem 0 2rem;
 }
@@ -328,7 +294,33 @@ export default defineComponent({
     flex: 1;
   }
 }
-
+.validators-item__oracle-status {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background: var(--clr__modal-field-bg);
+  border-radius: 3.2rem;
+  width: 7.8rem;
+  height: 2.8rem;
+  padding: 0.4rem 1.2rem 0.4rem 0.8rem;
+  gap: 0.4rem;
+  margin-right: 2rem;
+}
+.validators-item__oracle-status-text {
+  font-weight: 400;
+  font-size: 1.4rem;
+  line-height: 2rem;
+  &--success {
+    color: var(--clr__oracle-status-success);
+  }
+  &--error {
+    color: var(--clr__oracle-status-error);
+  }
+}
+.validators-item__oracle-status-icon {
+  height: 1.8rem;
+}
 @include respond-to(tablet) {
   .validators-item {
     padding-bottom: 10rem;
@@ -355,6 +347,16 @@ export default defineComponent({
 
   .validators-item--large-padding {
     padding-bottom: 17rem;
+  }
+  .validators-item__title-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-right: 0;
+    margin-bottom: 3.2rem;
+  }
+  .validators-item__oracle-status {
+    margin-top: 1.2rem;
   }
 }
 

@@ -91,13 +91,16 @@
           </div>
           <div class="send-form-modal__field-info">
             <InfoIcon class="send-form-modal__info-icon" />
-            <span>Fee amount: {{ $convertLokiToOdin(fee) }} ODIN</span>
+            <span
+              >Fee amount:
+              {{ $convertLokiToOdin(fee, { onlyNumber: true }) }} ODIN</span
+            >
           </div>
         </div>
 
         <div class="app-form__footer">
           <button
-            class="app-btn"
+            class="app-btn app-btn--medium w-full"
             type="button"
             @click="submit()"
             :disabled="!form.isValid || isLoading"
@@ -152,7 +155,9 @@ export default defineComponent({
       const balance = props.balance.find((item) => {
         return item.denom === COINS_LIST.LOKI
       })
-      return balance ? convertLokiToOdin(balance.amount) : 0
+      return balance
+        ? convertLokiToOdin(balance.amount, { onlyNumber: true })
+        : 0
     })
     const geoBalance = computed(() => {
       const balance = props.balance.find((item) => {

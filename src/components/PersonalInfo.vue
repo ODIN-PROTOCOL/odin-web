@@ -1,6 +1,6 @@
 <template>
   <div class="personal-info mg-b40">
-    <div class="personal-info__card">
+    <div class="personal-info__card card-frame">
       <h3 class="personal-info__card-title">Your address</h3>
       <div
         class="personal-info__card-address app-table__cell-txt"
@@ -9,8 +9,11 @@
         {{ accountAddress }}
       </div>
       <div class="personal-info__card-activities">
-        <button class="app-btn app-btn_small" @click="receive()">
-          <ShareIcon />
+        <button
+          class="personal-info__share-btn app-btn app-btn--small"
+          @click="receive()"
+        >
+          <ShareIcon class="personal-info__share-icon" />
           Share
         </button>
         <CopyButtonWithText
@@ -21,7 +24,7 @@
         />
       </div>
     </div>
-    <div class="personal-info__card">
+    <div class="personal-info__card card-frame">
       <div class="personal-info__card-title-wrapper">
         <h2 class="personal-info__card-title">Balance</h2>
         <div class="personal-info__card-btn-wrapper">
@@ -34,7 +37,7 @@
             >Account explorer
           </a>
           <button
-            class="app-btn app-btn_small"
+            class="personal-info__send-btn app-btn app-btn--small"
             @click="send()"
             :disabled="isEmptyBalance"
           >
@@ -175,10 +178,6 @@ export default defineComponent({
   width: 100%;
   display: flex;
   flex-direction: column;
-  padding: 3.2rem;
-  border: 0.1rem solid var(--clr__wallet-info-border);
-  box-shadow: 0 0.4rem 0.8rem var(--clr__wallet-info-box-shadow);
-  border-radius: 0.8rem;
 }
 .personal-info__card-title {
   display: inline-block;
@@ -233,6 +232,18 @@ export default defineComponent({
 }
 .personal-info__copy-button-with-text {
   align-items: flex-start;
+}
+.personal-info__share-btn {
+  width: 8.9rem;
+  height: 3.2rem;
+  padding: 0.6rem 0;
+}
+.personal-info__send-btn {
+  width: 6.5rem;
+  height: 3.2rem;
+}
+.personal-info__share-icon {
+  margin-right: 0.8rem;
 }
 @include respond-to(tablet) {
   .personal-info {

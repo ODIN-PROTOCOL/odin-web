@@ -33,7 +33,7 @@
                 class="undelegate-form-modal__field-balance-value"
                 :title="$convertLokiToOdin(validator.minSelfDelegation)"
               >
-                {{ $convertLokiToOdin(validator.minSelfDelegation) }} ODIN
+                {{ $convertLokiToOdin(validator.minSelfDelegation) }}
               </p>
             </div>
 
@@ -92,7 +92,7 @@
 
         <div class="app-form__footer">
           <button
-            class="app-btn"
+            class="app-btn w-full app-btn--medium"
             type="button"
             @click="submit()"
             :disabled="!form.isValid || isLoading"

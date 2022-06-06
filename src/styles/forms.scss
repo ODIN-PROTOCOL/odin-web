@@ -152,15 +152,11 @@
 
   &__footer {
     display: flex;
-    margin-block-start: 3.2rem;
-    padding: 0 1rem;
-
-    & > * {
-      flex: 1;
-    }
-
-    & > *:not(:first-child) {
-      margin-inline-start: 2.4rem;
+    margin-block-start: 2.4rem;
+    gap: 2.4rem;  
+    padding-right: 1rem;
+    @include respond-to(tablet) {
+      gap: 1.6rem;  
     }
   }
 }

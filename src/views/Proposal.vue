@@ -6,13 +6,15 @@
     }"
   >
     <div class="view-main__title-wrapper">
-      <BackButton :text="'Governance'" />
-      <h2 class="view-main__title proposal__title">Proposal</h2>
-      <span class="view-main__subtitle" v-if="proposal">
-        {{ proposal.content.title }}
-      </span>
+      <div class="view-main__title proposal__title-info">
+        <BackButton :text="'Governance'" />
+        <h2 class="view-main__title proposal__title">Proposal</h2>
+        <span class="view-main__subtitle" v-if="proposal">
+          {{ proposal.content.title }}
+        </span>
+      </div>
       <button
-        class="proposal__title-btn app-btn app-btn_small fx-sae w-min184"
+        class="proposal__title-btn app-btn app-btn--medium"
         :disabled="
           !proposal ||
           proposal?.status !== ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
@@ -133,7 +135,7 @@
 
     <div class="view-main__mobile-activities">
       <button
-        class="app-btn w-full"
+        class="app-btn w-full app-btn--medium"
         :disabled="
           !proposal ||
           proposal?.status !== ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
@@ -229,7 +231,10 @@ export default defineComponent({
 .proposal__title {
   margin: 0 1.6rem 0 2rem;
 }
-
+.proposal__title-info {
+  display: flex;
+  align-items: center;
+}
 @include respond-to(tablet) {
   .proposal {
     padding-bottom: 10rem;
@@ -240,10 +245,14 @@ export default defineComponent({
   .proposal__title-btn {
     display: none;
   }
-
   .proposal__table-row-title {
     display: inline-block;
     min-width: 15.4rem;
+  }
+  .proposal__title-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 </style>

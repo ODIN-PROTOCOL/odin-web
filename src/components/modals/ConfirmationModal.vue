@@ -11,7 +11,7 @@
           </div>
         </div>
         <div class="app-form__footer">
-          <button class="app-btn app-btn_outlined" @click="onClose">No</button>
+          <button class="app-btn app-btn--outlined" @click="onClose">No</button>
           <button class="app-btn" type="button" @click="onSubmit">Yes</button>
         </div>
       </div>
