@@ -1,5 +1,9 @@
 <template>
-  <ModalBase class="stake-transfer-form-modal__wrapper" @close="onClose()">
+  <ModalBase
+    class="stake-transfer-form-modal__wrapper"
+    :scheme="SCHEMES.paddingContent31px"
+    @close="onClose()"
+  >
     <template #title>
       <h3 class="app-form__title">Stake transfer</h3>
     </template>
@@ -9,7 +13,7 @@
         :class="{ 'load-fog_show': isLoading }"
         @submit.prevent
       >
-        <div class="app-form__main">
+        <div class="app-form__main stake-transfer-form-modal__main">
           <div class="stake-transfer-form-modal__select-wrapper">
             <div class="stake-transfer-form-modal__select-header">
               <label class="stake-transfer-form-modal__select-header-title"
@@ -199,9 +203,9 @@
           </div>
         </div>
 
-        <div class="app-form__footer">
+        <div class="app-form__footer stake-transfer-form-modal__footer">
           <button
-            class="app-btn"
+            class="app-btn w-full app-btn--medium"
             type="button"
             @click="submit()"
             :disabled="!form.isValid || isLoading"
@@ -230,7 +234,7 @@ import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { preventIf } from '@/helpers/functions'
 import { convertLokiToOdin, convertOdinToLoki } from '@/helpers/converters'
 import { useForm, validators } from '@/composables/useForm'
-import ModalBase from './ModalBase.vue'
+import ModalBase, { SCHEMES } from './ModalBase.vue'
 import {
   ValidatorDecoded,
   TransferValidator,
@@ -414,6 +418,7 @@ const StakeTransferFormModal = defineComponent({
       delegatedValidators,
       isShowToAdressOption,
       filtredValidators,
+      SCHEMES,
     }
   },
 })
@@ -430,6 +435,10 @@ export function showUndelegateFormDialog(
 </script>
 
 <style scoped lang="scss">
+.stake-transfer-form-modal__footer,
+.stake-transfer-form-modal__main {
+  padding: 0 1rem;
+}
 .frame {
   padding: 1.2rem 4.8rem 1.2rem 1.6rem;
   gap: 0.8rem;

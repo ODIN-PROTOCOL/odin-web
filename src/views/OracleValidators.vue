@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="oracle-validators view-main load-fog"
-    :class="{
-      'load-fog_show': isLoading,
-    }"
-  >
+  <div class="oracle-validators view-main load-fog">
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Oracle validators</h2>
     </div>
@@ -54,6 +49,14 @@
               </span>
             </div>
           </div>
+          <template v-if="validatorsCount > ITEMS_PER_PAGE">
+            <AppPagination
+              class="mg-t32 mg-b32"
+              v-model="currentPage"
+              :pages="totalPages"
+              @update:modelValue="paginationHandler"
+            />
+          </template>
         </template>
         <template v-else>
           <div class="app-table__empty-stub">
@@ -62,15 +65,6 @@
           </div>
         </template>
       </div>
-
-      <template v-if="validatorsCount > ITEMS_PER_PAGE">
-        <AppPagination
-          class="mg-t32 mg-b32"
-          v-model="currentPage"
-          :pages="totalPages"
-          @update:modelValue="paginationHandler"
-        />
-      </template>
     </div>
   </div>
 </template>

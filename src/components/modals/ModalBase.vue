@@ -22,6 +22,7 @@
 import { defineComponent, computed } from 'vue'
 export enum SCHEMES {
   noMarginTitle = 'no-margin-title',
+  paddingContent31px = 'padding-content-31px',
 }
 
 export default defineComponent({
@@ -56,6 +57,14 @@ export default defineComponent({
   &--no-margin-title {
     & .modal-base__content-head {
       margin-bottom: 0;
+    }
+  }
+  &--padding-content-31px {
+    & .modal-base__content {
+      padding: 3.2rem 3.1rem;
+    }
+    & .modal-base__content-head {
+      padding: 0 1rem;
     }
   }
 }

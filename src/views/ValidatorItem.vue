@@ -10,7 +10,10 @@
     <div class="view-main__title-wrapper validators-item__title-wrapper">
       <BackButton text="Validators" class="validators-item__back-btn" />
       <h2 class="view-main__title validators-item__title">Validator</h2>
-      <div class="validators-item__validator-address">
+      <div
+        v-if="!isLoading && validator"
+        class="validators-item__validator-address"
+      >
         <p
           :title="validator?.operatorAddress"
           class="view-main__subtitle validators-item__subtitle"
@@ -19,24 +22,13 @@
         </p>
         <CopyButton :text="String(validator?.operatorAddress)" class="mg-l8" />
       </div>
-      <div class="validators-item__oracle-status">
-        <StatusIcon
-          :width="14"
-          :height="14"
-          :status="validator?.isActive ? 'success' : 'error'"
-          class="validators-item__oracle-status-icon"
-        />
-
-        <span
-          class="validators-item__oracle-status-text"
-          :class="
-            validator?.isActive
-              ? 'validators-item__oracle-status-text--success'
-              : 'validators-item__oracle-status-text--error'
-          "
-          >Oracle</span
-        >
-      </div>
+      <ValidatorStatus
+        v-if="!isLoading && validator"
+        :width="14"
+        :height="14"
+        :status="validatorStatus"
+        class="validators-item__validator-status"
+      />
       <div
         v-if="delegations[validator?.operatorAddress]"
         class="validators-item__activities validators-item__activities--top fx-sae"
@@ -64,6 +56,12 @@
           <ProposedBlocksTable :proposerAddress="validator?.operatorAddress" />
         </AppTab>
       </AppTabs>
+    </template>
+    <template v-else>
+      <div class="app-table__empty-stub">
+        <p v-if="isLoading" class="empty mg-t32">Loading…</p>
+        <p v-else class="empty mg-t32">Validator not found!</p>
+      </div>
     </template>
     <div
       v-if="delegations[validator?.operatorAddress]"
@@ -99,13 +97,15 @@ import OracleReportsTable from '@/components/tables/OracleReportsTable.vue'
 import DelegatorsTable from '@/components/tables/DelegatorsTable.vue'
 import ProposedBlocksTable from '@/components/tables/ProposedBlocksTable.vue'
 import { isActiveValidator } from '@/helpers/validatorHelpers'
-import StatusIcon from '@/components/StatusIcon.vue'
+import ValidatorStatus from '@/components/ValidatorStatus.vue'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import WithdrawRewardsFormModal from '@/components/modals/WithdrawRewardsFormModal.vue'
 import DelegateFormModal from '@/components/modals/DelegateFormModal.vue'
 import UndelegateFormModal from '@/components/modals/UndelegateFormModal.vue'
 import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
+import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 
 export default defineComponent({
   components: {
@@ -117,9 +117,10 @@ export default defineComponent({
     OracleReportsTable,
     DelegatorsTable,
     ProposedBlocksTable,
-    StatusIcon,
+    ValidatorStatus,
   },
   setup: function () {
+    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const route: RouteLocationNormalizedLoaded = useRoute()
     const validator = ref()
     const delegators = ref<DelegationResponse[]>([])
@@ -131,13 +132,28 @@ export default defineComponent({
         : 'Delegators'
     )
     const getValidator = async () => {
-      const response = await callers.getValidator(String(route.params.address))
-      validator.value = {
-        ...response.validator,
-        isActive: await isActiveValidator(String(route.params.address)),
+      lockLoading()
+      try {
+        const response = await callers.getValidator(
+          String(route.params.address)
+        )
+        validator.value = {
+          ...response.validator,
+          isActive: await isActiveValidator(String(route.params.address)),
+        }
+      } catch (error) {
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
+      releaseLoading()
     }
 
+    const validatorStatus = computed(() => {
+      if (validator.value?.status === 3) {
+        return validator.value.isActive ? 'success' : 'error'
+      } else {
+        return 'inactive'
+      }
+    })
     const getDelegators = async () => {
       const response = await callers.getValidatorDelegations(
         String(route.params.address)
@@ -245,6 +261,8 @@ export default defineComponent({
       redelegate,
       undelegate,
       delegatorsTitle,
+      validatorStatus,
+      isLoading,
     }
   },
 })
@@ -294,33 +312,6 @@ export default defineComponent({
     flex: 1;
   }
 }
-.validators-item__oracle-status {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  background: var(--clr__modal-field-bg);
-  border-radius: 3.2rem;
-  width: 7.8rem;
-  height: 2.8rem;
-  padding: 0.4rem 1.2rem 0.4rem 0.8rem;
-  gap: 0.4rem;
-  margin-right: 2rem;
-}
-.validators-item__oracle-status-text {
-  font-weight: 400;
-  font-size: 1.4rem;
-  line-height: 2rem;
-  &--success {
-    color: var(--clr__oracle-status-success);
-  }
-  &--error {
-    color: var(--clr__oracle-status-error);
-  }
-}
-.validators-item__oracle-status-icon {
-  height: 1.8rem;
-}
 @include respond-to(tablet) {
   .validators-item {
     padding-bottom: 10rem;
@@ -355,7 +346,7 @@ export default defineComponent({
     margin-right: 0;
     margin-bottom: 3.2rem;
   }
-  .validators-item__oracle-status {
+  .validators-item__validator-status {
     margin-top: 1.2rem;
   }
 }

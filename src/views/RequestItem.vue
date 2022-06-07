@@ -41,7 +41,7 @@
           <span class="info-table__row-title">Report Status</span>
           <Progressbar
             :min="Number(resultData.min_count)"
-            :max="Number(resultData.ans_count)"
+            :max="Number(resultData.ask_count)"
             :current="Number(resultData.ans_count)"
           />
         </div>
