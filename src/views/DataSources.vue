@@ -66,7 +66,7 @@
             <div class="app-table__cell">
               <span class="app-table__title">Price</span>
               <span>
-                {{ convertLokiToOdin(item.attributes.fee_amount) }}
+                {{ convertLokiToOdin(Number(item.attributes.fee_amount)) }}
               </span>
             </div>
             <div class="app-table__cell">
@@ -246,6 +246,12 @@ export default defineComponent({
     minmax(4rem, 2fr)
     minmax(8rem, 2fr)
     minmax(8rem, 2fr);
+}
+.data-sources__table-row {
+  align-items: center;
+}
+.data-sources__table-head {
+  padding-bottom: 0;
 }
 .data-sources__table-activities {
   width: 100%;

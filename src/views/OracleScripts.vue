@@ -118,7 +118,7 @@
 
     <div class="view-main__mobile-activities">
       <button
-        class="app-btn w-full"
+        class="app-btn w-full app-btn--medium"
         type="button"
         @click="createOracleScript()"
       >
@@ -263,6 +263,12 @@ export default defineComponent({
     minmax(4rem, 3fr)
     minmax(10rem, 2fr)
     minmax(8rem, 2fr);
+}
+.oracle-scripts__table-head {
+  padding-bottom: 0;
+}
+.oracle-scripts__table-row {
+  align-items: center;
 }
 .oracle-scripts__table-head--center {
   text-align: center;

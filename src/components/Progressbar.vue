@@ -11,7 +11,7 @@
       <div
         class="progressbar__thumb"
         :class="
-          progress > 60
+          progress >= 60
             ? 'progressbar__thumb--positive'
             : 'progressbar__thumb--negative'
         "
@@ -32,13 +32,12 @@ export default defineComponent({
     isForValidators: { type: Boolean, default: false },
   },
   setup: function (props) {
-    const _min = toRef(props, 'min')
     const _max = toRef(props, 'max')
     const _current = toRef(props, 'current')
 
     const progress = computed(() => {
       if (_current.value >= _max.value) return 100
-      if (_current.value <= _min.value) return 5
+      if (_current.value === 0) return 5
 
       return Math.round((_current.value / _max.value) * 100)
     })
