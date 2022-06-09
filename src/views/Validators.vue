@@ -79,6 +79,10 @@
             v-for="item in filteredValidators"
             :key="item.operatorAddress"
             class="app-table__row validators__table-row"
+            :class="{
+              'validators__table-row--top':
+                item.status === 3 && delegations[item.operatorAddress],
+            }"
           >
             <div class="app-table__cell">
               <span class="app-table__title">Rank</span>
@@ -133,6 +137,7 @@
             <div class="app-table__cell">
               <div class="app-table__activities validators__table-activities">
                 <div
+                  v-if="item.status === 3"
                   class="app-table__activities-item validators__table-activities-item"
                 >
                   <button
@@ -565,6 +570,10 @@ export default defineComponent({
 }
 .validators__table-row {
   padding: 3.2rem 0 2rem;
+  align-items: center;
+}
+.validators__table-row--top {
+  align-items: flex-start;
 }
 .validators__table-activities {
   width: 100%;

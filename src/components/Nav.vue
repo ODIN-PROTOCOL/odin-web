@@ -1,36 +1,51 @@
 <template>
-  <div class="nav" :class="{ 'nav-mob': isOpen }">
+  <div class="nav" :class="{ 'nav--mobile': isOpen }">
     <div class="nav__wrap-cont">
       <router-link
-        class="nav__link"
-        data-text="Data Sources"
+        @click="closeBurger"
         :to="{ name: 'DataSources' }"
+        data-text="Data Sources"
+        class="nav__link"
       >
         <span>Data Sources</span>
       </router-link>
       <router-link
-        class="nav__link"
-        data-text="Oracle Scripts"
+        @click="closeBurger"
         :to="{ name: 'OracleScripts' }"
+        data-text="Oracle Scripts"
+        class="nav__link"
       >
         <span>Oracle Scripts</span>
       </router-link>
       <router-link
-        class="nav__link"
-        data-text="Requests"
+        @click="closeBurger"
         :to="{ name: 'Requests' }"
+        data-text="Requests"
+        class="nav__link"
       >
         <span>Requests</span>
       </router-link>
-      <LinksDropdown :isActive="isDropdownActive" :list="ValidatorsList" />
+      <LinksDropdown
+        @click="openDropdownValidators"
+        @redirect="closeBurger"
+        :is-dropdown-open="isValidatorsDropdownOpen"
+        :list="ValidatorsList"
+        :isActive="isDropdownActive"
+      />
       <router-link
-        class="nav__link"
-        data-text="Governance"
+        @click="closeBurger"
         :to="{ name: 'Governance' }"
+        data-text="Governance"
+        class="nav__link"
       >
         <span>Governance</span>
       </router-link>
-      <router-link class="nav__link" data-text="IBCs" :to="{ name: 'IBC' }">
+      <router-link
+        @click="closeBurger"
+        :to="{ name: 'IBC' }"
+        data-text="IBCs"
+        class="nav__link"
+      >
         <span>IBCs</span>
       </router-link>
     </div>
@@ -55,10 +70,11 @@ import router from '@/router'
 import LinksDropdown from '@/components/LinksDropdown.vue'
 import ExitIcon from '@/components/icons/ExitIcon.vue'
 import { WalletTypes, wallet } from '@/api/wallet'
+import { isMobile } from '@/helpers/helpers'
 
 export default defineComponent({
   components: { LinksDropdown, ExitIcon },
-  emits: ['changeRoute'],
+  emits: ['closeBurger'],
   props: {
     isOpen: { type: Boolean, default: false },
   },
@@ -76,28 +92,33 @@ export default defineComponent({
         },
       ],
     }
-
     const auth = useAuthorization()
-    function logOutAndLeave() {
+    const route = useRoute()
+    const logOutAndLeave = () => {
       auth.logOut()
       router.push({ name: 'Auth' })
     }
-
-    const route = useRoute()
+    const closeBurger = () => {
+      emit('closeBurger')
+    }
     watch(
       () => route.path,
       () => {
-        emit('changeRoute')
         handleDropdownActive()
       }
     )
-
     const isDropdownActive = ref(false)
     const urls = ['/validators', '/oracle-validators']
     const handleDropdownActive = () => {
       isDropdownActive.value = urls.indexOf(route.path) > -1
     }
 
+    const isValidatorsDropdownOpen = ref(false)
+    const openDropdownValidators = () => {
+      if (isMobile()) {
+        isValidatorsDropdownOpen.value = !isValidatorsDropdownOpen.value
+      }
+    }
     onMounted(() => {
       if (wallet.type === WalletTypes.KEPLR_WALLET) {
         window.addEventListener('keplr_keystorechange', logOutAndLeave)
@@ -109,57 +130,57 @@ export default defineComponent({
     })
 
     return {
-      isDropdownActive,
       logOutAndLeave,
-      handleDropdownActive,
       ValidatorsList,
+      openDropdownValidators,
+      isValidatorsDropdownOpen,
+      closeBurger,
+      isDropdownActive,
     }
   },
 })
 </script>
 
 <style scoped lang="scss">
-.nav {
-  &__wrap-cont {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-    align-items: center;
-    gap: 2.4rem;
+.nav__wrap-cont {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  align-items: center;
+  gap: 2.4rem;
+}
+
+.nav__link {
+  display: grid;
+  grid-template-columns: 100%;
+  text-decoration: none;
+  white-space: nowrap;
+  color: inherit;
+  font-weight: 400;
+  line-height: 2.4rem;
+  font-size: 16px;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--clr__action);
   }
 
-  &__link {
-    display: grid;
-    grid-template-columns: 100%;
-    text-decoration: none;
-    white-space: nowrap;
-    color: inherit;
-    font-weight: 400;
-    line-height: 2.4rem;
-    font-size: 16px;
-    cursor: pointer;
-
-    &:hover {
-      color: var(--clr__action);
-    }
-
-    &::before {
-      content: attr(data-text);
-      font-weight: 900;
-      opacity: 0;
-      grid-column: 1;
-      grid-row: 1;
-    }
-    > span {
-      text-align: center;
-      grid-column: 1;
-      grid-row: 1;
-      transition: color 0.5s ease, font-weight 0.5s ease;
-    }
-    &.router-link-exact-active > span {
-      font-weight: bold;
-      color: var(--clr__action);
-    }
+  &::before {
+    content: attr(data-text);
+    font-weight: 900;
+    opacity: 0;
+    grid-column: 1;
+    grid-row: 1;
+  }
+  > span {
+    text-align: center;
+    grid-column: 1;
+    grid-row: 1;
+    transition: color 0.5s ease, font-weight 0.5s ease;
+  }
+  &.router-link-exact-active > span {
+    font-weight: bold;
+    color: var(--clr__action);
   }
 }
 
@@ -179,27 +200,26 @@ export default defineComponent({
     padding: 0 1.6rem 1.6rem 1.6rem;
     z-index: 9999;
     height: calc(100vh - 9.6rem);
+  }
+  .nav__wrap-cont {
+    flex-direction: column;
+    gap: 0;
+  }
 
-    &__wrap-cont {
-      flex-direction: column;
-      gap: 0;
+  .nav__link {
+    width: 100%;
+    padding: 2.4rem 1.2rem;
+    border-bottom: 0.1rem solid #ced4da;
+    > span {
+      text-align: left;
     }
 
-    &__link {
-      width: 100%;
+    &:hover {
+      background: rgba(204, 228, 255, 0.4);
+    }
+
+    &:first-child {
       padding: 2.4rem 1.2rem;
-      border-bottom: 0.1rem solid #ced4da;
-      > span {
-        text-align: left;
-      }
-
-      &:hover {
-        background: rgba(204, 228, 255, 0.4);
-      }
-
-      &:first-child {
-        padding: 2.4rem 1.2rem;
-      }
     }
   }
 
@@ -209,7 +229,7 @@ export default defineComponent({
     gap: 1.1rem;
   }
 
-  .nav-mob {
+  .nav--mobile {
     display: flex;
     overflow: auto;
     flex-direction: column;

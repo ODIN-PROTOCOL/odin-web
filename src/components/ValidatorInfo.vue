@@ -88,7 +88,7 @@
             Undelegate
           </button>
           <button
-            v-if="delegations?.balance"
+            v-if="delegations?.balance && validator.status === 3"
             @click="redelegate"
             type="button"
             class="validator-info__delegetion-btn app-btn app-btn--outlined app-btn--very-small"
@@ -96,6 +96,7 @@
             Redelegate
           </button>
           <button
+            v-if="validator.status === 3"
             @click="delegate"
             type="button"
             class="validator-info__delegetion-btn app-btn app-btn--very-small"
