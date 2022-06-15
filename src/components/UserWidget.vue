@@ -1,15 +1,8 @@
 <template>
   <div class="user-widget fx-row">
-    <!--TEMP. Hide all unnecessary -->
-    <!-- <Search /> -->
-    <!-- <button class="nav-btn">
-      <img src="~@/assets/icons/metamask.svg" alt="metamask" />
-    </button> -->
-    <!-- TEMP. Hide metamask -->
-    <!-- <MetaMask /> -->
-    <BalanceButton />
+    <BalanceButton @click="closeBurger" />
     <button
-      class="app-ico-btn log-out-and-leave"
+      class="user-widget__log-out app-ico-btn"
       type="button"
       @click="logOutAndLeave()"
     >
@@ -22,21 +15,21 @@
 import { defineComponent } from 'vue'
 import { useAuthorization } from '@/composables/useAuthorization'
 import BalanceButton from '@/components/BalanceButton.vue'
-//TEMP. Hide metamask
-// import MetaMask from '@/components/MetaMask/MetaMask.vue'
-// import Search from '@/components/Search.vue'
 import router from '@/router'
 
 export default defineComponent({
   components: { BalanceButton },
-  setup() {
+  emits: ['closeBurger'],
+  setup(_, { emit }) {
     const auth = useAuthorization()
     const logOutAndLeave = () => {
       auth.logOut()
       router.push({ name: 'Auth' })
     }
-
-    return { logOutAndLeave }
+    const closeBurger = () => {
+      emit('closeBurger')
+    }
+    return { logOutAndLeave, closeBurger }
   },
 })
 </script>
@@ -47,7 +40,7 @@ export default defineComponent({
 }
 
 @media (max-width: 768px) {
-  .log-out-and-leave {
+  .user-widget__log-out {
     display: none;
   }
 }

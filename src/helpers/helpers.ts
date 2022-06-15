@@ -4,7 +4,21 @@ import { adjustedData, IAttributesItem, IEventsItem } from '@/helpers/Types'
 import { convertLokiToOdin } from './converters'
 import { TxTelemetry } from '@/helpers/Types'
 import { formatDate } from '@/helpers/formatters'
+import { detect } from 'detect-browser'
 
+export const isIos = (): boolean | null => {
+  const res = detect()
+  return res && res.os === 'iOS'
+}
+
+export const isAndroid = (): boolean | null => {
+  const res = detect()
+  return res && res.os === 'Android OS'
+}
+
+export const isMobile = (): boolean | null => {
+  return isAndroid() || isIos()
+}
 export const toHexFunc: (data: Uint8Array) => string = toHex
 
 export const copyValue = (text: string): void => {
@@ -66,4 +80,9 @@ export const parseLogsToGetRewardsAmount = (
   } catch (error) {
     return null
   }
+}
+export enum VALIDATOR_STATUS_TYPE {
+  inactive = 'inactive',
+  success = 'success',
+  error = 'error',
 }

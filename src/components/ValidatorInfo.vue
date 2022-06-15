@@ -88,7 +88,7 @@
             Undelegate
           </button>
           <button
-            v-if="delegations?.balance"
+            v-if="delegations?.balance && validator.status === 3"
             @click="redelegate"
             type="button"
             class="validator-info__delegetion-btn app-btn app-btn--outlined app-btn--very-small"
@@ -96,6 +96,7 @@
             Redelegate
           </button>
           <button
+            v-if="validator.status === 3"
             @click="delegate"
             type="button"
             class="validator-info__delegetion-btn app-btn app-btn--very-small"
@@ -120,9 +121,9 @@
           </span>
         </div>
         <div class="validator-info__description-item">
-          <span class="validator-info__description-item-title"
-            >Amount of proposed blocks</span
-          >
+          <span class="validator-info__description-item-title">
+            {{ isMobile() ? 'Proposed blocks' : 'Amount of proposed blocks' }}
+          </span>
           <span
             :title="proposedBlocksCount"
             class="validator-info__description-item-value"
@@ -166,6 +167,7 @@ import UndelegateFormModal from '@/components/modals/UndelegateFormModal.vue'
 import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
+import { isMobile } from '@/helpers/helpers'
 
 export default defineComponent({
   components: {},
@@ -258,6 +260,7 @@ export default defineComponent({
       undelegate,
       delegations,
       proposedBlocksCount,
+      isMobile,
     }
   },
 })

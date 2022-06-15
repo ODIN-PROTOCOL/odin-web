@@ -11,12 +11,12 @@
             src="~@/assets/brand/odin-logo-black.png"
             alt="Logo"
           />
-          <Nav :isOpen="isOpen" @changeRoute="changeRoute($event)" />
-          <UserWidget class="fx-sae" />
+          <Nav :isOpen="isOpen" @closeBurger="closeBurger" />
+          <UserWidget @closeBurger="closeBurger" class="fx-sae" />
           <BurgerMenu
-            class="burger-menu"
-            :isOpen="isOpen"
             @click="burgerMenuHandler($event)"
+            :isOpen="isOpen"
+            class="burger-menu"
           />
         </div>
       </header>
@@ -110,7 +110,7 @@ export default defineComponent({
       isOpen.value = isOpen.value !== true
     }
 
-    const changeRoute = () => {
+    const closeBurger = () => {
       if (isOpen.value === true) isOpen.value = false
     }
 
@@ -130,7 +130,7 @@ export default defineComponent({
       isLoggedIn: useAuthorization().isLoggedIn,
       isOpen,
       burgerMenuHandler,
-      changeRoute,
+      closeBurger,
       notification,
     }
   },

@@ -155,6 +155,14 @@ export default defineComponent({
     VuePickerOption,
   },
   setup(props) {
+    const assets = computed(() => {
+      return props.dataSource?.fee ? props.dataSource?.fee[0]?.denom : 'loki'
+    })
+    const price = computed(() => {
+      return props.dataSource?.fee
+        ? props.dataSource?.fee[0]?.amount
+        : getLokiFromString(props.dataSource?.fee_amount)
+    })
     const bntText = computed(() => {
       return props.dataSource ? 'Edit' : 'Create'
     })
@@ -169,10 +177,9 @@ export default defineComponent({
         props.dataSource?.description || '',
         validators.maxCharacters(256),
       ],
-      assets: [props.dataSource?.fee[0]?.denom || 'loki', validators.required],
+      assets: [String(assets.value), validators.required],
       price: [
-        props.dataSource?.fee[0]?.amount ||
-          getLokiFromString(props.dataSource?.fee),
+        Number(price.value),
         validators.required,
         validators.number,
         validators.sixDecimalNumber,
