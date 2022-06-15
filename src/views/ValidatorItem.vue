@@ -50,7 +50,7 @@
           <OracleReportsTable :proposerAddress="validator.operatorAddress" />
         </AppTab>
         <AppTab :title="delegatorsTitle">
-          <DelegatorsTable :delegators="delegators" />
+          <DelegatorsTable :delegators="delegators" :isLoading="isLoading" />
         </AppTab>
         <AppTab title="Proposed Blocks">
           <ProposedBlocksTable :proposerAddress="validator?.operatorAddress" />

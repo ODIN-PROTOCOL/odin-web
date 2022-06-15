@@ -1,12 +1,7 @@
 <template>
-  <div
-    class="requests-data-source load-fog"
-    :class="{
-      'load-fog_show': isLoading,
-    }"
-  >
+  <div class="requests-data-source">
     <div class="app-table" v-if="requests">
-      <div class="app-table__head">
+      <div class="app-table__head requests-data-source__head">
         <span>Request ID</span>
         <span>Oracle Script</span>
         <span>Timestamp</span>
@@ -16,7 +11,7 @@
           <div
             v-for="(item, index) in requests"
             :key="item.attributes?.oracle_script_id"
-            class="app-table__row"
+            class="app-table__row requests-data-source__row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">Request ID</span>
@@ -46,14 +41,18 @@
           </div>
         </template>
         <template v-else>
-          <div class="app-table__empty-stub">
-            <span v-if="isLoading" class="empty mg-t32">Loading…</span>
-            <span v-else class="empty mg-t32">No items yet</span>
+          <SkeletonTable
+            v-if="isLoading"
+            :header-titles="headerTitles"
+            class-string="requests-data-source__row"
+          />
+          <div v-else class="app-table__empty-stub">
+            <p class="empty mg-t32">No items yet</p>
           </div>
         </template>
       </div>
     </div>
-    <template v-if="requestsCount > ITEMS_PER_PAGE">
+    <template v-if="requestsCount > ITEMS_PER_PAGE && !isLoading">
       <AppPagination
         class="mg-t32 mg-b32"
         v-model="currentPage"
@@ -73,9 +72,10 @@ import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import TitledLink from '@/components/TitledLink.vue'
+import SkeletonTable from '@/components/SkeletonTable.vue'
 
 export default defineComponent({
-  components: { AppPagination, TitledLink },
+  components: { AppPagination, TitledLink, SkeletonTable },
   props: {
     dataSourceId: { type: String, required: true },
   },
@@ -86,7 +86,11 @@ export default defineComponent({
     const totalPages = ref(0)
     const requests = ref()
     const requestsCount = ref()
-
+    const headerTitles = [
+      { title: 'Request ID' },
+      { title: 'Oracle Script' },
+      { title: 'Timestamp' },
+    ]
     const getDataSourceRequests = async () => {
       lockLoading()
       try {
@@ -127,6 +131,7 @@ export default defineComponent({
       toHex,
       getDataSourceRequests,
       getRequestItemName,
+      headerTitles,
     }
   },
 })
@@ -135,20 +140,6 @@ export default defineComponent({
 <style lang="scss" scoped>
 .requests-data-source {
   margin-bottom: 3rem;
-}
-.app-table__head,
-.app-table__row {
-  grid:
-    auto /
-    minmax(3rem, 1fr)
-    minmax(8rem, 2fr)
-    minmax(8rem, 0.5fr);
-}
-@include respond-to(tablet) {
-  .app-table__head,
-  .app-table__row {
-    grid: none;
-  }
 }
 @include respond-to(small) {
   .app-table__title {

@@ -1,8 +1,7 @@
 <template>
   <div
-    class="view-main validators load-fog"
+    class="view-main validators"
     :class="{
-      'load-fog_show': isLoading && validators?.length,
       'validators--large-padding': isDelegator,
     }"
   >
@@ -35,11 +34,16 @@
       </div>
     </div>
 
-    <template v-if="validatorsCount">
-      <div class="validators__count-info">
-        <p>{{ validatorsCount }} validators found</p>
-      </div>
-    </template>
+    <div class="validators__count-info">
+      <skeleton-loader
+        v-if="isLoading"
+        :height="24"
+        :rounded="true"
+        animation="fade"
+        color="rgb(225, 229, 233)"
+      />
+      <p v-else>{{ validatorsCount }} validators found</p>
+    </div>
     <div class="validators__filter">
       <div class="validators__tabs">
         <button
@@ -206,15 +210,19 @@
           </div>
         </template>
         <template v-else>
-          <div class="app-table__empty-stub">
-            <p v-if="isLoading" class="empty mg-t32">Loading…</p>
-            <p v-else class="empty mg-t32">No items yet</p>
+          <SkeletonTable
+            v-if="isLoading"
+            :header-titles="headerTitles"
+            class-string="validators__table-row"
+          />
+          <div v-else class="app-table__empty-stub">
+            <p class="empty mg-t32">No items yet</p>
           </div>
         </template>
       </div>
     </div>
 
-    <template v-if="filteredValidatorsCount > ITEMS_PER_PAGE">
+    <template v-if="filteredValidatorsCount > ITEMS_PER_PAGE && !isLoading">
       <AppPagination
         class="mg-t32"
         v-model="currentPage"
@@ -277,6 +285,7 @@ import { isActiveValidator } from '@/helpers/validatorHelpers'
 import Progressbar from '@/components/Progressbar.vue'
 import InputField from '@/components/fields/InputField.vue'
 import SearchIcon from '@/components/icons/SearchIcon.vue'
+import SkeletonTable from '@/components/SkeletonTable.vue'
 
 export default defineComponent({
   components: {
@@ -286,6 +295,7 @@ export default defineComponent({
     Progressbar,
     InputField,
     SearchIcon,
+    SkeletonTable,
   },
   setup() {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
@@ -330,6 +340,15 @@ export default defineComponent({
     const isDisabledDelegationsTab = computed(() =>
       Boolean(myDelegationsValitors.value.length)
     )
+
+    const headerTitles = [
+      { title: 'Rank' },
+      { title: 'Validator' },
+      { title: 'Delegated' },
+      { title: 'Commission' },
+      { title: 'Uptime' },
+      { title: 'Oracle Status' },
+    ]
     const getValidators = async () => {
       lockLoading()
       try {
@@ -581,6 +600,7 @@ export default defineComponent({
       myDelegationsValitors,
       isDisabledDelegationsTab,
       tabStatus,
+      headerTitles,
     }
   },
 })
@@ -610,19 +630,6 @@ export default defineComponent({
   margin-bottom: 3.2rem;
 }
 
-.validators__table-head,
-.validators__table-row {
-  gap: 3.4rem;
-  grid:
-    auto /
-    minmax(2rem, 5rem)
-    minmax(5rem, 1fr)
-    minmax(6rem, 0.5fr)
-    minmax(8rem, 0.5fr)
-    minmax(7rem, 1fr)
-    minmax(6rem, 8rem)
-    minmax(24rem, 1.5fr);
-}
 .validators__table-row {
   padding: 3.2rem 0 2rem;
   align-items: center;
@@ -757,12 +764,6 @@ export default defineComponent({
     box-shadow: inset 0px -2px 0px var(--clr__action);
   }
 }
-@include respond-to(medium) {
-  .validators__table-head,
-  .validators__table-row {
-    gap: 1.6rem;
-  }
-}
 @include respond-to(tablet) {
   .validators__count-info {
     margin-bottom: 0;
@@ -770,10 +771,6 @@ export default defineComponent({
 
   .validators__title-btn-wrraper {
     display: none;
-  }
-
-  .validators__table-row {
-    grid: none;
   }
 
   .validators__table-activities {

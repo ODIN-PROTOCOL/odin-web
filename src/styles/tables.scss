@@ -108,3 +108,101 @@
     }
   }
 }
+.data-sources__table-head,
+.data-sources__table-row {
+  grid:
+    auto /
+    minmax(2rem, 0.5fr)
+    minmax(4rem, 2fr)
+    minmax(4rem, 2fr)
+    minmax(4rem, 2fr)
+    minmax(8rem, 2fr)
+    minmax(8rem, 2fr);
+}
+.requests__table-head,
+.requests__table-row {
+  grid:
+    auto /
+    minmax(7rem, 0.5fr)
+    minmax(8rem, 3fr)
+    minmax(10rem, 1fr)
+    minmax(8rem, 2fr)
+    minmax(10rem, 1.5fr);
+}
+.validators__table-head,
+.validators__table-row {
+  gap: 2rem;
+  grid:
+    auto /
+    minmax(2rem, 5rem)
+    minmax(5rem, 1fr)
+    minmax(6rem, 0.5fr)
+    minmax(8rem, 0.5fr)
+    minmax(7rem, 1fr)
+    minmax(6rem, 8rem)
+    minmax(24rem, 1.5fr);
+}
+.oracle-scripts__table-head,
+.oracle-scripts__table-row {
+  grid:
+    auto /
+    minmax(2rem, 0.5fr)
+    minmax(4rem, 2fr)
+    minmax(4rem, 3fr)
+    minmax(10rem, 2fr)
+    minmax(8rem, 2fr);
+}
+.oracle-validators__table-head,
+.oracle-validators__table-row {
+  grid:
+    auto /
+    minmax(10rem, 0.7fr)
+    minmax(10rem, 0.5fr)
+    minmax(10rem, 2fr)
+    minmax(10rem, 0.1fr);
+}
+.governance__table-head,
+.governance__table-row {
+  grid:
+    auto /
+    minmax(3rem, 5rem)
+    minmax(8rem, 1fr)
+    minmax(8rem, 2fr)
+    minmax(11rem, 0.5fr);
+}
+.requests-oracle-script__head,
+.requests-oracle-script__row {
+  grid:
+    auto /
+    minmax(3rem, 0.5fr)
+    minmax(8rem, 2fr)
+    minmax(8rem, 0.5fr);
+}
+.requests-data-source__head,
+.requests-data-source__row {
+  grid:
+    auto /
+    minmax(3rem, 1fr)
+    minmax(8rem, 2fr)
+    minmax(8rem, 0.5fr);
+}
+.delegators-table__table-head,
+.delegators-table__table-row {
+  grid:
+    auto /
+    minmax(8rem, 4fr)
+    minmax(8rem, 2fr);
+}
+@include respond-to(tablet) {
+  .data-sources__table-row,
+  .requests__table-row,
+  .validators__table-row,
+  .oracle-scripts__table-row,
+  .oracle-validators__table-row,
+  .governance__table-row,
+  .requests-oracle-script__row,
+  .requests-data-source__row,
+  .delegators-table__table-row    {
+    grid: none;
+  }
+}

@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="governance view-main load-fog"
-    :class="{
-      'load-fog_show': isLoading,
-    }"
-  >
+  <div class="governance view-main">
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Governance</h2>
       <button
@@ -68,15 +63,19 @@
           </div>
         </template>
         <template v-else>
-          <div class="app-table__empty-stub">
-            <p v-if="isLoading" class="empty mg-t32">Loading…</p>
-            <p v-else class="empty mg-t32">No items yet</p>
+          <SkeletonTable
+            v-if="isLoading"
+            :header-titles="headerTitles"
+            class-string="governance__table-row"
+          />
+          <div v-else class="app-table__empty-stub">
+            <p class="empty mg-t32">No items yet</p>
           </div>
         </template>
       </div>
     </div>
 
-    <template v-if="proposalsCount > ITEMS_PER_PAGE">
+    <template v-if="proposalsCount > ITEMS_PER_PAGE && !isLoading">
       <AppPagination
         class="mg-t32 mg-b32"
         v-model="currentPage"
@@ -112,6 +111,7 @@ import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import ProposalFormModal from '@/components/modals/ProposalFormModal.vue'
 import { proposalStatusFromJSON } from '@provider/codec/cosmos/gov/v1beta1/gov'
+import SkeletonTable from '@/components/SkeletonTable.vue'
 
 export default defineComponent({
   components: {
@@ -119,6 +119,7 @@ export default defineComponent({
     TitledLink,
     StatusBlock,
     AppPagination,
+    SkeletonTable,
   },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
@@ -130,7 +131,12 @@ export default defineComponent({
     const filteredProposals = ref()
     const proposalChanges = ref()
     let proposalsDataForChart = ref()
-
+    const headerTitles = [
+      { title: 'ID' },
+      { title: 'Proposal' },
+      { title: `Proposer's account ID` },
+      { title: 'Proposal status' },
+    ]
     const getProposals = async () => {
       lockLoading()
       try {
@@ -235,6 +241,7 @@ export default defineComponent({
       filteredProposals,
       createProposal,
       paginationHandler,
+      headerTitles,
     }
   },
 })
@@ -249,15 +256,6 @@ export default defineComponent({
   font-size: 2.4rem;
   line-height: 2.9rem;
 }
-.governance__table-head,
-.governance__table-row {
-  grid:
-    auto /
-    minmax(3rem, 5rem)
-    minmax(8rem, 1fr)
-    minmax(8rem, 2fr)
-    minmax(11rem, 0.5fr);
-}
 
 @include respond-to(tablet) {
   .governance__title-btn {
@@ -271,9 +269,6 @@ export default defineComponent({
   }
   .governance__info {
     width: 100%;
-  }
-  .governance__table-row {
-    grid: none;
   }
 }
 </style>

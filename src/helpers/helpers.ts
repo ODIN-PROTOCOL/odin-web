@@ -86,3 +86,14 @@ export enum VALIDATOR_STATUS_TYPE {
   success = 'success',
   error = 'error',
 }
+export const duplicateArrayNCount = (
+  exampleArray: Array<unknown>,
+  duplicateNumber: number
+): Array<unknown> => {
+  if (!exampleArray.length) return []
+  const tempArr: Array<unknown> = []
+  for (let i = 0; i < duplicateNumber; i++) {
+    tempArr.push(exampleArray)
+  }
+  return tempArr
+}

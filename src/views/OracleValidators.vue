@@ -1,5 +1,5 @@
 <template>
-  <div class="oracle-validators view-main load-fog">
+  <div class="oracle-validators view-main">
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Oracle validators</h2>
     </div>
@@ -49,23 +49,27 @@
               </span>
             </div>
           </div>
-          <template v-if="validatorsCount > ITEMS_PER_PAGE">
-            <AppPagination
-              class="mg-t32 mg-b32"
-              v-model="currentPage"
-              :pages="totalPages"
-              @update:modelValue="paginationHandler"
-            />
-          </template>
         </template>
         <template v-else>
-          <div class="app-table__empty-stub">
-            <p v-if="isLoading" class="empty mg-t32">Loading…</p>
-            <p v-else class="empty mg-t32">No items yet</p>
+          <SkeletonTable
+            v-if="isLoading"
+            :header-titles="headerTitles"
+            class-string="oracle-validators__table-row"
+          />
+          <div v-else class="app-table__empty-stub">
+            <p class="empty mg-t32">No items yet</p>
           </div>
         </template>
       </div>
     </div>
+    <template v-if="validatorsCount > ITEMS_PER_PAGE && !isLoading">
+      <AppPagination
+        class="mg-t32 mg-b32"
+        v-model="currentPage"
+        :pages="totalPages"
+        @update:modelValue="paginationHandler"
+      />
+    </template>
   </div>
 </template>
 
@@ -83,9 +87,16 @@ import StatusBlock from '@/components/StatusBlock.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
+import SkeletonTable from '@/components/SkeletonTable.vue'
 
 export default defineComponent({
-  components: { TitledLink, CopyButton, StatusBlock, AppPagination },
+  components: {
+    TitledLink,
+    CopyButton,
+    StatusBlock,
+    AppPagination,
+    SkeletonTable,
+  },
   setup() {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 50
@@ -94,7 +105,12 @@ export default defineComponent({
     const validatorsCount = ref(0)
     const validators = ref<ValidatorDecoded[]>([])
     const filteredValidators = ref()
-
+    const headerTitles = [
+      { title: 'Validator' },
+      { title: 'Is active' },
+      { title: 'Validator address' },
+      { title: 'Validator since' },
+    ]
     const getOracleValidators = async () => {
       lockLoading()
       try {
@@ -152,23 +168,10 @@ export default defineComponent({
       validators,
       filteredValidators,
       paginationHandler,
+      headerTitles,
     }
   },
 })
 </script>
 
-<style lang="scss" scoped>
-.oracle-validators__table-head,
-.oracle-validators__table-row {
-  grid:
-    auto /
-    minmax(10rem, 0.7fr) minmax(10rem, 0.5fr) minmax(10rem, 2fr) minmax(10rem, 0.1fr);
-}
-
-@include respond-to(tablet) {
-  .oracle-validators__table-head,
-  .oracle-validators__table-row {
-    grid: none;
-  }
-}
-</style>
+<style lang="scss" scoped></style>
