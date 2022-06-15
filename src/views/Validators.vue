@@ -42,34 +42,34 @@
     </template>
     <div class="validators__filter">
       <div class="validators__tabs">
-        <div
+        <button
           v-if="isDisabledDelegationsTab && !isLoading"
-          @click="clickHandler(myValidatorsTitle)"
+          @click="selectTab(myValidatorsTitle)"
           class="validators__tab"
           :class="{
             selected: myValidatorsTitle === tabStatus,
           }"
         >
           {{ myValidatorsTitle }}
-        </div>
-        <div
-          @click="clickHandler(activeValidatorsTitle)"
+        </button>
+        <button
+          @click="selectTab(activeValidatorsTitle)"
           class="validators__tab"
           :class="{
             selected: activeValidatorsTitle === tabStatus,
           }"
         >
           {{ activeValidatorsTitle }}
-        </div>
-        <div
-          @click="clickHandler(inactiveValidatorsTitle)"
+        </button>
+        <button
+          @click="selectTab(inactiveValidatorsTitle)"
           class="validators__tab"
           :class="{
             selected: inactiveValidatorsTitle === tabStatus,
           }"
         >
           {{ inactiveValidatorsTitle }}
-        </div>
+        </button>
       </div>
       <div class="validators__filter-search">
         <div class="validators__filter-search-input-wrapper">
@@ -439,7 +439,7 @@ export default defineComponent({
     const paginationHandler = (num: number) => {
       filterValidators(num)
     }
-    const clickHandler = async (title: string) => {
+    const selectTab = async (title: string) => {
       if (title !== tabStatus.value) {
         tabStatus.value = title
         if (tabStatus.value === activeValidatorsTitle.value) {
@@ -564,7 +564,7 @@ export default defineComponent({
       getValidators,
       getDelegations,
       paginationHandler,
-      clickHandler,
+      selectTab,
       becomeValidator,
       withdrawRewards,
       claimAllRewards,
