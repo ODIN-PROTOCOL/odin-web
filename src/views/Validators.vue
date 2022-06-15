@@ -41,10 +41,36 @@
       </div>
     </template>
     <div class="validators__filter">
-      <AppTabs @changeTab="tabHandler($event)">
-        <AppTab :title="activeValidatorsTitle" />
-        <AppTab :title="inactiveValidatorsTitle" />
-      </AppTabs>
+      <div class="validators__tabs">
+        <div
+          v-if="isDisabledDelegationsTab && !isLoading"
+          @click="clickHandler(myValidatorsTitle)"
+          class="validators__tab"
+          :class="{
+            selected: myValidatorsTitle === tabStatus,
+          }"
+        >
+          {{ myValidatorsTitle }}
+        </div>
+        <div
+          @click="clickHandler(activeValidatorsTitle)"
+          class="validators__tab"
+          :class="{
+            selected: activeValidatorsTitle === tabStatus,
+          }"
+        >
+          {{ activeValidatorsTitle }}
+        </div>
+        <div
+          @click="clickHandler(inactiveValidatorsTitle)"
+          class="validators__tab"
+          :class="{
+            selected: inactiveValidatorsTitle === tabStatus,
+          }"
+        >
+          {{ inactiveValidatorsTitle }}
+        </div>
+      </div>
       <div class="validators__filter-search">
         <div class="validators__filter-search-input-wrapper">
           <InputField
@@ -235,8 +261,6 @@ import { getTransformedValidators } from '@/helpers/validatorHelpers'
 import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
-import AppTabs from '@/components/tabs/AppTabs.vue'
-import AppTab from '@/components/tabs/AppTab.vue'
 import TitledLink from '@/components/TitledLink.vue'
 import StatusIcon from '@/components/StatusIcon.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
@@ -256,8 +280,6 @@ import SearchIcon from '@/components/icons/SearchIcon.vue'
 
 export default defineComponent({
   components: {
-    AppTabs,
-    AppTab,
     TitledLink,
     StatusIcon,
     AppPagination,
@@ -280,22 +302,40 @@ export default defineComponent({
     )
     const activeValidators = ref<ValidatorDecoded[]>([])
     const inactiveValidators = ref<ValidatorDecoded[]>([])
+    const allValitors = ref<ValidatorDecoded[]>([])
+    const delegatedAdress = ref<string[]>([])
     const activeValidatorsTitle = computed(() =>
       activeValidators.value?.length
         ? `Active (${activeValidators.value?.length})`
         : 'Active'
     )
+    const myValidatorsTitle = computed(() =>
+      activeValidators.value?.length
+        ? `My delegations (${myDelegationsValitors.value?.length})`
+        : 'My delegations'
+    )
+    const myDelegationsValitors = computed(() =>
+      delegatedAdress.value.map((validatorAddress: string) => {
+        return {
+          ...allValitors.value.find(
+            (validator: ValidatorDecoded) =>
+              validator.operatorAddress === validatorAddress
+          ),
+        }
+      })
+    )
     const inactiveValidatorsTitle = ref('Inactive')
     const tabStatus = ref(activeValidatorsTitle.value)
     const searchValue = ref('')
-
+    const isDisabledDelegationsTab = computed(() =>
+      Boolean(myDelegationsValitors.value.length)
+    )
     const getValidators = async () => {
       lockLoading()
       try {
         const bonded = await callers.getValidators('BOND_STATUS_BONDED')
         const unbonding = await callers.getValidators('BOND_STATUS_UNBONDING')
         const unbonded = await callers.getValidators('BOND_STATUS_UNBONDED')
-
         const allUptime = await callers
           .getValidatorUptime()
           .then((resp) => resp.json())
@@ -333,7 +373,16 @@ export default defineComponent({
             })
           )
         )
-        validators.value = [...activeValidators.value]
+        allValitors.value = [
+          ...inactiveValidators.value,
+          ...activeValidators.value,
+        ]
+        validators.value = isDisabledDelegationsTab.value
+          ? [...myDelegationsValitors.value]
+          : [...activeValidators.value]
+        tabStatus.value = isDisabledDelegationsTab.value
+          ? myValidatorsTitle.value
+          : activeValidatorsTitle.value
         validatorsCount.value =
           activeValidators.value.length + inactiveValidators.value.length
         filterValidators(currentPage.value)
@@ -355,6 +404,7 @@ export default defineComponent({
           _delegations[delegation.delegation.validatorAddress] = delegation
         }
         delegations.value = _delegations
+        delegatedAdress.value = Object.keys(delegations.value)
       } catch (error) {
         // error is ignored, since no delegations also throws the error
         delegations.value = {}
@@ -389,14 +439,15 @@ export default defineComponent({
     const paginationHandler = (num: number) => {
       filterValidators(num)
     }
-
-    const tabHandler = async (title: string) => {
+    const clickHandler = async (title: string) => {
       if (title !== tabStatus.value) {
         tabStatus.value = title
         if (tabStatus.value === activeValidatorsTitle.value) {
           validators.value = [...activeValidators.value]
         } else if (tabStatus.value === inactiveValidatorsTitle.value) {
           validators.value = [...inactiveValidators.value]
+        } else if (tabStatus.value === myValidatorsTitle.value) {
+          validators.value = [...myDelegationsValitors.value]
         }
         filterValidators(1)
       }
@@ -513,7 +564,7 @@ export default defineComponent({
       getValidators,
       getDelegations,
       paginationHandler,
-      tabHandler,
+      clickHandler,
       becomeValidator,
       withdrawRewards,
       claimAllRewards,
@@ -526,6 +577,10 @@ export default defineComponent({
       searchValue,
       filterValidators,
       stakeTransfer,
+      myValidatorsTitle,
+      myDelegationsValitors,
+      isDisabledDelegationsTab,
+      tabStatus,
     }
   },
 })
@@ -684,7 +739,24 @@ export default defineComponent({
     }
   }
 }
-
+.validators__tabs {
+  display: flex;
+  padding: 0;
+  margin: 0 0 2.4rem 0;
+  list-style: none;
+  overflow: auto;
+}
+.validators__tab {
+  padding: 1.2rem;
+  font-size: 2rem;
+  white-space: nowrap;
+  box-shadow: inset 0 -0.2rem 0 var(--clr__table-head);
+  cursor: pointer;
+  &.selected {
+    font-weight: 600;
+    box-shadow: inset 0px -2px 0px var(--clr__action);
+  }
+}
 @include respond-to(medium) {
   .validators__table-head,
   .validators__table-row {

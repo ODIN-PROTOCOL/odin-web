@@ -1,10 +1,10 @@
 <template>
   <div
-    class="links-dropdown"
     @click="dropdownOpen"
+    class="links-dropdown"
     :class="{
-      ['links-dropdown--open']: isDropdownOpen,
-      ['links-dropdown--active']: isActive,
+      'links-dropdown--open': isDropdownOpen,
+      'links-dropdown--active': isActive,
     }"
   >
     <span class="links-dropdown__title-wrapper">
@@ -13,7 +13,7 @@
         :height="12"
         :width="12"
         class="links-dropdown__arrow"
-        :class="{ ['links-dropdown__arrow-icon--active']: isActive }"
+        :class="{ 'links-dropdown__arrow-icon--active': isActive }"
       />
     </span>
     <transition name="fade">
@@ -21,21 +21,21 @@
         <template v-for="link in list.links">
           <router-link
             v-if="link.to"
-            class="links-dropdown__modal-link"
-            @click="isRedirect"
+            @click="redirect"
             :key="link.to"
             :data-text="link.text"
             :to="{ name: link.to }"
+            class="links-dropdown__modal-link"
           >
             <span>{{ link.text }}</span>
           </router-link>
           <router-link
             v-else
-            class="links-dropdown__modal-link"
-            @click="isRedirect"
+            @click="redirect"
             :key="link.url"
             :data-text="link.text"
             :to="link.url"
+            class="links-dropdown__modal-link"
           >
             <span>{{ link.text }}</span>
           </router-link>
@@ -59,10 +59,10 @@ export default defineComponent({
     isActive: { type: Boolean, default: false },
   },
   setup(_, { emit }) {
-    const isRedirect = () => {
+    const redirect = () => {
       emit('redirect')
     }
-    return { isRedirect }
+    return { redirect }
   },
 })
 </script>

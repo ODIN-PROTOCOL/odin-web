@@ -48,14 +48,14 @@
           {{ form.mnemonicErr }}
         </p>
         <button
-          class="app-btn w-full mg-t32"
+          class="app-btn w-full mg-t16"
           type="submit"
           :disabled="!form.isValid || isLoading"
         >
           Log in
         </button>
         <button
-          class="app-btn w-full mg-t32"
+          class="app-btn w-full mg-t12"
           type="submit"
           @click.prevent="generateKey"
         >
@@ -170,7 +170,7 @@ export default defineComponent({
 .auth__field-additional {
   display: flex;
   justify-content: center;
-  margin-top: 3.2rem;
+  margin-top: 1.2rem;
 }
 
 .auth__field-additional-btn {
