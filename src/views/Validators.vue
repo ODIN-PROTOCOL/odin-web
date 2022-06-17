@@ -53,6 +53,11 @@
             class="validators__filter-search-input"
             @keydown.enter="filterValidators()"
           />
+          <template v-if="searchValue">
+            <button @click="clearText()" class="validators-search__clear">
+              <CancelIcon />
+            </button>
+          </template>
         </div>
         <button
           class="validators__filter-search-button"
@@ -248,6 +253,7 @@ import { isActiveValidator } from '@/helpers/validatorHelpers'
 import Progressbar from '@/components/Progressbar.vue'
 import InputField from '@/components/fields/InputField.vue'
 import SearchIcon from '@/components/icons/SearchIcon.vue'
+import CancelIcon from '@/components/icons/CancelIcon.vue'
 
 export default defineComponent({
   components: {
@@ -259,6 +265,7 @@ export default defineComponent({
     Progressbar,
     InputField,
     SearchIcon,
+    CancelIcon,
   },
   setup() {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
@@ -490,6 +497,11 @@ export default defineComponent({
         }
       )
     }
+
+    const clearText = (): void => {
+      searchValue.value = ''
+    }
+
     onMounted(async () => {
       await loadData()
     })
@@ -521,6 +533,7 @@ export default defineComponent({
       searchValue,
       filterValidators,
       stakeTransfer,
+      clearText,
     }
   },
 })
@@ -674,6 +687,12 @@ export default defineComponent({
       transform: scale(0.9);
     }
   }
+}
+.validators-search__clear {
+  overflow: visible;
+  position: absolute;
+  right: 0rem;
+  top: 1.25rem;
 }
 
 @include respond-to(medium) {

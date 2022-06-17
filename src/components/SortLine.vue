@@ -8,8 +8,12 @@
           class="sort-line__search-input"
           @keydown.enter="inputChange()"
         />
+        <template v-if="searchValue">
+          <button @click="clearText()" class="sort-line__clear">
+            <CancelIcon />
+          </button>
+        </template>
       </div>
-
       <button class="sort-line__search-button" @click="inputChange()">
         <SearchIcon />
       </button>
@@ -67,6 +71,7 @@
 import { defineComponent, ref, watch } from 'vue'
 import InputField from '@/components/fields/InputField.vue'
 import SearchIcon from '@/components/icons/SearchIcon.vue'
+import CancelIcon from '@/components/icons/CancelIcon.vue'
 import {
   sortingActivities,
   sortingOwners,
@@ -75,7 +80,7 @@ import {
 } from '@/helpers/sortingHelpers'
 
 export default defineComponent({
-  components: { InputField, SearchIcon },
+  components: { InputField, SearchIcon, CancelIcon },
   props: {
     oracleScriptsName: { type: String, required: true },
     sortingOwnersValue: { type: String, required: true },
@@ -98,6 +103,10 @@ export default defineComponent({
       emit('update:sortingOwnersValue', sortByOwners.value)
     }
 
+    const clearText = (): void => {
+      searchValue.value = ''
+    }
+
     watch([sortByActivites], () => {
       updateSortingActivitiesValue()
     })
@@ -114,6 +123,7 @@ export default defineComponent({
       sortByActivites,
       sortByOwners,
       searchValue,
+      clearText,
     }
   },
 })
@@ -174,6 +184,13 @@ export default defineComponent({
   justify-content: center;
   align-items: center;
   cursor: pointer;
+}
+
+.sort-line__clear {
+  overflow: visible;
+  position: absolute;
+  right: 0rem;
+  top: 1.25rem;
 }
 
 @include respond-to(tablet) {
