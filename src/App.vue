@@ -154,7 +154,9 @@ export default defineComponent({
   width: 100%;
   @include flex-container;
 }
-
+.animation--wave::before {
+  animation: wave 0.5s linear 0.5s infinite;
+}
 .burger-menu {
   display: none;
 }

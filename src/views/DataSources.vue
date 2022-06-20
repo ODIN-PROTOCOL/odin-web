@@ -16,7 +16,7 @@
         v-if="isLoading"
         :height="24"
         :rounded="true"
-        animation="fade"
+        animation="wave"
         color="rgb(225, 229, 233)"
       />
       <p v-else>{{ dataSourcesCount }} Data Sources found</p>

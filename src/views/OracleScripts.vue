@@ -24,7 +24,7 @@
         v-if="isLoading"
         :height="24"
         :rounded="true"
-        animation="fade"
+        animation="wave"
         color="rgb(225, 229, 233)"
       />
       <div v-else class="view-main__count-info oracle-scripts__count-info">

@@ -39,7 +39,7 @@
         v-if="isLoading"
         :height="24"
         :rounded="true"
-        animation="fade"
+        animation="wave"
         color="rgb(225, 229, 233)"
       />
       <p v-else>{{ validatorsCount }} validators found</p>
@@ -93,14 +93,27 @@
       </div>
     </div>
 
-    <div class="app-table validators__table">
+    <div
+      class="app-table validators__table"
+      :class="{
+        'validators__table--inactive': tabStatus === inactiveValidatorsTitle,
+      }"
+    >
       <div class="app-table__head validators__table-head">
         <span class="validators__table-head-item">Rank</span>
         <span class="validators__table-head-item">Validator</span>
-        <span class="validators__table-head-item"> Delegated </span>
-        <span class="validators__table-head-item"> Commission </span>
-        <span class="validators__table-head-item"> Uptime </span>
-        <span class="validators__table-head-item"> Oracle Status </span>
+        <span class="validators__table-head-item">Delegated</span>
+        <span class="validators__table-head-item">Commission</span>
+        <span
+          v-if="tabStatus !== inactiveValidatorsTitle"
+          class="validators__table-head-item"
+        >
+          Uptime
+        </span>
+        <span
+          class="validators__table-head-item validators__table-head-item--center"
+          >Status</span
+        >
         <span class="validators__table-head-item"></span>
       </div>
       <div class="app-table__body">
@@ -149,20 +162,26 @@
                 {{ $getPrecisePercents(item.commission.commissionRates.rate) }}
               </span>
             </div>
-            <div class="app-table__cell">
+            <div
+              v-if="tabStatus !== inactiveValidatorsTitle"
+              class="app-table__cell"
+            >
               <span class="app-table__title">Uptime</span>
               <Progressbar
-                v-if="item.uptimeInfo?.uptime"
                 :min="0"
                 :max="100"
-                :current="Number(item.uptimeInfo.uptime) || 0"
+                :current="Number(item.uptimeInfo?.uptime) || 0"
                 :isForValidators="true"
               />
-              <span v-else>N/A</span>
             </div>
             <div class="app-table__cell validators__table-cell--center">
-              <span class="app-table__title">Oracle Status</span>
-              <StatusIcon :status="item?.isActive ? 'success' : 'error'" />
+              <span class="app-table__title">Status</span>
+              <ValidatorStatus
+                :width="14"
+                :height="14"
+                :status="validatorStatus(item)"
+                class="validators-item__validator-status"
+              />
             </div>
             <div class="app-table__cell">
               <div class="app-table__activities validators__table-activities">
@@ -270,7 +289,7 @@ import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import TitledLink from '@/components/TitledLink.vue'
-import StatusIcon from '@/components/StatusIcon.vue'
+// import StatusIcon from '@/components/StatusIcon.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
@@ -286,16 +305,18 @@ import Progressbar from '@/components/Progressbar.vue'
 import InputField from '@/components/fields/InputField.vue'
 import SearchIcon from '@/components/icons/SearchIcon.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
+import ValidatorStatus from '@/components/ValidatorStatus.vue'
 
 export default defineComponent({
   components: {
     TitledLink,
-    StatusIcon,
+    // StatusIcon,
     AppPagination,
     Progressbar,
     InputField,
     SearchIcon,
     SkeletonTable,
+    ValidatorStatus,
   },
   setup() {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
@@ -471,7 +492,18 @@ export default defineComponent({
         filterValidators(1)
       }
     }
+    const validatorStatus = (validator: {
+      status: number
+      isActive: boolean
+    }) => {
+      console.log(validator)
 
+      if (validator.status === 3) {
+        return validator.isActive ? 'success' : 'error'
+      } else {
+        return 'inactive'
+      }
+    }
     const loadData = async () => {
       await getDelegations()
       await getValidators()
@@ -601,6 +633,7 @@ export default defineComponent({
       isDisabledDelegationsTab,
       tabStatus,
       headerTitles,
+      validatorStatus,
     }
   },
 })
@@ -625,7 +658,20 @@ export default defineComponent({
     margin-bottom: 1.6rem;
   }
 }
-
+.validators__table--inactive {
+  .validators__table-head,
+  .validators__table-row {
+    gap: 2rem;
+    grid:
+      auto /
+      minmax(2rem, 5rem)
+      minmax(5rem, 1.5fr)
+      minmax(6rem, 1fr)
+      minmax(8rem, 0.5fr)
+      minmax(7rem, 8.7rem)
+      minmax(24rem, 1.5fr);
+  }
+}
 .validators__count-info {
   margin-bottom: 3.2rem;
 }
@@ -765,6 +811,12 @@ export default defineComponent({
   }
 }
 @include respond-to(tablet) {
+  .validators__table--inactive {
+    .validators__table-head,
+    .validators__table-row {
+      grid: none;
+    }
+  }
   .validators__count-info {
     margin-bottom: 0;
   }

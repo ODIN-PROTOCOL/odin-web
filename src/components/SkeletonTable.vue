@@ -2,16 +2,24 @@
   <div
     v-for="(arr, index) in skeletonLoaderArray"
     :key="index"
-    class="app-table__row"
+    class="skeleton-table__row app-table__row"
     :class="classString"
   >
-    <div v-for="item in arr" :key="item.title" class="app-table__cell">
-      <span class="app-table__title">{{ item.title }}</span>
+    <div
+      v-for="item in arr"
+      :key="item.title"
+      class="skeleton-table__cell app-table__cell"
+    >
+      <span class="skeleton-table__title app-table__title">{{
+        item.title
+      }}</span>
       <skeleton-loader
         :height="24"
         :rounded="true"
-        animation="fade"
+        :width="-1"
+        animation="wave"
         color="rgb(225, 229, 233)"
+        class="skeleton-table__loader"
       />
     </div>
   </div>
@@ -35,3 +43,8 @@ export default defineComponent({
   },
 })
 </script>
+<style scoped>
+.skeleton-table__loader {
+  width: 100%;
+}
+</style>
