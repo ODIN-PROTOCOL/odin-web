@@ -3,7 +3,22 @@
     <div class="custom-doughnut-chart__chart-wrapper">
       <DoughnutChart v-bind="doughnutChartProps" />
     </div>
-    <div v-if="data" class="custom-doughnut-chart__legend">
+    <div v-if="isLoading" class="custom-doughnut-chart__legend">
+      <div
+        v-for="item in dataLegendEmpty"
+        :key="item"
+        class="custom-doughnut-chart__legend-item"
+      >
+        <skeleton-loader
+          :height="16"
+          :width="150"
+          :rounded="true"
+          animation="wave"
+          color="rgb(225, 229, 233)"
+        />
+      </div>
+    </div>
+    <div v-else-if="data" class="custom-doughnut-chart__legend">
       <div
         v-for="(item, idx) in data"
         :key="item.name"
@@ -51,8 +66,10 @@ export default defineComponent({
   components: { DoughnutChart },
   props: {
     data: { type: (Array as PropType<Array<ChartDataItem>>) || undefined },
+    isLoading: { type: Boolean, required: true },
   },
   setup: function (props) {
+    const dataLegendEmpty = [1, 2, 3, 4, 5, 6]
     const _data = toRef(props, 'data')
     const labels = ref<string[]>([])
     const dataValues = ref<number[]>([])
@@ -135,6 +152,7 @@ export default defineComponent({
     return {
       percentage,
       doughnutChartProps,
+      dataLegendEmpty,
     }
   },
 })

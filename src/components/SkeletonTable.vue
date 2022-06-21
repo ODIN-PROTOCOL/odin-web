@@ -14,9 +14,10 @@
         item.title
       }}</span>
       <skeleton-loader
-        :height="24"
+        :height="skeletonHeight"
         :rounded="true"
         :width="-1"
+        :radius="skeletonRadius"
         animation="wave"
         color="rgb(225, 229, 233)"
         class="skeleton-table__loader"
@@ -33,6 +34,8 @@ export default defineComponent({
     headerTitles: { type: Array, required: true },
     classString: { type: String },
     tableSize: { type: Number, default: 5 },
+    skeletonHeight: { type: Number, default: 24 },
+    skeletonRadius: { type: Number, default: 32 },
   },
   setup(props) {
     const skeletonLoaderArray = duplicateArrayNCount(

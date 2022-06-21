@@ -52,7 +52,7 @@
         </template>
       </div>
     </div>
-    <template v-if="requestsCount > ITEMS_PER_PAGE && !isLoading">
+    <template v-if="requestsCount > ITEMS_PER_PAGE">
       <AppPagination
         class="mg-t32 mg-b32"
         v-model="currentPage"
@@ -94,6 +94,7 @@ export default defineComponent({
     const getDataSourceRequests = async () => {
       lockLoading()
       try {
+        requests.value = []
         const response = await callers
           .getDataSourceRequests(
             props.dataSourceId,

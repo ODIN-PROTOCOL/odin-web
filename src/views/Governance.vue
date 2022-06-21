@@ -15,7 +15,10 @@
       <h3 class="info-card__title governance__info-title mg-b40">
         Total number of proposals in ODIN
       </h3>
-      <CustomDoughnutChart :data="proposalsDataForChart" />
+      <CustomDoughnutChart
+        :data="proposalsDataForChart"
+        :isLoading="isLoading"
+      />
     </div>
 
     <div class="app-table">
@@ -75,7 +78,7 @@
       </div>
     </div>
 
-    <template v-if="proposalsCount > ITEMS_PER_PAGE && !isLoading">
+    <template v-if="proposalsCount > ITEMS_PER_PAGE">
       <AppPagination
         class="mg-t32 mg-b32"
         v-model="currentPage"

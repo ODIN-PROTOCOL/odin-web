@@ -170,6 +170,7 @@ export default defineComponent({
     const loadDataSources = async () => {
       lockLoading()
       try {
+        dataSources.value = []
         const { data, total_count } = await callers
           .getSortedDataSources(
             currentPage.value - 1,

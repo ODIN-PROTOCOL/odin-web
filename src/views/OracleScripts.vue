@@ -11,12 +11,13 @@
       </button>
     </div>
 
-    <template v-if="mostRequestedOracleScripts">
-      <div>
-        <h3 class="view-main__subtitle mg-b24">Most requested</h3>
-        <TopOracleScripts :top-oracle-scripts="mostRequestedOracleScripts" />
-      </div>
-    </template>
+    <div>
+      <h3 class="view-main__subtitle mg-b24">Most requested</h3>
+      <TopOracleScripts
+        :top-oracle-scripts="mostRequestedOracleScripts"
+        :isLoading="isLoading"
+      />
+    </div>
 
     <div class="view-main__count-info requests__count-info">
       <h3 class="view-main__subtitle mg-b24">All oracle scripts</h3>
@@ -111,7 +112,7 @@
       </div>
     </div>
 
-    <template v-if="oracleScriptsCount > ITEMS_PER_PAGE && !isLoading">
+    <template v-if="oracleScriptsCount > ITEMS_PER_PAGE">
       <AppPagination
         class="mg-t32 mg-b32"
         v-model="currentPage"

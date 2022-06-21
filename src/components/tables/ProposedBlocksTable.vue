@@ -46,7 +46,7 @@
       </div>
     </div>
 
-    <template v-if="blocksCount > ITEMS_PER_PAGE && !isLoading">
+    <template v-if="blocksCount > ITEMS_PER_PAGE">
       <AppPagination
         class="mg-t32 mg-b32"
         v-model="currentPage"

@@ -92,7 +92,7 @@
       </div>
     </div>
 
-    <template v-if="requestsCount > ITEMS_PER_PAGE && !isLoading">
+    <template v-if="requestsCount > ITEMS_PER_PAGE">
       <AppPagination
         class="mg-t32 mg-b32"
         v-model="currentPage"
@@ -151,6 +151,7 @@ export default defineComponent({
     const getRequests = async () => {
       lockLoading()
       try {
+        requests.value = []
         const req = await callers.getRequests(
           ITEMS_PER_PAGE,
           (currentPage.value - 1) * ITEMS_PER_PAGE

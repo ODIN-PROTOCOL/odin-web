@@ -47,7 +47,7 @@
     <div class="validators__filter">
       <div class="validators__tabs">
         <button
-          v-if="isDisabledDelegationsTab && !isLoading"
+          v-if="isDisabledDelegationsTab"
           @click="selectTab(myValidatorsTitle)"
           class="validators__tab"
           :class="{
@@ -241,7 +241,7 @@
       </div>
     </div>
 
-    <template v-if="filteredValidatorsCount > ITEMS_PER_PAGE && !isLoading">
+    <template v-if="filteredValidatorsCount > ITEMS_PER_PAGE">
       <AppPagination
         class="mg-t32"
         v-model="currentPage"
@@ -289,7 +289,6 @@ import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import TitledLink from '@/components/TitledLink.vue'
-// import StatusIcon from '@/components/StatusIcon.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
@@ -310,7 +309,6 @@ import ValidatorStatus from '@/components/ValidatorStatus.vue'
 export default defineComponent({
   components: {
     TitledLink,
-    // StatusIcon,
     AppPagination,
     Progressbar,
     InputField,
@@ -496,8 +494,6 @@ export default defineComponent({
       status: number
       isActive: boolean
     }) => {
-      console.log(validator)
-
       if (validator.status === 3) {
         return validator.isActive ? 'success' : 'error'
       } else {
