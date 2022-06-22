@@ -57,17 +57,6 @@
             </span>
           </div>
         </div>
-        <div class="personal-info__card-balance-row">
-          <span class="personal-info__card-balance-row-title">GEO</span>
-          <div class="personal-info__card-balance-row-value-wrapper">
-            <span
-              class="personal-info__card-balance-row-value app-table__cell-txt app-table__link"
-              :title="0"
-            >
-              {{ 0 }}
-            </span>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -208,7 +197,6 @@ export default defineComponent({
 .personal-info__card-balance-row-value-wrapper {
   display: flex;
   flex-direction: column;
-  max-width: 20rem;
   position: relative;
 }
 .personal-info__card-balance-row-value {
