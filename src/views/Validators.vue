@@ -10,13 +10,6 @@
       <h2 class="view-main__title">All Validators</h2>
       <div class="validators__title-btn-wrraper">
         <button
-          class="validators__title-btn app-btn app-btn--medium"
-          type="button"
-          @click="becomeValidator()"
-        >
-          Become a validator
-        </button>
-        <button
           v-if="isDelegator && delegations && validators"
           class="validators__title-btn app-btn app-btn--medium"
           type="button"
