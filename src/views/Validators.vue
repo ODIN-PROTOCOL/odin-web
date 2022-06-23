@@ -55,7 +55,9 @@
           />
           <template v-if="searchValue">
             <button @click="clearText()" class="validators-search__clear">
-              <CancelIcon />
+              <CancelIcon
+                :className="'validators__filter-search__cancel-button'"
+              />
             </button>
           </template>
         </div>
@@ -621,7 +623,7 @@ export default defineComponent({
   color: var(--clr__input-border);
   svg {
     transition: all 0.5s ease;
-    fill: var(--clr__input-border);
+    fill: var(--clr__text-muted);
   }
   &:hover,
   &:active,
@@ -636,9 +638,9 @@ export default defineComponent({
   &:disabled {
     border-color: var(--clr__input-border);
     color: var(--clr__input-border);
-    svg {
-      fill: var(--clr__input-border);
-    }
+  }
+  svg.validators__filter-search__cancel-button {
+    fill: var(--clr__text-muted);
   }
 }
 .validators__filter-search-input-wrapper {
