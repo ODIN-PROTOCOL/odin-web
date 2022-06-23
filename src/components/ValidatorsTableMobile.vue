@@ -45,14 +45,6 @@
     </div>
     <template v-if="isShow[validator.rank]">
       <div class="app-table__cell">
-        <span class="app-table__title">Validator</span>
-        <TitledLink
-          class="app-table__cell-txt app-table__link"
-          :text="validator.description.moniker"
-          :to="`/validators/${validator.operatorAddress}`"
-        />
-      </div>
-      <div class="app-table__cell">
         <span class="app-table__title">Commission</span>
         <span>
           {{ $getPrecisePercents(validator.commission.commissionRates.rate) }}
