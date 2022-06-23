@@ -692,7 +692,7 @@ export default defineComponent({
   overflow: visible;
   position: absolute;
   right: 0rem;
-  top: 1.25rem;
+  top: 1.3rem;
 }
 
 @include respond-to(medium) {
