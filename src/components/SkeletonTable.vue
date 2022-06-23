@@ -10,9 +10,19 @@
       :key="item.title"
       class="skeleton-table__cell app-table__cell"
     >
-      <span class="skeleton-table__title app-table__title">{{
-        item.title
-      }}</span>
+      <span v-if="item.title" class="skeleton-table__title app-table__title">
+        {{ item.title }}
+      </span>
+      <skeleton-loader
+        v-else
+        :height="skeletonHeight"
+        :rounded="true"
+        :width="-1"
+        :radius="skeletonRadius"
+        animation="wave"
+        color="rgb(225, 229, 233)"
+        class="skeleton-table__loader"
+      />
       <skeleton-loader
         :height="skeletonHeight"
         :rounded="true"
@@ -49,5 +59,8 @@ export default defineComponent({
 <style scoped>
 .skeleton-table__loader {
   width: 100%;
+}
+.skeleton-table__cell {
+  gap: 1.6rem;
 }
 </style>
