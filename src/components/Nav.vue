@@ -22,7 +22,13 @@
       >
         <span>Requests</span>
       </router-link>
-      <LinksDropdown :isActive="isDropdownActive" :list="ValidatorsList" />
+      <router-link
+        class="nav__link"
+        data-text="Validators"
+        :to="{ name: 'Validators' }"
+      >
+        <span>Validators</span>
+      </router-link>
       <router-link
         class="nav__link"
         data-text="Governance"
@@ -52,31 +58,16 @@ import { defineComponent, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthorization } from '@/composables/useAuthorization'
 import router from '@/router'
-import LinksDropdown from '@/components/LinksDropdown.vue'
 import ExitIcon from '@/components/icons/ExitIcon.vue'
 import { WalletTypes, wallet } from '@/api/wallet'
 
 export default defineComponent({
-  components: { LinksDropdown, ExitIcon },
+  components: { ExitIcon },
   emits: ['changeRoute'],
   props: {
     isOpen: { type: Boolean, default: false },
   },
   setup(props, { emit }) {
-    const ValidatorsList = {
-      name: 'Validators',
-      links: [
-        {
-          to: 'Validators',
-          text: 'Validators',
-        },
-        {
-          to: 'OracleValidators',
-          text: 'Oracle validators',
-        },
-      ],
-    }
-
     const auth = useAuthorization()
     function logOutAndLeave() {
       auth.logOut()
@@ -112,7 +103,6 @@ export default defineComponent({
       isDropdownActive,
       logOutAndLeave,
       handleDropdownActive,
-      ValidatorsList,
     }
   },
 })
