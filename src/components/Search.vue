@@ -5,9 +5,7 @@
         <InputField v-model="data.searchValue" placeholder="Search" />
         <template v-if="data.searchValue">
             <button @click="clearText()" class="search__clear">
-              <CancelIcon 
-                :className="'search__cancel-button'"
-              />
+              <CancelIcon />
             </button>
           </template>
       </div>
@@ -81,7 +79,7 @@ export default defineComponent({
     cursor: pointer;
     transition: all 0.5s ease;
     svg {
-      fill: var(--clr__text-muted);
+      fill: var(--clr__action);
     }
     &:hover,
     &--open {
@@ -98,13 +96,6 @@ export default defineComponent({
   position: absolute;
   right: 0rem;
   top: 1.3rem;
-  svg.search__cancel-button {
-      fill: var(--clr__text-muted);
-    &:hover,
-    &:focus {
-      fill: var(--clr__text-muted);
-    }
-  }
 }
 @media (max-width: 768px) {
   .search {
