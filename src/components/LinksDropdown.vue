@@ -1,35 +1,41 @@
 <template>
-  <div class="links-dropdown">
-    <span
-      class="links-dropdown__wrapper"
-      :class="{ 'links-dropdown__wrapper--active': isActive }"
-    >
-      <span class="links-dropdown__wrapper-name">{{ list.name }}</span>
+  <div
+    @click="dropdownOpen"
+    class="links-dropdown"
+    :class="{
+      'links-dropdown--open': isDropdownOpen,
+      'links-dropdown--active': isActive,
+    }"
+  >
+    <span class="links-dropdown__title-wrapper">
+      <span class="links-dropdown__title">{{ list.name }}</span>
       <ArrowIcon
         :height="12"
         :width="12"
-        class="links-dropdown__arrow-icon"
+        class="links-dropdown__arrow"
         :class="{ 'links-dropdown__arrow-icon--active': isActive }"
       />
     </span>
     <transition name="fade">
-      <div class="links-dropdown__modal">
+      <div class="links-dropdown__modal" ref="dropdownEl">
         <template v-for="link in list.links">
           <router-link
             v-if="link.to"
-            class="links-dropdown__link"
+            @click="redirect"
             :key="link.to"
             :data-text="link.text"
             :to="{ name: link.to }"
+            class="links-dropdown__modal-link"
           >
             <span>{{ link.text }}</span>
           </router-link>
           <router-link
             v-else
-            class="links-dropdown__link"
+            @click="redirect"
             :key="link.url"
             :data-text="link.text"
             :to="link.url"
+            class="links-dropdown__modal-link"
           >
             <span>{{ link.text }}</span>
           </router-link>
@@ -40,118 +46,144 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
 import ArrowIcon from '@/components/icons/ArrowIcon.vue'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'linksDropdown',
+  emits: ['redirect'],
   components: { ArrowIcon },
   props: {
-    isActive: { type: Boolean, default: false },
     list: { type: Object, required: true },
+    isDropdownOpen: { type: Boolean, required: true },
+    isActive: { type: Boolean, default: false },
+  },
+  setup(_, { emit }) {
+    const redirect = () => {
+      emit('redirect')
+    }
+    return { redirect }
   },
 })
 </script>
 
 <style scoped lang="scss">
-.links-dropdown__arrow-icon {
-  fill: var(--clr__text);
-  transform: translate(0.3rem, -0.1rem) rotate(270deg);
+.links-dropdown--active {
+  .links-dropdown__title {
+    color: var(--clr__action);
+    font-weight: bold;
+  }
 }
 .links-dropdown__arrow-icon--active {
   fill: var(--clr__action);
 }
 .links-dropdown {
   position: relative;
-  display: grid;
-  grid-template-columns: 100%;
-  text-decoration: none;
   white-space: nowrap;
-  color: inherit;
-  font-weight: 400;
-  line-height: 2.4rem;
-  font-size: 1.6rem;
-  cursor: pointer;
 
-  :last-child {
-    border-end-start-radius: 0.8rem;
-    border-end-end-radius: 0.8rem;
-  }
-  &:hover {
-    .links-dropdown__modal {
-      display: flex;
-    }
-    .links-dropdown__arrow-icon {
-      transform: translate(-0.1rem, 0.3rem) rotate(90deg);
+  @media screen and (min-width: 768px) {
+    &:hover {
+      .links-dropdown__title {
+        font-weight: 600;
+        color: var(--clr__action);
+      }
+      .links-dropdown__arrow {
+        fill: var(--clr__action);
+        transform: translate(0.1rem, 0.3rem) rotate(90deg);
+      }
+      .links-dropdown__modal {
+        display: flex;
+      }
     }
   }
 }
-.links-dropdown__wrapper {
+.links-dropdown__title-wrapper {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  cursor: pointer;
 }
-.links-dropdown__wrapper--active {
-  .links-dropdown__wrapper-name {
-    color: var(--clr__action);
-    font-weight: bold;
-  }
+
+.links-dropdown__title {
+  margin-right: 0.4rem;
 }
+
+.links-dropdown__arrow {
+  fill: var(--clr__text);
+  transform: translate(0.3rem, -0.1rem) rotate(270deg);
+}
+
 .links-dropdown__modal {
   display: none;
   flex-direction: column;
-  align-items: flex-start;
   position: absolute;
   top: 100%;
   left: 0;
-  border-end-start-radius: 0.8rem;
-  border-end-end-radius: 0.8rem;
+  min-width: 16.7rem;
   background: var(--clr__main-bg);
-  z-index: 1;
-  box-shadow: 0 0.4rem 2.4rem var(--clr__dropdown-shadow);
-  min-width: 16rem;
+  box-shadow: 0 0.4rem 2.4rem rgba(8, 87, 172, 0.12);
+  border-radius: 0 0 0.8rem 0.8rem;
+  z-index: 99;
 }
-.links-dropdown__link {
-  margin: 0;
+
+.links-dropdown__modal-link {
+  padding: 0.8rem 1.2rem;
   text-decoration: none;
   color: inherit;
-  width: 100%;
-  padding: 0.8rem 1.2rem;
+
+  &:last-child {
+    border-end-start-radius: 0.8rem;
+    border-end-end-radius: 0.8rem;
+  }
+
   &:hover {
-    background: var(--clr__dropdown-link);
+    background: rgba(204, 228, 255, 0.4);
     color: var(--clr__action);
+    font-weight: 600;
   }
 }
 
-@media (max-width: 768px) {
+@include respond-to(tablet) {
   .links-dropdown {
     width: 100%;
+    border-bottom: 0.1rem solid var(--clr__input-border);
+    padding: 0.8rem 0;
+    &--open {
+      .links-dropdown__title {
+        color: var(--clr__action);
+        font-weight: 600;
+      }
+      .links-dropdown__arrow {
+        fill: var(--clr__action);
+        transform: translate(0.3rem, -0.1rem) rotate(270deg);
+      }
+      .links-dropdown__modal {
+        display: flex;
+      }
+    }
   }
+  .links-dropdown__title-wrapper {
+    padding: 1.6rem 1.2rem;
+    justify-content: space-between;
+  }
+
   .links-dropdown__modal {
     position: relative;
     box-shadow: none;
     top: initial;
     padding: 0;
     gap: 0;
+  }
 
-    :last-child {
+  .links-dropdown__modal-link {
+    padding: 1.2rem 2.8rem;
+
+    &:last-child {
       border-radius: 0;
     }
-  }
-  .links-dropdown__link {
-    width: 100%;
-    padding: 2.4rem 1.2rem 2.4rem 4.8rem;
-    border-bottom: 0.1rem solid var(--clr__input-border);
+
     &:hover {
-      background: var(--clr__dropdown-link);
+      background: inherit;
     }
-  }
-  .links-dropdown__wrapper {
-    text-align: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: 2.4rem 1.2rem;
-    border-bottom: 0.1rem solid var(--clr__input-border);
   }
 }
 </style>

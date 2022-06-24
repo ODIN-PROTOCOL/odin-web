@@ -39,72 +39,70 @@ export default defineComponent({
   display: grid;
   grid: 100% / 1fr 0.85fr;
   flex: 1;
+}
+.auth-base__splash {
+  background: url('~@/assets/images/auth_background.png') no-repeat center
+    var(--clr__auth-base-bg);
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-  &__splash {
-    background: url('~@/assets/images/auth_background.png') no-repeat
-      center#031e3a;
-    background-size: cover;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+.auth-base__splash-logo {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  width: 100%;
+  min-width: 22rem;
+  max-width: 25vw;
+  max-height: 25rem;
+}
 
-  &__splash-logo {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    width: 100%;
-    min-width: 22rem;
-    max-width: 25vw;
-    max-height: 25rem;
-  }
+.auth-base__content {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex: 1;
+  padding: 3.2rem;
+  position: relative;
+}
 
-  &__content {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    flex: 1;
-    padding: 3.2rem;
-    position: relative;
-  }
+.auth-base__content-title {
+  font-size: 4rem;
+  font-weight: 400;
+  margin-bottom: 5.6rem;
+}
 
-  &__content-title {
-    font-size: 4rem;
-    font-weight: 400;
-    margin-bottom: 4.8rem;
-  }
+.auth-base__form {
+  width: 100%;
+  max-width: 39.2rem;
+  margin: 0 auto;
+}
 
-  &__form {
-    width: 100%;
-    max-width: 30rem;
-    margin-inline-start: 8vw;
-  }
-
-  &__form-logo {
-    display: none;
-    max-width: 12rem;
-    position: absolute;
-    top: 4rem;
-  }
+.auth-base__form-logo {
+  display: none;
+  max-width: 12rem;
+  position: absolute;
+  top: 4rem;
 }
 
 @include respond-to(tablet) {
   .auth-base {
     grid: 100% / 1fr;
+  }
+  .auth-base__splash {
+    display: none;
+  }
 
-    &__splash {
-      display: none;
-    }
+  .auth-base__form {
+    margin: 0 auto;
+  }
 
-    &__form {
-      margin: 0 auto;
-    }
-
-    &__form-logo {
-      display: block;
-      margin: 0 auto;
-    }
+  .auth-base__form-logo {
+    display: block;
+    margin: 0 auto;
   }
 }
 </style>

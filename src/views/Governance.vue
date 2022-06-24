@@ -25,6 +25,7 @@
 
     <div class="app-table">
       <div class="app-table__head governance__table-head">
+        <span>ID</span>
         <span>Proposal</span>
         <span>Proposer's account ID</span>
         <span>Proposal status</span>
@@ -33,15 +34,19 @@
         <template v-if="proposals?.length">
           <div
             v-for="item in filteredProposals"
-            :key="item.proposalId.toString()"
+            :key="item.proposal_id"
             class="app-table__row governance__table-row"
           >
+            <div class="app-table__cell">
+              <span class="app-table__title">ID</span>
+              <span class="app-table__cell-txt"> #{{ item.proposal_id }} </span>
+            </div>
             <div class="app-table__cell">
               <span class="app-table__title">Proposal</span>
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="item.content?.title || '-'"
-                :to="`/proposal/${item.proposalId}`"
+                :to="`/proposal/${item.proposal_id}`"
               />
             </div>
             <div class="app-table__cell">
@@ -96,10 +101,7 @@
 import { defineComponent, ref, onMounted } from 'vue'
 import { callers } from '@/api/callers'
 import { API_CONFIG } from '@/api/api-config'
-import {
-  getTransformedProposals,
-  getProposalsCountByStatus,
-} from '@/helpers/proposalHelpers'
+import { getProposalsCountByStatus } from '@/helpers/proposalHelpers'
 import { proposalStatusType } from '@/helpers/statusTypes'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
@@ -107,12 +109,17 @@ import TitledLink from '@/components/TitledLink.vue'
 import CustomDoughnutChart from '@/components/charts/CustomDoughnutChart.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
-
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import ProposalFormModal from '@/components/modals/ProposalFormModal.vue'
+import { proposalStatusFromJSON } from '@provider/codec/cosmos/gov/v1beta1/gov'
 
 export default defineComponent({
-  components: { CustomDoughnutChart, TitledLink, StatusBlock, AppPagination },
+  components: {
+    CustomDoughnutChart,
+    TitledLink,
+    StatusBlock,
+    AppPagination,
+  },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 30
@@ -127,12 +134,23 @@ export default defineComponent({
     const getProposals = async () => {
       lockLoading()
       try {
-        const response = await callers.getProposals(0, '', '')
-        const transformedProposals = await getTransformedProposals(
-          response.proposals
+        const response = await callers.getProposals(0, 100, true)
+        const transformedProposals = await Promise.all(
+          response.data?.proposals?.map(
+            async (item: { proposal_id: string; status: string }) => {
+              const response = await callers.getProposer(item.proposal_id)
+              const proposer = await response.json()
+              return {
+                ...item,
+                proposerAddress: proposer.result.proposer,
+                status: proposalStatusFromJSON(item.status),
+                humanizeStatus:
+                  proposalStatusType[proposalStatusFromJSON(item.status)].name,
+              }
+            }
+          )
         )
-
-        proposalsCount.value = response.proposals.length
+        proposalsCount.value = response.data?.proposals.length
         proposals.value = transformedProposals
         totalPages.value = Math.ceil(proposalsCount.value / ITEMS_PER_PAGE)
         filterProposals(currentPage.value)
@@ -235,7 +253,10 @@ export default defineComponent({
 .governance__table-row {
   grid:
     auto /
-    minmax(8rem, 1fr) minmax(8rem, 2fr) minmax(11rem, 0.5fr);
+    minmax(3rem, 5rem)
+    minmax(8rem, 1fr)
+    minmax(8rem, 2fr)
+    minmax(11rem, 0.5fr);
 }
 
 @include respond-to(tablet) {
