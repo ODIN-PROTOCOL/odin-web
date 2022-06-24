@@ -15,7 +15,7 @@
       <h3 class="view-main__subtitle mg-b24">Most requested</h3>
       <TopOracleScripts
         :top-oracle-scripts="mostRequestedOracleScripts"
-        :isLoading="isLoading"
+        :is-loading="isLoading"
       />
     </div>
 
@@ -24,7 +24,7 @@
       <skeleton-loader
         v-if="isLoading"
         :height="24"
-        :rounded="true"
+        rounded
         animation="wave"
         color="rgb(225, 229, 233)"
       />
@@ -34,7 +34,7 @@
     </div>
 
     <SortLine
-      :isLoading="isLoading"
+      :is-loading="isLoading"
       :title="'Oracle Scripts'"
       v-model:oracleScriptsName="oracleScriptsName"
       v-model:sortingOwnersValue="sortingOwnersValue"

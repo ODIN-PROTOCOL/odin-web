@@ -17,7 +17,7 @@
       </h3>
       <CustomDoughnutChart
         :data="proposalsDataForChart"
-        :isLoading="isLoading"
+        :is-loading="isLoading"
       />
     </div>
 

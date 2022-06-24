@@ -65,7 +65,7 @@ export default defineComponent({
   margin-bottom: 4rem;
   font-weight: 400;
   font-size: 1.6rem;
-  line-height: 24px;
+  line-height: 2.4rem;
 }
 .top-oracle-scripts__item {
   display: flex;

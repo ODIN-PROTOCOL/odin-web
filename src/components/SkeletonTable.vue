@@ -16,7 +16,7 @@
       <skeleton-loader
         v-else
         :height="skeletonHeight"
-        :rounded="true"
+        rounded
         :width="-1"
         :radius="skeletonRadius"
         animation="wave"
@@ -25,7 +25,7 @@
       />
       <skeleton-loader
         :height="skeletonHeight"
-        :rounded="true"
+        rounded
         :width="-1"
         :radius="skeletonRadius"
         animation="wave"
@@ -38,19 +38,18 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { duplicateArrayNCount } from '@/helpers/helpers'
+
 export default defineComponent({
   props: {
     headerTitles: { type: Array, required: true },
     classString: { type: String },
-    tableSize: { type: Number, default: 5 },
+    tableSize: { type: String, default: '5' },
     skeletonHeight: { type: Number, default: 24 },
     skeletonRadius: { type: Number, default: 32 },
   },
   setup(props) {
-    const skeletonLoaderArray = duplicateArrayNCount(
-      props.headerTitles,
-      props.tableSize
+    const skeletonLoaderArray = Array(Number(props.tableSize)).fill(
+      props.headerTitles
     )
     return { skeletonLoaderArray }
   },

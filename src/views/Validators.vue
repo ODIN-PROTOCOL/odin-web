@@ -38,7 +38,7 @@
       <skeleton-loader
         v-if="isLoading"
         :height="24"
-        :rounded="true"
+        rounded
         animation="wave"
         color="rgb(225, 229, 233)"
       />
@@ -118,7 +118,7 @@
       <div class="app-table__body">
         <template v-if="filteredValidators?.length">
           <template v-if="windowInnerWidth > 768">
-            <ValidatorsTable
+            <ValidatorsTableRow
               v-for="validator in filteredValidators"
               :key="validator.operatorAddress"
               @selectedBtn="openModal"
@@ -129,7 +129,7 @@
             />
           </template>
           <template v-else>
-            <ValidatorsTableMobile
+            <ValidatorsTableRowMobile
               v-for="validator in filteredValidators"
               :key="validator.operatorAddress"
               @selectedBtn="openModal"
@@ -191,7 +191,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, computed } from 'vue'
+import { defineComponent, ref, onMounted, computed, onUnmounted } from 'vue'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 import { COINS_LIST } from '@/api/api-config'
@@ -214,8 +214,8 @@ import { isActiveValidator } from '@/helpers/validatorHelpers'
 import InputField from '@/components/fields/InputField.vue'
 import SearchIcon from '@/components/icons/SearchIcon.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
-import ValidatorsTableMobile from '@/components/ValidatorsTableMobile.vue'
-import ValidatorsTable from '@/components/ValidatorsTable.vue'
+import ValidatorsTableRowMobile from '@/components/ValidatorsTableRowMobile.vue'
+import ValidatorsTableRow from '@/components/ValidatorsTableRow.vue'
 
 export default defineComponent({
   components: {
@@ -223,8 +223,8 @@ export default defineComponent({
     InputField,
     SearchIcon,
     SkeletonTable,
-    ValidatorsTableMobile,
-    ValidatorsTable,
+    ValidatorsTableRowMobile,
+    ValidatorsTableRow,
   },
   setup() {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
@@ -511,7 +511,7 @@ export default defineComponent({
           },
         },
         {
-          validators: activeValidators.value,
+          validators: allValitors.value,
           delegation: delegations.value,
         }
       )
@@ -534,7 +534,9 @@ export default defineComponent({
       window.addEventListener('resize', updateWidth)
       await loadData()
     })
-
+    onUnmounted(async () => {
+      window.removeEventListener('resize', updateWidth)
+    })
     return {
       COINS_LIST,
       ITEMS_PER_PAGE,
@@ -596,7 +598,7 @@ export default defineComponent({
 }
 .validators__table--inactive {
   .validators__table-head,
-  .validators__table-row {
+  .validators-table-row {
     gap: 2rem;
     grid:
       auto /

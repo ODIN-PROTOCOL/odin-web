@@ -50,7 +50,7 @@
           <OracleReportsTable :proposerAddress="validator.operatorAddress" />
         </AppTab>
         <AppTab :title="delegatorsTitle">
-          <DelegatorsTable :delegators="delegators" :isLoading="isLoading" />
+          <DelegatorsTable :delegators="delegators" :is-loading="isLoading" />
         </AppTab>
         <AppTab title="Proposed Blocks">
           <ProposedBlocksTable :proposerAddress="validator?.operatorAddress" />
@@ -281,9 +281,7 @@ export default defineComponent({
 }
 
 .validators-item__subtitle {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  @include ellipsis();
   line-height: 4.6rem;
 }
 

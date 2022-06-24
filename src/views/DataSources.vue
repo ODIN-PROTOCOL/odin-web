@@ -15,7 +15,7 @@
       <skeleton-loader
         v-if="isLoading"
         :height="24"
-        :rounded="true"
+        rounded
         animation="wave"
         color="rgb(225, 229, 233)"
       />
@@ -23,7 +23,7 @@
     </div>
 
     <SortLine
-      :isLoading="isLoading"
+      :is-loading="isLoading"
       :title="'Data Source'"
       v-model:oracleScriptsName="dataSourceName"
       v-model:sortingOwnersValue="sortingOwnersValue"

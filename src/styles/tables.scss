@@ -130,7 +130,8 @@
     minmax(10rem, 1.5fr);
 }
 .validators__table-head,
-.validators__table-row {
+.validators__table-row,
+.validators-table-row {
   gap: 2rem;
   grid:
     auto /
@@ -202,7 +203,8 @@
   .governance__table-row,
   .requests-oracle-script__row,
   .requests-data-source__row,
-  .delegators-table__table-row    {
+  .delegators-table__table-row,
+  .validators-table-row   {
     grid: none;
   }
 }

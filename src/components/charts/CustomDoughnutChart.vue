@@ -5,14 +5,14 @@
     </div>
     <div v-if="isLoading" class="custom-doughnut-chart__legend">
       <div
-        v-for="item in dataLegendEmpty"
+        v-for="item of 6"
         :key="item"
         class="custom-doughnut-chart__legend-item"
       >
         <skeleton-loader
           :height="16"
           :width="150"
-          :rounded="true"
+          rounded
           animation="wave"
           color="rgb(225, 229, 233)"
         />
@@ -69,7 +69,6 @@ export default defineComponent({
     isLoading: { type: Boolean, required: true },
   },
   setup: function (props) {
-    const dataLegendEmpty = [1, 2, 3, 4, 5, 6]
     const _data = toRef(props, 'data')
     const labels = ref<string[]>([])
     const dataValues = ref<number[]>([])
@@ -152,7 +151,6 @@ export default defineComponent({
     return {
       percentage,
       doughnutChartProps,
-      dataLegendEmpty,
     }
   },
 })

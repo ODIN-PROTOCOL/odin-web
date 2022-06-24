@@ -15,7 +15,7 @@
       <skeleton-loader
         v-if="isLoading"
         :height="24"
-        :rounded="true"
+        rounded
         animation="wave"
         color="rgb(225, 229, 233)"
       />

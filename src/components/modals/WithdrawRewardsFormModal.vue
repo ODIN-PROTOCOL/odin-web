@@ -14,22 +14,7 @@
           <template v-if="rewards?.length">
             <div class="app-form__field">
               <label class="app-form__field-lbl">Your rewards:</label>
-              <p
-                v-for="item in rewards"
-                :key="item.denom"
-                :title="
-                  $convertLokiToOdin(item.amount, {
-                    withPrecise: true,
-                  })
-                "
-              >
-                {{
-                  $convertLokiToOdin(item.amount, {
-                    withDenom: true,
-                    withPrecise: true,
-                  })
-                }}
-              </p>
+              <p :title="odinRewardsValue">{{ odinRewardsValue }} ODIN</p>
             </div>
           </template>
           <template v-else>
@@ -66,6 +51,7 @@ import { preventIf } from '@/helpers/functions'
 import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import ModalBase from './ModalBase.vue'
 import { usePoll } from '@/composables/usePoll'
+import { convertLokiToOdin } from '@/helpers/converters'
 
 const WithdrawFormDialog = defineComponent({
   props: {
@@ -76,7 +62,7 @@ const WithdrawFormDialog = defineComponent({
     const isLoading = ref(false)
     const onSubmit = dialogs.getHandler('onSubmit')
     const rewards = ref()
-
+    const odinRewardsValue = ref()
     const getRewards = async () => {
       try {
         const response = await callers.getDelegationDelegatorReward(
@@ -84,6 +70,11 @@ const WithdrawFormDialog = defineComponent({
           props.validator.operatorAddress
         )
         rewards.value = response.rewards
+        odinRewardsValue.value = convertLokiToOdin(response.rewards[0].amount, {
+          withPrecise: true,
+          onlyNumber: true,
+        })
+        odinRewardsValue.value = Number(odinRewardsValue.value.toFixed(6))
       } catch (error) {
         handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
@@ -123,6 +114,7 @@ const WithdrawFormDialog = defineComponent({
       isLoading,
       submit,
       onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
+      odinRewardsValue,
     }
   },
 })

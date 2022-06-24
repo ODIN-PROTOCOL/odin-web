@@ -73,7 +73,6 @@ import { txFromTelemetry } from '@/helpers/Types'
 
 export default defineComponent({
   name: 'TxLine',
-  components: {},
   props: {
     tx: {
       type: Object as PropType<txFromTelemetry>,

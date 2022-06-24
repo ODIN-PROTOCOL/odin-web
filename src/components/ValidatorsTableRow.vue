@@ -1,8 +1,8 @@
 <template>
   <div
-    class="app-table__row validators__table-row"
+    class="app-table__row validators-table-row"
     :class="{
-      'validators__table-row--top':
+      'validators-table-row--top':
         validator.status === 3 && delegations[validator.operatorAddress],
     }"
   >
@@ -35,7 +35,7 @@
         }}
       </span>
     </div>
-    <div class="app-table__cell validators__table-cell--center">
+    <div class="app-table__cell validators-table-row__cell--center">
       <span class="app-table__title">Commission</span>
       <span>
         {{ $getPrecisePercents(validator.commission.commissionRates.rate) }}
@@ -50,7 +50,7 @@
         :isForValidators="true"
       />
     </div>
-    <div class="app-table__cell validators__table-cell--center">
+    <div class="app-table__cell validators-table-row__cell--center">
       <span class="app-table__title">Status</span>
       <ValidatorStatus
         :width="14"
@@ -60,10 +60,10 @@
       />
     </div>
     <div class="app-table__cell">
-      <div class="app-table__activities validators__table-activities">
+      <div class="app-table__activities validators-table-row__activities">
         <div
           v-if="validator.status === 3"
-          class="app-table__activities-item validators__table-activities-item"
+          class="app-table__activities-item validators-table-row__activities-item"
         >
           <button
             v-if="delegations[validator.operatorAddress]"
@@ -83,7 +83,7 @@
         </div>
         <div
           v-if="delegations[validator.operatorAddress]"
-          class="app-table__activities-item validators__table-activities-item"
+          class="app-table__activities-item validators-table-row__activities-item"
         >
           <button
             class="app-btn app-btn--outlined app-btn--very-small w-min108"
@@ -107,11 +107,9 @@
 
 <script lang="ts">
 import { defineComponent, ref, PropType } from 'vue'
-import { COINS_LIST } from '@/api/api-config'
 import TitledLink from '@/components/TitledLink.vue'
 import Progressbar from '@/components/Progressbar.vue'
 import ValidatorStatus from '@/components/ValidatorStatus.vue'
-import { isMobile } from '@/helpers/helpers'
 import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 
 export default defineComponent({
@@ -129,8 +127,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const ITEMS_PER_PAGE = 50
     const currentPage = ref(1)
-    const totalPages = ref()
-    const isShow = ref([])
+    const totalPages = ref(0)
 
     const validatorStatus = (validator: {
       status: number
@@ -147,13 +144,10 @@ export default defineComponent({
     }
 
     return {
-      COINS_LIST,
       ITEMS_PER_PAGE,
       totalPages,
       currentPage,
       validatorStatus,
-      isShow,
-      isMobile,
       selectedBtn,
     }
   },
@@ -162,8 +156,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .validators__table--inactive {
-  .validators__table-head,
-  .validators__table-row {
+  .validators-table-row {
     gap: 2rem;
     grid:
       auto /
@@ -175,25 +168,25 @@ export default defineComponent({
       minmax(24rem, 1.5fr);
   }
 }
-.validators__table-row {
+.validators-table-row {
   padding: 3.2rem 0 2rem;
   align-items: center;
 }
-.validators__table-row--top {
+.validators-table-row--top {
   align-items: flex-start;
 }
-.validators__table-activities {
+.validators-table-row__activities {
   width: 100%;
   & > *:not(:last-child) {
     margin-bottom: 1.6rem;
   }
 }
-.validators__table-activities-item {
+.validators-table-row__activities-item {
   display: flex;
   justify-content: flex-end;
   gap: 1.6rem;
 }
-.validators__table-cell--center {
+.validators-table-row__cell--center {
   justify-content: center;
 }
 .validators__mobile-activities {
@@ -203,27 +196,26 @@ export default defineComponent({
 }
 @include respond-to(tablet) {
   .validators__table--inactive {
-    .validators__table-head,
-    .validators__table-row {
+    .validators-table-row {
       grid: none;
     }
   }
-  .validators__table-activities {
+  .validators-table-row__activities {
     width: 100%;
   }
 
-  .validators__table-activities-item {
+  .validators-table-row__activities-item {
     & > * {
       flex: 1;
     }
   }
-  .validators__table-cell--center {
+  .validators-table-row__cell--center {
     justify-content: flex-start;
   }
-  .validators__table-head--center {
+  .validators-table-row__head--center {
     text-align: start;
   }
-  .validators__table-head--end {
+  .validators-table-row__head--end {
     text-align: start;
   }
 }

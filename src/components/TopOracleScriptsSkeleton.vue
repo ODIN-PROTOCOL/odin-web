@@ -1,14 +1,14 @@
 <template>
   <div
-    v-for="script in topOracleScriptsEmpty"
-    :key="script"
+    v-for="frame of 6"
+    :key="frame"
     class="top-oracle-scripts__item card-frame"
   >
     <div class="top-oracle-scripts__item-description">
       <div class="top-oracle-scripts__item-title">
         <skeleton-loader
           :height="20"
-          :rounded="true"
+          rounded
           :width="-1"
           animation="wave"
           color="rgb(225, 229, 233)"
@@ -17,10 +17,10 @@
       </div>
       <span class="top-oracle-scripts__item-text">
         <skeleton-loader
-          v-for="script in topOracleScriptsEmptyText"
-          :key="script"
+          v-for="text of 3"
+          :key="text"
           :height="16"
-          :rounded="true"
+          rounded
           :width="-1"
           animation="wave"
           color="rgb(225, 229, 233)"
@@ -34,7 +34,7 @@
           <skeleton-loader
             :height="16"
             :width="-1"
-            :rounded="true"
+            rounded
             animation="wave"
             color="rgb(225, 229, 233)"
             class="w-full"
@@ -44,7 +44,7 @@
           <skeleton-loader
             :height="16"
             :width="-1"
-            :rounded="true"
+            rounded
             animation="wave"
             color="rgb(225, 229, 233)"
             class="w-full"
@@ -56,7 +56,7 @@
           <skeleton-loader
             :height="16"
             :width="-1"
-            :rounded="true"
+            rounded
             animation="wave"
             color="rgb(225, 229, 233)"
             class="w-full"
@@ -66,7 +66,7 @@
           <skeleton-loader
             :height="16"
             :width="-1"
-            :rounded="true"
+            rounded
             animation="wave"
             color="rgb(225, 229, 233)"
             class="w-full"
@@ -81,11 +81,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-  setup() {
-    const topOracleScriptsEmpty = [1, 2, 3, 4, 5, 6]
-    const topOracleScriptsEmptyText = [1, 2, 3]
-    return { topOracleScriptsEmpty, topOracleScriptsEmptyText }
-  },
+  name: 'TopOracleScriptsSkeleton',
 })
 </script>
 
@@ -97,7 +93,7 @@ export default defineComponent({
   margin-bottom: 4rem;
   font-weight: 400;
   font-size: 1.6rem;
-  line-height: 24px;
+  line-height: 2.4rem;
 }
 .top-oracle-scripts__item {
   display: flex;
@@ -130,9 +126,6 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
 }
-// .top-oracle-scripts__item-info-text {
-//   max-width: 15rem;
-// }
 @include respond-to(medium) {
   .top-oracle-scripts {
     grid: auto/repeat(2, 1fr);
