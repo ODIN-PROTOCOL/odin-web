@@ -49,7 +49,7 @@
         :min="0"
         :max="100"
         :current="Number(validator.uptimeInfo?.uptime) || 0"
-        isForValidators
+        is-for-validators
       />
     </div>
     <div class="app-table__cell validators-table-row__cell--center">
