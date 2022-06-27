@@ -176,9 +176,7 @@ export default defineComponent({
   font-size: 1.4rem;
   line-height: 2rem;
   display: inline-block;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  @include ellipsis();
 }
 .receive-modal__info {
   position: relative;

@@ -33,9 +33,9 @@
                       <div class="stake-transfer-form-modal__option-info">
                         <label
                           class="stake-transfer-form-modal__option-moniker"
-                          :title="validator.description.moniker"
+                          :title="validator.description?.moniker"
                         >
-                          {{ validator.description.moniker }}
+                          {{ validator.description?.moniker }}
                         </label>
                         <label class="stake-transfer-form-modal__option-adress">
                           {{ $cropAddress(validator.operatorAddress) }}
@@ -99,9 +99,9 @@
                       <div class="stake-transfer-form-modal__option-info">
                         <label
                           class="stake-transfer-form-modal__option-moniker"
-                          :title="validator.description.moniker"
+                          :title="validator.description?.moniker"
                         >
-                          {{ validator.description.moniker }}
+                          {{ validator.description?.moniker }}
                         </label>
                         <label class="stake-transfer-form-modal__option-adress">
                           {{ $cropAddress(validator.operatorAddress) }}
@@ -495,9 +495,7 @@ export function showUndelegateFormDialog(
 }
 .stake-transfer-form-modal__option-moniker,
 .stake-transfer-form-modal__option-balance {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  @include ellipsis();
 }
 .stake-transfer-form-modal {
   margin-top: 0.5rem;

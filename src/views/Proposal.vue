@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="view-main proposal load-fog"
-    :class="{
-      'load-fog_show': isLoading,
-    }"
-  >
+  <div class="view-main proposal">
     <div class="view-main__title-wrapper">
       <div class="view-main__title proposal__title-info">
         <BackButton :text="'Governance'" />

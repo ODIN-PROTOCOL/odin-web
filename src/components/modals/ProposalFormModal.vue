@@ -104,17 +104,6 @@
           <div class="app-form__field" v-if="form.changesKey">
             <div class="app-form__field-lbl app-form__field-lbl_ext">
               <label>Value</label>
-              <div class="app-form__info-wrapper">
-                <div class="app-form__info">
-                  <img src="~@/assets/icons/info.svg" alt="info" />
-                </div>
-                <div class="tooltip">
-                  <span>Value type:</span>
-                  <p>
-                    {{ changesValueType }}
-                  </p>
-                </div>
-              </div>
             </div>
             <input
               class="app-form__field-input"
@@ -127,6 +116,17 @@
             <p v-if="form.changesValueErr" class="app-form__field-err">
               {{ form.changesValueErr }}
             </p>
+            <div
+              v-if="changesValueType"
+              class="proposal-form-modal__field-info"
+            >
+              <div class="proposal-form-modal__field-lbl--info">
+                <label>Value type:</label>
+              </div>
+              <div class="proposal-form-modal__value-type">
+                {{ changesValueType }}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -277,38 +277,17 @@ export default defineComponent({
   justify-content: space-between;
   align-items: center;
 }
-
-.tooltip {
-  display: none;
-  position: absolute;
-  bottom: 130%;
-  right: -5px;
-  max-width: 22rem;
-  min-width: 15rem;
-  padding: 1.2rem 2.4rem;
-  background: var(--clr__tooltip-bg);
-  border-radius: 8px;
-  font-size: 1.6rem;
+.proposal-form-modal__field-info {
+  margin-top: 0.4rem;
+  color: var(--clr__text-muted);
+  font-size: 1.4rem;
+  line-height: 2rem;
+}
+.proposal-form-modal__field-lbl--info {
   font-weight: 400;
-  line-height: 1.6rem;
-  color: var(--clr__tooltip-text);
-
-  &:before {
-    content: '';
-    display: block;
-    width: 0.6rem;
-    height: 0.6rem;
-    position: absolute;
-    bottom: -0.3rem;
-    right: 10px;
-    transform: rotate(45deg);
-    background: var(--clr__tooltip-bg);
-  }
-
-  span {
-    display: inline-block;
-    color: var(--clr__input-border);
-    margin-bottom: 1rem;
-  }
+}
+.proposal-form-modal__value-type {
+  overflow-wrap: break-word;
+  font-weight: 300;
 }
 </style>
