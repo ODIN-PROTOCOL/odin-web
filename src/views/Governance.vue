@@ -115,7 +115,7 @@ import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import ProposalFormModal from '@/components/modals/ProposalFormModal.vue'
 import { proposalStatusFromJSON } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import SkeletonTable from '@/components/SkeletonTable.vue'
-
+import { ChartDataItem } from '@/helpers/Types'
 export default defineComponent({
   components: {
     CustomDoughnutChart,
@@ -133,7 +133,7 @@ export default defineComponent({
     const proposals = ref()
     const filteredProposals = ref()
     const proposalChanges = ref()
-    let proposalsDataForChart = ref()
+    const proposalsDataForChart = ref<ChartDataItem[] | never[]>([])
     const headerTitles = [
       { title: 'ID' },
       { title: 'Proposal' },

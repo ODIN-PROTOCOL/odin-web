@@ -18,7 +18,7 @@
         />
       </div>
     </div>
-    <div v-else-if="data" class="custom-doughnut-chart__legend">
+    <div v-else-if="data.length" class="custom-doughnut-chart__legend">
       <div
         v-for="(item, idx) in data"
         :key="item.name"
@@ -65,7 +65,7 @@ Chart.register(...registerables)
 export default defineComponent({
   components: { DoughnutChart },
   props: {
-    data: { type: (Array as PropType<Array<ChartDataItem>>) || undefined },
+    data: { type: Array as PropType<Array<ChartDataItem>> },
     isLoading: { type: Boolean, required: true },
   },
   setup: function (props) {
