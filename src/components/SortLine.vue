@@ -10,7 +10,7 @@
         />
         <template v-if="searchValue">
           <button @click="clearText()" class="sort-line__clear">
-            <CancelIcon :className="'sort-line__search-cancel-button'" />
+            <CancelIcon />
           </button>
         </template>
       </div>
@@ -171,9 +171,6 @@ export default defineComponent({
       fill: var(--clr__input-border);
     }
   }
-  svg.sort-line__search-cancel-button {
-    fill: var(--clr__text-muted);
-  }
 }
 .sort-line__search-input-wrapper {
   position: relative;
@@ -192,7 +189,7 @@ export default defineComponent({
 .sort-line__clear {
   overflow: visible;
   position: absolute;
-  right: 0rem;
+  right: 0;
   top: 1.3rem;
 }
 

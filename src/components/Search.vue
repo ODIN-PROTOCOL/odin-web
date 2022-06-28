@@ -94,7 +94,7 @@ export default defineComponent({
 .search__clear {
   overflow: visible;
   position: absolute;
-  right: 0rem;
+  right: 0;
   top: 1.3rem;
 }
 @media (max-width: 768px) {

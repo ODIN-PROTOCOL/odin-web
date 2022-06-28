@@ -81,9 +81,7 @@
           />
           <template v-if="searchValue">
             <button @click="clearText()" class="validators-search__clear">
-              <CancelIcon
-                :className="'validators__filter-search__cancel-button'"
-              />
+              <CancelIcon className="validators__filter-search-cancel-button" />
             </button>
           </template>
         </div>
@@ -703,7 +701,7 @@ export default defineComponent({
     border-color: var(--clr__input-border);
     color: var(--clr__input-border);
   }
-  svg.validators__filter-search__cancel-button {
+  svg.validators__filter-search-cancel-button {
     fill: var(--clr__text-muted);
   }
 }
@@ -775,7 +773,7 @@ export default defineComponent({
 .validators-search__clear {
   overflow: visible;
   position: absolute;
-  right: 0rem;
+  right: 0;
   top: 1.3rem;
 }
 
