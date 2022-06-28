@@ -19,7 +19,6 @@ import { decodeValidators } from '@/helpers/validatorDecoders'
 import { NumLike } from '@/helpers/casts'
 import { API_CONFIG } from './api-config'
 import {
-  MsgCreateValidator,
   MsgDelegate,
   MsgUndelegate,
   MsgBeginRedelegate,
@@ -166,11 +165,6 @@ const makeCallers = () => {
     getRate: querier((qc) => qc.coinswap.unverified.rate),
     getTreasuryPool: querier((qc) => qc.mint.unverified.treasuryPool),
     getTotalSupply: querier((qc) => qc.bank.totalSupply),
-
-    createValidator: broadcaster<MsgCreateValidator>(
-      '/cosmos.staking.v1beta1.MsgCreateValidator',
-      MsgCreateValidator
-    ),
     getValidators: querier((qc) =>
       mapResponse(qc.staking.validators, (response) => {
         return {
