@@ -7,12 +7,6 @@ export enum VALIDATOR_STATUS {
   bounding = 2,
   active = 3,
 }
-export const isOracleValidator = async (
-  validatorAddress: string
-): Promise<boolean> => {
-  const response = await callers.getReports(validatorAddress)
-  return response.reporter.length ? true : false
-}
 
 export const isActiveValidator = async (
   validatorAddress: string
@@ -41,7 +35,6 @@ export const getTransformedValidators = async (
       return {
         ...item,
         rank: idx + 1,
-        isOracleValidator: await isOracleValidator(item.operatorAddress),
       }
     })
   )

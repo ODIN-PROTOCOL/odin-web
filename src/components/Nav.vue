@@ -64,8 +64,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { defineComponent, onMounted, onUnmounted } from 'vue'
 import { useAuthorization } from '@/composables/useAuthorization'
 import router from '@/router'
 import ExitIcon from '@/components/icons/ExitIcon.vue'
@@ -77,26 +76,14 @@ export default defineComponent({
   props: {
     isOpen: { type: Boolean, default: false },
   },
-  setup(props, { emit }) {
+  setup(_, { emit }) {
     const auth = useAuthorization()
-    const route = useRoute()
     const logOutAndLeave = () => {
       auth.logOut()
       router.push({ name: 'Auth' })
     }
     const closeBurger = () => {
       emit('closeBurger')
-    }
-    watch(
-      () => route.path,
-      () => {
-        handleDropdownActive()
-      }
-    )
-    const isDropdownActive = ref(false)
-    const urls = ['/validators', '/oracle-validators']
-    const handleDropdownActive = () => {
-      isDropdownActive.value = urls.indexOf(route.path) > -1
     }
 
     onMounted(() => {
