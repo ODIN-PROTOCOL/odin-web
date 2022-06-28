@@ -14,14 +14,7 @@
           <template v-if="totalRewards.length">
             <div class="app-form__field">
               <label class="app-form__field-lbl">Your rewards:</label>
-              <p v-for="item in totalRewards" :key="item.denom">
-                {{
-                  $convertLokiToOdin(item.amount, {
-                    withDenom: true,
-                    withPrecise: true,
-                  })
-                }}
-              </p>
+              <p :title="odinRewardsValue">{{ odinRewardsValue }} ODIN</p>
             </div>
           </template>
           <template v-else>
@@ -59,6 +52,7 @@ import { preventIf } from '@/helpers/functions'
 import { DelegationDelegatorReward } from 'cosmjs-types/cosmos/distribution/v1beta1/distribution'
 import { DecCoin } from 'cosmjs-types/cosmos/base/v1beta1/coin'
 import ModalBase from '@/components/modals/ModalBase.vue'
+import { convertLokiToOdin } from '@/helpers/converters'
 
 export default defineComponent({
   components: { ModalBase },
@@ -67,6 +61,7 @@ export default defineComponent({
     const onSubmit = dialogs.getHandler('onSubmit')
     const totalRewards = ref<DecCoin[]>([])
     const rewards = ref<DelegationDelegatorReward[]>([])
+    const odinRewardsValue = ref()
 
     const getRewards = async () => {
       try {
@@ -75,6 +70,11 @@ export default defineComponent({
         )
         totalRewards.value = response.total
         rewards.value = response.rewards
+        odinRewardsValue.value = convertLokiToOdin(response.total[0].amount, {
+          withPrecise: true,
+          onlyNumber: true,
+        })
+        odinRewardsValue.value = Number(odinRewardsValue.value.toFixed(6))
       } catch (error) {
         handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
@@ -114,6 +114,7 @@ export default defineComponent({
       isLoading,
       submit,
       onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
+      odinRewardsValue,
     }
   },
 })

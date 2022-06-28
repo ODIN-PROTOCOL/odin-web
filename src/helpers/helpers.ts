@@ -1,6 +1,6 @@
 import { getDateFromMessage } from '@/helpers/decodeMessage'
 import { toHex } from '@cosmjs/encoding'
-import { adjustedData, IAttributesItem, IEventsItem } from '@/helpers/Types'
+import { DecodedTxData, IAttributesItem, IEventsItem } from '@/helpers/Types'
 import { convertLokiToOdin } from './converters'
 import { TxTelemetry } from '@/helpers/Types'
 import { formatDate } from '@/helpers/formatters'
@@ -27,8 +27,8 @@ export const copyValue = (text: string): void => {
 
 export const prepareTransaction = async (
   txs: readonly TxTelemetry[]
-): Promise<Array<adjustedData>> => {
-  let tempArr: Array<adjustedData> = []
+): Promise<Array<DecodedTxData>> => {
+  let tempArr: Array<DecodedTxData> = []
   for (const tx of txs) {
     const {
       receiver,

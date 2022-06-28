@@ -1,8 +1,7 @@
 <template>
   <div
-    class="view-main validators load-fog"
+    class="view-main validators"
     :class="{
-      'load-fog_show': isLoading && validators?.length,
       'validators--large-padding': isDelegator,
     }"
   >
@@ -35,15 +34,20 @@
       </div>
     </div>
 
-    <template v-if="validatorsCount">
-      <div class="validators__count-info">
-        <p>{{ validatorsCount }} validators found</p>
-      </div>
-    </template>
+    <div class="validators__count-info">
+      <skeleton-loader
+        v-if="isLoading"
+        :height="24"
+        rounded
+        animation="wave"
+        color="rgb(225, 229, 233)"
+      />
+      <p v-else>{{ validatorsCount }} validators found</p>
+    </div>
     <div class="validators__filter">
       <div class="validators__tabs">
         <button
-          v-if="isDisabledDelegationsTab && !isLoading"
+          v-if="isDisabledDelegationsTab"
           @click="selectTab(myValidatorsTitle)"
           class="validators__tab"
           :class="{
@@ -88,127 +92,62 @@
         </button>
       </div>
     </div>
-
-    <div class="app-table validators__table">
+    <div
+      class="app-table validators__table"
+      :class="{
+        'validators__table--inactive': tabStatus === inactiveValidatorsTitle,
+      }"
+    >
       <div class="app-table__head validators__table-head">
         <span class="validators__table-head-item">Rank</span>
         <span class="validators__table-head-item">Validator</span>
-        <span class="validators__table-head-item"> Delegated </span>
-        <span class="validators__table-head-item"> Commission </span>
-        <span class="validators__table-head-item"> Uptime </span>
-        <span class="validators__table-head-item"> Oracle Status </span>
+        <span class="validators__table-head-item">Delegated</span>
+        <span class="validators__table-head-item">Commission</span>
+        <span
+          v-if="tabStatus !== inactiveValidatorsTitle"
+          class="validators__table-head-item"
+        >
+          Uptime
+        </span>
+        <span
+          class="validators__table-head-item validators__table-head-item--center"
+          >Status</span
+        >
         <span class="validators__table-head-item"></span>
       </div>
       <div class="app-table__body">
         <template v-if="filteredValidators?.length">
-          <div
-            v-for="item in filteredValidators"
-            :key="item.operatorAddress"
-            class="app-table__row validators__table-row"
-            :class="{
-              'validators__table-row--top':
-                item.status === 3 && delegations[item.operatorAddress],
-            }"
-          >
-            <div class="app-table__cell">
-              <span class="app-table__title">Rank</span>
-              <span>{{ item.rank }}</span>
-            </div>
-            <div class="app-table__cell">
-              <span class="app-table__title">Validator</span>
-              <TitledLink
-                class="app-table__cell-txt app-table__link"
-                :text="item.description.moniker"
-                :to="`/validators/${item.operatorAddress}`"
-              />
-            </div>
-            <div class="app-table__cell app-table__cell-txt">
-              <span class="app-table__title">Delegated</span>
-              <span
-                :title="
-                  $convertLokiToOdin(item.delegatorShares, {
-                    withPrecise: true,
-                  })
-                "
-              >
-                {{
-                  $convertLokiToOdin(item.delegatorShares, {
-                    withDenom: true,
-                    withPrecise: true,
-                  })
-                }}
-              </span>
-            </div>
-            <div class="app-table__cell validators__table-cell--center">
-              <span class="app-table__title">Commission</span>
-              <span>
-                {{ $getPrecisePercents(item.commission.commissionRates.rate) }}
-              </span>
-            </div>
-            <div class="app-table__cell">
-              <span class="app-table__title">Uptime</span>
-              <Progressbar
-                v-if="item.uptimeInfo?.uptime"
-                :min="0"
-                :max="100"
-                :current="Number(item.uptimeInfo.uptime) || 0"
-                :isForValidators="true"
-              />
-              <span v-else>N/A</span>
-            </div>
-            <div class="app-table__cell validators__table-cell--center">
-              <span class="app-table__title">Oracle Status</span>
-              <StatusIcon :status="item?.isActive ? 'success' : 'error'" />
-            </div>
-            <div class="app-table__cell">
-              <div class="app-table__activities validators__table-activities">
-                <div
-                  v-if="item.status === 3"
-                  class="app-table__activities-item validators__table-activities-item"
-                >
-                  <button
-                    v-if="delegations[item.operatorAddress]"
-                    class="app-btn app-btn--outlined app-btn--very-small w-min108"
-                    type="button"
-                    @click="redelegate(item)"
-                  >
-                    Redelegate
-                  </button>
-                  <button
-                    class="app-btn app-btn--very-small w-min108"
-                    type="button"
-                    @click="delegate(item)"
-                  >
-                    Delegate
-                  </button>
-                </div>
-                <div
-                  v-if="delegations[item.operatorAddress]"
-                  class="app-table__activities-item validators__table-activities-item"
-                >
-                  <button
-                    class="app-btn app-btn--outlined app-btn--very-small w-min108"
-                    type="button"
-                    @click="withdrawRewards(item)"
-                  >
-                    Claim rewards
-                  </button>
-                  <button
-                    class="app-btn app-btn--outline-red app-btn--very-small w-min108"
-                    type="button"
-                    @click="undelegate(item)"
-                  >
-                    Undelegate
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <template v-if="windowInnerWidth > 768">
+            <ValidatorsTableRow
+              v-for="validator in filteredValidators"
+              :key="validator.operatorAddress"
+              @selectedBtn="openModal"
+              :validator="validator"
+              :tabStatus="tabStatus"
+              :inactiveValidatorsTitle="inactiveValidatorsTitle"
+              :delegations="delegations"
+            />
+          </template>
+          <template v-else>
+            <ValidatorsTableRowMobile
+              v-for="validator in filteredValidators"
+              :key="validator.operatorAddress"
+              @selectedBtn="openModal"
+              :validator="validator"
+              :tabStatus="tabStatus"
+              :inactiveValidatorsTitle="inactiveValidatorsTitle"
+              :delegations="delegations"
+            />
+          </template>
         </template>
         <template v-else>
-          <div class="app-table__empty-stub">
-            <p v-if="isLoading" class="empty mg-t32">Loading…</p>
-            <p v-else class="empty mg-t32">No items yet</p>
+          <SkeletonTable
+            v-if="isLoading"
+            :header-titles="headerTitles"
+            class-string="validators__table-row"
+          />
+          <div v-else class="app-table__empty-stub">
+            <p class="empty mg-t32">No items yet</p>
           </div>
         </template>
       </div>
@@ -252,7 +191,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, computed } from 'vue'
+import { defineComponent, ref, onMounted, computed, onUnmounted } from 'vue'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 import { COINS_LIST } from '@/api/api-config'
@@ -261,8 +200,6 @@ import { getTransformedValidators } from '@/helpers/validatorHelpers'
 import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
-import TitledLink from '@/components/TitledLink.vue'
-import StatusIcon from '@/components/StatusIcon.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
@@ -274,18 +211,20 @@ import StakeTransferFormModal from '@/components/modals/StakeTransferFormModal.v
 import ClaimAllRewardsFormModal from '@/components/modals/ClaimAllRewardsFormModal.vue'
 import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
 import { isActiveValidator } from '@/helpers/validatorHelpers'
-import Progressbar from '@/components/Progressbar.vue'
 import InputField from '@/components/fields/InputField.vue'
 import SearchIcon from '@/components/icons/SearchIcon.vue'
+import SkeletonTable from '@/components/SkeletonTable.vue'
+import ValidatorsTableRowMobile from '@/components/ValidatorsTableRowMobile.vue'
+import ValidatorsTableRow from '@/components/ValidatorsTableRow.vue'
 
 export default defineComponent({
   components: {
-    TitledLink,
-    StatusIcon,
     AppPagination,
-    Progressbar,
     InputField,
     SearchIcon,
+    SkeletonTable,
+    ValidatorsTableRowMobile,
+    ValidatorsTableRow,
   },
   setup() {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
@@ -324,12 +263,30 @@ export default defineComponent({
         }
       })
     )
+    const windowInnerWidth = ref(document.documentElement.clientWidth)
+    const updateWidth = () => {
+      windowInnerWidth.value = document.documentElement.clientWidth
+    }
     const inactiveValidatorsTitle = ref('Inactive')
     const tabStatus = ref(activeValidatorsTitle.value)
     const searchValue = ref('')
     const isDisabledDelegationsTab = computed(() =>
       Boolean(myDelegationsValitors.value.length)
     )
+    const headerTitles = computed(() => {
+      if (windowInnerWidth.value > 768) {
+        return [
+          { title: 'Rank' },
+          { title: 'Validator' },
+          { title: 'Delegated' },
+          { title: 'Commission' },
+          { title: 'Uptime' },
+          { title: 'Oracle Status' },
+        ]
+      } else {
+        return [{ title: '' }, { title: 'Delegated' }]
+      }
+    })
     const getValidators = async () => {
       lockLoading()
       try {
@@ -405,9 +362,13 @@ export default defineComponent({
         }
         delegations.value = _delegations
         delegatedAdress.value = Object.keys(delegations.value)
+        tabStatus.value = isDisabledDelegationsTab.value
+          ? myValidatorsTitle.value
+          : activeValidatorsTitle.value
       } catch (error) {
         // error is ignored, since no delegations also throws the error
         delegations.value = {}
+        tabStatus.value = activeValidatorsTitle.value
       }
       releaseLoading()
     }
@@ -452,7 +413,16 @@ export default defineComponent({
         filterValidators(1)
       }
     }
-
+    const validatorStatus = (validator: {
+      status: number
+      isActive: boolean
+    }) => {
+      if (validator.status === 3) {
+        return validator.isActive ? 'success' : 'error'
+      } else {
+        return 'inactive'
+      }
+    }
     const loadData = async () => {
       await getDelegations()
       await getValidators()
@@ -541,15 +511,32 @@ export default defineComponent({
           },
         },
         {
-          validators: activeValidators.value,
+          validators: allValitors.value,
           delegation: delegations.value,
         }
       )
     }
+    const openModal = (event: {
+      typeBtn: string
+      validator: ValidatorDecoded
+    }) => {
+      if (event.typeBtn === 'Delegate') {
+        delegate(event.validator)
+      } else if (event.typeBtn === 'Regelate') {
+        redelegate(event.validator)
+      } else if (event.typeBtn === 'Claim rewards') {
+        withdrawRewards(event.validator)
+      } else if (event.typeBtn === 'Undelegate') {
+        undelegate(event.validator)
+      }
+    }
     onMounted(async () => {
+      window.addEventListener('resize', updateWidth)
       await loadData()
     })
-
+    onUnmounted(async () => {
+      window.removeEventListener('resize', updateWidth)
+    })
     return {
       COINS_LIST,
       ITEMS_PER_PAGE,
@@ -581,6 +568,10 @@ export default defineComponent({
       myDelegationsValitors,
       isDisabledDelegationsTab,
       tabStatus,
+      headerTitles,
+      validatorStatus,
+      windowInnerWidth,
+      openModal,
     }
   },
 })
@@ -605,47 +596,22 @@ export default defineComponent({
     margin-bottom: 1.6rem;
   }
 }
-
-.validators__count-info {
-  margin-bottom: 3.2rem;
-}
-
-.validators__table-head,
-.validators__table-row {
-  gap: 3.4rem;
-  grid:
-    auto /
-    minmax(2rem, 5rem)
-    minmax(5rem, 1fr)
-    minmax(6rem, 0.5fr)
-    minmax(8rem, 0.5fr)
-    minmax(7rem, 0.5fr)
-    minmax(6rem, 8rem)
-    minmax(24rem, 1.5fr);
-}
-.validators__table-row {
-  padding: 3.2rem 0 2rem;
-  align-items: center;
-}
-.validators__table-row--top {
-  align-items: flex-start;
-}
-.validators__table-activities {
-  width: 100%;
-
-  & > *:not(:last-child) {
-    margin-bottom: 1.6rem;
+.validators__table--inactive {
+  .validators__table-head,
+  .validators-table-row {
+    gap: 2rem;
+    grid:
+      auto /
+      minmax(2rem, 5rem)
+      minmax(5rem, 1.5fr)
+      minmax(6rem, 1fr)
+      minmax(8rem, 0.5fr)
+      minmax(7rem, 8.7rem)
+      minmax(24rem, 1.5fr);
   }
 }
-
-.validators__table-activities-item {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1.6rem;
-}
-
-.validators__table-cell--center {
-  justify-content: center;
+.validators__count-info {
+  margin-bottom: 3.2rem;
 }
 
 .validators__table-head-item--center {
@@ -661,9 +627,6 @@ export default defineComponent({
   }
 }
 
-.validators--large-padding {
-  padding-bottom: 17rem;
-}
 .validators__filter-search {
   display: flex;
   align-items: center;
@@ -750,20 +713,23 @@ export default defineComponent({
   padding: 1.2rem;
   font-size: 2rem;
   white-space: nowrap;
-  box-shadow: inset 0 -0.2rem 0 var(--clr__table-head);
+  border-bottom: 0.2rem solid var(--clr__table-head);
   cursor: pointer;
   &.selected {
     font-weight: 600;
-    box-shadow: inset 0px -2px 0px var(--clr__action);
-  }
-}
-@include respond-to(medium) {
-  .validators__table-head,
-  .validators__table-row {
-    gap: 1.6rem;
+    border-bottom: 0.2rem solid var(--clr__action);
   }
 }
 @include respond-to(tablet) {
+  .validators--large-padding {
+    padding-bottom: 20rem;
+  }
+  .validators__table--inactive {
+    .validators__table-head,
+    .validators__table-row {
+      grid: none;
+    }
+  }
   .validators__count-info {
     margin-bottom: 0;
   }
@@ -772,30 +738,6 @@ export default defineComponent({
     display: none;
   }
 
-  .validators__table-row {
-    grid: none;
-  }
-
-  .validators__table-activities {
-    width: 100%;
-  }
-
-  .validators__table-activities-item {
-    & > * {
-      flex: 1;
-    }
-  }
-
-  .validators__table-cell--center {
-    justify-content: flex-start;
-  }
-
-  .validators__table-head--center {
-    text-align: start;
-  }
-  .validators__table-head--end {
-    text-align: start;
-  }
   .validators__filter {
     margin-bottom: 0;
     flex-direction: column;
