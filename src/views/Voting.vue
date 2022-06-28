@@ -59,7 +59,7 @@
       </div>
       <div class="voting__chart card-frame">
         <h3 class="voting__chart-title mg-b40">Results of voting</h3>
-        <CustomDoughnutChart :data="votesDataForChart" />
+        <CustomDoughnutChart :isLoading="isLoading" :data="votesDataForChart" />
       </div>
     </div>
     <template v-if="isLoading">
@@ -81,17 +81,17 @@ import BackButton from '@/components/BackButton.vue'
 import CustomDoughnutChart from '@/components/charts/CustomDoughnutChart.vue'
 import Loader from '@/components/Loader.vue'
 import { getVotesCountByStatus } from '@/helpers/voteHelpers'
-
+import { ChartDataItem } from '@/helpers/Types'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import ConfirmationModal from '@/components/modals/ConfirmationModal.vue'
+import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 
 export default defineComponent({
   components: { BackButton, CustomDoughnutChart, Loader },
-  setup: function () {
+  setup() {
+    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const route: RouteLocationNormalizedLoaded = useRoute()
-    const isLoading = ref(false)
-
-    const votesDataForChart = ref()
+    const votesDataForChart = ref<ChartDataItem[] | never[]>([])
     const pickedOption = ref(VoteOption.VOTE_OPTION_YES)
     const proposalName = ref('')
 
@@ -102,12 +102,18 @@ export default defineComponent({
     }
 
     const getVotes = async () => {
-      const res = await callers.getProposalVotes(Number(route.params.id))
-      votesDataForChart.value = getVotesCountByStatus(res.votes)
+      lockLoading()
+      try {
+        const res = await callers.getProposalVotes(Number(route.params.id))
+        votesDataForChart.value = getVotesCountByStatus(res.votes)
+      } catch (error) {
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+      }
+      releaseLoading()
     }
 
     const vote = async () => {
-      isLoading.value = true
+      lockLoading()
       try {
         await callers.proposalVote({
           proposalId: new Long(Number(route.params.id)),
@@ -124,7 +130,7 @@ export default defineComponent({
       } catch (error) {
         handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
-      isLoading.value = false
+      releaseLoading()
     }
 
     const confirmation = async () => {

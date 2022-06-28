@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="view-main ibc-view load-fog"
-    :class="{
-      'load-fog_show': isLoading,
-    }"
-  >
+  <div class="view-main ibc-view">
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">IBCs</h2>
     </div>

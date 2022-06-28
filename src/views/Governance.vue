@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="governance view-main load-fog"
-    :class="{
-      'load-fog_show': isLoading,
-    }"
-  >
+  <div class="governance view-main">
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Governance</h2>
       <button
@@ -20,11 +15,15 @@
       <h3 class="info-card__title governance__info-title mg-b40">
         Total number of proposals in ODIN
       </h3>
-      <CustomDoughnutChart :data="proposalsDataForChart" />
+      <CustomDoughnutChart
+        :data="proposalsDataForChart"
+        :is-loading="isLoading"
+      />
     </div>
 
     <div class="app-table">
       <div class="app-table__head governance__table-head">
+        <span>ID</span>
         <span>Proposal</span>
         <span>Proposer's account ID</span>
         <span>Proposal status</span>
@@ -33,15 +32,19 @@
         <template v-if="proposals?.length">
           <div
             v-for="item in filteredProposals"
-            :key="item.proposalId.toString()"
+            :key="item.proposal_id"
             class="app-table__row governance__table-row"
           >
+            <div class="app-table__cell">
+              <span class="app-table__title">ID</span>
+              <span class="app-table__cell-txt"> #{{ item.proposal_id }} </span>
+            </div>
             <div class="app-table__cell">
               <span class="app-table__title">Proposal</span>
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="item.content?.title || '-'"
-                :to="`/proposal/${item.proposalId}`"
+                :to="`/proposal/${item.proposal_id}`"
               />
             </div>
             <div class="app-table__cell">
@@ -63,9 +66,13 @@
           </div>
         </template>
         <template v-else>
-          <div class="app-table__empty-stub">
-            <p v-if="isLoading" class="empty mg-t32">Loading…</p>
-            <p v-else class="empty mg-t32">No items yet</p>
+          <SkeletonTable
+            v-if="isLoading"
+            :header-titles="headerTitles"
+            class-string="governance__table-row"
+          />
+          <div v-else class="app-table__empty-stub">
+            <p class="empty mg-t32">No items yet</p>
           </div>
         </template>
       </div>
@@ -96,10 +103,7 @@
 import { defineComponent, ref, onMounted } from 'vue'
 import { callers } from '@/api/callers'
 import { API_CONFIG } from '@/api/api-config'
-import {
-  getTransformedProposals,
-  getProposalsCountByStatus,
-} from '@/helpers/proposalHelpers'
+import { getProposalsCountByStatus } from '@/helpers/proposalHelpers'
 import { proposalStatusType } from '@/helpers/statusTypes'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
@@ -107,12 +111,19 @@ import TitledLink from '@/components/TitledLink.vue'
 import CustomDoughnutChart from '@/components/charts/CustomDoughnutChart.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
-
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import ProposalFormModal from '@/components/modals/ProposalFormModal.vue'
-
+import { proposalStatusFromJSON } from '@provider/codec/cosmos/gov/v1beta1/gov'
+import SkeletonTable from '@/components/SkeletonTable.vue'
+import { ChartDataItem } from '@/helpers/Types'
 export default defineComponent({
-  components: { CustomDoughnutChart, TitledLink, StatusBlock, AppPagination },
+  components: {
+    CustomDoughnutChart,
+    TitledLink,
+    StatusBlock,
+    AppPagination,
+    SkeletonTable,
+  },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 30
@@ -122,17 +133,33 @@ export default defineComponent({
     const proposals = ref()
     const filteredProposals = ref()
     const proposalChanges = ref()
-    let proposalsDataForChart = ref()
-
+    const proposalsDataForChart = ref<ChartDataItem[] | never[]>([])
+    const headerTitles = [
+      { title: 'ID' },
+      { title: 'Proposal' },
+      { title: `Proposer's account ID` },
+      { title: 'Proposal status' },
+    ]
     const getProposals = async () => {
       lockLoading()
       try {
-        const response = await callers.getProposals(0, '', '')
-        const transformedProposals = await getTransformedProposals(
-          response.proposals
+        const response = await callers.getProposals(0, 100, true)
+        const transformedProposals = await Promise.all(
+          response.data?.proposals?.map(
+            async (item: { proposal_id: string; status: string }) => {
+              const response = await callers.getProposer(item.proposal_id)
+              const proposer = await response.json()
+              return {
+                ...item,
+                proposerAddress: proposer.result.proposer,
+                status: proposalStatusFromJSON(item.status),
+                humanizeStatus:
+                  proposalStatusType[proposalStatusFromJSON(item.status)].name,
+              }
+            }
+          )
         )
-
-        proposalsCount.value = response.proposals.length
+        proposalsCount.value = response.data?.proposals.length
         proposals.value = transformedProposals
         totalPages.value = Math.ceil(proposalsCount.value / ITEMS_PER_PAGE)
         filterProposals(currentPage.value)
@@ -217,6 +244,7 @@ export default defineComponent({
       filteredProposals,
       createProposal,
       paginationHandler,
+      headerTitles,
     }
   },
 })
@@ -231,12 +259,6 @@ export default defineComponent({
   font-size: 2.4rem;
   line-height: 2.9rem;
 }
-.governance__table-head,
-.governance__table-row {
-  grid:
-    auto /
-    minmax(8rem, 1fr) minmax(8rem, 2fr) minmax(11rem, 0.5fr);
-}
 
 @include respond-to(tablet) {
   .governance__title-btn {
@@ -250,9 +272,6 @@ export default defineComponent({
   }
   .governance__info {
     width: 100%;
-  }
-  .governance__table-row {
-    grid: none;
   }
 }
 </style>

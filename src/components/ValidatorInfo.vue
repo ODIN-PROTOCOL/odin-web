@@ -4,7 +4,10 @@
       <div class="validator-info__top-line-item card-frame">
         <span class="validator-info__top-line-item-title">Moniker</span>
         <div class="validator-info__card-balance-row-value-wrapper">
-          <span class="validator-info__top-line-item-value">
+          <span
+            :title="validator.description.moniker"
+            class="validator-info__top-line-item-value"
+          >
             {{ validator.description.moniker }}
           </span>
         </div>
@@ -12,7 +15,10 @@
       <div class="validator-info__top-line-item card-frame">
         <span class="validator-info__top-line-item-title">Status</span>
         <div class="validator-info__card-balance-row-value-wrapper">
-          <span class="validator-info__top-line-item-value">
+          <span
+            :title="$tBondStatus(validator.status)"
+            class="validator-info__top-line-item-value"
+          >
             {{ $tBondStatus(validator.status) }}
           </span>
         </div>
@@ -20,7 +26,10 @@
       <div class="validator-info__top-line-item card-frame">
         <span class="validator-info__top-line-item-title">Jailed?</span>
         <div class="validator-info__card-balance-row-value-wrapper">
-          <span class="validator-info__top-line-item-value">
+          <span
+            :title="validator.jailed ? 'Yes' : 'No'"
+            class="validator-info__top-line-item-value"
+          >
             {{ validator.jailed ? 'Yes' : 'No' }}
           </span>
         </div>
@@ -28,7 +37,10 @@
       <div class="validator-info__top-line-item card-frame">
         <span class="validator-info__top-line-item-title">Stake</span>
         <div class="validator-info__card-balance-row-value-wrapper">
-          <span class="validator-info__top-line-item-value">
+          <span
+            :title="$convertLokiToOdin(validator.tokens, { withDenom: true })"
+            class="validator-info__top-line-item-value"
+          >
             {{ $convertLokiToOdin(validator.tokens, { withDenom: true }) }}
           </span>
         </div>
@@ -36,7 +48,12 @@
       <div class="validator-info__top-line-item card-frame">
         <span class="validator-info__top-line-item-title">Rate</span>
         <div class="validator-info__card-balance-row-value-wrapper">
-          <span class="validator-info__top-line-item-value">
+          <span
+            :title="
+              $getPrecisePercents(validator.commission.commissionRates.rate)
+            "
+            class="validator-info__top-line-item-value"
+          >
             {{ $getPrecisePercents(validator.commission.commissionRates.rate) }}
           </span>
         </div>
@@ -88,7 +105,7 @@
             Undelegate
           </button>
           <button
-            v-if="delegations?.balance"
+            v-if="delegations?.balance && validator.status === 3"
             @click="redelegate"
             type="button"
             class="validator-info__delegetion-btn app-btn app-btn--outlined app-btn--very-small"
@@ -96,6 +113,7 @@
             Redelegate
           </button>
           <button
+            v-if="validator.status === 3"
             @click="delegate"
             type="button"
             class="validator-info__delegetion-btn app-btn app-btn--very-small"
@@ -120,9 +138,9 @@
           </span>
         </div>
         <div class="validator-info__description-item">
-          <span class="validator-info__description-item-title"
-            >Amount of proposed blocks</span
-          >
+          <span class="validator-info__description-item-title">
+            {{ isMobile() ? 'Proposed blocks' : 'Amount of proposed blocks' }}
+          </span>
           <span
             :title="proposedBlocksCount"
             class="validator-info__description-item-value"
@@ -166,9 +184,9 @@ import UndelegateFormModal from '@/components/modals/UndelegateFormModal.vue'
 import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
+import { isMobile } from '@/helpers/helpers'
 
 export default defineComponent({
-  components: {},
   props: {
     validator: { type: Object as PropType<ValidatorDecoded>, required: true },
   },
@@ -258,6 +276,7 @@ export default defineComponent({
       undelegate,
       delegations,
       proposedBlocksCount,
+      isMobile,
     }
   },
 })
@@ -292,9 +311,7 @@ export default defineComponent({
 .validator-info__top-line-item {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  @include ellipsis();
   max-width: 100%;
 }
 
@@ -315,9 +332,7 @@ export default defineComponent({
   font-weight: 600;
   font-size: 2.4rem;
   line-height: 3.2rem;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  @include ellipsis();
 }
 .validator-info__delegetion-title,
 .validator-info__description-title {

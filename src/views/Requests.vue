@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="requests view-main load-fog"
-    :class="{
-      'load-fog_show': isLoading && requests?.length,
-    }"
-  >
+  <div class="requests view-main">
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Requests</h2>
       <button
@@ -16,11 +11,16 @@
       </button>
     </div>
 
-    <template v-if="requestsCount">
-      <div class="view-main__count-info requests__count-info">
-        <p>{{ requestsCount }} requests found</p>
-      </div>
-    </template>
+    <div class="view-main__count-info requests__count-info">
+      <skeleton-loader
+        v-if="isLoading"
+        :height="24"
+        rounded
+        animation="wave"
+        color="rgb(225, 229, 233)"
+      />
+      <p v-else>{{ requestsCount }} requests found</p>
+    </div>
 
     <div class="app-table requests__table">
       <div class="app-table__head requests__table-head">
@@ -80,9 +80,13 @@
           </div>
         </template>
         <template v-else>
-          <div class="app-table__empty-stub">
-            <p v-if="isLoading" class="empty mg-t32">Loading…</p>
-            <p v-else class="empty mg-t32">No items yet</p>
+          <SkeletonTable
+            v-if="isLoading"
+            :header-titles="headerTitles"
+            class-string="requests__table-row"
+          />
+          <div v-else class="app-table__empty-stub">
+            <p class="empty mg-t32">No items yet</p>
           </div>
         </template>
       </div>
@@ -120,9 +124,10 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import RequestFormModal from '@/components/modals/RequestFormModal.vue'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
+import SkeletonTable from '@/components/SkeletonTable.vue'
 
 export default defineComponent({
-  components: { TitledLink, Progressbar, AppPagination },
+  components: { TitledLink, Progressbar, AppPagination, SkeletonTable },
   setup() {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 25
@@ -136,10 +141,17 @@ export default defineComponent({
         return `${API_CONFIG.odinScan}/account/${item.request.client_id}`
       }
     )
-
+    const headerTitles = [
+      { title: 'Request ID' },
+      { title: 'Sender' },
+      { title: 'Oracle Script ID' },
+      { title: 'Report Status' },
+      { title: 'Timestamp' },
+    ]
     const getRequests = async () => {
       lockLoading()
       try {
+        requests.value = []
         const req = await callers.getRequests(
           ITEMS_PER_PAGE,
           (currentPage.value - 1) * ITEMS_PER_PAGE
@@ -209,6 +221,7 @@ export default defineComponent({
       paginationHandler,
       senderLink,
       isLoading,
+      headerTitles,
     }
   },
 })
@@ -217,16 +230,6 @@ export default defineComponent({
 <style lang="scss" scoped>
 .requests__count-info {
   margin-bottom: 3.2rem;
-}
-.requests__table-head,
-.requests__table-row {
-  grid:
-    auto /
-    minmax(7rem, 0.5fr)
-    minmax(8rem, 3fr)
-    minmax(10rem, 1fr)
-    minmax(8rem, 2fr)
-    minmax(10rem, 1.5fr);
 }
 @include respond-to(tablet) {
   .requests {
@@ -237,10 +240,6 @@ export default defineComponent({
   }
   .requests__title-btn {
     display: none;
-  }
-  .requests__table-head,
-  .requests__table-row {
-    grid: none;
   }
 }
 </style>

@@ -12,7 +12,7 @@ export interface IAttributesItem {
   value: string
 }
 
-export type adjustedData = {
+export type DecodedTxData = {
   voter?: string
   type: string
   hash?: string

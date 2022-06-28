@@ -2,6 +2,11 @@ import { big } from '@/helpers/bigMath'
 import { callers } from '@/api/callers'
 import { ValidatorDecoded } from './validatorDecoders'
 
+export enum VALIDATOR_STATUS {
+  inactive = 1,
+  bounding = 2,
+  active = 3,
+}
 export const isOracleValidator = async (
   validatorAddress: string
 ): Promise<boolean> => {

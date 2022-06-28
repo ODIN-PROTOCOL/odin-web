@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="data-source-item view-main load-fog"
-    :class="{
-      'load-fog_show': isLoading,
-    }"
-  >
+  <div class="data-source-item view-main">
     <div class="view-main__title-wrapper">
       <div class="data-source-item__title-wrapper">
         <BackButton text="Data Sources" />
