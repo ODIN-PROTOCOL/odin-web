@@ -31,7 +31,8 @@
           </div>
         </template>
         <template v-else>
-          <div class="app-table__empty-stub">
+          <SkeletonTable v-if="isLoading" :header-titles="headerTitles" />
+          <div v-else class="app-table__empty-stub">
             <p class="empty mg-t32">No items yet</p>
           </div>
         </template>
@@ -54,29 +55,45 @@ import { defineComponent, onMounted, ref } from 'vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { callers } from '@/api/callers'
 import { API_CONFIG } from '@/api/api-config'
-
+import SkeletonTable from '@/components/SkeletonTable.vue'
+import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 export default defineComponent({
-  components: { AppPagination },
+  components: { AppPagination, SkeletonTable },
   props: {
     proposerAddress: { type: String, required: true },
   },
   setup(props) {
+    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+
     const ITEMS_PER_PAGE = 5
     const currentPage = ref(1)
     const totalPages = ref(0)
     const reportsCount = ref(0)
     const reports = ref([])
+    const headerTitles = [
+      { title: 'Oracle reports' },
+      { title: 'Oracle script' },
+      { title: 'Tx hash' },
+    ]
+
     const getReports = async () => {
-      const response = await callers.getOracleReports(
-        props.proposerAddress,
-        currentPage.value - 1,
-        ITEMS_PER_PAGE
-      )
-      if (response.data.data) {
-        reportsCount.value = response.data.tx_count
-        totalPages.value = Math.ceil(reportsCount.value / ITEMS_PER_PAGE)
-        reports.value = response.data.data
+      lockLoading()
+      try {
+        const response = await callers.getOracleReports(
+          props.proposerAddress,
+          currentPage.value - 1,
+          ITEMS_PER_PAGE
+        )
+        if (response.data.data) {
+          reportsCount.value = response.data.tx_count
+          totalPages.value = Math.ceil(reportsCount.value / ITEMS_PER_PAGE)
+          reports.value = response.data.data
+        }
+      } catch (error) {
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
+      releaseLoading()
     }
     const paginationHandler = async (num: number) => {
       currentPage.value = num
@@ -93,6 +110,8 @@ export default defineComponent({
       reports,
       paginationHandler,
       API_CONFIG,
+      isLoading,
+      headerTitles,
     }
   },
 })

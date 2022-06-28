@@ -33,7 +33,7 @@ import { callers } from '@/api/callers'
 import { Tx } from 'cosmjs-types/cosmos/tx/v1beta1/tx'
 import { ReadonlyDateWithNanoseconds } from '@cosmjs/tendermint-rpc/build/dates'
 import { TxResponse } from '@cosmjs/tendermint-rpc/build/tendermint34/responses'
-import { adjustedData } from '@/helpers/Types'
+import { DecodedTxData } from '@/helpers/Types'
 import {
   MsgCreateClient,
   MsgUpdateClient,
@@ -285,8 +285,8 @@ export function decodeMessage(obj: {
 
 export async function getDateFromMessage(
   tx: TxTelemetry
-): Promise<adjustedData> {
-  const adjustedData: adjustedData = {
+): Promise<DecodedTxData> {
+  const DecodedTxData: DecodedTxData = {
     type: '',
     time: (await getTime(Number(tx.height))) as Date,
     fee: '',
@@ -303,237 +303,237 @@ export async function getDateFromMessage(
       value: Uint8Array
     }
     const message = decodeMessage(obj)
-    adjustedData.type = humanizeMessageType(obj.typeUrl)
-    adjustedData.fee = decodedTx?.authInfo?.fee?.amount[0]?.amount
-    adjustedData.memo = decodedTx.body?.memo
+    DecodedTxData.type = humanizeMessageType(obj.typeUrl)
+    DecodedTxData.fee = decodedTx?.authInfo?.fee?.amount[0]?.amount
+    DecodedTxData.memo = decodedTx.body?.memo
       ? decodedTx.body?.memo
       : '<No Memo>'
-    adjustedData.status = tx.tx_result.code
-    adjustedData.gasWanted = tx.tx_result.gas_wanted
-    adjustedData.gasUsed = tx.tx_result.gas_used
+    DecodedTxData.status = tx.tx_result.code
+    DecodedTxData.gasWanted = tx.tx_result.gas_wanted
+    DecodedTxData.gasUsed = tx.tx_result.gas_used
 
     if ('amount' in message) {
       if (typeof message.amount === 'object') {
         if ('denom' in message.amount && 'amount' in message.amount) {
-          adjustedData.amount = message.amount?.amount
+          DecodedTxData.amount = message.amount?.amount
         } else {
-          adjustedData.amount = message.amount[0]?.amount
+          DecodedTxData.amount = message.amount[0]?.amount
         }
       }
     } else {
       const amount = tx.tx_result.events
         .find((item) => {
-          adjustedData.type.toLowerCase().includes(item.type.split('_')[0])
+          DecodedTxData.type.toLowerCase().includes(item.type.split('_')[0])
         })
         ?.attributes?.map((item) =>
           item.value ? new TextDecoder().decode(fromBase64(item.value)) : ''
         )
 
-      adjustedData.amount = getLokiFromString(
+      DecodedTxData.amount = getLokiFromString(
         amount?.find((item: string) => item?.includes('loki'))
       )
     }
 
-    if (adjustedData.type === 'Vote') {
+    if (DecodedTxData.type === 'Vote') {
       if ('voter' in message) {
-        adjustedData.sender = message?.voter
+        DecodedTxData.sender = message?.voter
       }
     }
-    if (adjustedData.type === 'Delegate') {
+    if (DecodedTxData.type === 'Delegate') {
       if ('delegatorAddress' in message) {
-        adjustedData.sender = message?.delegatorAddress
+        DecodedTxData.sender = message?.delegatorAddress
       }
       if ('validatorAddress' in message) {
-        adjustedData.receiver = message?.validatorAddress
+        DecodedTxData.receiver = message?.validatorAddress
       }
     }
-    if (adjustedData.type === 'Undelegate') {
+    if (DecodedTxData.type === 'Undelegate') {
       if ('delegatorAddress' in message) {
-        adjustedData.sender = message?.delegatorAddress
+        DecodedTxData.sender = message?.delegatorAddress
       }
       if ('validatorAddress' in message) {
-        adjustedData.receiver = ''
+        DecodedTxData.receiver = ''
       }
     }
-    if (adjustedData.type === 'Send') {
+    if (DecodedTxData.type === 'Send') {
       if ('fromAddress' in message) {
-        adjustedData.sender = message?.fromAddress
+        DecodedTxData.sender = message?.fromAddress
       }
       if ('toAddress' in message) {
-        adjustedData.receiver = message?.toAddress
+        DecodedTxData.receiver = message?.toAddress
       }
     }
-    if (adjustedData.type === 'Withdraw') {
+    if (DecodedTxData.type === 'Withdraw') {
       if ('sender' in message) {
-        adjustedData.sender = message?.sender
+        DecodedTxData.sender = message?.sender
       }
       if ('receiver' in message) {
-        adjustedData.receiver = message?.receiver
+        DecodedTxData.receiver = message?.receiver
       }
     }
-    if (adjustedData.type === 'Withdraw delegator reward') {
+    if (DecodedTxData.type === 'Withdraw delegator reward') {
       if ('delegatorAddress' in message) {
-        adjustedData.sender = message?.delegatorAddress
+        DecodedTxData.sender = message?.delegatorAddress
       }
       if ('validatorAddress' in message) {
-        adjustedData.receiver = message?.validatorAddress
+        DecodedTxData.receiver = message?.validatorAddress
       }
     }
-    if (adjustedData.type === 'Withdraw validator commission') {
+    if (DecodedTxData.type === 'Withdraw validator commission') {
       if ('delegatorAddress' in message) {
-        adjustedData.sender = message?.delegatorAddress
+        DecodedTxData.sender = message?.delegatorAddress
       }
       if ('validatorAddress' in message) {
-        adjustedData.receiver = message?.validatorAddress
+        DecodedTxData.receiver = message?.validatorAddress
       }
     }
-    if (adjustedData.type === 'Edit OracleScript') {
+    if (DecodedTxData.type === 'Edit OracleScript') {
       if ('sender' in message) {
-        adjustedData.sender = message.sender
+        DecodedTxData.sender = message.sender
       }
     }
-    if (adjustedData.type === 'Edit Data Source') {
+    if (DecodedTxData.type === 'Edit Data Source') {
       if ('sender' in message) {
-        adjustedData.sender = message.sender
+        DecodedTxData.sender = message.sender
       }
     }
-    if (adjustedData.type === 'Edit Validator') {
+    if (DecodedTxData.type === 'Edit Validator') {
       if ('delegatorAddress' in message) {
-        adjustedData.sender = message.delegatorAddress
+        DecodedTxData.sender = message.delegatorAddress
       }
       if ('validatorAddress' in message) {
-        adjustedData.receiver = message.validatorAddress
+        DecodedTxData.receiver = message.validatorAddress
       }
     }
-    if (adjustedData.type === 'Begin Redelegate') {
+    if (DecodedTxData.type === 'Begin Redelegate') {
       if ('delegatorAddress' in message) {
-        adjustedData.sender = message.delegatorAddress
+        DecodedTxData.sender = message.delegatorAddress
       }
       if ('validatorDstAddress' in message) {
-        adjustedData.receiver = message.validatorDstAddress
+        DecodedTxData.receiver = message.validatorDstAddress
       }
     }
-    if (adjustedData.type === 'IBC Transfer') {
+    if (DecodedTxData.type === 'IBC Transfer') {
       if ('sender' in message) {
-        adjustedData.sender = message.sender
+        DecodedTxData.sender = message.sender
       }
       if ('receiver' in message) {
-        adjustedData.receiver = message.receiver
+        DecodedTxData.receiver = message.receiver
       }
     }
-    if (adjustedData.type === 'Create Validator') {
+    if (DecodedTxData.type === 'Create Validator') {
       if ('delegatorAddress' in message) {
-        adjustedData.sender = message.delegatorAddress
+        DecodedTxData.sender = message.delegatorAddress
       }
       if ('validatorAddress' in message) {
-        adjustedData.receiver = message.validatorAddress
+        DecodedTxData.receiver = message.validatorAddress
       }
     }
-    if (adjustedData.type === 'Submit Proposal') {
+    if (DecodedTxData.type === 'Submit Proposal') {
       if ('proposer' in message) {
-        adjustedData.sender = message.proposer
+        DecodedTxData.sender = message.proposer
       }
       if ('initialDeposit' in message) {
-        adjustedData.amount = message.initialDeposit[0]?.amount
+        DecodedTxData.amount = message.initialDeposit[0]?.amount
       }
     }
-    if (adjustedData.type === 'Report Data') {
+    if (DecodedTxData.type === 'Report Data') {
       if ('reporter' in message) {
-        adjustedData.sender = message.reporter
+        DecodedTxData.sender = message.reporter
       }
       if ('validator' in message) {
-        adjustedData.receiver = message.validator
+        DecodedTxData.receiver = message.validator
       }
     }
-    if (adjustedData.type === 'Request Data') {
+    if (DecodedTxData.type === 'Request Data') {
       if ('sender' in message) {
-        adjustedData.sender = message.sender
+        DecodedTxData.sender = message.sender
       }
       if ('validator' in message) {
-        adjustedData.receiver = message.validator
+        DecodedTxData.receiver = message.validator
       }
     }
-    if (adjustedData.type === 'Update IBC Client') {
+    if (DecodedTxData.type === 'Update IBC Client') {
       if ('signer' in message) {
-        adjustedData.sender = message.signer
+        DecodedTxData.sender = message.signer
       }
       if ('validatorAddress' in message) {
-        adjustedData.receiver = message.validatorAddress
+        DecodedTxData.receiver = message.validatorAddress
       }
     }
-    if (adjustedData.type === 'Create Oracle Script') {
+    if (DecodedTxData.type === 'Create Oracle Script') {
       if ('sender' in message) {
-        adjustedData.sender = message.sender
+        DecodedTxData.sender = message.sender
       }
     }
-    if (adjustedData.type === 'Create Data Source') {
+    if (DecodedTxData.type === 'Create Data Source') {
       if ('sender' in message) {
-        adjustedData.sender = message.sender
+        DecodedTxData.sender = message.sender
       }
     }
-    if (adjustedData.type === 'Create IBC Client') {
+    if (DecodedTxData.type === 'Create IBC Client') {
       if ('signer' in message) {
-        adjustedData.sender = message.signer
+        DecodedTxData.sender = message.signer
       }
     }
-    if (adjustedData.type === 'Connection Open Init') {
+    if (DecodedTxData.type === 'Connection Open Init') {
       if ('signer' in message) {
-        adjustedData.sender = message.signer
+        DecodedTxData.sender = message.signer
       }
     }
-    if (adjustedData.type === 'Create Vesting Account') {
+    if (DecodedTxData.type === 'Create Vesting Account') {
       if ('fromAddress' in message) {
-        adjustedData.sender = message.fromAddress
+        DecodedTxData.sender = message.fromAddress
       }
       if ('toAddress' in message) {
-        adjustedData.receiver = message.toAddress
+        DecodedTxData.receiver = message.toAddress
       }
     }
-    if (adjustedData.type === 'Unjail') {
+    if (DecodedTxData.type === 'Unjail') {
       if ('validatorAddr' in message) {
-        adjustedData.receiver = message.validatorAddr
+        DecodedTxData.receiver = message.validatorAddr
       }
     }
-    if (adjustedData.type === 'Chanel Open Init') {
+    if (DecodedTxData.type === 'Chanel Open Init') {
       if ('signer' in message) {
-        adjustedData.sender = message.signer
+        DecodedTxData.sender = message.signer
       }
     }
-    if (adjustedData.type === 'Activate') {
+    if (DecodedTxData.type === 'Activate') {
       if ('validator' in message) {
-        adjustedData.receiver = message.validator
+        DecodedTxData.receiver = message.validator
       }
     }
-    if (adjustedData.type === 'Deposit') {
+    if (DecodedTxData.type === 'Deposit') {
       if ('depositor' in message) {
-        adjustedData.receiver = message.depositor
+        DecodedTxData.receiver = message.depositor
       }
     }
-    if (adjustedData.type === 'Mint Coins') {
+    if (DecodedTxData.type === 'Mint Coins') {
       if ('sender' in message) {
-        adjustedData.sender = message?.sender
+        DecodedTxData.sender = message?.sender
       }
       if ('receiver' in message) {
-        adjustedData.receiver = message?.receiver
+        DecodedTxData.receiver = message?.receiver
       }
     }
 
-    if (adjustedData.type === 'Fund Community Pool') {
+    if (DecodedTxData.type === 'Fund Community Pool') {
       if ('depositor' in message) {
-        adjustedData.sender = message?.depositor
+        DecodedTxData.sender = message?.depositor
       }
     }
 
-    if (adjustedData.type === 'Remove Reporter') {
+    if (DecodedTxData.type === 'Remove Reporter') {
       if ('validator' in message) {
-        adjustedData.receiver = message.validator
+        DecodedTxData.receiver = message.validator
       }
       if ('reporter' in message) {
-        adjustedData.sender = message.reporter
+        DecodedTxData.sender = message.reporter
       }
     }
 
-    console.debug(adjustedData.type)
+    console.debug(DecodedTxData.type)
   }
-  return adjustedData
+  return DecodedTxData
 }

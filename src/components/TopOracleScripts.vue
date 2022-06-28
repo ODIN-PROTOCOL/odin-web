@@ -1,43 +1,53 @@
 <template>
   <div class="top-oracle-scripts">
-    <div
-      v-for="script in topOracleScripts"
-      :key="script.attributes.id"
-      class="top-oracle-scripts__item card-frame"
-    >
-      <div class="top-oracle-scripts__item-description">
-        <div class="top-oracle-scripts__item-title">
-          {{ script.attributes.name }}
+    <TopOracleScriptsSkeleton v-if="isLoading" />
+    <template v-else>
+      <div
+        v-for="script in topOracleScripts"
+        :key="script.attributes.id"
+        class="top-oracle-scripts__item card-frame"
+      >
+        <div class="top-oracle-scripts__item-description">
+          <div class="top-oracle-scripts__item-title">
+            {{ script.attributes.name }}
+          </div>
+          <span class="top-oracle-scripts__item-text">
+            {{ script.attributes.description || 'No description' }}
+          </span>
         </div>
-        <span class="top-oracle-scripts__item-text">
-          {{ script.attributes.description || 'No description' }}
-        </span>
-      </div>
-      <div class="top-oracle-scripts__item-info">
-        <div class="top-oracle-scripts__item-info-value">
-          <div class="top-oracle-scripts__item-info-title">Requests number</div>
-          <div class="top-oracle-scripts__item-info-text">
-            {{ script.attributes.requests_number }}
+        <div class="top-oracle-scripts__item-info">
+          <div class="top-oracle-scripts__item-info-value">
+            <div class="top-oracle-scripts__item-info-title">
+              Requests number
+            </div>
+            <div class="top-oracle-scripts__item-info-text">
+              {{ script.attributes.requests_number }}
+            </div>
+          </div>
+          <div class="top-oracle-scripts__item-info-value">
+            <div class="top-oracle-scripts__item-info-title">Response time</div>
+            <div class="top-oracle-scripts__item-info-text">
+              {{ script.attributes.response_time }} s
+            </div>
           </div>
         </div>
-        <div class="top-oracle-scripts__item-info-value">
-          <div class="top-oracle-scripts__item-info-title">Response time</div>
-          <div class="top-oracle-scripts__item-info-text">
-            {{ script.attributes.response_time }} s
-          </div>
-        </div>
       </div>
-    </div>
+    </template>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import TopOracleScriptsSkeleton from '@/components/TopOracleScriptsSkeleton.vue'
 
 export default defineComponent({
-  components: {},
+  components: { TopOracleScriptsSkeleton },
   props: {
     topOracleScripts: {
+      required: true,
+    },
+    isLoading: {
+      type: Boolean,
       required: true,
     },
   },
@@ -55,7 +65,7 @@ export default defineComponent({
   margin-bottom: 4rem;
   font-weight: 400;
   font-size: 1.6rem;
-  line-height: 24px;
+  line-height: 2.4rem;
 }
 .top-oracle-scripts__item {
   display: flex;
@@ -87,7 +97,9 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
 }
-
+.top-oracle-scripts__item-info-text {
+  max-width: 15rem;
+}
 @include respond-to(medium) {
   .top-oracle-scripts {
     grid: auto/repeat(2, 1fr);

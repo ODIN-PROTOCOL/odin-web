@@ -14,7 +14,7 @@ import { api } from './api'
 import { wallet } from './wallet'
 import { mapResponse, sendPost, sendGet } from './callersHelpers'
 import { cacheAnswers } from '@/helpers/requests'
-import { decodeProposal, decodeProposals } from '@/helpers/proposalDecoders'
+import { decodeProposal } from '@/helpers/proposalDecoders'
 import { decodeValidators } from '@/helpers/validatorDecoders'
 import { NumLike } from '@/helpers/casts'
 import { API_CONFIG } from './api-config'
@@ -105,14 +105,15 @@ const makeCallers = () => {
       return axiosWrapper.get(`${API_CONFIG.rpc}api/oracle/requests/${id}`)
     },
     getOracleParams: querier((qc) => qc.oracle.unverified.params),
-    getProposals: querier((qc) =>
-      mapResponse(qc.gov.unverified.proposals, (response) => {
-        return {
-          ...response,
-          proposals: decodeProposals(response.proposals),
-        }
-      })
-    ),
+    getProposals: (
+      page_number: number,
+      page_limit: number,
+      page_reverse: boolean
+    ) => {
+      return axiosWrapper.get(
+        `${API_CONFIG.api}cosmos/gov/v1beta1/proposals?pagination.offset=${page_number}&pagination.limit=${page_limit}&pagination.reverse=${page_reverse}`
+      )
+    },
     createProposal: broadcaster<MsgSubmitProposal>(
       '/cosmos.gov.v1beta1.MsgSubmitProposal',
       MsgSubmitProposal
