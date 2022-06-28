@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="view-main data-sources load-fog"
-    :class="{
-      'load-fog_show': isLoading,
-    }"
-  >
+  <div class="view-main data-sources">
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Data Sources</h2>
       <button
@@ -16,14 +11,19 @@
       </button>
     </div>
 
-    <template v-if="dataSourcesCount">
-      <div class="data-sources__count-info">
-        <p>{{ dataSourcesCount }} Data Sources found</p>
-      </div>
-    </template>
+    <div class="data-sources__count-info">
+      <skeleton-loader
+        v-if="isLoading"
+        :height="24"
+        rounded
+        animation="wave"
+        color="rgb(225, 229, 233)"
+      />
+      <p v-else>{{ dataSourcesCount }} Data Sources found</p>
+    </div>
 
     <SortLine
-      :isLoading="isLoading"
+      :is-loading="isLoading"
       :title="'Data Source'"
       v-model:oracleScriptsName="dataSourceName"
       v-model:sortingOwnersValue="sortingOwnersValue"
@@ -94,9 +94,13 @@
           </div>
         </template>
         <template v-else>
-          <div class="app-table__empty-stub">
-            <p v-if="isLoading" class="empty mg-t32">Loading…</p>
-            <p v-else class="empty mg-t32">No items yet</p>
+          <SkeletonTable
+            v-if="isLoading"
+            :header-titles="headerTitles"
+            class-string="data-sources__table-row"
+          />
+          <div v-else class="app-table__empty-stub">
+            <p class="empty mg-t32">No items yet</p>
           </div>
         </template>
       </div>
@@ -136,12 +140,14 @@ import { wallet } from '@/api/wallet'
 import SortLine from '@/components/SortLine.vue'
 import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
 import { convertLokiToOdin } from '@/helpers/converters'
+import SkeletonTable from '@/components/SkeletonTable.vue'
 
 export default defineComponent({
   components: {
     TitledLink,
     AppPagination,
     SortLine,
+    SkeletonTable,
   },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
@@ -154,9 +160,17 @@ export default defineComponent({
     const sortingActivitiesValue = ref(ACTIVITIES_SORT.latest)
     const sortingOwnersValue = ref(OWNERS_SORT.all)
     const dataSourceName = ref('')
+    const headerTitles = [
+      { title: 'ID' },
+      { title: 'Data Source' },
+      { title: 'Description' },
+      { title: 'Price' },
+      { title: 'Timestamp' },
+    ]
     const loadDataSources = async () => {
       lockLoading()
       try {
+        dataSources.value = []
         const { data, total_count } = await callers
           .getSortedDataSources(
             currentPage.value - 1,
@@ -220,13 +234,13 @@ export default defineComponent({
       sortingActivitiesValue,
       sortingOwnersValue,
       accountAddress,
-
       dataSourcesCount,
       dataSources,
       createDataSource,
       editDataSource,
       dataSourceName,
       convertLokiToOdin,
+      headerTitles,
     }
   },
 })
@@ -235,17 +249,6 @@ export default defineComponent({
 <style scoped lang="scss">
 .data-sources__count-info {
   margin-bottom: 3.2rem;
-}
-.data-sources__table-head,
-.data-sources__table-row {
-  grid:
-    auto /
-    minmax(2rem, 0.5fr)
-    minmax(4rem, 2fr)
-    minmax(4rem, 2fr)
-    minmax(4rem, 2fr)
-    minmax(8rem, 2fr)
-    minmax(8rem, 2fr);
 }
 .data-sources__table-row {
   align-items: center;
@@ -283,9 +286,6 @@ export default defineComponent({
   }
   .data-sources__count-info {
     margin-bottom: 2.4rem;
-  }
-  .data-sources__table-row {
-    grid: none;
   }
 }
 </style>

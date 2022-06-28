@@ -31,7 +31,7 @@ import hljs from 'highlight.js/lib/core'
 import python from 'highlight.js/lib/languages/python'
 import rust from 'highlight.js/lib/languages/rust'
 import hljsVuePlugin from '@highlightjs/vue-plugin'
-
+import SkeletonLoaderVueSample from 'skeleton-loader-vue/src/components/Loader.vue'
 hljs.registerLanguage('python', python)
 hljs.registerLanguage('rust', rust)
 
@@ -83,6 +83,7 @@ async function _main() {
   app.use(hljsVuePlugin)
   app.component('VuePicker', VuePicker)
   app.component('VuePickerOption', VuePickerOption)
+  app.component('skeleton-loader', SkeletonLoaderVueSample)
   app.mount('#app')
   return app
 }

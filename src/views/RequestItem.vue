@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="view-main request-item load-fog"
-    :class="{
-      'load-fog_show': isLoading,
-    }"
-  >
+  <div class="view-main request-item">
     <div class="view-main__title-wrapper request-item__title-wrapper">
       <BackButton :text="'Requests'" />
       <h2 class="view-main__title request-item__title">Request</h2>

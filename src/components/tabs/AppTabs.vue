@@ -61,12 +61,12 @@ export default defineComponent({
   padding: 1.2rem;
   font-size: 2rem;
   white-space: nowrap;
-  box-shadow: inset 0 -0.2rem 0 var(--clr__table-head);
+  border-bottom: 0.2rem solid var(--clr__table-head);
   cursor: pointer;
 
   &.selected {
     font-weight: 600;
-    box-shadow: inset 0px -2px 0px var(--clr__action);
+    border-bottom: 0.2rem solid var(--clr__action);
   }
 }
 </style>
