@@ -157,13 +157,6 @@
 
     <div class="view-main__mobile-activities validators__mobile-activities">
       <button
-        class="app-btn w-full app-btn--medium"
-        type="button"
-        @click="becomeValidator()"
-      >
-        Become a validator
-      </button>
-      <button
         v-if="isDelegator && delegations && validators"
         class="app-btn w-full app-btn--medium"
         type="button"
@@ -199,7 +192,6 @@ import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import WithdrawRewardsFormModal from '@/components/modals/WithdrawRewardsFormModal.vue'
 import DelegateFormModal from '@/components/modals/DelegateFormModal.vue'
 import UndelegateFormModal from '@/components/modals/UndelegateFormModal.vue'
-import BecomeValidatorFormModal from '@/components/modals/BecomeValidatorFormModal.vue'
 import StakeTransferFormModal from '@/components/modals/StakeTransferFormModal.vue'
 import ClaimAllRewardsFormModal from '@/components/modals/ClaimAllRewardsFormModal.vue'
 import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
@@ -421,15 +413,6 @@ export default defineComponent({
       await getValidators()
     }
 
-    const becomeValidator = async () => {
-      await showDialogHandler(BecomeValidatorFormModal, {
-        onSubmit: async (d) => {
-          d.kill()
-          await loadData()
-        },
-      })
-    }
-
     const claimAllRewards = async () => {
       await showDialogHandler(ClaimAllRewardsFormModal, {
         onSubmit: async (d) => {
@@ -545,7 +528,6 @@ export default defineComponent({
       getDelegations,
       paginationHandler,
       selectTab,
-      becomeValidator,
       withdrawRewards,
       claimAllRewards,
       delegate,
