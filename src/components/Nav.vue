@@ -27,8 +27,6 @@
       </router-link>
       <router-link
         @click="closeBurger"
-        :to="{ name: 'Governance' }"
-        data-text="Governance"
         class="nav__link"
         data-text="Validators"
         :to="{ name: 'Validators' }"
@@ -36,9 +34,10 @@
         <span>Validators</span>
       </router-link>
       <router-link
-        class="nav__link"
-        data-text="Governance"
+        @click="closeBurger"
         :to="{ name: 'Governance' }"
+        data-text="Governance"
+        class="nav__link"
       >
         <span>Governance</span>
       </router-link>
@@ -71,11 +70,10 @@ import { useAuthorization } from '@/composables/useAuthorization'
 import router from '@/router'
 import ExitIcon from '@/components/icons/ExitIcon.vue'
 import { WalletTypes, wallet } from '@/api/wallet'
-import { isMobile } from '@/helpers/helpers'
 
 export default defineComponent({
   components: { ExitIcon },
-  emits: ['changeRoute'],
+  emits: ['closeBurger'],
   props: {
     isOpen: { type: Boolean, default: false },
   },
@@ -101,12 +99,6 @@ export default defineComponent({
       isDropdownActive.value = urls.indexOf(route.path) > -1
     }
 
-    const isValidatorsDropdownOpen = ref(false)
-    const openDropdownValidators = () => {
-      if (isMobile()) {
-        isValidatorsDropdownOpen.value = !isValidatorsDropdownOpen.value
-      }
-    }
     onMounted(() => {
       if (wallet.type === WalletTypes.KEPLR_WALLET) {
         window.addEventListener('keplr_keystorechange', logOutAndLeave)
@@ -119,7 +111,7 @@ export default defineComponent({
 
     return {
       logOutAndLeave,
-      handleDropdownActive,
+      closeBurger,
     }
   },
 })
