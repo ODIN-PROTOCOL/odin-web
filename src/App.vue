@@ -11,12 +11,12 @@
             src="~@/assets/brand/odin-logo-black.png"
             alt="Logo"
           />
-          <Nav :isOpen="isOpen" @changeRoute="changeRoute($event)" />
-          <UserWidget class="fx-sae" />
+          <Nav :isOpen="isOpen" @closeBurger="closeBurger" />
+          <UserWidget @closeBurger="closeBurger" class="fx-sae" />
           <BurgerMenu
-            class="burger-menu"
-            :isOpen="isOpen"
             @click="burgerMenuHandler($event)"
+            :isOpen="isOpen"
+            class="burger-menu"
           />
         </div>
       </header>
@@ -110,7 +110,7 @@ export default defineComponent({
       isOpen.value = isOpen.value !== true
     }
 
-    const changeRoute = () => {
+    const closeBurger = () => {
       if (isOpen.value === true) isOpen.value = false
     }
 
@@ -130,7 +130,7 @@ export default defineComponent({
       isLoggedIn: useAuthorization().isLoggedIn,
       isOpen,
       burgerMenuHandler,
-      changeRoute,
+      closeBurger,
       notification,
     }
   },
@@ -146,7 +146,6 @@ export default defineComponent({
 @import '~@/styles/cards.scss';
 @import '~@/styles/tables.scss';
 @import '~@/styles/views.scss';
-@import '~@/styles/load-fog.scss';
 @import '~@/styles/forms.scss';
 @import '~@/styles/vue-notification.scss';
 @import '~@/styles/shortcuts.scss';
@@ -155,7 +154,9 @@ export default defineComponent({
   width: 100%;
   @include flex-container;
 }
-
+.animation--wave::before {
+  animation: wave 0.5s linear 0.5s infinite;
+}
 .burger-menu {
   display: none;
 }

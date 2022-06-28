@@ -134,7 +134,7 @@ const UndelegateFormDialog = defineComponent({
   components: { ModalBase, CopyText, InfoIcon },
   setup(props) {
     const delegated = Number(
-      convertLokiToOdin(props.delegation.balance?.amount)
+      convertLokiToOdin(props.delegation.balance?.amount, { onlyNumber: true })
     )
 
     const form = useForm({

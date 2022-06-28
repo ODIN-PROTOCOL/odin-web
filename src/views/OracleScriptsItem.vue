@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="oracle-scripts-item view-main load-fog"
-    :class="{
-      'load-fog_show': isLoading,
-    }"
-  >
+  <div class="oracle-scripts-item view-main">
     <div class="view-main__title-wrapper">
       <div class="oracle-scripts-item__title-wrapper">
         <BackButton text="Oracle Scripts" />
