@@ -201,6 +201,7 @@ import SearchIcon from '@/components/icons/SearchIcon.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 import ValidatorsTableRowMobile from '@/components/ValidatorsTableRowMobile.vue'
 import ValidatorsTableRow from '@/components/ValidatorsTableRow.vue'
+import { Router, useRouter } from 'vue-router'
 
 export default defineComponent({
   components: {
@@ -212,8 +213,9 @@ export default defineComponent({
     ValidatorsTableRow,
   },
   setup() {
+    const router: Router = useRouter()
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 50
+    const ITEMS_PER_PAGE = 1
     const currentPage = ref(1)
     const totalPages = ref()
     const filteredValidatorsCount = ref(0)
@@ -383,6 +385,9 @@ export default defineComponent({
     }
 
     const paginationHandler = (num: number) => {
+      router.push({
+        query: { page: num, tab: tabStatus.value },
+      })
       filterValidators(num)
     }
     const selectTab = async (title: string) => {
@@ -507,6 +512,13 @@ export default defineComponent({
       }
     }
     onMounted(async () => {
+      if (router.currentRoute.value.query.page) {
+        currentPage.value = Number(router.currentRoute.value.query.page)
+      } else {
+        router.push({
+          query: { page: currentPage.value, tab: tabStatus.value },
+        })
+      }
       window.addEventListener('resize', updateWidth)
       await loadData()
     })

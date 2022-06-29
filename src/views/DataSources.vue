@@ -141,6 +141,7 @@ import SortLine from '@/components/SortLine.vue'
 import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
 import { convertLokiToOdin } from '@/helpers/converters'
 import SkeletonTable from '@/components/SkeletonTable.vue'
+import { Router, useRouter } from 'vue-router'
 
 export default defineComponent({
   components: {
@@ -149,7 +150,8 @@ export default defineComponent({
     SortLine,
     SkeletonTable,
   },
-  setup: function () {
+  setup() {
+    const router: Router = useRouter()
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 50
     const currentPage = ref(1)
@@ -183,6 +185,11 @@ export default defineComponent({
         dataSources.value = data
         dataSourcesCount.value = total_count
         totalPages.value = Math.ceil(dataSourcesCount.value / ITEMS_PER_PAGE)
+        if (totalPages.value < currentPage.value || !total_count) {
+          currentPage.value = 1
+          setPage()
+          loadDataSources()
+        }
       } catch (error) {
         handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
@@ -210,6 +217,7 @@ export default defineComponent({
     }
     const paginationHandler = (num: number) => {
       currentPage.value = num
+      setPage()
       loadDataSources()
     }
 
@@ -220,8 +228,17 @@ export default defineComponent({
         await loadDataSources()
       }
     )
-
+    const setPage = () => {
+      router.push({
+        query: { page: currentPage.value },
+      })
+    }
     onMounted(async () => {
+      if (router.currentRoute.value.query.page) {
+        currentPage.value = Number(router.currentRoute.value.query.page)
+      } else {
+        setPage()
+      }
       await loadDataSources()
     })
 

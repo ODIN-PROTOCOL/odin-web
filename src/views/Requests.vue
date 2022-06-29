@@ -125,10 +125,12 @@ import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import RequestFormModal from '@/components/modals/RequestFormModal.vue'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import SkeletonTable from '@/components/SkeletonTable.vue'
+import { Router, useRouter } from 'vue-router'
 
 export default defineComponent({
   components: { TitledLink, Progressbar, AppPagination, SkeletonTable },
   setup() {
+    const router: Router = useRouter()
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 25
     const currentPage = ref(1)
@@ -148,16 +150,24 @@ export default defineComponent({
       { title: 'Report Status' },
       { title: 'Timestamp' },
     ]
+    const setPage = () => {
+      router.push({
+        query: { page: currentPage.value },
+      })
+    }
     const getRequests = async () => {
       lockLoading()
       try {
         requests.value = []
+        if (totalPages.value < currentPage.value) {
+          currentPage.value = 1
+          setPage()
+        }
         const req = await callers.getRequests(
           ITEMS_PER_PAGE,
           (currentPage.value - 1) * ITEMS_PER_PAGE
         )
         requests.value = req.data.result.result.requests
-        await getRequestsCount()
       } catch (error) {
         handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
@@ -170,6 +180,7 @@ export default defineComponent({
         const res = await callers.getCounts()
         requestsCount.value = Number(res.requestCount)
         totalPages.value = Math.ceil(requestsCount.value / ITEMS_PER_PAGE)
+        await getRequests()
       } catch (error) {
         handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
@@ -202,12 +213,18 @@ export default defineComponent({
 
     const paginationHandler = (num: number) => {
       currentPage.value = num
+      setPage()
       getRequests()
     }
 
     onMounted(async () => {
+      if (router.currentRoute.value.query.page) {
+        currentPage.value = Number(router.currentRoute.value.query.page)
+      } else {
+        setPage()
+      }
       await getParams()
-      await getRequests()
+      await getRequestsCount()
     })
 
     return {

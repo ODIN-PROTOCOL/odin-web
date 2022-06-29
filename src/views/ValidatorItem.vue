@@ -45,7 +45,7 @@
 
     <template v-if="validator">
       <ValidatorInfo :validator="validator" />
-      <AppTabs>
+      <AppTabs @changeTab="selectTab">
         <AppTab title="Oracle Reports">
           <OracleReportsTable :proposerAddress="validator.operatorAddress" />
         </AppTab>
@@ -106,6 +106,7 @@ import UndelegateFormModal from '@/components/modals/UndelegateFormModal.vue'
 import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
+import { Router, useRouter } from 'vue-router'
 
 export default defineComponent({
   components: {
@@ -120,17 +121,28 @@ export default defineComponent({
     ValidatorStatus,
   },
   setup: function () {
+    const router: Router = useRouter()
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const route: RouteLocationNormalizedLoaded = useRoute()
     const validator = ref()
     const delegators = ref<DelegationResponse[]>([])
-
+    const tabStatus = ref('')
+    const oracleReportsTableTitle = 'Oracle Reports'
+    const proposedBlocksTitle = 'Proposed Blocks'
     const delegations = ref<{ [k: string]: DelegationResponse }>({})
     const delegatorsTitle = computed(() =>
       delegators.value?.length
         ? `Delegators (${delegators.value?.length})`
         : 'Delegators'
     )
+    const selectTab = async (title: string) => {
+      if (title !== tabStatus.value) {
+        tabStatus.value = title
+        router.push({
+          query: { tab: title },
+        })
+      }
+    }
     const getValidator = async () => {
       lockLoading()
       try {
@@ -249,6 +261,13 @@ export default defineComponent({
     }
 
     onMounted(async () => {
+      if (router.currentRoute.value.query.tab) {
+        tabStatus.value = String(router.currentRoute.value.query.tab)
+      } else {
+        router.push({
+          query: { tab: tabStatus.value },
+        })
+      }
       await loadData()
     })
 
@@ -263,6 +282,9 @@ export default defineComponent({
       delegatorsTitle,
       validatorStatus,
       isLoading,
+      selectTab,
+      oracleReportsTableTitle,
+      proposedBlocksTitle,
     }
   },
 })
