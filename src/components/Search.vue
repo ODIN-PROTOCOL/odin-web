@@ -2,12 +2,13 @@
   <div class="search">
     <transition name="slide-fade">
       <div class="search__input" v-if="data.isOpen">
-        <InputField v-model="data.searchValue" placeholder="Search" />
+        <InputField v-model="data.searchValue" placeholder="Search" >
         <template v-if="data.searchValue">
             <button @click="clearText()" class="search__clear">
               <CancelIcon />
             </button>
           </template>
+        </InputField>
       </div>
     </transition>
     <button
