@@ -29,21 +29,24 @@ type sortingOptions = {
   value: string
 }[]
 
-export const getSortingOwners = (walletAddress: string): sortingOptions => {
+export const getSortingOwners = (
+  isWalletActive: boolean,
+  walletAddress: string
+): sortingOptions => {
   const allOwners = {
     text: 'All',
     value: OWNERS_SORT.all,
   }
 
-  return !walletAddress
+  return isWalletActive
     ? [allOwners]
     : [
-        allOwners,
-        {
-          text: 'My',
-          value: walletAddress,
-        },
-      ]
+      allOwners,
+      {
+        text: 'My',
+        value: walletAddress,
+      },
+    ]
 }
 
 export const sortingTypeTx = [
