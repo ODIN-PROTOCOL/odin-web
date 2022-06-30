@@ -37,7 +37,7 @@
           </template>
         </VuePicker>
       </div>
-      <div class="sort-line__selection-item">
+      <div class="sort-line__selection-item" v-if="walletAddress">
         <span class="sort-line__selection-item-title">{{ title }}</span>
         <VuePicker
           class="sort-line__vue-picker _vue-picker"
@@ -69,10 +69,11 @@ import InputField from '@/components/fields/InputField.vue'
 import SearchIcon from '@/components/icons/SearchIcon.vue'
 import {
   sortingActivities,
-  sortingOwners,
+  getSortingOwners,
   ACTIVITIES_SORT,
   OWNERS_SORT,
 } from '@/helpers/sortingHelpers'
+import { useAuthorization } from '@/composables/useAuthorization'
 
 export default defineComponent({
   components: { InputField, SearchIcon },
@@ -88,6 +89,10 @@ export default defineComponent({
     const sortByOwners = ref(OWNERS_SORT.all)
     const searchValue = ref('')
 
+    const { walletAddress } = useAuthorization()
+
+    const sortingOwners = ref(getSortingOwners(walletAddress.value))
+
     const inputChange = () => {
       emit('update:oracleScriptsName', searchValue.value)
     }
@@ -98,11 +103,19 @@ export default defineComponent({
       emit('update:sortingOwnersValue', sortByOwners.value)
     }
 
+    const updateSortingOwnerOptions = () => {
+      sortingOwners.value = getSortingOwners(walletAddress.value)
+    }
+
     watch([sortByActivites], () => {
       updateSortingActivitiesValue()
     })
     watch([sortByOwners], () => {
       updateSortingOwnersValue()
+    })
+
+    watch([walletAddress], () => {
+      updateSortingOwnerOptions()
     })
 
     return {
@@ -114,6 +127,7 @@ export default defineComponent({
       sortByActivites,
       sortByOwners,
       searchValue,
+      walletAddress,
     }
   },
 })

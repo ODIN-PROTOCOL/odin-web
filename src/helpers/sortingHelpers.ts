@@ -1,5 +1,3 @@
-import { wallet } from '@/api/wallet'
-
 export enum ACTIVITIES_SORT {
   latest = 'latest_updated',
   most = 'most_requested',
@@ -26,16 +24,28 @@ export const sortingActivities = [
   },
 ]
 
-export const sortingOwners = [
-  {
+type sortingOptions = {
+  text: string
+  value: string
+}[]
+
+export const getSortingOwners = (walletAddress: string): sortingOptions => {
+  const allOwners = {
     text: 'All',
     value: OWNERS_SORT.all,
-  },
-  {
-    text: 'My',
-    value: wallet.account.address,
-  },
-]
+  }
+
+  return !walletAddress
+    ? [allOwners]
+    : [
+        allOwners,
+        {
+          text: 'My',
+          value: walletAddress,
+        },
+      ]
+}
+
 export const sortingTypeTx = [
   {
     text: 'All',
