@@ -112,12 +112,12 @@
 .data-sources__table-row {
   grid:
     auto /
-    minmax(2rem, 0.5fr)
     minmax(4rem, 2fr)
     minmax(4rem, 2fr)
     minmax(4rem, 2fr)
-    minmax(8rem, 2fr)
-    minmax(8rem, 2fr);
+    minmax(4rem, 2fr)
+    minmax(8rem, 1fr)
+    minmax(8rem, 1fr);
 }
 .requests__table-head,
 .requests__table-row {

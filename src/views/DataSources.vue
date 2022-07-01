@@ -32,7 +32,6 @@
 
     <div class="app-table">
       <div class="app-table__head data-sources__table-head">
-        <span>ID</span>
         <span>Data Source</span>
         <span>Description</span>
         <span>Price</span>
@@ -46,14 +45,10 @@
             class="app-table__row data-sources__table-row"
           >
             <div class="app-table__cell">
-              <span class="app-table__title">ID</span>
-              <span>#{{ item.attributes.id }}</span>
-            </div>
-            <div class="app-table__cell">
               <span class="app-table__title">Data Source</span>
               <TitledLink
                 class="app-table__cell-txt app-table__link"
-                :text="item.attributes.name"
+                :text="`#` + item.attributes.id + ` ` + item.attributes.name"
                 :to="`/data-sources/${item.attributes.id.toString()}`"
               />
             </div>

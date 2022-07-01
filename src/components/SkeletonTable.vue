@@ -38,7 +38,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-
 export default defineComponent({
   props: {
     headerTitles: { type: Array, required: true },
