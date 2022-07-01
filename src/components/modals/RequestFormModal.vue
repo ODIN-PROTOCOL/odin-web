@@ -161,6 +161,7 @@ import TextareaField from '@/components/fields/TextareaField.vue'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
+import { convertOdinToLoki, getDenom } from '@/helpers/converters'
 
 export default defineComponent({
   props: {
@@ -181,7 +182,7 @@ export default defineComponent({
         ...validators.num(1, props.maxAskCount),
       ],
       calldata: [''],
-      assets: ['loki', validators.required],
+      assets: ['ODIN', validators.required],
       feeLimit: [
         '',
         validators.required,
@@ -231,7 +232,10 @@ export default defineComponent({
           askCount: Long.fromNumber(form.askCount.val()),
           minCount: Long.fromNumber(form.minCount.val()),
           calldata: _processCallData(),
-          feeLimit: coins(form.feeLimit.val(), form.assets.val()),
+          feeLimit: coins(
+            convertOdinToLoki(form.feeLimit.val()),
+            getDenom(form.assets.val())
+          ),
           prepareGas: Long.fromNumber(200000),
           executeGas: Long.fromNumber(200000),
           sender: wallet.account.address,

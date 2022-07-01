@@ -60,7 +60,7 @@
             <div class="app-table__cell">
               <span class="app-table__title">Description</span>
               <span>
-                {{ item.attributes.description || '-' }}
+                {{ item.attributes.description || 'No description' }}
               </span>
             </div>
             <div class="app-table__cell">
@@ -142,7 +142,7 @@ import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
 import { convertLokiToOdin } from '@/helpers/converters'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 import { Router, useRouter } from 'vue-router'
-
+import { setPage } from '@/router'
 export default defineComponent({
   components: {
     TitledLink,
@@ -187,7 +187,7 @@ export default defineComponent({
         totalPages.value = Math.ceil(dataSourcesCount.value / ITEMS_PER_PAGE)
         if (totalPages.value < currentPage.value || !total_count) {
           currentPage.value = 1
-          setPage()
+          setPage(currentPage.value)
           loadDataSources()
         }
       } catch (error) {
@@ -217,7 +217,7 @@ export default defineComponent({
     }
     const paginationHandler = (num: number) => {
       currentPage.value = num
-      setPage()
+      setPage(currentPage.value)
       loadDataSources()
     }
 
@@ -228,16 +228,15 @@ export default defineComponent({
         await loadDataSources()
       }
     )
-    const setPage = () => {
-      router.push({
-        query: { page: currentPage.value },
-      })
-    }
+
     onMounted(async () => {
-      if (router.currentRoute.value.query.page) {
+      if (
+        router.currentRoute.value.query.page &&
+        Number(router.currentRoute.value.query.page) > 1
+      ) {
         currentPage.value = Number(router.currentRoute.value.query.page)
       } else {
-        setPage()
+        setPage(currentPage.value)
       }
       await loadDataSources()
     })

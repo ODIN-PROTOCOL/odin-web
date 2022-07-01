@@ -37,6 +37,7 @@
       />
       <p v-else>{{ validatorsCount }} validators found</p>
     </div>
+
     <div class="validators__filter">
       <div class="validators__tabs">
         <button
@@ -44,7 +45,9 @@
           @click="selectTab(myValidatorsTitle)"
           class="validators__tab"
           :class="{
-            selected: myValidatorsTitle === tabStatus,
+            selected: myValidatorsTitle
+              .toLowerCase()
+              .includes(tabStatus.toLowerCase()),
           }"
         >
           {{ myValidatorsTitle }}
@@ -53,7 +56,9 @@
           @click="selectTab(activeValidatorsTitle)"
           class="validators__tab"
           :class="{
-            selected: activeValidatorsTitle === tabStatus,
+            selected: activeValidatorsTitle
+              .toLowerCase()
+              .includes(tabStatus.toLowerCase()),
           }"
         >
           {{ activeValidatorsTitle }}
@@ -62,7 +67,9 @@
           @click="selectTab(inactiveValidatorsTitle)"
           class="validators__tab"
           :class="{
-            selected: inactiveValidatorsTitle === tabStatus,
+            selected: inactiveValidatorsTitle
+              .toLowerCase()
+              .includes(tabStatus.toLowerCase()),
           }"
         >
           {{ inactiveValidatorsTitle }}
@@ -321,12 +328,19 @@ export default defineComponent({
           ...inactiveValidators.value,
           ...activeValidators.value,
         ]
-        validators.value = isDisabledDelegationsTab.value
-          ? [...myDelegationsValitors.value]
-          : [...activeValidators.value]
-        tabStatus.value = isDisabledDelegationsTab.value
-          ? myValidatorsTitle.value
-          : activeValidatorsTitle.value
+        if (tabStatus.value === inactiveValidatorsTitle.value) {
+          validators.value = [...inactiveValidators.value]
+        } else if (tabStatus.value === activeValidatorsTitle.value) {
+          validators.value = [...activeValidators.value]
+        } else {
+          validators.value = [...myDelegationsValitors.value]
+        }
+        // validators.value = isDisabledDelegationsTab.value
+        //   ? [...myDelegationsValitors.value]
+        //   : [...activeValidators.value]
+        // tabStatus.value = isDisabledDelegationsTab.value
+        //   ? myValidatorsTitle.value
+        //   : activeValidatorsTitle.value
         validatorsCount.value =
           activeValidators.value.length + inactiveValidators.value.length
         filterValidators(currentPage.value)
@@ -349,13 +363,13 @@ export default defineComponent({
         }
         delegations.value = _delegations
         delegatedAdress.value = Object.keys(delegations.value)
-        tabStatus.value = isDisabledDelegationsTab.value
-          ? myValidatorsTitle.value
-          : activeValidatorsTitle.value
+        // tabStatus.value = isDisabledDelegationsTab.value
+        //   ? myValidatorsTitle.value
+        //   : activeValidatorsTitle.value
       } catch (error) {
         // error is ignored, since no delegations also throws the error
         delegations.value = {}
-        tabStatus.value = activeValidatorsTitle.value
+        // tabStatus.value = activeValidatorsTitle.value
       }
       releaseLoading()
     }
@@ -386,13 +400,16 @@ export default defineComponent({
 
     const paginationHandler = (num: number) => {
       router.push({
-        query: { page: num, tab: tabStatus.value },
+        query: { page: num, tab: tabStatus.value.toLowerCase().split('(')[0] },
       })
       filterValidators(num)
     }
     const selectTab = async (title: string) => {
       if (title !== tabStatus.value) {
         tabStatus.value = title
+        router.push({
+          query: { page: 1, tab: tabStatus.value.toLowerCase().split('(')[0] },
+        })
         if (tabStatus.value === activeValidatorsTitle.value) {
           validators.value = [...activeValidators.value]
         } else if (tabStatus.value === inactiveValidatorsTitle.value) {
@@ -512,11 +529,20 @@ export default defineComponent({
       }
     }
     onMounted(async () => {
-      if (router.currentRoute.value.query.page) {
+      if (router.currentRoute.value.query.tab) {
+        tabStatus.value = String(router.currentRoute.value.query.tab)
+      }
+      if (
+        router.currentRoute.value.query.page &&
+        Number(router.currentRoute.value.query.page) > 1
+      ) {
         currentPage.value = Number(router.currentRoute.value.query.page)
       } else {
         router.push({
-          query: { page: currentPage.value, tab: tabStatus.value },
+          query: {
+            page: currentPage.value,
+            tab: tabStatus.value.toLowerCase().split('(')[0],
+          },
         })
       }
       window.addEventListener('resize', updateWidth)

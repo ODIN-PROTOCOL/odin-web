@@ -126,11 +126,14 @@ import RequestFormModal from '@/components/modals/RequestFormModal.vue'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 import { Router, useRouter } from 'vue-router'
+import { setPage } from '@/router'
 
 export default defineComponent({
   components: { TitledLink, Progressbar, AppPagination, SkeletonTable },
   setup() {
     const router: Router = useRouter()
+    const { page } = router.currentRoute.value.query
+
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 25
     const currentPage = ref(1)
@@ -150,18 +153,14 @@ export default defineComponent({
       { title: 'Report Status' },
       { title: 'Timestamp' },
     ]
-    const setPage = () => {
-      router.push({
-        query: { page: currentPage.value },
-      })
-    }
+
     const getRequests = async () => {
       lockLoading()
       try {
         requests.value = []
         if (totalPages.value < currentPage.value) {
           currentPage.value = 1
-          setPage()
+          setPage(currentPage.value)
         }
         const req = await callers.getRequests(
           ITEMS_PER_PAGE,
@@ -213,15 +212,16 @@ export default defineComponent({
 
     const paginationHandler = (num: number) => {
       currentPage.value = num
-      setPage()
+      setPage(currentPage.value)
       getRequests()
     }
 
     onMounted(async () => {
-      if (router.currentRoute.value.query.page) {
-        currentPage.value = Number(router.currentRoute.value.query.page)
+      if (page && Number(page) > 1) {
+        const { page } = router.currentRoute.value.query
+        currentPage.value = Number(page)
       } else {
-        setPage()
+        setPage(currentPage.value)
       }
       await getParams()
       await getRequestsCount()

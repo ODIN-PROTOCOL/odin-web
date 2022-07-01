@@ -152,6 +152,7 @@ import SortLine from '@/components/SortLine.vue'
 import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 import { Router, useRouter } from 'vue-router'
+import { setPage } from '@/router'
 
 export default defineComponent({
   components: {
@@ -180,11 +181,7 @@ export default defineComponent({
       { title: 'Description' },
       { title: 'Timestamp' },
     ]
-    const setPage = () => {
-      router.push({
-        query: { page: currentPage.value },
-      })
-    }
+
     const loadOracleScripts = async () => {
       lockLoading()
       try {
@@ -203,7 +200,7 @@ export default defineComponent({
         totalPages.value = Math.ceil(oracleScriptsCount.value / ITEMS_PER_PAGE)
         if (totalPages.value < currentPage.value || !total_count) {
           currentPage.value = 1
-          setPage()
+          setPage(currentPage.value)
           loadOracleScripts()
         }
       } catch (error) {
@@ -241,7 +238,7 @@ export default defineComponent({
     )
     const paginationHandler = (num: number) => {
       currentPage.value = num
-      setPage()
+      setPage(currentPage.value)
       loadOracleScripts()
     }
     const editOracleScript = async (oracleScript: OracleScript) => {
@@ -257,10 +254,13 @@ export default defineComponent({
       )
     }
     onMounted(async () => {
-      if (router.currentRoute.value.query.page) {
+      if (
+        router.currentRoute.value.query.page &&
+        Number(router.currentRoute.value.query.page) > 1
+      ) {
         currentPage.value = Number(router.currentRoute.value.query.page)
       } else {
-        setPage()
+        setPage(currentPage.value)
       }
       await loadOracleScripts()
       await getMostRequestedOracleScripts()
