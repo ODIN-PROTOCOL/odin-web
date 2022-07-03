@@ -77,7 +77,10 @@
             </div>
           </div>
 
-          <div class="validator-info__delegetion-balance-row">
+          <div
+            class="validator-info__delegetion-balance-row"
+            v-if="accountAddress"
+          >
             <span class="validator-info__delegetion-balance-row-title"
               >You delegated</span
             >
@@ -95,7 +98,10 @@
             </div>
           </div>
         </div>
-        <div class="validator-info__delegetion-btn-wrapper">
+        <div
+          class="validator-info__delegetion-btn-wrapper"
+          v-if="accountAddress"
+        >
           <button
             v-if="delegations?.balance"
             @click="undelegate"
@@ -195,9 +201,14 @@ export default defineComponent({
     const proposedBlocksCount = ref(0)
     const delegations = ref<DelegationResponse>({})
 
+    const accountAddress = wallet.isEmpty ? '' : wallet.account.address
+
     const getDelegations = async () => {
+      if (!accountAddress) {
+        return
+      }
       try {
-        const response = await callers.getDelegations(wallet.account.address)
+        const response = await callers.getDelegations(accountAddress)
         for (const delegation of response.delegationResponses) {
           if (
             delegation.delegation?.validatorAddress ===
@@ -277,6 +288,7 @@ export default defineComponent({
       delegations,
       proposedBlocksCount,
       isMobile,
+      accountAddress,
     }
   },
 })

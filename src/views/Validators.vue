@@ -89,6 +89,7 @@
       class="app-table validators__table"
       :class="{
         'validators__table--inactive': tabStatus === inactiveValidatorsTitle,
+        'validators__table--unauthenticated': !accountAddress,
       }"
     >
       <div class="app-table__head validators__table-head">
@@ -119,6 +120,7 @@
               :tabStatus="tabStatus"
               :inactiveValidatorsTitle="inactiveValidatorsTitle"
               :delegations="delegations"
+              :showActionButtons="!!accountAddress"
             />
           </template>
           <template v-else>
@@ -130,6 +132,7 @@
               :tabStatus="tabStatus"
               :inactiveValidatorsTitle="inactiveValidatorsTitle"
               :delegations="delegations"
+              :showActionButtons="!!accountAddress"
             />
           </template>
         </template>
@@ -272,6 +275,9 @@ export default defineComponent({
         return [{ title: '' }, { title: 'Delegated' }]
       }
     })
+
+    const accountAddress = wallet.isEmpty ? '' : wallet.account.address
+
     const getValidators = async () => {
       lockLoading()
       try {
@@ -335,10 +341,13 @@ export default defineComponent({
     }
 
     const getDelegations = async () => {
+      if (!accountAddress) {
+        return
+      }
       lockLoading()
       try {
         // TODO: delegations returns invalid delegator's amount?
-        const response = await callers.getDelegations(wallet.account.address)
+        const response = await callers.getDelegations(accountAddress)
 
         const _delegations: { [k: string]: DelegationResponse } = {}
         for (const delegation of response.delegationResponses) {
@@ -547,6 +556,7 @@ export default defineComponent({
       validatorStatus,
       windowInnerWidth,
       openModal,
+      accountAddress,
     }
   },
 })
@@ -571,6 +581,21 @@ export default defineComponent({
     margin-bottom: 1.6rem;
   }
 }
+.validators__table--unauthenticated {
+  .validators__table-head,
+  .validators-table-row {
+    gap: 2rem;
+    grid:
+      auto /
+      minmax(2rem, 5rem)
+      minmax(5rem, 1fr)
+      minmax(6rem, 0.5fr)
+      minmax(8rem, 0.5fr)
+      minmax(7rem, 0.5fr)
+      minmax(6rem, 8rem);
+  }
+}
+
 .validators__table--inactive {
   .validators__table-head,
   .validators-table-row {
@@ -585,6 +610,7 @@ export default defineComponent({
       minmax(24rem, 1.5fr);
   }
 }
+
 .validators__count-info {
   margin-bottom: 3.2rem;
 }
