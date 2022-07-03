@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="oracle-scripts view-main load-fog"
-    :class="{
-      'load-fog_show': isLoading,
-    }"
-  >
+  <div class="oracle-scripts view-main">
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Oracle Scripts</h2>
       <button
@@ -17,24 +12,30 @@
       </button>
     </div>
 
-    <template v-if="mostRequestedOracleScripts">
-      <div>
-        <h3 class="view-main__subtitle mg-b24">Most requested</h3>
-        <TopOracleScripts :top-oracle-scripts="mostRequestedOracleScripts" />
-      </div>
-    </template>
+    <div>
+      <h3 class="view-main__subtitle mg-b24">Most requested</h3>
+      <TopOracleScripts
+        :top-oracle-scripts="mostRequestedOracleScripts"
+        :is-loading="isLoading"
+      />
+    </div>
 
-    <template v-if="oracleScriptsCount">
-      <div>
-        <h3 class="view-main__subtitle mg-b24">All oracle scripts</h3>
-        <div class="view-main__count-info oracle-scripts__count-info">
-          <p>{{ oracleScriptsCount }} Oracle Scripts found</p>
-        </div>
+    <div class="view-main__count-info requests__count-info">
+      <h3 class="view-main__subtitle mg-b24">All oracle scripts</h3>
+      <skeleton-loader
+        v-if="isLoading"
+        :height="24"
+        rounded
+        animation="wave"
+        color="rgb(225, 229, 233)"
+      />
+      <div v-else class="view-main__count-info oracle-scripts__count-info">
+        <p>{{ oracleScriptsCount }} Oracle Scripts found</p>
       </div>
-    </template>
+    </div>
 
     <SortLine
-      :isLoading="isLoading"
+      :is-loading="isLoading"
       :title="'Oracle Scripts'"
       v-model:oracleScriptsName="oracleScriptsName"
       v-model:sortingOwnersValue="sortingOwnersValue"
@@ -45,8 +46,8 @@
       <div class="app-table__head oracle-scripts__table-head">
         <span>ID</span>
         <span>Oracle Script</span>
-        <span class="oracle-scripts__table-head--center">Description</span>
-        <span class="oracle-scripts__table-head--center">Timestamp</span>
+        <span>Description</span>
+        <span>Timestamp</span>
       </div>
       <div class="app-table__body">
         <template v-if="oracleScripts?.length">
@@ -67,13 +68,13 @@
                 :to="`/oracle-scripts/${item.attributes.id}`"
               />
             </div>
-            <div class="app-table__cell oracle-scripts__table-cell--center">
+            <div class="app-table__cell">
               <span class="app-table__title">Description</span>
               <span>
                 {{ item.attributes.description || 'No description' }}
               </span>
             </div>
-            <div class="app-table__cell oracle-scripts__table-cell--center">
+            <div class="app-table__cell">
               <span class="app-table__title">Timestamp</span>
               <span>
                 {{ $fDate(new Date(item.attributes.timestamp * 1000)) || '-' }}
@@ -100,9 +101,13 @@
           </div>
         </template>
         <template v-else>
-          <div class="app-table__empty-stub">
-            <p v-if="isLoading" class="empty mg-t32">Loading…</p>
-            <p v-else class="empty mg-t32">No items yet</p>
+          <SkeletonTable
+            v-if="isLoading"
+            :header-titles="headerTitles"
+            class-string="oracle-scripts__table-row"
+          />
+          <div v-else class="app-table__empty-stub">
+            <p class="empty mg-t32">No items yet</p>
           </div>
         </template>
       </div>
@@ -146,9 +151,16 @@ import { OracleScript } from '@provider/codec/oracle/v1/oracle'
 import TopOracleScripts from '@/components/TopOracleScripts.vue'
 import SortLine from '@/components/SortLine.vue'
 import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
+import SkeletonTable from '@/components/SkeletonTable.vue'
 
 export default defineComponent({
-  components: { TitledLink, AppPagination, TopOracleScripts, SortLine },
+  components: {
+    TitledLink,
+    AppPagination,
+    TopOracleScripts,
+    SortLine,
+    SkeletonTable,
+  },
   setup() {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 50
@@ -161,6 +173,12 @@ export default defineComponent({
     const oracleScriptsName = ref('')
     const sortingActivitiesValue = ref(ACTIVITIES_SORT.latest)
     const sortingOwnersValue = ref(OWNERS_SORT.all)
+    const headerTitles = [
+      { title: 'ID' },
+      { title: 'Oracle Script' },
+      { title: 'Description' },
+      { title: 'Timestamp' },
+    ]
     const loadOracleScripts = async () => {
       lockLoading()
       try {
@@ -246,6 +264,7 @@ export default defineComponent({
       sortingOwnersValue,
       mostRequestedOracleScripts,
       oracleScriptsName,
+      headerTitles,
     }
   },
 })
@@ -255,16 +274,7 @@ export default defineComponent({
 .oracle-scripts__count-info {
   margin-bottom: 3.2rem;
 }
-.oracle-scripts__table-head,
-.oracle-scripts__table-row {
-  grid:
-    auto /
-    minmax(2rem, 0.5fr)
-    minmax(4rem, 2fr)
-    minmax(4rem, 3fr)
-    minmax(10rem, 2fr)
-    minmax(8rem, 2fr);
-}
+
 .oracle-scripts__table-head {
   padding-bottom: 0;
 }
@@ -289,10 +299,6 @@ export default defineComponent({
   gap: 2.4rem;
 }
 
-.oracle-scripts__table-cell--center {
-  justify-content: center;
-}
-
 @include respond-to(tablet) {
   .oracle-scripts {
     padding-bottom: 10rem;
@@ -313,9 +319,6 @@ export default defineComponent({
     & > * {
       flex: 1;
     }
-  }
-  .oracle-scripts__table-cell--center {
-    justify-content: flex-start;
   }
 }
 </style>

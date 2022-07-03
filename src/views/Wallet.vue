@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="wallet view-main load-fog"
-    :class="{
-      'load-fog_show': isLoading,
-    }"
-  >
+  <div class="wallet view-main">
     <div class="wallet__title-wrapper view-main__title-wrapper">
       <h1 class="wallet__title view-main__title">Wallet</h1>
     </div>
@@ -65,9 +60,9 @@
           />
         </template>
         <template v-else>
-          <div class="app-table__empty-stub">
-            <p v-if="isLoading" class="empty mg-t32">Loading…</p>
-            <p v-else class="empty mg-t32">No items yet</p>
+          <SkeletonTable v-if="isLoading" :header-titles="headerTitles" />
+          <div v-else class="app-table__empty-stub">
+            <p class="empty mg-t32">No items yet</p>
           </div>
         </template>
       </div>
@@ -95,12 +90,14 @@ import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import TxLine from '@/components/TxLine.vue'
 import PersonalInfo from '@/components/PersonalInfo.vue'
 import { sortingTypeTx, TYPE_TX_SORT } from '@/helpers/sortingHelpers'
+import SkeletonTable from '@/components/SkeletonTable.vue'
 
 export default defineComponent({
   components: {
     AppPagination,
     TxLine,
     PersonalInfo,
+    SkeletonTable,
   },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
@@ -110,7 +107,16 @@ export default defineComponent({
     const transactionsCount = ref(0)
     const transactions = ref()
     const sortingValue = ref(TYPE_TX_SORT.all)
-
+    const headerTitles = [
+      { title: 'Transaction hash' },
+      { title: 'Type' },
+      { title: 'Block' },
+      { title: 'Date and time' },
+      { title: 'Sender' },
+      { title: 'Receiver' },
+      { title: 'Amount' },
+      { title: 'Transaction Fee' },
+    ]
     const getTransactions = async () => {
       lockLoading()
       try {
@@ -157,6 +163,7 @@ export default defineComponent({
       paginationHandler,
       sortingTypeTx,
       sortingValue,
+      headerTitles,
     }
   },
 })

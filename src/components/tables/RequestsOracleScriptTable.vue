@@ -1,12 +1,7 @@
 <template>
-  <div
-    class="requests-oracle-script load-fog"
-    :class="{
-      'load-fog_show': isLoading,
-    }"
-  >
+  <div class="requests-oracle-script">
     <div v-if="requests" class="app-table">
-      <div class="app-table__head">
+      <div class="app-table__head requests-oracle-script__head">
         <span>Request ID</span>
         <span>Transaction hash</span>
         <span>Timestamp</span>
@@ -16,7 +11,7 @@
           <div
             v-for="(item, index) in requests"
             :key="item.attributes.block_height"
-            class="app-table__row"
+            class="app-table__row requests-oracle-script__row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">Request ID</span>
@@ -49,9 +44,13 @@
           </div>
         </template>
         <template v-else>
-          <div class="app-table__empty-stub">
-            <span v-if="isLoading" class="empty mg-t32">Loading…</span>
-            <span v-else class="empty mg-t32">No items yet</span>
+          <SkeletonTable
+            v-if="isLoading"
+            :header-titles="headerTitles"
+            class-string="requests-oracle-script__row"
+          />
+          <div v-else class="app-table__empty-stub">
+            <p class="empty mg-t32">No items yet</p>
           </div>
         </template>
       </div>
@@ -77,9 +76,10 @@ import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import TitledLink from '@/components/TitledLink.vue'
+import SkeletonTable from '@/components/SkeletonTable.vue'
 
 export default defineComponent({
-  components: { AppPagination, TitledLink },
+  components: { AppPagination, TitledLink, SkeletonTable },
   props: {
     oracleScriptId: { type: String, required: true },
   },
@@ -91,10 +91,15 @@ export default defineComponent({
     const totalPages = ref(0)
     const requests = ref()
     const requestsCount = ref()
-
+    const headerTitles = [
+      { title: 'Request ID' },
+      { title: 'Transaction hash' },
+      { title: 'Timestamp' },
+    ]
     const getOracleScriptRequests = async () => {
       lockLoading()
       try {
+        requests.value = []
         const response = await callers
           .getOracleScriptRequests(
             props.oracleScriptId,
@@ -129,6 +134,7 @@ export default defineComponent({
       toHex,
       getOracleScriptRequests,
       getRequestItemTxHash,
+      headerTitles,
     }
   },
 })
@@ -137,20 +143,6 @@ export default defineComponent({
 <style lang="scss" scoped>
 .requests-oracle-script {
   margin-bottom: 3rem;
-}
-.app-table__head,
-.app-table__row {
-  grid:
-    auto /
-    minmax(3rem, 0.5fr)
-    minmax(8rem, 2fr)
-    minmax(8rem, 0.5fr);
-}
-@include respond-to(tablet) {
-  .app-table__head,
-  .app-table__row {
-    grid: none;
-  }
 }
 @include respond-to(small) {
   .app-table__title {

@@ -151,7 +151,6 @@ export default defineComponent({
 @import '~@/styles/cards.scss';
 @import '~@/styles/tables.scss';
 @import '~@/styles/views.scss';
-@import '~@/styles/load-fog.scss';
 @import '~@/styles/forms.scss';
 @import '~@/styles/vue-notification.scss';
 @import '~@/styles/shortcuts.scss';
@@ -160,7 +159,9 @@ export default defineComponent({
   width: 100%;
   @include flex-container;
 }
-
+.animation--wave::before {
+  animation: wave 0.5s linear 0.5s infinite;
+}
 .burger-menu {
   display: none;
 }

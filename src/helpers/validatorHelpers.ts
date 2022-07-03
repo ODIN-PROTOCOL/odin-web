@@ -2,11 +2,10 @@ import { big } from '@/helpers/bigMath'
 import { callers } from '@/api/callers'
 import { ValidatorDecoded } from './validatorDecoders'
 
-export const isOracleValidator = async (
-  validatorAddress: string
-): Promise<boolean> => {
-  const response = await callers.getReports(validatorAddress)
-  return response.reporter.length ? true : false
+export enum VALIDATOR_STATUS {
+  inactive = 1,
+  bounding = 2,
+  active = 3,
 }
 
 export const isActiveValidator = async (
@@ -36,7 +35,6 @@ export const getTransformedValidators = async (
       return {
         ...item,
         rank: idx + 1,
-        isOracleValidator: await isOracleValidator(item.operatorAddress),
       }
     })
   )
