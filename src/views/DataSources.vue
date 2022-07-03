@@ -8,6 +8,7 @@
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Data Sources</h2>
       <button
+        v-if="accountAddress"
         class="data-sources__title-btn app-btn app-btn--medium"
         type="button"
         @click="createDataSource()"
@@ -135,7 +136,7 @@ import DataSourceFormModal from '@/components/modals/DataSourceFormModal.vue'
 import SortLine from '@/components/SortLine.vue'
 import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
 import { convertLokiToOdin } from '@/helpers/converters'
-import { useAuthorization } from '@/composables/useAuthorization'
+import { wallet } from '@/api/wallet'
 
 export default defineComponent({
   components: {
@@ -151,7 +152,7 @@ export default defineComponent({
     const dataSourcesCount = ref(0)
     const dataSources = ref([])
 
-    const { walletAddress: accountAddress } = useAuthorization()
+    const accountAddress = wallet.isEmpty ? '' : wallet.account.address
     const sortingActivitiesValue = ref(ACTIVITIES_SORT.latest)
     const sortingOwnersValue = ref(OWNERS_SORT.all)
     const dataSourceName = ref('')
