@@ -117,7 +117,10 @@ export default defineComponent({
     const oracleScriptData = ref()
     const oracleScriptCode = ref('')
     const isOracleScriptOwner = computed(() => {
-      return wallet.account.address === oracleScriptData.value?.owner
+      return (
+        !wallet.isEmpty &&
+        wallet.account.address === oracleScriptData.value?.owner
+      )
     })
     const getOracleScript = async () => {
       lockLoading()
