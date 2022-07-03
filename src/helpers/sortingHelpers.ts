@@ -41,12 +41,12 @@ export const getSortingOwners = (
   return isWalletActive
     ? [allOwners]
     : [
-      allOwners,
-      {
-        text: 'My',
-        value: walletAddress,
-      },
-    ]
+        allOwners,
+        {
+          text: 'My',
+          value: walletAddress,
+        },
+      ]
 }
 
 export const sortingTypeTx = [
