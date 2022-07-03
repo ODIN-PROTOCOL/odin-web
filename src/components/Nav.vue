@@ -120,13 +120,13 @@ export default defineComponent({
       }
     }
     onMounted(() => {
-      // if (wallet.type === WalletTypes.KEPLR_WALLET) {
-      //   window.addEventListener('keplr_keystorechange', logOutAndLeave)
-      // }
+      if (!wallet.isEmpty && wallet.type === WalletTypes.KEPLR_WALLET) {
+        window.addEventListener('keplr_keystorechange', logOutAndLeave)
+      }
     })
 
     onUnmounted(() => {
-      // window.removeEventListener('keplr_keystorechange', logOutAndLeave)
+      window.removeEventListener('keplr_keystorechange', logOutAndLeave)
     })
 
     return {
