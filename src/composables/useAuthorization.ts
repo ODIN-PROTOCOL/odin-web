@@ -8,9 +8,6 @@ import { CHAIN_CONFIG, COINS_TYPE } from '@/api/api-config'
 const _isLoggedIn = ref<boolean>(false)
 const isLoggedInReadonly = readonly(_isLoggedIn)
 
-const _walletAddress = ref<string>('')
-const walletAddressReadOnly = readonly(_walletAddress)
-
 async function createSessionWithOdinWallet(
   mnemonic: string
 ): Promise<OdinWallet> {
@@ -22,7 +19,6 @@ async function createSessionWithOdinWallet(
   await Promise.all([api.attachWallet(wallet), useBalances().load()])
 
   _isLoggedIn.value = true
-  _walletAddress.value = wallet.account.address
   storage.set('mnemonic', mnemonic)
 
   return wallet
@@ -63,7 +59,6 @@ async function createSessionWithKeplrWallet(
       })
       await Promise.all([api.attachWallet(wallet), useBalances().load()])
       _isLoggedIn.value = true
-      _walletAddress.value = wallet.account.address
       storage.set('chainId', chainId)
       storage.set('coinType', coinType.toString())
     } catch (err) {
@@ -80,7 +75,6 @@ function destroySession(): void {
   useBalances().clear()
 
   _isLoggedIn.value = false
-  _walletAddress.value = ''
   storage.remove('mnemonic')
   storage.remove('chainId')
   storage.remove('coinType')
@@ -109,7 +103,6 @@ export async function tryRestoreSession(): Promise<OdinWallet | null> {
 export function useAuthorization() {
   return {
     isLoggedIn: isLoggedInReadonly,
-    walletAddress: walletAddressReadOnly,
     logInWithOdinWallet: createSessionWithOdinWallet,
     logInWithKeplrWallet: createSessionWithKeplrWallet,
     logOut: destroySession,
