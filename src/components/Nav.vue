@@ -50,7 +50,7 @@
         <span>IBCs</span>
       </router-link>
     </div>
-    <div class="nav__activities">
+    <div class="nav__activities" v-if="isLoggedIn">
       <button
         class="app-btn log-out-btn app-btn--medium"
         type="button"
@@ -99,6 +99,7 @@ export default defineComponent({
     return {
       logOutAndLeave,
       closeBurger,
+      isLoggedIn: auth.isLoggedIn,
     }
   },
 })
