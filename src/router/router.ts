@@ -40,14 +40,12 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/data-sources',
     name: 'DataSources',
-    // beforeEnter: authorizedOnlyGuard,
     component: () =>
       import(/* webpackChunkName: "data-sources" */ '../views/DataSources.vue'),
   },
   {
     path: '/data-sources/:id',
     name: 'DataSource',
-    // beforeEnter: authorizedOnlyGuard,
     component: () =>
       import(
         /* webpackChunkName: "data-source" */ '../views/DataSourcesItem.vue'
@@ -56,7 +54,6 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/oracle-scripts',
     name: 'OracleScripts',
-    // beforeEnter: authorizedOnlyGuard,
     component: () =>
       import(
         /* webpackChunkName: "oracle-scripts" */ '../views/OracleScripts.vue'
@@ -65,7 +62,6 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/oracle-scripts/:id',
     name: 'OracleScript',
-    // beforeEnter: authorizedOnlyGuard,
     component: () =>
       import(
         /* webpackChunkName: "oracle-script" */ '../views/OracleScriptsItem.vue'
@@ -74,42 +70,36 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/requests',
     name: 'Requests',
-    // beforeEnter: authorizedOnlyGuard,
     component: () =>
       import(/* webpackChunkName: "requests" */ '../views/Requests.vue'),
   },
   {
     path: '/requests/:id',
     name: 'Request',
-    // beforeEnter: authorizedOnlyGuard,
     component: () =>
       import(/* webpackChunkName: "request" */ '../views/RequestItem.vue'),
   },
   {
     path: '/validators',
     name: 'Validators',
-    // beforeEnter: authorizedOnlyGuard,
     component: () =>
       import(/* webpackChunkName: "validators" */ '../views/Validators.vue'),
   },
   {
     path: '/validators/:address',
     name: 'Validator',
-    // beforeEnter: authorizedOnlyGuard,
     component: () =>
       import(/* webpackChunkName: "validator" */ '../views/ValidatorItem.vue'),
   },
   {
     path: '/governance',
     name: 'Governance',
-    // beforeEnter: authorizedOnlyGuard,
     component: () =>
       import(/* webpackChunkName: "governance" */ '../views/Governance.vue'),
   },
   {
     path: '/proposal/:id',
     name: 'Proposal',
-    beforeEnter: authorizedOnlyGuard,
     component: () =>
       import(/* webpackChunkName: "proposal" */ '../views/Proposal.vue'),
   },
@@ -130,7 +120,6 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/ibc',
     name: 'IBC',
-    // beforeEnter: authorizedOnlyGuard,
     component: () =>
       import(/* webpackChunkName: "wallet" */ '../views/IbcView.vue'),
   },
