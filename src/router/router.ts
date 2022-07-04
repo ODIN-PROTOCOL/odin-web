@@ -8,7 +8,7 @@ import { LOGIN_TYPE } from '../api/api-config'
 
 const rootRedirector = makeRootRedirector(
   { name: 'Wallet' },
-  { name: 'Validators' }
+  { name: 'DataSources' }
 )
 const authorizedOnlyGuard = makeAuthorizedOnlyGuard({ name: 'Auth' })
 const unauthorizedOnlyGuard = makeUnauthorizedOnlyGuard({ name: 'Redirector' })
