@@ -1,7 +1,7 @@
 <template>
   <ModalBase class="claim-all-rewards-form-modal" @close="onClose">
     <template #title>
-      <h3 class="app-form__title">Claim all delegation rewards</h3>
+      <h3 class="app-form__title">Claim All Delegation Rewards</h3>
     </template>
 
     <template #main>
@@ -13,7 +13,7 @@
         <div class="app-form__main">
           <template v-if="totalRewards.length">
             <div class="app-form__field">
-              <label class="app-form__field-lbl">Your rewards:</label>
+              <label class="app-form__field-lbl">Your Rewards:</label>
               <p :title="odinRewardsValue">{{ odinRewardsValue }} ODIN</p>
             </div>
           </template>

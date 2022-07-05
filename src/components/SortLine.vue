@@ -16,7 +16,7 @@
     </div>
     <div class="sort-line__selection">
       <div class="sort-line__selection-item">
-        <span class="sort-line__selection-item-title">Sort by</span>
+        <span class="sort-line__selection-item-title">Sort By</span>
         <VuePicker
           class="sort-line__vue-picker _vue-picker"
           name="filter"

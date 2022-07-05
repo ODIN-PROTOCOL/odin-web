@@ -5,7 +5,7 @@
     @close="onClose()"
   >
     <template #title>
-      <h3 class="app-form__title">Stake transfer</h3>
+      <h3 class="app-form__title">Stake Transfer</h3>
     </template>
     <template #main>
       <form

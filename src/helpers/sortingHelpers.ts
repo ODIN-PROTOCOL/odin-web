@@ -17,7 +17,7 @@ export enum TYPE_TX_SORT {
 
 export const sortingActivities = [
   {
-    text: 'Latest Update',
+    text: 'Last Updated',
     value: ACTIVITIES_SORT.latest,
   },
   {
@@ -32,7 +32,7 @@ export const sortingOwners = [
     value: OWNERS_SORT.all,
   },
   {
-    text: 'My',
+    text: 'My Uploads',
     value: wallet.account.address,
   },
 ]

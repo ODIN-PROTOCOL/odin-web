@@ -38,7 +38,7 @@
           type="button"
           class="app-btn app-btn--small w-min150"
         >
-          Claim rewards
+          Claim Rewards
         </button>
       </div>
     </div>
@@ -74,7 +74,7 @@
             type="button"
             class="validators-item__activities-btn app-btn"
           >
-            Claim rewards
+            Claim Rewards
           </button>
         </div>
       </div>

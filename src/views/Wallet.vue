@@ -47,7 +47,7 @@
 
     <div class="app-table">
       <div class="app-table__head">
-        <span>Transaction hash</span>
+        <span>Transaction Hash</span>
         <span>Type</span>
         <span>Block</span>
         <span>Date and time</span>
@@ -118,7 +118,7 @@ export default defineComponent({
     const transactions = ref()
     const sortingValue = ref(TYPE_TX_SORT.all)
     const headerTitles = [
-      { title: 'Transaction hash' },
+      { title: 'Transaction Hash' },
       { title: 'Type' },
       { title: 'Block' },
       { title: 'Date and time' },

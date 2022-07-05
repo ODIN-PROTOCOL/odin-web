@@ -7,7 +7,7 @@
         type="button"
         @click="createProposal()"
       >
-        Create a proposal
+        Create a Proposal
       </button>
     </div>
 
@@ -25,8 +25,8 @@
       <div class="app-table__head governance__table-head">
         <span>ID</span>
         <span>Proposal</span>
-        <span>Proposer's account ID</span>
-        <span>Proposal status</span>
+        <span>Proposer's Account ID</span>
+        <span>Proposal Status</span>
       </div>
       <div class="app-table__body">
         <template v-if="proposals?.length">
@@ -48,7 +48,7 @@
               />
             </div>
             <div class="app-table__cell">
-              <span class="app-table__title">Proposer's account ID</span>
+              <span class="app-table__title">Proposer's Account ID</span>
               <a
                 class="app-table__cell-txt app-table__link"
                 :href="`${API_CONFIG.odinScan}/account/${item.proposerAddress}`"
@@ -57,7 +57,7 @@
               </a>
             </div>
             <div class="app-table__cell">
-              <span class="app-table__title">Proposal status</span>
+              <span class="app-table__title">Proposal Status</span>
               <StatusBlock
                 :status="proposalStatusType[item.status].status"
                 :text="proposalStatusType[item.status].name"
@@ -93,7 +93,7 @@
         type="button"
         @click="createProposal()"
       >
-        Create a proposal
+        Create a Proposal
       </button>
     </div>
   </div>
@@ -137,8 +137,8 @@ export default defineComponent({
     const headerTitles = [
       { title: 'ID' },
       { title: 'Proposal' },
-      { title: `Proposer's account ID` },
-      { title: 'Proposal status' },
+      { title: `Proposer's Account ID` },
+      { title: 'Proposal Status' },
     ]
     const getProposals = async () => {
       lockLoading()

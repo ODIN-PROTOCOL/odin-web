@@ -14,7 +14,7 @@
           type="button"
           @click="stakeTransfer"
         >
-          Stake transfer
+          Stake Transfer
         </button>
         <button
           v-if="isDelegator && delegations && validators"
@@ -22,7 +22,7 @@
           type="button"
           @click="claimAllRewards"
         >
-          Claim all rewards
+          Claim All Rewards
         </button>
       </div>
     </div>
@@ -162,7 +162,7 @@
         type="button"
         @click="stakeTransfer"
       >
-        Stake transfer
+        Stake Transfer
       </button>
       <button
         v-if="isDelegator && delegations && validators"
@@ -170,7 +170,7 @@
         type="button"
         @click="claimAllRewards"
       >
-        Claim all rewards
+        Claim All Rewards
       </button>
     </div>
   </div>
@@ -235,8 +235,8 @@ export default defineComponent({
     )
     const myValidatorsTitle = computed(() =>
       activeValidators.value?.length
-        ? `My delegations (${myDelegationsValitors.value?.length})`
-        : 'My delegations'
+        ? `My Delegations (${myDelegationsValitors.value?.length})`
+        : 'My Delegations'
     )
     const myDelegationsValitors = computed(() =>
       delegatedAdress.value.map((validatorAddress: string) => {
@@ -500,7 +500,7 @@ export default defineComponent({
         delegate(event.validator)
       } else if (event.typeBtn === 'Regelate') {
         redelegate(event.validator)
-      } else if (event.typeBtn === 'Claim rewards') {
+      } else if (event.typeBtn === 'Claim Rewards') {
         withdrawRewards(event.validator)
       } else if (event.typeBtn === 'Undelegate') {
         undelegate(event.validator)

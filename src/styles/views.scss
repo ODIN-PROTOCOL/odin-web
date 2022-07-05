@@ -28,7 +28,7 @@
 
   &__title-wrapper {
     display: flex;
-    flex-direction: row;
+    flex-direction: row !important;     // Had to use important since this is getting overriden in mobile mode by some CSS. Could not find "@media (max-width: 767px)" overiding it within this project.
     align-items: center;
     justify-content: space-between;
     margin-bottom: 3.2rem;
