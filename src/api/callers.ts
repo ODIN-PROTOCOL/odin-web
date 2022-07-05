@@ -55,6 +55,11 @@ const makeCallers = () => {
         `${API_CONFIG.telemetryUrl}/data_sources?page[number]=${page_number}&page[limit]=${page_limit}&sort=${activities}&owner=${owner}&name=${name}`
       )
     },
+    getDataSourceRequestCount: (data_source_id: number) => {
+      return sendGet(
+        `${API_CONFIG.telemetryUrl}/requests/data_sources/${data_source_id}`
+      )
+    },
     getDataSource: querier((qc) => qc.oracle.unverified.dataSource),
     createOracleScript: broadcaster<MsgCreateOracleScript>(
       '/oracle.v1.MsgCreateOracleScript',

@@ -35,6 +35,7 @@
         <span>Data Source</span>
         <span>Description</span>
         <span>Price</span>
+        <span>Requests</span>
         <span>Timestamp</span>
       </div>
       <div class="app-table__body">
@@ -62,6 +63,12 @@
               <span class="app-table__title">Price</span>
               <span>
                 {{ convertLokiToOdin(Number(item.attributes.fee_amount)) }}
+              </span>
+            </div>
+            <div class="app-table__cell">
+              <span class="app-table__title">Requests</span>
+              <span>
+                {{ item.request_count }}
               </span>
             </div>
             <div class="app-table__cell">
@@ -160,6 +167,7 @@ export default defineComponent({
       { title: 'Data Source' },
       { title: 'Description' },
       { title: 'Price' },
+      { title: 'Requests' },
       { title: 'Timestamp' },
     ]
     const loadDataSources = async () => {
@@ -175,7 +183,14 @@ export default defineComponent({
             dataSourceName.value
           )
           .then((response) => response.json())
-        dataSources.value = data
+        dataSources.value = await Promise.all(
+          data.map(async (item: { attributes: { id: number } }) => {
+            const { total_count: request_count } = await callers
+              .getDataSourceRequestCount(item.attributes.id)
+              .then((response) => response.json())
+            return { ...item, request_count }
+          })
+        ).catch(() => data)
         dataSourcesCount.value = total_count
         totalPages.value = Math.ceil(dataSourcesCount.value / ITEMS_PER_PAGE)
       } catch (error) {
