@@ -259,4 +259,18 @@ export function showUndelegateFormDialog(
     display: flex;
   }
 }
+body.dark {
+  .undelegate-form-modal__field-balance {
+    background: var(--d-clr__modal-field-bg);
+  }
+  .undelegate-form-modal__field-lbl {
+    color: var(--d-clr__modal-backdrop-bg);
+  }
+  .undelegate-form-modal__field-info {
+    color: var(--d-clr__modal-backdrop-bg);
+  }
+  .undelegate-form-modal__field-lbl_black {
+    color: var(--d-clr__text);
+  }
+}
 </style>

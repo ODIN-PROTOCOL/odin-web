@@ -42,4 +42,16 @@ export default defineComponent({
     background: var(--clr__btn-disabled);
   }
 }
+body.dark .balance-button {
+    background: var(--d-clr__btn-normal);
+  &:hover {
+    background: var(--d-clr__btn-hover);
+  }
+  &:active {
+    background: var(--d-clr__btn-pressed);
+  }
+  &:disabled {
+    background: var(--d-clr__btn-disabled);
+  }
+}
 </style>

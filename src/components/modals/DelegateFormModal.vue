@@ -249,4 +249,12 @@ export function showDelegateFormDialog(
     flex-direction: column;
   }
 }
+body.dark {
+  .delegate-form-modal__field-balance-row {
+    background: var(--d-clr__modal-field-bg);
+  }
+  .delegate-form-modal__field-lbl {
+    color: var(--d-clr__modal-backdrop-bg);
+  }
+}
 </style>

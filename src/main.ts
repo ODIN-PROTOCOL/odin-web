@@ -59,6 +59,7 @@ async function _main() {
   )
   const app = createApp(appModule.default)
   app.config.performance = true
+  app.config.unwrapInjectedRef = true           // This will be default in Vue 3.3+
   app.config.globalProperties.$cropAddress = cropAddress
   app.config.globalProperties.$fCoin = formatCoin
   app.config.globalProperties.$preciseAsPercents = preciseAsPercents

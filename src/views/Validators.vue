@@ -728,4 +728,36 @@ export default defineComponent({
     width: 100%;
   }
 }
+body.dark {
+  .validators__filter-search {
+    border-bottom: 0.1rem solid var(--d-clr__input-border);
+    color: var(--d-clr__input-border);
+    svg {
+      fill: var(--d-clr__input-border);
+    }
+    &:hover,
+    &:active,
+    &:focus,
+    &:focus-within {
+      color: var(--d-clr__text);
+      border-color: var(--d-clr__text);
+      svg {
+        fill: var(--d-clr__text);
+      }
+    }
+    &:disabled {
+      border-color: var(--d-clr__input-border);
+      color: var(--d-clr__input-border);
+      svg {
+        fill: var(--d-clr__input-border);
+      }
+    }
+  }
+  .validators__title-btn {
+    &--white {
+      background: var(--d-clr__main-bg);
+      color: var(--d-clr__action);
+    }
+  }
+}
 </style>

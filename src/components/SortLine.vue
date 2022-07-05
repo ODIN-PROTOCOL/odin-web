@@ -209,4 +209,16 @@ export default defineComponent({
     width: 100%;
   }
 }
+body.dark .sort-line__search {
+  &:hover,
+  &:active,
+  &:focus,
+  &:focus-within {
+    color: var(--d-clr__text);
+    border-color: var(--d-clr__text);
+    svg {
+      fill: var(--d-clr__text);
+    }
+  }
+}
 </style>

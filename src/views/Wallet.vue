@@ -2,6 +2,11 @@
   <div class="wallet view-main">
     <div class="wallet__title-wrapper view-main__title-wrapper">
       <h1 class="wallet__title view-main__title">Wallet</h1>
+      <div class="theme_switch" :class="{'dark': settings && settings.theme === 'dark'}">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 12c0 2.8 2.2 5 5 5s5-2.2 5-5-2.2-5-5-5S7 9.2 7 12zM12 9c1.7 0 3 1.3 3 3s-1.3 3-3 3-3-1.3-3-3S10.3 9 12 9zM13 5V3c0-.6-.4-1-1-1s-1 .4-1 1v2c0 .6.4 1 1 1S13 5.6 13 5zM19.1 4.9c-.4-.4-1-.4-1.4 0l-1.4 1.4c-.4.4-.4 1 0 1.4.2.2.5.3.7.3s.5-.1.7-.3l1.4-1.4C19.5 6 19.5 5.3 19.1 4.9zM21 11h-2c-.6 0-1 .4-1 1s.4 1 1 1h2c.6 0 1-.4 1-1S21.6 11 21 11zM17.7 16.2c-.4-.4-1-.4-1.4 0s-.4 1 0 1.4l1.4 1.4c.2.2.5.3.7.3s.5-.1.7-.3c.4-.4.4-1 0-1.4L17.7 16.2zM11 19v2c0 .6.4 1 1 1s1-.4 1-1v-2c0-.6-.4-1-1-1S11 18.4 11 19zM4.9 19.1c.2.2.5.3.7.3s.5-.1.7-.3l1.4-1.4c.4-.4.4-1 0-1.4s-1-.4-1.4 0l-1.4 1.4C4.5 18 4.5 18.7 4.9 19.1zM2 12c0 .6.4 1 1 1h2c.6 0 1-.4 1-1s-.4-1-1-1H3C2.4 11 2 11.4 2 12zM6.3 4.9c-.4-.4-1-.4-1.4 0s-.4 1 0 1.4l1.4 1.4C6.5 8 6.8 8.1 7.1 8.1S7.6 8 7.8 7.8c.4-.4.4-1 0-1.4L6.3 4.9z"/></svg>
+        <Switch :action="updateTheme" :initialState="settings && settings.theme == 'dark' ? true : false" />
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"><path d="M20.63,20a9,9,0,0,1-9.12-8.78A8.61,8.61,0,0,1,14.17,5,10.17,10.17,0,0,0,5,15,10.23,10.23,0,0,0,15.42,25,10.43,10.43,0,0,0,25,18.9,9.3,9.3,0,0,1,20.63,20Z"/></svg>
+      </div>
     </div>
     <PersonalInfo />
     <div class="wallet__subtitle-wrapper">
@@ -80,7 +85,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref, watch } from 'vue'
+import { defineComponent, inject, onMounted, ref, watch } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
@@ -89,8 +94,10 @@ import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import TxLine from '@/components/TxLine.vue'
 import PersonalInfo from '@/components/PersonalInfo.vue'
+import Switch from '@/components/Switch.vue'
 import { sortingTypeTx, TYPE_TX_SORT } from '@/helpers/sortingHelpers'
 import SkeletonTable from '@/components/SkeletonTable.vue'
+import { Settings, SettingsStateSymbol, SettingsUpdateSymbol } from '@/ThemeProvider'
 
 export default defineComponent({
   components: {
@@ -98,9 +105,12 @@ export default defineComponent({
     TxLine,
     PersonalInfo,
     SkeletonTable,
+    Switch
   },
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+    const settings: Settings | undefined = inject(SettingsStateSymbol)
+    const updateUserSettings: ((x: Settings) => any) | undefined = inject(SettingsUpdateSymbol)
     const ITEMS_PER_PAGE = 50
     const currentPage = ref(1)
     const totalPages = ref()
@@ -143,6 +153,12 @@ export default defineComponent({
       await getTransactions()
     }
 
+    const updateTheme = (dark: boolean) => {
+      let newSettings: Settings = settings as Settings
+      newSettings.theme = dark ? 'dark' : 'light'
+      if (updateUserSettings) updateUserSettings(newSettings)
+    }
+
     onMounted(async () => {
       await getTransactions()
     })
@@ -154,6 +170,7 @@ export default defineComponent({
 
     return {
       API_CONFIG,
+      settings,
       ITEMS_PER_PAGE,
       totalPages,
       currentPage,
@@ -161,6 +178,7 @@ export default defineComponent({
       transactions,
       isLoading,
       paginationHandler,
+      updateTheme,
       sortingTypeTx,
       sortingValue,
       headerTitles,
@@ -225,6 +243,12 @@ export default defineComponent({
   font-weight: 300;
   margin-right: 0.4rem;
 }
+.theme_switch {
+  display: inherit;
+}
+.theme_switch > svg {
+  width: 28px;
+}
 @include respond-to(tablet) {
   .wallet__selection {
     width: 100%;
@@ -244,6 +268,11 @@ export default defineComponent({
   }
   .wallet__vue-picker {
     width: 100%;
+  }
+}
+body.dark {
+  .theme_switch > svg {
+    fill: #fff;
   }
 }
 </style>

@@ -123,4 +123,9 @@ export default defineComponent({
     }
   }
 }
+body.dark {
+  .top-oracle-scripts__item-info-title {
+    color: var(--d-clr__text-muted);
+  }
+}
 </style>

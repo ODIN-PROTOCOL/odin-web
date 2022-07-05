@@ -97,4 +97,25 @@ export default defineComponent({
     }
   }
 }
+body.dark {
+  .copy-button {
+    &:hover {
+      background: var(--d-clr__action-disabled);
+    }
+  }
+  .copy-button__wrapper {
+    &--black {
+      .copy-button__copy-icon {
+        fill: var(--d-clr__text);
+      }
+    }
+  }
+  .copy-button__message {
+    background: var(--clr__tooltip-bg);
+    color: var(--clr__tooltip-text);
+    &:before {
+      background: var(--clr__tooltip-bg);
+    }
+  }
+}
 </style>

@@ -539,4 +539,18 @@ export function showUndelegateFormDialog(
     max-width: 7rem;
   }
 }
+body.dark {
+  .stake-transfer-form-modal__select-header-btn {
+    color: var(--d-clr__action);
+  }
+  .stake-transfer-form-modal__option-balance {
+    color: var(--d-clr__text-muted);
+  }
+  .stake-transfer-form-modal__field-balance {
+    background: var(--d-clr__modal-field-bg);
+  }
+  .stake-transfer-form-modal__field-balance-lbl {
+    color: var(--d-clr__modal-backdrop-bg);
+  }
+}
 </style>

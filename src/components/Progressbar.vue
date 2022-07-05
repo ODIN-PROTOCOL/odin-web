@@ -82,4 +82,15 @@ export default defineComponent({
     background: var(--clr__progressbar-negative);
   }
 }
+body.dark {
+  .progressbar__thumb {
+    &--positive {
+      background: var(--d-clr__progressbar-positive);
+    }
+
+    &--negative {
+      background: var(--d-clr__progressbar-negative);
+    }
+  }
+}
 </style>

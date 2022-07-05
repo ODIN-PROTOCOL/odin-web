@@ -20,7 +20,7 @@
         :width="-1"
         :radius="skeletonRadius"
         animation="wave"
-        color="rgb(225, 229, 233)"
+        color="rgb(225, 229, 233)"  
         class="skeleton-table__loader"
       />
       <skeleton-loader
