@@ -241,6 +241,7 @@ export function showDelegateFormDialog(
   font-weight: 600;
   font-size: 1.6rem;
   line-height: 2.4rem;
+  color: var(--clr__text);
 }
 
 @include respond-to(small) {
