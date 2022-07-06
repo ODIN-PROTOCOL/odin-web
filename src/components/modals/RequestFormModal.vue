@@ -182,7 +182,7 @@ export default defineComponent({
         ...validators.num(1, props.maxAskCount),
       ],
       calldata: [''],
-      assets: ['ODIN', validators.required],
+      assets: [assetsChanges.odin.value, validators.required],
       feeLimit: [
         '',
         validators.required,

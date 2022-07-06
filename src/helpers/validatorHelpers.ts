@@ -41,3 +41,20 @@ export const getTransformedValidators = async (
 
   return transformedValidators
 }
+
+export const getDecodedValidators = async (
+  validatorsU: ValidatorDecoded[]
+): Promise<ValidatorDecoded[]> => {
+  return await Promise.all(
+    await getTransformedValidators([...validatorsU]).then(
+      (validators: ValidatorDecoded[]) =>
+        validators.map(async (item: ValidatorDecoded) => {
+          return {
+            ...item,
+            isActive: await isActiveValidator(item.operatorAddress),
+            uptimeInfo: [],
+          }
+        })
+    )
+  )
+}

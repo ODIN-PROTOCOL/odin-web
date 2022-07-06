@@ -185,7 +185,7 @@ export default defineComponent({
         dataSources.value = data
         dataSourcesCount.value = total_count
         totalPages.value = Math.ceil(dataSourcesCount.value / ITEMS_PER_PAGE)
-        if (totalPages.value < currentPage.value || !total_count) {
+        if (totalPages.value < currentPage.value) {
           currentPage.value = 1
           setPage(currentPage.value)
           loadDataSources()

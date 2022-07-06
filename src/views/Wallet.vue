@@ -105,7 +105,7 @@ export default defineComponent({
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 50
     const currentPage = ref(1)
-    const totalPages = ref()
+    const totalPages = ref(1)
     const transactionsCount = ref(0)
     const transactions = ref()
     const sortingValue = ref(TYPE_TX_SORT.all)
@@ -135,7 +135,10 @@ export default defineComponent({
         transactions.value = tx.data
         transactionsCount.value = tx.total_count
         totalPages.value = Math.ceil(transactionsCount.value / ITEMS_PER_PAGE)
-        if (totalPages.value < currentPage.value) {
+        if (
+          totalPages.value < currentPage.value &&
+          transactionsCount.value > 0
+        ) {
           currentPage.value = 1
           setPage(currentPage.value)
           getTransactions()

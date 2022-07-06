@@ -5,7 +5,8 @@
       'validators-table-row--top':
         validator.status === VALIDATOR_STATUS.active &&
         delegations[validator.operatorAddress],
-      'validators-table-row--inactive': tabStatus === inactiveValidatorsTitle,
+      'validators-table-row--inactive':
+        tabStatus.toLowerCase() === inactiveValidatorsTitle.toLowerCase(),
     }"
   >
     <div class="app-table__cell">
@@ -43,7 +44,10 @@
         {{ $getPrecisePercents(validator.commission.commissionRates.rate) }}
       </span>
     </div>
-    <div v-if="tabStatus !== inactiveValidatorsTitle" class="app-table__cell">
+    <div
+      v-if="tabStatus.toLowerCase() !== inactiveValidatorsTitle.toLowerCase()"
+      class="app-table__cell"
+    >
       <span class="app-table__title">Uptime</span>
       <Progressbar
         :min="0"

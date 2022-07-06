@@ -45,14 +45,26 @@
 
     <template v-if="validator">
       <ValidatorInfo :validator="validator" />
-      <AppTabs @changeTab="selectTab">
-        <AppTab title="Oracle Reports">
+      <AppTabs
+        @changeTab="selectTab"
+        :first-selected-title="tabStatus.toLowerCase()"
+      >
+        <AppTab
+          title="Oracle Reports"
+          :titleKey="oracleReportsTableTitle.toLowerCase()"
+        >
           <OracleReportsTable :proposerAddress="validator.operatorAddress" />
         </AppTab>
-        <AppTab :title="delegatorsTitle">
+        <AppTab
+          :title="delegatorsTitle"
+          :titleKey="delegatorsKey.toLowerCase()"
+        >
           <DelegatorsTable :delegators="delegators" :is-loading="isLoading" />
         </AppTab>
-        <AppTab title="Proposed Blocks">
+        <AppTab
+          title="Proposed Blocks"
+          :titleKey="proposedBlocksTitle.toLowerCase()"
+        >
           <ProposedBlocksTable :proposerAddress="validator?.operatorAddress" />
         </AppTab>
       </AppTabs>
@@ -122,14 +134,16 @@ export default defineComponent({
   },
   setup: function () {
     const router: Router = useRouter()
+    const { tab } = router.currentRoute.value.query
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const route: RouteLocationNormalizedLoaded = useRoute()
     const validator = ref()
     const delegators = ref<DelegationResponse[]>([])
     const tabStatus = ref('')
-    const oracleReportsTableTitle = 'Oracle Reports'
-    const proposedBlocksTitle = 'Proposed Blocks'
+    const oracleReportsTableTitle = ref('Oracle Reports')
+    const proposedBlocksTitle = ref('Proposed Blocks')
     const delegations = ref<{ [k: string]: DelegationResponse }>({})
+    const delegatorsKey = ref('delegators')
     const delegatorsTitle = computed(() =>
       delegators.value?.length
         ? `Delegators (${delegators.value?.length})`
@@ -139,7 +153,7 @@ export default defineComponent({
       if (title !== tabStatus.value) {
         tabStatus.value = title
         router.push({
-          query: { tab: title },
+          query: { page: 1, tab: tabStatus.value },
         })
       }
     }
@@ -261,12 +275,12 @@ export default defineComponent({
     }
 
     onMounted(async () => {
-      if (router.currentRoute.value.query.tab) {
-        tabStatus.value = String(router.currentRoute.value.query.tab)
-      } else {
-        router.push({
-          query: { tab: tabStatus.value },
-        })
+      if (
+        tab === oracleReportsTableTitle.value.toLowerCase() ||
+        tab === proposedBlocksTitle.value.toLowerCase() ||
+        tab === delegatorsKey.value.toLowerCase()
+      ) {
+        tabStatus.value = String(tab)
       }
       await loadData()
     })
@@ -285,6 +299,8 @@ export default defineComponent({
       selectTab,
       oracleReportsTableTitle,
       proposedBlocksTitle,
+      tabStatus,
+      delegatorsKey,
     }
   },
 })

@@ -165,7 +165,7 @@ export default defineComponent({
   setup() {
     const router: Router = useRouter()
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 1
+    const ITEMS_PER_PAGE = 50
     const currentPage = ref(1)
     const totalPages = ref()
     const oracleScriptsCount = ref(0)
@@ -198,7 +198,7 @@ export default defineComponent({
         oracleScripts.value = data
         oracleScriptsCount.value = total_count
         totalPages.value = Math.ceil(oracleScriptsCount.value / ITEMS_PER_PAGE)
-        if (totalPages.value < currentPage.value || !total_count) {
+        if (totalPages.value < currentPage.value) {
           currentPage.value = 1
           setPage(currentPage.value)
           loadOracleScripts()

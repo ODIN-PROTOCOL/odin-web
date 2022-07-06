@@ -218,7 +218,6 @@ export default defineComponent({
 
     onMounted(async () => {
       if (page && Number(page) > 1) {
-        const { page } = router.currentRoute.value.query
         currentPage.value = Number(page)
       } else {
         setPage(currentPage.value)

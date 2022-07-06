@@ -56,11 +56,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType, computed } from 'vue'
+import { defineComponent, ref, PropType, computed, onMounted } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
+import { Router, useRouter } from 'vue-router'
 import SkeletonTable from '@/components/SkeletonTable.vue'
+import { setPageWithTab } from '@/router'
 
 export default defineComponent({
   components: { AppPagination, SkeletonTable },
@@ -75,6 +77,8 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const router: Router = useRouter()
+    const { page, tab } = router.currentRoute.value.query
     const ITEMS_PER_PAGE = 5
     const currentPage = ref(1)
     const delegatorsCount = computed(() => {
@@ -98,8 +102,16 @@ export default defineComponent({
 
     const paginationHandler = (num: number) => {
       currentPage.value = num
+      if (totalPages.value < currentPage.value) {
+        currentPage.value = 1
+      }
+      setPageWithTab(currentPage.value, String(tab))
     }
-
+    onMounted(async () => {
+      if (page && Number(page) > 1 && tab === 'delegators') {
+        currentPage.value = Number(page)
+      }
+    })
     return {
       API_CONFIG,
       ITEMS_PER_PAGE,

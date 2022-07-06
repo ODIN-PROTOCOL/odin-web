@@ -51,7 +51,7 @@
         class="mg-t32 mg-b32"
         v-model="currentPage"
         :pages="totalPages"
-        @update:modelValue="getProposedBlocks"
+        @update:modelValue="paginationHandler"
       />
     </template>
   </div>
@@ -66,6 +66,8 @@ import { callers } from '@/api/callers'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
+import { Router, useRouter } from 'vue-router'
+import { setPageWithTab } from '@/router'
 
 export default defineComponent({
   components: { AppPagination, SkeletonTable },
@@ -73,6 +75,8 @@ export default defineComponent({
     proposerAddress: { type: String, required: true },
   },
   setup: function (props) {
+    const router: Router = useRouter()
+    const { page, tab } = router.currentRoute.value.query
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 5
     const currentPage = ref(1)
@@ -89,20 +93,41 @@ export default defineComponent({
       try {
         const response = await callers.getProposedBlocks(
           props.proposerAddress,
-          currentPage.value,
+          1,
           ITEMS_PER_PAGE
         )
         const _blocks = await response.json()
-        blocks.value = _blocks.data ? _blocks.data : []
         blocksCount.value = _blocks?.total_count
         totalPages.value = Math.ceil(blocksCount.value / ITEMS_PER_PAGE) - 1
+        if (totalPages.value < currentPage.value) {
+          currentPage.value = 1
+          setPageWithTab(currentPage.value, String(tab))
+          getProposedBlocks()
+        } else {
+          const response = await callers.getProposedBlocks(
+            props.proposerAddress,
+            currentPage.value,
+            ITEMS_PER_PAGE
+          )
+          const _blocks = await response.json()
+          blocksCount.value = _blocks?.total_count
+          totalPages.value = Math.ceil(blocksCount.value / ITEMS_PER_PAGE) - 1
+          blocks.value = _blocks.data ? _blocks.data : []
+        }
       } catch (error) {
         handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }
-
+    const paginationHandler = async (pageNumber: number) => {
+      currentPage.value = pageNumber
+      setPageWithTab(currentPage.value, String(tab))
+      await getProposedBlocks()
+    }
     onMounted(async () => {
+      if (page && Number(page) > 1) {
+        currentPage.value = Number(page)
+      }
       await getProposedBlocks()
     })
 
@@ -117,6 +142,7 @@ export default defineComponent({
       getProposedBlocks,
       headerTitles,
       isLoading,
+      paginationHandler,
     }
   },
 })

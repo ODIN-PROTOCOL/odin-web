@@ -130,9 +130,9 @@ export default defineComponent({
   setup() {
     const router: Router = useRouter()
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 5
+    const ITEMS_PER_PAGE = 50
     const currentPage = ref(1)
-    const totalPages = ref()
+    const totalPages = ref(0)
     const proposalsCount = ref(0)
     const proposals = ref()
     const filteredProposals = ref()

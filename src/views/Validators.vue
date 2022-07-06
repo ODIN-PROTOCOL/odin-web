@@ -41,35 +41,32 @@
     <div class="validators__filter">
       <div class="validators__tabs">
         <button
-          v-if="isDisabledDelegationsTab"
+          v-if="isDelegator"
           @click="selectTab(myValidatorsTitle)"
           class="validators__tab"
           :class="{
-            selected: myValidatorsTitle
-              .toLowerCase()
-              .includes(tabStatus.toLowerCase()),
+            selected:
+              myValidatorsTitle.toLowerCase() === tabStatus.toLowerCase(),
           }"
         >
-          {{ myValidatorsTitle }}
+          {{ myValidatorsTitle }} {{ myValidatorsCount }}
         </button>
         <button
           @click="selectTab(activeValidatorsTitle)"
           class="validators__tab"
           :class="{
-            selected: activeValidatorsTitle
-              .toLowerCase()
-              .includes(tabStatus.toLowerCase()),
+            selected:
+              activeValidatorsTitle.toLowerCase() === tabStatus.toLowerCase(),
           }"
         >
-          {{ activeValidatorsTitle }}
+          {{ activeValidatorsTitle }} {{ activeValidatorsCount }}
         </button>
         <button
           @click="selectTab(inactiveValidatorsTitle)"
           class="validators__tab"
           :class="{
-            selected: inactiveValidatorsTitle
-              .toLowerCase()
-              .includes(tabStatus.toLowerCase()),
+            selected:
+              inactiveValidatorsTitle.toLowerCase() === tabStatus.toLowerCase(),
           }"
         >
           {{ inactiveValidatorsTitle }}
@@ -95,7 +92,8 @@
     <div
       class="app-table validators__table"
       :class="{
-        'validators__table--inactive': tabStatus === inactiveValidatorsTitle,
+        'validators__table--inactive':
+          tabStatus.toLowerCase() === inactiveValidatorsTitle.toLowerCase(),
       }"
     >
       <div class="app-table__head validators__table-head">
@@ -104,7 +102,9 @@
         <span class="validators__table-head-item">Delegated</span>
         <span class="validators__table-head-item">Commission</span>
         <span
-          v-if="tabStatus !== inactiveValidatorsTitle"
+          v-if="
+            tabStatus.toLowerCase() !== inactiveValidatorsTitle.toLowerCase()
+          "
           class="validators__table-head-item"
         >
           Uptime
@@ -184,12 +184,19 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, computed, onUnmounted } from 'vue'
+import {
+  defineComponent,
+  ref,
+  onMounted,
+  computed,
+  onUnmounted,
+  watch,
+} from 'vue'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 import { COINS_LIST } from '@/api/api-config'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
-import { getTransformedValidators } from '@/helpers/validatorHelpers'
+import { getDecodedValidators } from '@/helpers/validatorHelpers'
 import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
@@ -202,13 +209,14 @@ import UndelegateFormModal from '@/components/modals/UndelegateFormModal.vue'
 import StakeTransferFormModal from '@/components/modals/StakeTransferFormModal.vue'
 import ClaimAllRewardsFormModal from '@/components/modals/ClaimAllRewardsFormModal.vue'
 import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
-import { isActiveValidator } from '@/helpers/validatorHelpers'
+
 import InputField from '@/components/fields/InputField.vue'
 import SearchIcon from '@/components/icons/SearchIcon.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 import ValidatorsTableRowMobile from '@/components/ValidatorsTableRowMobile.vue'
 import ValidatorsTableRow from '@/components/ValidatorsTableRow.vue'
 import { Router, useRouter } from 'vue-router'
+import { setPageWithTab } from '@/router'
 
 export default defineComponent({
   components: {
@@ -221,51 +229,39 @@ export default defineComponent({
   },
   setup() {
     const router: Router = useRouter()
+    const { page, tab } = router.currentRoute.value.query
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 1
+    const ITEMS_PER_PAGE = 20
     const currentPage = ref(1)
-    const totalPages = ref()
+    const totalPages = ref(0)
     const filteredValidatorsCount = ref(0)
     const validatorsCount = ref(0)
-    const filteredValidators = ref()
-    const validators = ref()
-    const delegations = ref<{ [k: string]: DelegationResponse }>({})
-    const isDelegator = computed(
-      () => Object.keys(delegations.value).length !== 0
-    )
+    const filteredValidators = ref<ValidatorDecoded[]>([])
+    const validators = ref<ValidatorDecoded[]>([])
     const activeValidators = ref<ValidatorDecoded[]>([])
     const inactiveValidators = ref<ValidatorDecoded[]>([])
     const allValitors = ref<ValidatorDecoded[]>([])
+    const myDelegationsValitors = ref<ValidatorDecoded[]>([])
+    const delegations = ref<{ [k: string]: DelegationResponse }>({})
     const delegatedAdress = ref<string[]>([])
-    const activeValidatorsTitle = computed(() =>
-      activeValidators.value?.length
-        ? `Active (${activeValidators.value?.length})`
-        : 'Active'
-    )
-    const myValidatorsTitle = computed(() =>
-      activeValidators.value?.length
-        ? `My delegations (${myDelegationsValitors.value?.length})`
-        : 'My delegations'
-    )
-    const myDelegationsValitors = computed(() =>
-      delegatedAdress.value.map((validatorAddress: string) => {
-        return {
-          ...allValitors.value.find(
-            (validator: ValidatorDecoded) =>
-              validator.operatorAddress === validatorAddress
-          ),
-        }
-      })
-    )
-    const windowInnerWidth = ref(document.documentElement.clientWidth)
-    const updateWidth = () => {
-      windowInnerWidth.value = document.documentElement.clientWidth
-    }
+    const activeValidatorsTitle = ref('Active')
+    const myValidatorsTitle = ref('My delegations')
     const inactiveValidatorsTitle = ref('Inactive')
-    const tabStatus = ref(activeValidatorsTitle.value)
+    const tabStatus = ref('')
     const searchValue = ref('')
-    const isDisabledDelegationsTab = computed(() =>
-      Boolean(myDelegationsValitors.value.length)
+    const windowInnerWidth = ref(document.documentElement.clientWidth)
+    const activeValidatorsCount = computed(() =>
+      activeValidators.value?.length
+        ? `(${activeValidators.value?.length})`
+        : ''
+    )
+    const myValidatorsCount = computed(() =>
+      activeValidators.value?.length
+        ? `(${myDelegationsValitors.value?.length})`
+        : ''
+    )
+    const isDelegator = computed(() =>
+      Boolean(Object.keys(delegations.value).length)
     )
     const headerTitles = computed(() => {
       if (windowInnerWidth.value > 768) {
@@ -287,67 +283,60 @@ export default defineComponent({
         const bonded = await callers.getValidators('BOND_STATUS_BONDED')
         const unbonding = await callers.getValidators('BOND_STATUS_UNBONDING')
         const unbonded = await callers.getValidators('BOND_STATUS_UNBONDED')
-        const allUptime = await callers
-          .getValidatorUptime()
-          .then((resp) => resp.json())
-
-        activeValidators.value = await Promise.all(
-          await getTransformedValidators([...bonded.validators]).then(
-            (validators) =>
-              validators.map(async (item) => {
-                return {
-                  ...item,
-                  isActive: await isActiveValidator(item.operatorAddress),
-                  uptimeInfo: allUptime.find(
-                    (name: { operator_address: string }) =>
-                      name.operator_address === item.operatorAddress
-                  ),
-                }
-              })
-          )
-        )
-
-        inactiveValidators.value = await Promise.all(
-          await getTransformedValidators([
-            ...unbonded.validators,
-            ...unbonding.validators,
-          ]).then((validators) =>
-            validators.map(async (item) => {
-              return {
-                ...item,
-                isActive: await isActiveValidator(item.operatorAddress),
-                uptimeInfo: allUptime.find(
-                  (name: { operator_address: string }) =>
-                    name.operator_address === item.operatorAddress
-                ),
-              }
-            })
-          )
-        )
+        activeValidators.value = await getDecodedValidators(bonded.validators)
+        inactiveValidators.value = await getDecodedValidators([
+          ...unbonded.validators,
+          ...unbonding.validators,
+        ])
         allValitors.value = [
           ...inactiveValidators.value,
           ...activeValidators.value,
         ]
-        if (tabStatus.value === inactiveValidatorsTitle.value) {
-          validators.value = [...inactiveValidators.value]
-        } else if (tabStatus.value === activeValidatorsTitle.value) {
-          validators.value = [...activeValidators.value]
+        validatorsCount.value = allValitors.value.length
+
+        myDelegationsValitors.value = allValitors.value.filter(
+          (validator: ValidatorDecoded) =>
+            delegatedAdress.value.filter(
+              (validatorAddress: string) =>
+                validator.operatorAddress === validatorAddress
+            )[0] === validator.operatorAddress
+        )
+
+        if (
+          !tab ||
+          (tab !== inactiveValidatorsTitle.value.toLowerCase() &&
+            tab !== activeValidatorsTitle.value.toLowerCase() &&
+            tab !== myValidatorsTitle.value.toLowerCase())
+        ) {
+          tabStatus.value = isDelegator.value
+            ? myValidatorsTitle.value
+            : activeValidatorsTitle.value
         } else {
-          validators.value = [...myDelegationsValitors.value]
+          selectValidators()
+          filterValidators()
         }
-        // validators.value = isDisabledDelegationsTab.value
-        //   ? [...myDelegationsValitors.value]
-        //   : [...activeValidators.value]
-        // tabStatus.value = isDisabledDelegationsTab.value
-        //   ? myValidatorsTitle.value
-        //   : activeValidatorsTitle.value
-        validatorsCount.value =
-          activeValidators.value.length + inactiveValidators.value.length
-        filterValidators(currentPage.value)
       } catch (error) {
         handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
+    }
+
+    const selectValidators = () => {
+      if (
+        tabStatus.value.toLowerCase() ===
+        inactiveValidatorsTitle.value.toLowerCase()
+      ) {
+        validators.value = [...inactiveValidators.value]
+      } else if (
+        tabStatus.value.toLowerCase() ===
+        activeValidatorsTitle.value.toLowerCase()
+      ) {
+        validators.value = [...activeValidators.value]
+      } else if (
+        tabStatus.value.toLowerCase() === myValidatorsTitle.value.toLowerCase()
+      ) {
+        validators.value = [...myDelegationsValitors.value]
+      }
     }
 
     const getDelegations = async () => {
@@ -355,7 +344,6 @@ export default defineComponent({
       try {
         // TODO: delegations returns invalid delegator's amount?
         const response = await callers.getDelegations(wallet.account.address)
-
         const _delegations: { [k: string]: DelegationResponse } = {}
         for (const delegation of response.delegationResponses) {
           if (!delegation.delegation?.validatorAddress) continue
@@ -363,61 +351,54 @@ export default defineComponent({
         }
         delegations.value = _delegations
         delegatedAdress.value = Object.keys(delegations.value)
-        // tabStatus.value = isDisabledDelegationsTab.value
-        //   ? myValidatorsTitle.value
-        //   : activeValidatorsTitle.value
       } catch (error) {
-        // error is ignored, since no delegations also throws the error
         delegations.value = {}
-        // tabStatus.value = activeValidatorsTitle.value
       }
       releaseLoading()
     }
 
-    const filterValidators = (newPage = 1) => {
+    const filterValidators = () => {
       let tempArr = validators.value
-      if (searchValue.value.trim()) {
-        tempArr = tempArr.filter((item: { description: { moniker: string } }) =>
-          item.description.moniker
-            .toLowerCase()
-            .includes(searchValue.value.toLowerCase())
-        )
-      }
-      if (newPage === 1) {
-        filteredValidators.value = tempArr?.slice(0, newPage * ITEMS_PER_PAGE)
-      } else {
-        filteredValidators.value = tempArr?.slice(
-          (newPage - 1) * ITEMS_PER_PAGE,
-          (newPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE
-        )
-      }
       filteredValidatorsCount.value = tempArr.length
       totalPages.value = Math.ceil(
         filteredValidatorsCount.value / ITEMS_PER_PAGE
       )
-      currentPage.value = newPage
+      if (totalPages.value < currentPage.value) {
+        currentPage.value = 1
+        setPageWithTab(currentPage.value, tabStatus.value.toLowerCase())
+      }
+
+      if (searchValue.value.trim()) {
+        tempArr.filter((item: ValidatorDecoded) => {
+          if (item.description)
+            return item.description.moniker
+              .toLowerCase()
+              .includes(searchValue.value.toLowerCase())
+        })
+      }
+      if (currentPage.value === 1) {
+        filteredValidators.value = tempArr?.slice(
+          0,
+          currentPage.value * ITEMS_PER_PAGE
+        )
+      } else {
+        filteredValidators.value = tempArr?.slice(
+          (currentPage.value - 1) * ITEMS_PER_PAGE,
+          (currentPage.value - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE
+        )
+      }
     }
 
-    const paginationHandler = (num: number) => {
-      router.push({
-        query: { page: num, tab: tabStatus.value.toLowerCase().split('(')[0] },
-      })
-      filterValidators(num)
+    const paginationHandler = (pageNumber: number) => {
+      currentPage.value = pageNumber
+      setPageWithTab(currentPage.value, tabStatus.value.toLowerCase())
+      filterValidators()
     }
-    const selectTab = async (title: string) => {
+
+    const selectTab = (title: string) => {
       if (title !== tabStatus.value) {
+        currentPage.value = 1
         tabStatus.value = title
-        router.push({
-          query: { page: 1, tab: tabStatus.value.toLowerCase().split('(')[0] },
-        })
-        if (tabStatus.value === activeValidatorsTitle.value) {
-          validators.value = [...activeValidators.value]
-        } else if (tabStatus.value === inactiveValidatorsTitle.value) {
-          validators.value = [...inactiveValidators.value]
-        } else if (tabStatus.value === myValidatorsTitle.value) {
-          validators.value = [...myDelegationsValitors.value]
-        }
-        filterValidators(1)
       }
     }
     const validatorStatus = (validator: {
@@ -514,6 +495,7 @@ export default defineComponent({
         }
       )
     }
+
     const openModal = (event: {
       typeBtn: string
       validator: ValidatorDecoded
@@ -528,29 +510,37 @@ export default defineComponent({
         undelegate(event.validator)
       }
     }
+
+    const updateWidth = () => {
+      windowInnerWidth.value = document.documentElement.clientWidth
+    }
+
+    watch([tabStatus], () => {
+      if (!allValitors.value.length) return
+      selectValidators()
+      setPageWithTab(currentPage.value, tabStatus.value.toLowerCase())
+      filterValidators()
+    })
+
     onMounted(async () => {
-      if (router.currentRoute.value.query.tab) {
-        tabStatus.value = String(router.currentRoute.value.query.tab)
-      }
       if (
-        router.currentRoute.value.query.page &&
-        Number(router.currentRoute.value.query.page) > 1
+        tab === inactiveValidatorsTitle.value.toLowerCase() ||
+        tab === activeValidatorsTitle.value.toLowerCase() ||
+        tab === myValidatorsTitle.value.toLowerCase()
       ) {
-        currentPage.value = Number(router.currentRoute.value.query.page)
-      } else {
-        router.push({
-          query: {
-            page: currentPage.value,
-            tab: tabStatus.value.toLowerCase().split('(')[0],
-          },
-        })
+        tabStatus.value = String(tab)
+      }
+      if (page && Number(page) > 1) {
+        currentPage.value = Number(page)
       }
       window.addEventListener('resize', updateWidth)
       await loadData()
     })
+
     onUnmounted(async () => {
       window.removeEventListener('resize', updateWidth)
     })
+
     return {
       COINS_LIST,
       ITEMS_PER_PAGE,
@@ -562,6 +552,19 @@ export default defineComponent({
       validators,
       delegations,
       isLoading,
+      isDelegator,
+      activeValidatorsTitle,
+      activeValidatorsCount,
+      inactiveValidatorsTitle,
+      searchValue,
+      myValidatorsTitle,
+      myValidatorsCount,
+      myDelegationsValitors,
+      tabStatus,
+      headerTitles,
+      windowInnerWidth,
+      activeValidators,
+      validatorStatus,
       getValidators,
       getDelegations,
       paginationHandler,
@@ -571,20 +574,9 @@ export default defineComponent({
       delegate,
       redelegate,
       undelegate,
-      isDelegator,
-      activeValidatorsTitle,
-      inactiveValidatorsTitle,
-      searchValue,
+      openModal,
       filterValidators,
       stakeTransfer,
-      myValidatorsTitle,
-      myDelegationsValitors,
-      isDisabledDelegationsTab,
-      tabStatus,
-      headerTitles,
-      validatorStatus,
-      windowInnerWidth,
-      openModal,
     }
   },
 })
