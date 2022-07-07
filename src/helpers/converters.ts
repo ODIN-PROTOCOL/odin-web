@@ -49,3 +49,22 @@ export function getLokiFromString(value: string | undefined): string {
   }
   return value.split('loki')[0]
 }
+
+export function convertOdinToThousands(
+  amount: string | BigNumber | undefined
+): string | BigNumber {
+  if (!amount) return '-'
+
+  return `${big.divide(amount, 1000, { decimals: 4 })} K ${ODIN_DENOM}`
+}
+
+export function convertLokiToOdinThousands(
+  amount: string | BigNumber | undefined
+): string | BigNumber {
+  return convertOdinToThousands(
+    convertLokiToOdin(amount, {
+      onlyNumber: true,
+      withPrecise: true,
+    }).toString()
+  )
+}

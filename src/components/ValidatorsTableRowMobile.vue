@@ -37,12 +37,7 @@
           })
         "
       >
-        {{
-          $convertLokiToOdin(validator.delegatorShares, {
-            withDenom: true,
-            withPrecise: true,
-          })
-        }}
+        {{ $convertLokiToOdinThousands(validator.delegatorShares) }}
       </span>
     </div>
     <template v-if="isShowValidatorDetails">

@@ -29,12 +29,7 @@
           })
         "
       >
-        {{
-          $convertLokiToOdin(validator.delegatorShares, {
-            withDenom: true,
-            withPrecise: true,
-          })
-        }}
+        {{ $convertLokiToOdinThousands(validator.delegatorShares) }}
       </span>
     </div>
     <div class="app-table__cell validators-table-row__cell--center">

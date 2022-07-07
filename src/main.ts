@@ -26,7 +26,10 @@ import {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
-import { convertLokiToOdin } from './helpers/converters'
+import {
+  convertLokiToOdin,
+  convertLokiToOdinThousands,
+} from './helpers/converters'
 import hljs from 'highlight.js/lib/core'
 import python from 'highlight.js/lib/languages/python'
 import rust from 'highlight.js/lib/languages/rust'
@@ -78,6 +81,8 @@ async function _main() {
   app.config.globalProperties.$preciseFormatCoin = preciseFormatCoin
   app.config.globalProperties.$getPercentOutOfNumber = getPercentOutOfNumber
   app.config.globalProperties.$convertLokiToOdin = convertLokiToOdin
+  app.config.globalProperties.$convertLokiToOdinThousands =
+    convertLokiToOdinThousands
   app.use(router)
   app.use(Notifications)
   app.use(hljsVuePlugin)
