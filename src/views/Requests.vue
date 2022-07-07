@@ -25,7 +25,6 @@
     <div class="app-table requests__table">
       <div class="app-table__head requests__table-head">
         <span>Request ID</span>
-        <span>Sender</span>
         <span>Oracle Script ID</span>
         <span>Report Status</span>
         <span>Timestamp</span>
@@ -44,15 +43,6 @@
                 :text="`#${item.request.id}`"
                 :to="`/requests/${item.request.id}`"
               />
-            </div>
-            <div class="app-table__cell">
-              <span class="app-table__title">Sender</span>
-              <a
-                class="app-table__cell-txt app-table__link"
-                :href="senderLink(item)"
-              >
-                {{ item.request.client_id }}
-              </a>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Oracle Script ID</span>
