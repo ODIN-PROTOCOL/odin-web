@@ -3,6 +3,7 @@ import { stringToPath } from '@cosmjs/crypto'
 export const API_CONFIG = {
   api: process.env.VUE_APP_API_URL as string,
   rpc: process.env.VUE_APP_RPC_URL as string,
+  chainId: process.env.VUE_APP_CHAIN_ID as string,
   faucet: process.env.VUE_APP_FAUCET_URL as string,
   exBridge: process.env.VUE_APP_EX_BRIDGE_URL as string,
   exBridgeFee: process.env.VUE_APP_EX_BRIDGE_FEE as string,
@@ -24,7 +25,7 @@ export enum COINS_TYPE {
 // Configuration of the chain to which the Kepler extension connects
 export const CHAIN_CONFIG = {
   features: ['no-legacy-stdTx'],
-  chainId: 'odin-mainnet-freya',
+  chainId: API_CONFIG.chainId,
   chainName: 'ODIN118',
   rpc: API_CONFIG.rpc,
   rest: API_CONFIG.api,
