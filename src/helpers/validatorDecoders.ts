@@ -4,8 +4,13 @@ import { PubKey } from 'cosmjs-types/cosmos/crypto/secp256k1/keys'
 import { Validator } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { toBase64 } from '@cosmjs/encoding'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
+import { ValidatorsInfo } from '@/graphql/types'
 
 export type ValidatorDecoded = Modify<Validator, { consensusPubkey?: string }>
+export type ValidatorInfoModify = Modify<
+  ValidatorsInfo,
+  { isActive?: boolean; rank: number; uptime: number }
+>
 export type TransferValidator = Modify<
   ValidatorDecoded,
   { delegation?: DelegationResponse }
