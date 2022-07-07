@@ -1,5 +1,5 @@
 <template>
-  <div class="app-tab" v-show="title == selectedTitle">
+  <div class="app-tab" v-show="titleKey === selectedTitle">
     <slot />
   </div>
 </template>
@@ -8,8 +8,11 @@
 import { defineComponent, inject } from 'vue'
 
 export default defineComponent({
-  props: { title: { type: String, requred: true } },
-  setup: function () {
+  props: {
+    title: { type: String, requred: true },
+    titleKey: { type: String, requred: true },
+  },
+  setup() {
     const selectedTitle = inject('selectedTitle')
 
     return { selectedTitle }

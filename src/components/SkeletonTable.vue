@@ -43,7 +43,7 @@ export default defineComponent({
   props: {
     headerTitles: { type: Array, required: true },
     classString: { type: String },
-    tableSize: { type: String, default: '5' },
+    tableSize: { type: String, default: '8' },
     skeletonHeight: { type: Number, default: 24 },
     skeletonRadius: { type: Number, default: 32 },
   },

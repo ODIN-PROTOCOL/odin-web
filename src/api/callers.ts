@@ -209,16 +209,6 @@ const makeCallers = () => {
       (qc) => qc.distribution.delegationTotalRewards
     ),
     getParams: querier((qc) => qc.mint.unverified.params),
-    faucetRequest: (req: { denom: string }) => {
-      console.log({
-        address: wallet.account.address,
-        denom: req.denom,
-      })
-      return sendPost(`${API_CONFIG.faucet}/request`, {
-        address: wallet.account.address,
-        denom: req.denom,
-      })
-    },
     getTxSearch: cacheAnswers(tmQuerier((tc) => tc.txSearch.bind(tc))),
     getBlockchain: tmQuerier((tc) => tc.blockchain.bind(tc)),
     getBlock: cacheAnswers(tmQuerier((tc) => tc.block.bind(tc))),

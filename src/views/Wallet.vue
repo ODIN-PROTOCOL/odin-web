@@ -91,7 +91,8 @@ import TxLine from '@/components/TxLine.vue'
 import PersonalInfo from '@/components/PersonalInfo.vue'
 import { sortingTypeTx, TYPE_TX_SORT } from '@/helpers/sortingHelpers'
 import SkeletonTable from '@/components/SkeletonTable.vue'
-
+import { Router, useRouter } from 'vue-router'
+import { setPage } from '@/router'
 export default defineComponent({
   components: {
     AppPagination,
@@ -100,10 +101,11 @@ export default defineComponent({
     SkeletonTable,
   },
   setup: function () {
+    const router: Router = useRouter()
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 50
     const currentPage = ref(1)
-    const totalPages = ref()
+    const totalPages = ref(1)
     const transactionsCount = ref(0)
     const transactions = ref()
     const sortingValue = ref(TYPE_TX_SORT.all)
@@ -120,6 +122,7 @@ export default defineComponent({
     const getTransactions = async () => {
       lockLoading()
       try {
+        transactions.value = []
         const tx = await callers
           .getAccountTx(
             currentPage.value - 1,
@@ -132,6 +135,14 @@ export default defineComponent({
         transactions.value = tx.data
         transactionsCount.value = tx.total_count
         totalPages.value = Math.ceil(transactionsCount.value / ITEMS_PER_PAGE)
+        if (
+          totalPages.value < currentPage.value &&
+          transactionsCount.value > 0
+        ) {
+          currentPage.value = 1
+          setPage(currentPage.value)
+          getTransactions()
+        }
       } catch (error) {
         handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
@@ -140,10 +151,19 @@ export default defineComponent({
 
     const paginationHandler = async (num: number) => {
       currentPage.value = num
+      setPage(currentPage.value)
       await getTransactions()
     }
 
     onMounted(async () => {
+      if (
+        router.currentRoute.value.query.page &&
+        Number(router.currentRoute.value.query.page) > 1
+      ) {
+        currentPage.value = Number(router.currentRoute.value.query.page)
+      } else {
+        setPage(currentPage.value)
+      }
       await getTransactions()
     })
 

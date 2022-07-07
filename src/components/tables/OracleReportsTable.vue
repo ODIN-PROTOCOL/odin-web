@@ -58,6 +58,9 @@ import { API_CONFIG } from '@/api/api-config'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
+import { Router, useRouter } from 'vue-router'
+import { setPageWithTab } from '@/router'
+
 export default defineComponent({
   components: { AppPagination, SkeletonTable },
   props: {
@@ -65,7 +68,8 @@ export default defineComponent({
   },
   setup(props) {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-
+    const router: Router = useRouter()
+    const { page, tab } = router.currentRoute.value.query
     const ITEMS_PER_PAGE = 5
     const currentPage = ref(1)
     const totalPages = ref(0)
@@ -85,6 +89,12 @@ export default defineComponent({
           currentPage.value - 1,
           ITEMS_PER_PAGE
         )
+        if (currentPage.value > 1 && !response.data.data) {
+          currentPage.value = 1
+          setPageWithTab(currentPage.value, String(tab))
+          getReports()
+        }
+
         if (response.data.data) {
           reportsCount.value = response.data.tx_count
           totalPages.value = Math.ceil(reportsCount.value / ITEMS_PER_PAGE)
@@ -97,9 +107,13 @@ export default defineComponent({
     }
     const paginationHandler = async (num: number) => {
       currentPage.value = num
+      setPageWithTab(currentPage.value, String(tab))
       await getReports()
     }
     onMounted(async () => {
+      if (page && Number(page) > 1 && tab === 'oracle reports') {
+        currentPage.value = Number(page)
+      }
       await getReports()
     })
     return {

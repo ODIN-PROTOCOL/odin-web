@@ -34,20 +34,25 @@
           <div class="info-card__row">
             <span class="info-card__row-title">Description</span>
             <span class="info-card__row-value">
-              {{ dataSourceData.description }}
+              {{ dataSourceData.descriptio || 'No description' }}
             </span>
           </div>
         </div>
       </div>
-      <AppTabs>
+      <AppTabs
+        @changeTab="selectTab"
+        :first-selected-title="tabStatus.toLowerCase()"
+      >
         <AppTab
-          title="Requests"
+          :title="requestTableTitle"
+          :titleKey="requestTableTitle.toLowerCase()"
           :class="{ 'data-source-item__tab-content': isDataSourceOwner }"
         >
           <RequestsDataSourceTable :data-source-id="String($route.params.id)" />
         </AppTab>
         <AppTab
-          title="Code"
+          :title="codeTableTitle"
+          :titleKey="codeTableTitle.toLowerCase()"
           :class="{ 'data-source-item__tab-content': isDataSourceOwner }"
         >
           <CodeTable :code="dataSourceCode" />
@@ -78,7 +83,12 @@ import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
-import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
+import {
+  RouteLocationNormalizedLoaded,
+  useRoute,
+  Router,
+  useRouter,
+} from 'vue-router'
 import BackButton from '@/components/BackButton.vue'
 import AppTabs from '@/components/tabs/AppTabs.vue'
 import AppTab from '@/components/tabs/AppTab.vue'
@@ -88,6 +98,7 @@ import RequestsDataSourceTable from '@/components/tables/RequestsDataSourceTable
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import DataSourceFormModal from '@/components/modals/DataSourceFormModal.vue'
 import { wallet } from '@/api/wallet'
+import { setPageWithTab } from '@/router'
 
 export default defineComponent({
   components: {
@@ -100,9 +111,14 @@ export default defineComponent({
   setup: function () {
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const route: RouteLocationNormalizedLoaded = useRoute()
+    const router: Router = useRouter()
+    const { tab } = router.currentRoute.value.query
     const dataSourceData = ref()
+    const tabStatus = ref('')
     const dataSourceRequests = ref({})
     const dataSourceCode = ref('')
+    const codeTableTitle = ref('Code')
+    const requestTableTitle = ref('Requests')
     const isDataSourceOwner = computed(() => {
       return wallet.account.address === dataSourceData.value?.owner
     })
@@ -138,7 +154,21 @@ export default defineComponent({
         { dataSource }
       )
     }
+    const selectTab = async (title: string) => {
+      if (title !== tabStatus.value) {
+        tabStatus.value = title
+        setPageWithTab(1, tabStatus.value)
+      }
+    }
     onMounted(async () => {
+      if (
+        tab === requestTableTitle.value.toLowerCase() ||
+        tab === codeTableTitle.value.toLowerCase()
+      ) {
+        tabStatus.value = String(tab)
+      } else {
+        tabStatus.value = requestTableTitle.value
+      }
       await getDataSource()
       await getDataSourceCode()
     })
@@ -152,6 +182,10 @@ export default defineComponent({
       getDataSourceCode,
       editDataSource,
       isDataSourceOwner,
+      selectTab,
+      requestTableTitle,
+      codeTableTitle,
+      tabStatus,
     }
   },
 })

@@ -6,6 +6,16 @@ import {
 } from './guards'
 import { LOGIN_TYPE } from '../api/api-config'
 
+export const setPage = (pageNumber: number): void => {
+  router.push({
+    query: { page: pageNumber },
+  })
+}
+export const setPageWithTab = (page: number, tab: string): void => {
+  router.push({
+    query: { page, tab },
+  })
+}
 const rootRedirector = makeRootRedirector(
   { name: 'Validators' },
   { name: 'Auth' }

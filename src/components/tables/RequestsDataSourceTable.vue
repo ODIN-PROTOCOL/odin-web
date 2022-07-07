@@ -57,7 +57,7 @@
         class="mg-t32 mg-b32"
         v-model="currentPage"
         :pages="totalPages"
-        @update:modelValue="getDataSourceRequests"
+        @update:modelValue="paginationHandler"
       />
     </template>
   </div>
@@ -73,13 +73,17 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import TitledLink from '@/components/TitledLink.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
+import { Router, useRouter } from 'vue-router'
+import { setPageWithTab } from '@/router'
 
 export default defineComponent({
   components: { AppPagination, TitledLink, SkeletonTable },
   props: {
     dataSourceId: { type: String, required: true },
   },
-  setup: function (props) {
+  setup(props) {
+    const router: Router = useRouter()
+    const { page, tab } = router.currentRoute.value.query
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 5
     const currentPage = ref(1)
@@ -111,6 +115,12 @@ export default defineComponent({
       }
       releaseLoading()
     }
+    const paginationHandler = async (pageNumber: number) => {
+      currentPage.value = pageNumber
+      setPageWithTab(currentPage.value, String(tab))
+      await getDataSourceRequests()
+    }
+
     const getRequestItemName = (index: number) => {
       const item = requests.value[index]
       if (!item?.attributes.oracle_script_name) return '-'
@@ -118,6 +128,9 @@ export default defineComponent({
         return `#${item?.attributes?.oracle_script_id}${item?.attributes?.oracle_script_name}`
     }
     onMounted(async () => {
+      if (page && Number(page) > 1 && tab === 'request') {
+        currentPage.value = Number(page)
+      }
       await getDataSourceRequests()
     })
 
@@ -133,6 +146,7 @@ export default defineComponent({
       getDataSourceRequests,
       getRequestItemName,
       headerTitles,
+      paginationHandler,
     }
   },
 })

@@ -139,7 +139,13 @@ import ModalBase from './ModalBase.vue'
 import InputFileField from '@/components/fields/InputFileField.vue'
 import TextareaField from '@/components/fields/TextareaField.vue'
 import Long from 'long'
-import { getLokiFromString } from '@/helpers/converters'
+import {
+  convertOdinToLoki,
+  getDenom,
+  setDenom,
+  convertLokiToOdin,
+  getLokiFromString,
+} from '@/helpers/converters'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -159,10 +165,18 @@ export default defineComponent({
       return props.dataSource?.fee ? props.dataSource?.fee[0]?.denom : 'loki'
     })
     const price = computed(() => {
-      return props.dataSource?.fee
-        ? props.dataSource?.fee[0]?.amount
-        : getLokiFromString(props.dataSource?.fee_amount)
+      if (props.dataSource) {
+        // convertLokiToOdin(price.value, { onlyNumber: true })
+        return props.dataSource?.fee
+          ? convertLokiToOdin(props.dataSource?.fee[0]?.amount, {
+              onlyNumber: true,
+            })
+          : convertLokiToOdin(getLokiFromString(props.dataSource?.fee_amount), {
+              onlyNumber: true,
+            })
+      } else return 0
     })
+
     const bntText = computed(() => {
       return props.dataSource ? 'Edit' : 'Create'
     })
@@ -177,7 +191,7 @@ export default defineComponent({
         props.dataSource?.description || '',
         validators.maxCharacters(256),
       ],
-      assets: [String(assets.value), validators.required],
+      assets: [setDenom(assets.value), validators.required],
       price: [
         Number(price.value),
         validators.required,
@@ -210,7 +224,10 @@ export default defineComponent({
             name: form.name.val(),
             description: form.description.val(),
             executable: executableParsed,
-            fee: coins(form.price.val(), form.assets.val()),
+            fee: coins(
+              convertOdinToLoki(String(form.price.val())),
+              getDenom(form.assets.val())
+            ),
             owner: wallet.account.address,
             sender: wallet.account.address,
           })
@@ -219,7 +236,10 @@ export default defineComponent({
             name: form.name.val(),
             description: form.description.val(),
             executable: executableParsed,
-            fee: coins(form.price.val(), form.assets.val()),
+            fee: coins(
+              convertOdinToLoki(String(form.price.val())),
+              getDenom(form.assets.val())
+            ),
             owner: wallet.account.address,
             sender: wallet.account.address,
           })

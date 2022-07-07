@@ -151,6 +151,8 @@ import TopOracleScripts from '@/components/TopOracleScripts.vue'
 import SortLine from '@/components/SortLine.vue'
 import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
 import SkeletonTable from '@/components/SkeletonTable.vue'
+import { Router, useRouter } from 'vue-router'
+import { setPage } from '@/router'
 
 export default defineComponent({
   components: {
@@ -161,6 +163,7 @@ export default defineComponent({
     SkeletonTable,
   },
   setup() {
+    const router: Router = useRouter()
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 50
     const currentPage = ref(1)
@@ -178,6 +181,7 @@ export default defineComponent({
       { title: 'Description' },
       { title: 'Timestamp' },
     ]
+
     const loadOracleScripts = async () => {
       lockLoading()
       try {
@@ -190,9 +194,15 @@ export default defineComponent({
             oracleScriptsName.value
           )
           .then((response) => response.json())
+
         oracleScripts.value = data
         oracleScriptsCount.value = total_count
         totalPages.value = Math.ceil(oracleScriptsCount.value / ITEMS_PER_PAGE)
+        if (totalPages.value < currentPage.value) {
+          currentPage.value = 1
+          setPage(currentPage.value)
+          loadOracleScripts()
+        }
       } catch (error) {
         handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
@@ -228,6 +238,7 @@ export default defineComponent({
     )
     const paginationHandler = (num: number) => {
       currentPage.value = num
+      setPage(currentPage.value)
       loadOracleScripts()
     }
     const editOracleScript = async (oracleScript: OracleScript) => {
@@ -243,6 +254,14 @@ export default defineComponent({
       )
     }
     onMounted(async () => {
+      if (
+        router.currentRoute.value.query.page &&
+        Number(router.currentRoute.value.query.page) > 1
+      ) {
+        currentPage.value = Number(router.currentRoute.value.query.page)
+      } else {
+        setPage(currentPage.value)
+      }
       await loadOracleScripts()
       await getMostRequestedOracleScripts()
     })

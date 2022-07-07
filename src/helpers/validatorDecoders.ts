@@ -5,7 +5,10 @@ import { Validator } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { toBase64 } from '@cosmjs/encoding'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 
-export type ValidatorDecoded = Modify<Validator, { consensusPubkey?: string }>
+export type ValidatorDecoded = Modify<
+  Validator,
+  { consensusPubkey?: string; isActive?: boolean }
+>
 export type TransferValidator = Modify<
   ValidatorDecoded,
   { delegation?: DelegationResponse }
@@ -15,6 +18,7 @@ export function decodeValidators(validators: Validator[]): ValidatorDecoded[] {
     return {
       ...validator,
       consensusPubkey: decodePubKey(validator.consensusPubkey),
+      uptimeInfo: [],
     }
   })
 }

@@ -60,7 +60,7 @@
             <div class="app-table__cell">
               <span class="app-table__title">Description</span>
               <span>
-                {{ item.attributes.description || '-' }}
+                {{ item.attributes.description || 'No description' }}
               </span>
             </div>
             <div class="app-table__cell">
@@ -141,7 +141,8 @@ import SortLine from '@/components/SortLine.vue'
 import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
 import { convertLokiToOdin } from '@/helpers/converters'
 import SkeletonTable from '@/components/SkeletonTable.vue'
-
+import { Router, useRouter } from 'vue-router'
+import { setPage } from '@/router'
 export default defineComponent({
   components: {
     TitledLink,
@@ -149,7 +150,8 @@ export default defineComponent({
     SortLine,
     SkeletonTable,
   },
-  setup: function () {
+  setup() {
+    const router: Router = useRouter()
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
     const ITEMS_PER_PAGE = 50
     const currentPage = ref(1)
@@ -183,6 +185,11 @@ export default defineComponent({
         dataSources.value = data
         dataSourcesCount.value = total_count
         totalPages.value = Math.ceil(dataSourcesCount.value / ITEMS_PER_PAGE)
+        if (totalPages.value < currentPage.value) {
+          currentPage.value = 1
+          setPage(currentPage.value)
+          loadDataSources()
+        }
       } catch (error) {
         handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
@@ -210,6 +217,7 @@ export default defineComponent({
     }
     const paginationHandler = (num: number) => {
       currentPage.value = num
+      setPage(currentPage.value)
       loadDataSources()
     }
 
@@ -222,6 +230,14 @@ export default defineComponent({
     )
 
     onMounted(async () => {
+      if (
+        router.currentRoute.value.query.page &&
+        Number(router.currentRoute.value.query.page) > 1
+      ) {
+        currentPage.value = Number(router.currentRoute.value.query.page)
+      } else {
+        setPage(currentPage.value)
+      }
       await loadDataSources()
     })
 

@@ -116,6 +116,9 @@ import ProposalFormModal from '@/components/modals/ProposalFormModal.vue'
 import { proposalStatusFromJSON } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 import { ChartDataItem } from '@/helpers/Types'
+import { Router, useRouter } from 'vue-router'
+import { setPage } from '@/router'
+
 export default defineComponent({
   components: {
     CustomDoughnutChart,
@@ -124,11 +127,12 @@ export default defineComponent({
     AppPagination,
     SkeletonTable,
   },
-  setup: function () {
+  setup() {
+    const router: Router = useRouter()
     const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 30
+    const ITEMS_PER_PAGE = 50
     const currentPage = ref(1)
-    const totalPages = ref()
+    const totalPages = ref(0)
     const proposalsCount = ref(0)
     const proposals = ref()
     const filteredProposals = ref()
@@ -162,7 +166,7 @@ export default defineComponent({
         proposalsCount.value = response.data?.proposals.length
         proposals.value = transformedProposals
         totalPages.value = Math.ceil(proposalsCount.value / ITEMS_PER_PAGE)
-        filterProposals(currentPage.value)
+        filterProposals()
       } catch (error) {
         handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
@@ -182,18 +186,23 @@ export default defineComponent({
       releaseLoading()
     }
 
-    const filterProposals = (newPage: number) => {
-      let tempArr = proposals.value
-
-      if (newPage === 1) {
-        filteredProposals.value = tempArr.slice(0, newPage * ITEMS_PER_PAGE)
+    const filterProposals = () => {
+      const tempArr = proposals.value
+      if (totalPages.value < currentPage.value) {
+        currentPage.value = 1
+        setPage(currentPage.value)
+      }
+      if (currentPage.value === 1) {
+        filteredProposals.value = tempArr.slice(
+          0,
+          currentPage.value * ITEMS_PER_PAGE
+        )
       } else {
         filteredProposals.value = tempArr.slice(
-          (newPage - 1) * ITEMS_PER_PAGE,
-          (newPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE
+          (currentPage.value - 1) * ITEMS_PER_PAGE,
+          (currentPage.value - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE
         )
       }
-      currentPage.value = newPage
     }
 
     const getChangesParams = async () => {
@@ -222,10 +231,20 @@ export default defineComponent({
     }
 
     const paginationHandler = (num: number) => {
-      filterProposals(num)
+      currentPage.value = num
+      setPage(currentPage.value)
+      filterProposals()
     }
 
     onMounted(async () => {
+      if (
+        router.currentRoute.value.query.page &&
+        Number(router.currentRoute.value.query.page) > 1
+      ) {
+        currentPage.value = Number(router.currentRoute.value.query.page)
+      } else {
+        setPage(currentPage.value)
+      }
       await getChangesParams()
       await getProposalStatistic()
       await getProposals()
