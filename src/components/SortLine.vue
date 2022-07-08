@@ -73,7 +73,7 @@ import {
   ACTIVITIES_SORT,
   OWNERS_SORT,
 } from '@/helpers/sortingHelpers'
-// import { useAuthorization } from '@/composables/useAuthorization'
+
 import { wallet } from '@/api/wallet'
 
 export default defineComponent({
@@ -89,7 +89,7 @@ export default defineComponent({
     const sortByActivites = ref(ACTIVITIES_SORT.latest)
     const sortByOwners = ref(OWNERS_SORT.all)
     const searchValue = ref('')
-    const walletAddress = wallet.isEmpty ? ' ' : wallet.account.address
+    const walletAddress = wallet.isEmpty ? '' : wallet.account.address
     const sortingOwners = ref(getSortingOwners(wallet.isEmpty, walletAddress))
 
     const inputChange = () => {
@@ -118,7 +118,6 @@ export default defineComponent({
       sortByActivites,
       sortByOwners,
       searchValue,
-      walletAddress,
       wallet,
     }
   },

@@ -78,8 +78,8 @@
           </div>
 
           <div
-            class="validator-info__delegetion-balance-row"
             v-if="accountAddress"
+            class="validator-info__delegetion-balance-row"
           >
             <span class="validator-info__delegetion-balance-row-title"
               >You delegated</span
@@ -99,8 +99,8 @@
           </div>
         </div>
         <div
-          class="validator-info__delegetion-btn-wrapper"
           v-if="accountAddress"
+          class="validator-info__delegetion-btn-wrapper"
         >
           <button
             v-if="delegations?.balance"

@@ -61,7 +61,7 @@
         class="validators-item__validator-status"
       />
     </div>
-    <div class="app-table__cell" v-if="showActionButtons">
+    <div v-if="hasActionButtons" class="app-table__cell">
       <div class="app-table__activities validators-table-row__activities">
         <div
           v-if="validator.status === VALIDATOR_STATUS.active"
@@ -130,7 +130,7 @@ export default defineComponent({
     },
     tabStatus: { type: String, required: true },
     inactiveValidatorsTitle: { type: String, required: true },
-    showActionButtons: { type: Boolean, required: true },
+    hasActionButtons: { type: Boolean, required: true },
   },
   setup(props, { emit }) {
     const ITEMS_PER_PAGE = 50

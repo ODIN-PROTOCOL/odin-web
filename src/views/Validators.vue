@@ -120,7 +120,7 @@
               :tabStatus="tabStatus"
               :inactiveValidatorsTitle="inactiveValidatorsTitle"
               :delegations="delegations"
-              :showActionButtons="!!accountAddress"
+              :hasActionButtons="!!accountAddress"
             />
           </template>
           <template v-else>
@@ -132,7 +132,7 @@
               :tabStatus="tabStatus"
               :inactiveValidatorsTitle="inactiveValidatorsTitle"
               :delegations="delegations"
-              :showActionButtons="!!accountAddress"
+              :hasActionButtons="!!accountAddress"
             />
           </template>
         </template>

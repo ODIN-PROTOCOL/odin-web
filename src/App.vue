@@ -1,6 +1,6 @@
 <template>
   <template v-if="isAppReady">
-    <template v-if="!hideNav">
+    <template v-if="!isAuthPage">
       <header
         class="view-header fx-row"
         :class="{ 'view-header_mobile': isOpen }"
@@ -116,7 +116,7 @@ export default defineComponent({
     }
 
     const route = useRoute()
-    const hideNav = computed(() => route?.name?.toString().includes('Auth'))
+    const isAuthPage = computed(() => route?.name?.toString().includes('Auth'))
 
     // Notification
     const DURATION = 7000
@@ -136,7 +136,7 @@ export default defineComponent({
       burgerMenuHandler,
       closeBurger,
       notification,
-      hideNav,
+      isAuthPage,
     }
   },
 })
