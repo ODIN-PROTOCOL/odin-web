@@ -25,6 +25,7 @@ export const ValidatorsQuery = gql`
         tombstoned
       }
       validatorInfo: validator_info {
+        delegatorShares: delegator_shares
         operatorAddress: operator_address
         selfDelegateAddress: self_delegate_address
       }

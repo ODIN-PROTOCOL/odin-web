@@ -30,8 +30,21 @@
     </div>
     <div class="app-table__cell app-table__cell-txt">
       <span class="app-table__title">Delegated</span>
-      <span :title="0">
-        {{ 0 }}
+      <span
+        :title="
+          $convertLokiToOdin(
+            Number(validator.validatorInfo.delegatorShares).toFixed(6),
+            {
+              onlyNumber: true,
+            }
+          )
+        "
+      >
+        {{
+          $convertLokiToOdin(
+            Number(validator.validatorInfo.delegatorShares).toFixed(6)
+          )
+        }}
       </span>
     </div>
     <template v-if="isShowValidatorDetails">

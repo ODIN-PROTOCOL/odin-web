@@ -47,6 +47,7 @@ export interface ValidatorsInfo {
     }
   ]
   validatorInfo: {
+    delegatorShares: string
     operatorAddress: string
     selfDelegateAddress: string
   }

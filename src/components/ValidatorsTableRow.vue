@@ -22,8 +22,21 @@
     </div>
     <div class="app-table__cell app-table__cell-txt">
       <span class="app-table__title">Delegated</span>
-      <span :title="0">
-        {{ 0 }}
+      <span
+        :title="
+          $convertLokiToOdin(
+            Number(validator.validatorInfo.delegatorShares).toFixed(6),
+            {
+              onlyNumber: true,
+            }
+          )
+        "
+      >
+        {{
+          $convertLokiToOdin(
+            Number(validator.validatorInfo.delegatorShares).toFixed(6)
+          )
+        }}
       </span>
     </div>
     <div class="app-table__cell validators-table-row__cell--center">
@@ -132,6 +145,7 @@ export default defineComponent({
     const ITEMS_PER_PAGE = 50
     const currentPage = ref(1)
     const totalPages = ref(0)
+    console.log()
 
     const validatorStatus = () => {
       if (

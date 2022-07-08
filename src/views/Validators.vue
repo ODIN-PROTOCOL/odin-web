@@ -283,11 +283,37 @@ export default defineComponent({
     })
 
     const { result, loading } = useQuery<ValidatorsResponse>(ValidatorsQuery)
+
     const signedBlocks = computed(() =>
       Number(result.value?.slashingParams[0]?.params?.signed_blocks_window)
     )
 
     watch([loading], async () => {
+      await getValidators()
+    })
+
+    const getDelegations = async () => {
+      try {
+        // TODO: delegations returns invalid delegator's amount?
+        const response = await callers.getDelegations(wallet.account.address)
+
+        const _delegations: { [k: string]: DelegationResponse } = {}
+        for (const delegation of response.delegationResponses) {
+          if (!delegation.delegation?.validatorAddress) continue
+          _delegations[delegation.delegation.validatorAddress] = delegation
+        }
+        delegations.value = _delegations
+        delegatedAdress.value = Object.keys(delegations.value)
+        tabStatus.value = isDisabledDelegationsTab.value
+          ? myValidatorsTitle.value
+          : activeValidatorsTitle.value
+      } catch (error) {
+        // error is ignored, since no delegations also throws the error
+        delegations.value = {}
+        tabStatus.value = activeValidatorsTitle.value
+      }
+    }
+    const getValidators = async () => {
       if (loading.value) {
         return
       }
@@ -346,30 +372,6 @@ export default defineComponent({
         : activeValidatorsTitle.value
       validatorsCount.value = allValitors.value.length
       filterValidators(currentPage.value)
-    })
-
-    const getDelegations = async () => {
-      lockLoading()
-      try {
-        // TODO: delegations returns invalid delegator's amount?
-        const response = await callers.getDelegations(wallet.account.address)
-
-        const _delegations: { [k: string]: DelegationResponse } = {}
-        for (const delegation of response.delegationResponses) {
-          if (!delegation.delegation?.validatorAddress) continue
-          _delegations[delegation.delegation.validatorAddress] = delegation
-        }
-        delegations.value = _delegations
-        delegatedAdress.value = Object.keys(delegations.value)
-        tabStatus.value = isDisabledDelegationsTab.value
-          ? myValidatorsTitle.value
-          : activeValidatorsTitle.value
-      } catch (error) {
-        // error is ignored, since no delegations also throws the error
-        delegations.value = {}
-        tabStatus.value = activeValidatorsTitle.value
-      }
-      releaseLoading()
     }
 
     const filterValidators = (newPage = 1) => {
@@ -423,7 +425,10 @@ export default defineComponent({
       }
     }
     const loadData = async () => {
+      lockLoading()
       await getDelegations()
+      await getValidators()
+      releaseLoading()
     }
 
     const claimAllRewards = async () => {
