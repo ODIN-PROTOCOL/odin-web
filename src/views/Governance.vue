@@ -88,9 +88,8 @@
       />
     </template>
 
-    <div class="view-main__mobile-activities">
+    <div class="view-main__mobile-activities" v-if="accountAddress">
       <button
-        v-if="accountAddress"
         class="app-btn w-full app-btn--medium"
         type="button"
         @click="createProposal()"

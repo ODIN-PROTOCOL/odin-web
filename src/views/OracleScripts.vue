@@ -122,7 +122,7 @@
       />
     </template>
 
-    <div class="view-main__mobile-activities">
+    <div class="view-main__mobile-activities" v-if="accountAddress">
       <button
         class="app-btn w-full app-btn--medium"
         type="button"
