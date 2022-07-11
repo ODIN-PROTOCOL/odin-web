@@ -1,5 +1,11 @@
 <template>
-  <div class="nav" :class="{ 'nav--mobile': isOpen }">
+  <div
+    class="nav"
+    :class="{
+      'nav--mobile': isOpen,
+      'nav--mobile--not-authenticated': isOpen && !isLoggedIn,
+    }"
+  >
     <div class="nav__wrap-cont">
       <router-link
         @click="closeBurger"
@@ -201,6 +207,10 @@ export default defineComponent({
     position: fixed;
     top: 9.7rem;
     left: 0;
+  }
+
+  .nav--mobile--not-authenticated {
+    top: 8.5rem;
   }
 }
 </style>
