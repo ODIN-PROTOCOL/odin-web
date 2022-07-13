@@ -3,6 +3,7 @@
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Requests</h2>
       <button
+        v-if="accountAddress"
         class="requests__title-btn app-btn app-btn--medium"
         type="button"
         @click="createRequest()"
@@ -91,7 +92,7 @@
       />
     </template>
 
-    <div class="view-main__mobile-activities">
+    <div v-if="accountAddress" class="view-main__mobile-activities">
       <button
         class="app-btn w-full app-btn--medium"
         type="button"
@@ -114,6 +115,7 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import RequestFormModal from '@/components/modals/RequestFormModal.vue'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
+import { wallet } from '@/api/wallet'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 
 export default defineComponent({
@@ -126,6 +128,7 @@ export default defineComponent({
     const requests = ref()
     const requestsCount = ref()
     const maxAskCount = ref()
+    const accountAddress = wallet.isEmpty ? '' : wallet.account.address
     const senderLink = computed(
       () => (item: { request: { client_id: string } }) => {
         return `${API_CONFIG.odinScan}/account/${item.request.client_id}`
@@ -211,6 +214,7 @@ export default defineComponent({
       paginationHandler,
       senderLink,
       isLoading,
+      accountAddress,
       headerTitles,
     }
   },

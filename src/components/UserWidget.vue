@@ -1,13 +1,23 @@
 <template>
   <div class="user-widget fx-row">
-    <BalanceButton @click="closeBurger" />
-    <button
-      class="user-widget__log-out app-ico-btn"
-      type="button"
-      @click="logOutAndLeave()"
-    >
-      <img src="~@/assets/icons/exit.svg" alt="Log out" />
-    </button>
+    <template v-if="isLoggedIn">
+      <BalanceButton @click="closeBurger" />
+      <button
+        class="user-widget__log-out app-ico-btn"
+        type="button"
+        @click="logOutAndLeave()"
+      >
+        <img src="~@/assets/icons/exit.svg" alt="Log out" />
+      </button>
+    </template>
+    <template v-if="!isLoggedIn">
+      <router-link
+        class="app-btn app-btn--small user-widget__connect-wallet-btn"
+        :to="{ name: 'Auth' }"
+      >
+        Connect Wallet
+      </router-link>
+    </template>
   </div>
 </template>
 
@@ -29,7 +39,7 @@ export default defineComponent({
     const closeBurger = () => {
       emit('closeBurger')
     }
-    return { logOutAndLeave, closeBurger }
+    return { logOutAndLeave, closeBurger, isLoggedIn: auth.isLoggedIn }
   },
 })
 </script>
@@ -37,6 +47,10 @@ export default defineComponent({
 <style scoped lang="scss">
 .user-widget {
   gap: 2.4rem;
+}
+
+.user-widget__connect-wallet-btn {
+  text-decoration: none;
 }
 
 @media (max-width: 768px) {
