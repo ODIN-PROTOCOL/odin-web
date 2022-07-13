@@ -3,7 +3,7 @@
     class="nav"
     :class="{
       'nav--mobile': isOpen,
-      'nav--mobile--not-authenticated': isOpen && !isLoggedIn,
+      'nav--mobile-not-authenticated': isOpen && !isLoggedIn,
     }"
   >
     <div class="nav__wrap-cont">
@@ -209,7 +209,7 @@ export default defineComponent({
     left: 0;
   }
 
-  .nav--mobile--not-authenticated {
+  .nav--mobile-not-authenticated {
     top: 8.5rem;
   }
 }
