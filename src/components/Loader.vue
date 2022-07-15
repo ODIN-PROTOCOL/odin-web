@@ -15,7 +15,6 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: var(--clr__text-muted);
   opacity: 0.4;
 }
 
@@ -38,7 +37,6 @@
   vertical-align: top;
   display: inline-block;
   width: 100%;
-  background-color: var(--clr__main-bg);
   animation: loader-inner 2s infinite ease-in;
 }
 
@@ -84,5 +82,8 @@
   100% {
     height: 0%;
   }
+}
+body.dark .loader {
+  border: 0.4rem solid var(--d-clr__main-bg);
 }
 </style>

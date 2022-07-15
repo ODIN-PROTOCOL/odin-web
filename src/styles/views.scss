@@ -1,4 +1,4 @@
-.view-main{
+.view-main {
   width: 100%;
   max-width: 140rem;
   padding: 0 3.2rem;
@@ -28,7 +28,7 @@
 
   &__title-wrapper {
     display: flex;
-    flex-direction: row;
+    flex-direction: row !important;     // Had to use important since this is getting overriden in mobile mode by some CSS. Could not find "@media (max-width: 767px)" overiding it within this project.
     align-items: center;
     justify-content: space-between;
     margin-bottom: 3.2rem;
@@ -69,10 +69,10 @@
   justify-content: center;
   gap:5.4rem;
   margin: 0 auto;
+  border-bottom: 0.1rem solid #CCE4FF;
 }
 
 .view-header {
-  border-bottom: 0.1rem solid #CCE4FF;
   margin-bottom: 3rem;
 }
 
@@ -82,5 +82,12 @@
     max-width: 100%;
     margin: 0;
     padding: 2.4rem 1.6rem;
+  }
+}
+body.dark {
+  .view-main {
+    &__mobile-activities {
+      background-color: var(--d-clr__main-bg);
+    }
   }
 }

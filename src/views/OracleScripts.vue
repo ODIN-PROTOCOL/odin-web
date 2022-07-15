@@ -8,12 +8,12 @@
         type="button"
         @click="createOracleScript()"
       >
-        Create oracle script
+        Create Oracle Script
       </button>
     </div>
 
     <div>
-      <h3 class="view-main__subtitle mg-b24">Most requested</h3>
+      <h3 class="view-main__subtitle mg-b24">Most Requested</h3>
       <TopOracleScripts
         :top-oracle-scripts="mostRequestedOracleScripts"
         :is-loading="isLoading"
@@ -21,7 +21,7 @@
     </div>
 
     <div class="view-main__count-info requests__count-info">
-      <h3 class="view-main__subtitle mg-b24">All oracle scripts</h3>
+      <h3 class="view-main__subtitle mg-b24">All Oracle Scripts</h3>
       <skeleton-loader
         v-if="isLoading"
         :height="24"
@@ -30,7 +30,7 @@
         color="rgb(225, 229, 233)"
       />
       <div v-else class="view-main__count-info oracle-scripts__count-info">
-        <p>{{ oracleScriptsCount }} Oracle Scripts found</p>
+        <p>{{ oracleScriptsCount }} Oracle Scripts Found</p>
       </div>
     </div>
 
@@ -128,7 +128,7 @@
         type="button"
         @click="createOracleScript()"
       >
-        Create oracle script
+        Create Oracle Script
       </button>
     </div>
   </div>

@@ -44,6 +44,7 @@ export default defineComponent({
   resize: none;
   display: block;
   width: 100%;
+  color: var(--clr__text);
   padding: 0.8rem 1.2rem;
   text-overflow: ellipsis;
   border: 0.1rem solid var(--clr__input-border);

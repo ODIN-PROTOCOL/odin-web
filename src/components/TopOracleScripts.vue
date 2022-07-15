@@ -33,14 +33,14 @@
         <div class="top-oracle-scripts__item-info">
           <div class="top-oracle-scripts__item-info-value">
             <div class="top-oracle-scripts__item-info-title">
-              Requests number
+              Request Count
             </div>
             <div class="top-oracle-scripts__item-info-text">
               {{ script.attributes.requests_number }}
             </div>
           </div>
           <div class="top-oracle-scripts__item-info-value">
-            <div class="top-oracle-scripts__item-info-title">Response time</div>
+            <div class="top-oracle-scripts__item-info-title">Response Time</div>
             <div class="top-oracle-scripts__item-info-text">
               {{ script.attributes.response_time }} s
             </div>
@@ -151,6 +151,11 @@ export default defineComponent({
     &:first-child {
       margin-left: 0.7rem;
     }
+  }
+}
+body.dark {
+  .top-oracle-scripts__item-info-title {
+    color: var(--d-clr__text-muted);
   }
 }
 </style>

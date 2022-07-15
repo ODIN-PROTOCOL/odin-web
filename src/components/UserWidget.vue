@@ -1,5 +1,15 @@
 <template>
   <div class="user-widget fx-row">
+    <BalanceButton @click="closeBurger" />
+    <button
+      class="user-widget__log-out app-ico-btn"
+      type="button"
+      @click="logOutAndLeave()"
+    >
+      <img v-if="settings && settings.theme === 'dark'" src="~@/assets/icons/white-exit.svg" alt="Log out" />
+      <img v-else src="~@/assets/icons/exit.svg" alt="Log out" />
+    </button>
+
     <template v-if="isLoggedIn">
       <BalanceButton @click="closeBurger" />
       <button
@@ -18,14 +28,16 @@
         Connect Wallet
       </router-link>
     </template>
+
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, inject } from 'vue'
 import { useAuthorization } from '@/composables/useAuthorization'
 import BalanceButton from '@/components/BalanceButton.vue'
 import router from '@/router'
+import { Settings, SettingsStateSymbol } from '@/ThemeProvider'
 
 export default defineComponent({
   components: { BalanceButton },
@@ -36,10 +48,12 @@ export default defineComponent({
       auth.logOut()
       router.push({ name: 'Auth' })
     }
+    const settings: Settings | undefined = inject(SettingsStateSymbol);
     const closeBurger = () => {
       emit('closeBurger')
     }
-    return { logOutAndLeave, closeBurger, isLoggedIn: auth.isLoggedIn }
+
+    return { logOutAndLeave, closeBurger, isLoggedIn: auth.isLoggedIn, settings }
   },
 })
 </script>

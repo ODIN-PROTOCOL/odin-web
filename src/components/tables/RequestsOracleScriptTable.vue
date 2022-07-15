@@ -3,7 +3,7 @@
     <div v-if="requests" class="app-table">
       <div class="app-table__head requests-oracle-script__head">
         <span>Request ID</span>
-        <span>Transaction hash</span>
+        <span>Transaction Hash</span>
         <span>Timestamp</span>
       </div>
       <div class="app-table__body">
@@ -22,7 +22,7 @@
               />
             </div>
             <div class="app-table__cell">
-              <span class="app-table__title">Transaction hash</span>
+              <span class="app-table__title">Transaction Hash</span>
               <a
                 class="app-table__cell-txt app-table__link"
                 :href="`${
@@ -93,7 +93,7 @@ export default defineComponent({
     const requestsCount = ref()
     const headerTitles = [
       { title: 'Request ID' },
-      { title: 'Transaction hash' },
+      { title: 'Transaction Hash' },
       { title: 'Timestamp' },
     ]
     const getOracleScriptRequests = async () => {

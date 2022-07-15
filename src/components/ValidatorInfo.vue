@@ -438,4 +438,9 @@ export default defineComponent({
     max-width: none;
   }
 }
+body.dark {
+  .validator-info__card-balance-row-value {
+    color: var(--d-clr__text);
+  }
+}
 </style>

@@ -5,7 +5,7 @@
     @close="onClose()"
   >
     <template #title>
-      <h3 class="app-form__title">Stake transfer</h3>
+      <h3 class="app-form__title">Stake Transfer</h3>
     </template>
     <template #main>
       <form
@@ -537,6 +537,20 @@ export function showUndelegateFormDialog(
 @include respond-to(tablet) {
   .stake-transfer-form-modal__option-info {
     max-width: 7rem;
+  }
+}
+body.dark {
+  .stake-transfer-form-modal__select-header-btn {
+    color: var(--d-clr__action);
+  }
+  .stake-transfer-form-modal__option-balance {
+    color: var(--d-clr__text-muted);
+  }
+  .stake-transfer-form-modal__field-balance {
+    background: var(--d-clr__modal-field-bg);
+  }
+  .stake-transfer-form-modal__field-balance-lbl {
+    color: var(--d-clr__modal-backdrop-bg);
   }
 }
 </style>

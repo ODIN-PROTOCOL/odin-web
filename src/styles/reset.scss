@@ -36,7 +36,7 @@ textarea {
 
 input,
 select {
-  background-color: var(--clr__input-bg);
+  background-color: transparent;
 
   @include transition(border-color);
 
@@ -71,4 +71,12 @@ input::-webkit-inner-spin-button {
 
 input[type='number'] {
   -moz-appearance: textfield; /* Firefox */
+}
+body.dark {
+  input,
+  select {
+    &:focus {
+      border-color: var(--d-clr__action);
+    }
+  }
 }

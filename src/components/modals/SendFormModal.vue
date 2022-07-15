@@ -253,6 +253,7 @@ export default defineComponent({
 }
 .send-form-modal__info-balance-item-value {
   font-weight: 600;
+  color: var(--clr__text);
 }
 .send-form-modal__field-info {
   font-size: 1.4rem;
@@ -263,5 +264,10 @@ export default defineComponent({
 }
 .send-form-modal__info-icon {
   margin-right: 0.9rem;
+}
+body.dark {
+  .send-form-modal__info-balance-item {
+    background: var(--d-clr__modal-field-bg);
+  }
 }
 </style>

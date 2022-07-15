@@ -8,7 +8,7 @@
         type="button"
         @click="createDataSource()"
       >
-        Create data source
+        Create Data Source
       </button>
     </div>
 
@@ -20,12 +20,12 @@
         animation="wave"
         color="rgb(225, 229, 233)"
       />
-      <p v-else>{{ dataSourcesCount }} Data Sources found</p>
+      <p v-else>{{ dataSourcesCount }} Data Sources Found</p>
     </div>
 
     <SortLine
       :is-loading="isLoading"
-      :title="'Data Source'"
+      :title="'Data Sources'"
       v-model:oracleScriptsName="dataSourceName"
       v-model:sortingOwnersValue="sortingOwnersValue"
       v-model:sortingActivitiesValue="sortingActivitiesValue"
@@ -122,7 +122,7 @@
         type="button"
         @click="createDataSource()"
       >
-        Create data source
+        Create Data Source
       </button>
     </div>
   </div>
