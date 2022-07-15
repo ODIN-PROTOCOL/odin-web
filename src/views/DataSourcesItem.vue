@@ -104,7 +104,10 @@ export default defineComponent({
     const dataSourceRequests = ref({})
     const dataSourceCode = ref('')
     const isDataSourceOwner = computed(() => {
-      return wallet.account.address === dataSourceData.value?.owner
+      return (
+        !wallet.isEmpty &&
+        wallet.account.address === dataSourceData.value?.owner
+      )
     })
     const getDataSource = async () => {
       lockLoading()

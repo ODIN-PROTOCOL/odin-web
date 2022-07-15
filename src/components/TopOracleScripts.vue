@@ -8,8 +8,23 @@
         class="top-oracle-scripts__item card-frame"
       >
         <div class="top-oracle-scripts__item-description">
-          <div class="top-oracle-scripts__item-title">
-            {{ script.attributes.name }}
+          <div class="top-oracle-scripts__item-row">
+            <div class="top-oracle-scripts__item-title">
+              {{ script.attributes.name }}
+            </div>
+            <div class="top-oracle-scripts__item-link">
+              <router-link
+                class="nav__link"
+                :to="`/oracle-scripts/${script.attributes.id}`"
+              >
+                <button class="top-oracle-scripts__item-button">
+                  <img
+                    src="@/assets/icons/forward-arrow.svg"
+                    alt="enter-arrow"
+                  />
+                </button>
+              </router-link>
+            </div>
           </div>
           <span class="top-oracle-scripts__item-text">
             {{ script.attributes.description || 'No description' }}
@@ -78,6 +93,21 @@ export default defineComponent({
   font-weight: 600;
   font-size: 1.8rem;
   padding-bottom: 2.4rem;
+}
+
+.top-oracle-scripts__item-link {
+  display: flex;
+  flex-direction: column;
+}
+
+.top-oracle-scripts__item-button {
+  margin-right: 2rem;
+}
+
+.top-oracle-scripts__item-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .top-oracle-scripts__item-info {

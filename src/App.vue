@@ -1,6 +1,6 @@
 <template>
   <template v-if="isAppReady">
-    <template v-if="isLoggedIn">
+    <template v-if="!isAuthPage">
       <header
         class="view-header fx-row"
         :class="{ 'view-header_mobile': isOpen }"
@@ -80,6 +80,8 @@ import FailedNotificationIcon from '@/components/icons/FailedNotificationIcon.vu
 import CancelIcon from '@/components/icons/CancelIcon.vue'
 import { notify } from '@kyvg/vue3-notification'
 import { Settings, SettingsStateSymbol, SettingsUpdateSymbol } from '@/ThemeProvider'
+import emitter from '@/helpers/emmiter'
+import { useRoute } from 'vue-router'
 
 type NotificationInfo = {
   error: Error
@@ -152,6 +154,9 @@ export default defineComponent({
       if (isOpen.value === true) isOpen.value = false
     }
 
+    const route = useRoute()
+    const isAuthPage = computed(() => route?.name?.toString().includes('Auth'))
+
     // Notification
     const DURATION = 7000
     emitter.on('handleNotification', (e) => {
@@ -169,7 +174,9 @@ export default defineComponent({
       isOpen,
       burgerMenuHandler,
       closeBurger,
-      notification
+      notification,
+      isAuthPage,
+
     }
   },
 })

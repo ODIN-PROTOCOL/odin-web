@@ -1,5 +1,11 @@
 <template>
-  <div class="nav" :class="{ 'nav--mobile': isOpen }">
+  <div
+    class="nav"
+    :class="{
+      'nav--mobile': isOpen,
+      'nav--mobile-not-authenticated': isOpen && !isLoggedIn,
+    }"
+  >
     <div class="nav__wrap-cont">
       <router-link
         @click="closeBurger"
@@ -50,7 +56,7 @@
         <span>IBCs</span>
       </router-link>
     </div>
-    <div class="nav__activities">
+    <div class="nav__activities" v-if="isLoggedIn">
       <button
         class="app-btn log-out-btn app-btn--medium"
         type="button"
@@ -87,7 +93,7 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      if (wallet.type === WalletTypes.KEPLR_WALLET) {
+      if (!wallet.isEmpty && wallet.type === WalletTypes.KEPLR_WALLET) {
         window.addEventListener('keplr_keystorechange', logOutAndLeave)
       }
     })
@@ -99,6 +105,7 @@ export default defineComponent({
     return {
       logOutAndLeave,
       closeBurger,
+      isLoggedIn: auth.isLoggedIn,
     }
   },
 })
@@ -200,6 +207,10 @@ export default defineComponent({
     position: fixed;
     top: 9.7rem;
     left: 0;
+  }
+
+  .nav--mobile-not-authenticated {
+    top: 8.5rem;
   }
 }
 body.dark {
