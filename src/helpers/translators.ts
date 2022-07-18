@@ -138,12 +138,12 @@ export function translateBondStatus(bondStatus: BondStatus): string {
   }
 }
 export const assetsChanges = {
-  loki: {
-    text: 'LOKI',
-    value: 'loki',
+  odin: {
+    text: 'ODIN',
+    value: 'odin',
   },
-  miniGeo: {
-    text: 'MINIGEO',
-    value: 'minigeo',
+  geo: {
+    text: 'GEO',
+    value: 'geo',
   },
 }

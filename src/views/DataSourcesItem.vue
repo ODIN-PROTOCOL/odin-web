@@ -34,7 +34,7 @@
           <div class="info-card__row">
             <span class="info-card__row-title">Description</span>
             <span class="info-card__row-value">
-              {{ dataSourceData.description }}
+              {{ dataSourceData.description || 'No description' }}
             </span>
           </div>
         </div>
