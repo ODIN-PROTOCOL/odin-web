@@ -137,7 +137,7 @@
         </template>
         <template v-else>
           <SkeletonTable
-            v-if="isLoading"
+            v-if="isLoading || loading"
             :header-titles="headerTitles"
             class-string="validators__table-row"
           />
@@ -189,10 +189,10 @@ import {
 } from 'vue'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
-import { COINS_LIST } from '@/api/api-config'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import WithdrawRewardsFormModal from '@/components/modals/WithdrawRewardsFormModal.vue'
@@ -285,18 +285,7 @@ export default defineComponent({
       }
     })
 
-    const accountAddress = wallet.isEmpty ? '' : wallet.account.address
-
-    const getValidators = async () => {
-      lockLoading()
-      try {
-        const bonded = await callers.getValidators('BOND_STATUS_BONDED')
-        const unbonding = await callers.getValidators('BOND_STATUS_UNBONDING')
-        const unbonded = await callers.getValidators('BOND_STATUS_UNBONDED')
-        const allUptime = await callers
-          .getValidatorUptime()
-          .then((resp) => resp.json())
-
+    const accountAddress = ref(wallet.isEmpty ? '' : wallet.account.address)
 
     const { result, loading } = useQuery<ValidatorsResponse>(ValidatorsQuery)
 
@@ -309,13 +298,13 @@ export default defineComponent({
     })
 
     const getDelegations = async () => {
-      if (!accountAddress) {
+      if (!accountAddress.value) {
         return
       }
       lockLoading()
       try {
         // TODO: delegations returns invalid delegator's amount?
-        const response = await callers.getDelegations(accountAddress)
+        const response = await callers.getDelegations(accountAddress.value)
 
         const _delegations: { [k: string]: DelegationResponse } = {}
         for (const delegation of response.delegationResponses) {
@@ -332,66 +321,75 @@ export default defineComponent({
         delegations.value = {}
         tabStatus.value = activeValidatorsTitle.value
       }
+      releaseLoading()
     }
     const getValidators = async () => {
       if (loading.value) {
         return
       }
-      const copyActiveValidator =
-        result.value?.validator?.filter(
-          (item: ValidatorsInfo) => item?.validatorStatuses[0]?.status === 3
-        ) || []
-      const copyInactiveValidator =
-        result.value?.validator?.filter(
-          (item: ValidatorsInfo) => item?.validatorStatuses[0]?.status !== 3
-        ) || []
-      activeValidators.value = (await Promise.all(
-        copyActiveValidator.map(async (item: ValidatorsInfo, index: number) => {
-          return {
-            ...item,
-            rank: index + 1,
-            uptime:
-              ((signedBlocks.value -
-                item.validatorSigningInfos[0]?.missedBlocksCounter) /
-                signedBlocks.value) *
-              100,
-            isActive: await isActiveValidator(
-              item.validatorInfo?.operatorAddress
-            ).then((req) => req),
-          }
-        })
-      )) as unknown as ValidatorsInfo[]
-      inactiveValidators.value = (await Promise.all(
-        copyInactiveValidator.map(
-          async (item: ValidatorsInfo, index: number) => {
-            return {
-              ...item,
-              rank: index + 1,
-              uptime:
-                ((signedBlocks.value -
-                  item.validatorSigningInfos[0]?.missedBlocksCounter) /
-                  signedBlocks.value) *
-                100,
-              isActive: await isActiveValidator(
-                item.validatorInfo?.operatorAddress
-              ).then((req) => req),
+      lockLoading()
+      try {
+        const copyActiveValidator =
+          result.value?.validator?.filter(
+            (item: ValidatorsInfo) => item?.validatorStatuses[0]?.status === 3
+          ) || []
+        const copyInactiveValidator =
+          result.value?.validator?.filter(
+            (item: ValidatorsInfo) => item?.validatorStatuses[0]?.status !== 3
+          ) || []
+        activeValidators.value = (await Promise.all(
+          copyActiveValidator.map(
+            async (item: ValidatorsInfo, index: number) => {
+              return {
+                ...item,
+                rank: index + 1,
+                uptime:
+                  ((signedBlocks.value -
+                    item.validatorSigningInfos[0]?.missedBlocksCounter) /
+                    signedBlocks.value) *
+                  100,
+                isActive: await isActiveValidator(
+                  item.validatorInfo?.operatorAddress
+                ).then((req) => req),
+              }
             }
-          }
-        )
-      )) as unknown as ValidatorsInfo[]
+          )
+        )) as unknown as ValidatorsInfo[]
+        inactiveValidators.value = (await Promise.all(
+          copyInactiveValidator.map(
+            async (item: ValidatorsInfo, index: number) => {
+              return {
+                ...item,
+                rank: index + 1,
+                uptime:
+                  ((signedBlocks.value -
+                    item.validatorSigningInfos[0]?.missedBlocksCounter) /
+                    signedBlocks.value) *
+                  100,
+                isActive: await isActiveValidator(
+                  item.validatorInfo?.operatorAddress
+                ).then((req) => req),
+              }
+            }
+          )
+        )) as unknown as ValidatorsInfo[]
 
-      allValitors.value = [
-        ...inactiveValidators.value,
-        ...activeValidators.value,
-      ]
-      validators.value = isDisabledDelegationsTab.value
-        ? [...myDelegationsValitors.value]
-        : [...activeValidators.value]
-      tabStatus.value = isDisabledDelegationsTab.value
-        ? myValidatorsTitle.value
-        : activeValidatorsTitle.value
-      validatorsCount.value = allValitors.value.length
-      filterValidators(currentPage.value)
+        allValitors.value = [
+          ...inactiveValidators.value,
+          ...activeValidators.value,
+        ]
+        validators.value = isDisabledDelegationsTab.value
+          ? [...myDelegationsValitors.value]
+          : [...activeValidators.value]
+        tabStatus.value = isDisabledDelegationsTab.value
+          ? myValidatorsTitle.value
+          : activeValidatorsTitle.value
+        validatorsCount.value = allValitors.value.length
+        filterValidators(currentPage.value)
+      } catch (error) {
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+      }
+      releaseLoading()
     }
 
     const filterValidators = (newPage = 1) => {
@@ -564,7 +562,6 @@ export default defineComponent({
       window.removeEventListener('resize', updateWidth)
     })
     return {
-      COINS_LIST,
       ITEMS_PER_PAGE,
       totalPages,
       currentPage,
@@ -574,14 +571,8 @@ export default defineComponent({
       validators,
       delegations,
       isLoading,
-      getDelegations,
       paginationHandler,
       selectTab,
-      withdrawRewards,
-      claimAllRewards,
-      delegate,
-      redelegate,
-      undelegate,
       isDelegator,
       activeValidatorsTitle,
       inactiveValidatorsTitle,
@@ -589,17 +580,16 @@ export default defineComponent({
       filterValidators,
       stakeTransfer,
       myValidatorsTitle,
-      myDelegationsValitors,
+      claimAllRewards,
       isDisabledDelegationsTab,
       tabStatus,
       headerTitles,
       validatorStatus,
       windowInnerWidth,
       openModal,
-      result,
       activeValidators,
       accountAddress,
-
+      loading,
     }
   },
 })

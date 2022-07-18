@@ -146,7 +146,6 @@ export default defineComponent({
     const ITEMS_PER_PAGE = 50
     const currentPage = ref(1)
     const totalPages = ref(0)
-    console.log()
 
     const validatorStatus = () => {
       if (

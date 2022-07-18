@@ -158,7 +158,7 @@ export default defineComponent({
     const dataSourcesCount = ref(0)
     const dataSources = ref([])
 
-    const accountAddress = wallet.isEmpty ? '' : wallet.account.address
+    const accountAddress = ref(wallet.isEmpty ? '' : wallet.account.address)
     const sortingActivitiesValue = ref(ACTIVITIES_SORT.latest)
     const sortingOwnersValue = ref(OWNERS_SORT.all)
     const dataSourceName = ref('')
