@@ -21,18 +21,25 @@ export type DecodedTxData = {
   time?: string | void | Date
   sender?: string
   receiver?: string
-  amount?: string | BigNumber | undefined
-  fee?: string | BigNumber | undefined
+  amount?: string | BigNumber
+  denom?: string
+  fee?: string | BigNumber
+  feeDenom?: string
   status?: number | string | undefined
   memo?: string
   gasWanted?: string | number
   gasUsed?: string | number
 }
 
-export type txFromTelemetry = {
+export type AmountDetails = {
   amount: string
+  denom: string
+}
+
+export type txFromTelemetry = {
+  amount: AmountDetails[]
   block: number
-  fee: string
+  fee: AmountDetails[]
   receiver: string
   sender: string
   timestamp: number
