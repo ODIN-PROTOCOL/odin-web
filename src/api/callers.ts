@@ -56,7 +56,7 @@ const makeCallers = () => {
       )
     },
     getDataSourceRequestCount: (data_source_id: number) => {
-      return sendGet(
+      return axiosWrapper.get(
         `${API_CONFIG.telemetryUrl}/requests/data_sources/${data_source_id}`
       )
     },

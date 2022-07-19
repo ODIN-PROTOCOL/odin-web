@@ -42,39 +42,39 @@
         <template v-if="dataSources?.length">
           <div
             v-for="item in dataSources"
-            :key="item.attributes.id"
+            :key="item.id"
             class="app-table__row data-sources__table-row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">Data Source</span>
               <TitledLink
                 class="app-table__cell-txt app-table__link"
-                :text="`#` + item.attributes.id + ` ` + item.attributes.name"
-                :to="`/data-sources/${item.attributes.id.toString()}`"
+                :text="`#${item.id}${item.name}`"
+                :to="`/data-sources/${item.id}`"
               />
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Description</span>
               <span>
-                {{ item.attributes.description || '-' }}
+                {{ item.description || '-' }}
               </span>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Price</span>
               <span>
-                {{ convertLokiToOdin(Number(item.attributes.fee_amount)) }}
+                {{ convertLokiToOdin(Number(item.fee_amount)) }}
               </span>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Requests</span>
               <span>
-                {{ item.request_count }}
+                {{ item.requestCount }}
               </span>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Timestamp</span>
               <span>
-                {{ $fDate(new Date(item.attributes.timestamp * 1000)) || '-' }}
+                {{ $fDate(new Date(item.timestamp * 1000)) || '-' }}
               </span>
             </div>
             <div class="app-table__cell">
@@ -83,10 +83,10 @@
                   class="app-table__activities-item data-sources__table-activities-item"
                 >
                   <button
-                    v-if="accountAddress === item.attributes.owner"
+                    v-if="accountAddress === item.owner"
                     class="app-btn app-btn--edit"
                     type="button"
-                    @click="editDataSource(item.attributes)"
+                    @click="editDataSource(item)"
                   >
                     Edit
                   </button>
@@ -185,12 +185,12 @@ export default defineComponent({
           .then((response) => response.json())
         dataSources.value = await Promise.all(
           data.map(async (item: { attributes: { id: number } }) => {
-            const { total_count: request_count } = await callers
-              .getDataSourceRequestCount(item.attributes.id)
-              .then((response) => response.json())
-            return { ...item, request_count }
+            const resp = await callers.getDataSourceRequestCount(
+              item.attributes.id
+            )
+            return { ...item.attributes, requestCount: resp.data.total_count }
           })
-        ).catch(() => data)
+        )
         dataSourcesCount.value = total_count
         totalPages.value = Math.ceil(dataSourcesCount.value / ITEMS_PER_PAGE)
       } catch (error) {
