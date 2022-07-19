@@ -37,7 +37,7 @@
           <div class="info-card__row">
             <span class="info-card__row-title">Description</span>
             <span class="info-card__row-value">
-              {{ oracleScriptData.description }}
+              {{ oracleScriptData.description || 'No description' }}
             </span>
           </div>
         </div>
@@ -112,7 +112,10 @@ export default defineComponent({
     const oracleScriptData = ref()
     const oracleScriptCode = ref('')
     const isOracleScriptOwner = computed(() => {
-      return wallet.account.address === oracleScriptData.value?.owner
+      return (
+        !wallet.isEmpty &&
+        wallet.account.address === oracleScriptData.value?.owner
+      )
     })
     const getOracleScript = async () => {
       lockLoading()

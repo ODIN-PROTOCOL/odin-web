@@ -3,6 +3,7 @@
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Oracle Scripts</h2>
       <button
+        v-if="accountAddress"
         class="oracle-scripts__title-btn app-btn app-btn--medium"
         type="button"
         @click="createOracleScript()"
@@ -121,7 +122,7 @@
       />
     </template>
 
-    <div class="view-main__mobile-activities">
+    <div v-if="accountAddress" class="view-main__mobile-activities">
       <button
         class="app-btn w-full app-btn--medium"
         type="button"
@@ -167,7 +168,7 @@ export default defineComponent({
     const totalPages = ref()
     const oracleScriptsCount = ref(0)
     const oracleScripts = ref()
-    const accountAddress = wallet.account.address
+    const accountAddress = wallet.isEmpty ? '' : wallet.account.address
     const mostRequestedOracleScripts = ref()
     const oracleScriptsName = ref('')
     const sortingActivitiesValue = ref(ACTIVITIES_SORT.latest)

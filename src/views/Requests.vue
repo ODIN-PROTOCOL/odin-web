@@ -3,6 +3,7 @@
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Requests</h2>
       <button
+        v-if="accountAddress"
         class="requests__title-btn app-btn app-btn--medium"
         type="button"
         @click="createRequest()"
@@ -25,7 +26,6 @@
     <div class="app-table requests__table">
       <div class="app-table__head requests__table-head">
         <span>Request ID</span>
-        <span>Sender</span>
         <span>Oracle Script ID</span>
         <span>Report Status</span>
         <span>Timestamp</span>
@@ -44,15 +44,6 @@
                 :text="`#${item.request.id}`"
                 :to="`/requests/${item.request.id}`"
               />
-            </div>
-            <div class="app-table__cell">
-              <span class="app-table__title">Sender</span>
-              <a
-                class="app-table__cell-txt app-table__link"
-                :href="senderLink(item)"
-              >
-                {{ item.request.client_id }}
-              </a>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Oracle Script ID</span>
@@ -101,7 +92,7 @@
       />
     </template>
 
-    <div class="view-main__mobile-activities">
+    <div v-if="accountAddress" class="view-main__mobile-activities">
       <button
         class="app-btn w-full app-btn--medium"
         type="button"
@@ -124,6 +115,7 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import RequestFormModal from '@/components/modals/RequestFormModal.vue'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
+import { wallet } from '@/api/wallet'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 
 export default defineComponent({
@@ -136,6 +128,7 @@ export default defineComponent({
     const requests = ref()
     const requestsCount = ref()
     const maxAskCount = ref()
+    const accountAddress = wallet.isEmpty ? '' : wallet.account.address
     const senderLink = computed(
       () => (item: { request: { client_id: string } }) => {
         return `${API_CONFIG.odinScan}/account/${item.request.client_id}`
@@ -221,6 +214,7 @@ export default defineComponent({
       paginationHandler,
       senderLink,
       isLoading,
+      accountAddress,
       headerTitles,
     }
   },

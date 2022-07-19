@@ -3,6 +3,7 @@
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Data Sources</h2>
       <button
+        v-if="accountAddress"
         class="data-sources__title-btn app-btn app-btn--medium"
         type="button"
         @click="createDataSource()"
@@ -56,7 +57,7 @@
             <div class="app-table__cell">
               <span class="app-table__title">Description</span>
               <span>
-                {{ item.description || '-' }}
+                {{ item.attributes.description || 'No description' }}
               </span>
             </div>
             <div class="app-table__cell">
@@ -117,7 +118,7 @@
       />
     </template>
 
-    <div class="view-main__mobile-activities">
+    <div v-if="accountAddress" class="view-main__mobile-activities">
       <button
         class="app-btn w-full app-btn--medium"
         type="button"
@@ -138,10 +139,10 @@ import TitledLink from '@/components/TitledLink.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import DataSourceFormModal from '@/components/modals/DataSourceFormModal.vue'
-import { wallet } from '@/api/wallet'
 import SortLine from '@/components/SortLine.vue'
 import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
 import { convertLokiToOdin } from '@/helpers/converters'
+import { wallet } from '@/api/wallet'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 
 export default defineComponent({
@@ -158,7 +159,8 @@ export default defineComponent({
     const totalPages = ref(0)
     const dataSourcesCount = ref(0)
     const dataSources = ref([])
-    const accountAddress = wallet.account.address
+
+    const accountAddress = ref(wallet.isEmpty ? '' : wallet.account.address)
     const sortingActivitiesValue = ref(ACTIVITIES_SORT.latest)
     const sortingOwnersValue = ref(OWNERS_SORT.all)
     const dataSourceName = ref('')
@@ -224,7 +226,12 @@ export default defineComponent({
     }
 
     watch(
-      [sortingActivitiesValue, sortingOwnersValue, dataSourceName],
+      [
+        sortingActivitiesValue,
+        sortingOwnersValue,
+        dataSourceName,
+        accountAddress,
+      ],
       async () => {
         currentPage.value = 1
         await loadDataSources()

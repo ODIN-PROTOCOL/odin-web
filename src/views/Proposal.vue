@@ -9,6 +9,7 @@
         </span>
       </div>
       <button
+        v-if="accountAddress"
         class="proposal__title-btn app-btn app-btn--medium"
         :disabled="
           !proposal ||
@@ -130,6 +131,7 @@
 
     <div class="view-main__mobile-activities">
       <button
+        v-if="accountAddress"
         class="app-btn w-full app-btn--medium"
         :disabled="
           !proposal ||
@@ -164,6 +166,7 @@ import BackButton from '@/components/BackButton.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import { capitalizeFirstLetter } from '@/helpers/formatters'
+import { wallet } from '@/api/wallet'
 
 export default defineComponent({
   components: { Tally, BackButton, StatusBlock, CopyButton },
@@ -173,6 +176,8 @@ export default defineComponent({
     const route: RouteLocationNormalizedLoaded = useRoute()
     const proposal = ref()
     const tally = ref()
+
+    const accountAddress = wallet.isEmpty ? '' : wallet.account.address
 
     const getProposal = async () => {
       lockLoading()
@@ -217,6 +222,7 @@ export default defineComponent({
       proposal,
       tally,
       capitalizeFirstLetter,
+      accountAddress,
     }
   },
 })

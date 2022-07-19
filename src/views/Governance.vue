@@ -3,6 +3,7 @@
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Governance</h2>
       <button
+        v-if="accountAddress"
         class="governance__title-btn app-btn app-btn--medium"
         type="button"
         @click="createProposal()"
@@ -87,7 +88,7 @@
       />
     </template>
 
-    <div class="view-main__mobile-activities">
+    <div v-if="accountAddress" class="view-main__mobile-activities">
       <button
         class="app-btn w-full app-btn--medium"
         type="button"
@@ -116,6 +117,7 @@ import ProposalFormModal from '@/components/modals/ProposalFormModal.vue'
 import { proposalStatusFromJSON } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 import { ChartDataItem } from '@/helpers/Types'
+import { wallet } from '@/api/wallet'
 export default defineComponent({
   components: {
     CustomDoughnutChart,
@@ -140,6 +142,9 @@ export default defineComponent({
       { title: `Proposer's account ID` },
       { title: 'Proposal status' },
     ]
+
+    const accountAddress = wallet.isEmpty ? '' : wallet.account.address
+
     const getProposals = async () => {
       lockLoading()
       try {
@@ -245,6 +250,7 @@ export default defineComponent({
       createProposal,
       paginationHandler,
       headerTitles,
+      accountAddress,
     }
   },
 })
