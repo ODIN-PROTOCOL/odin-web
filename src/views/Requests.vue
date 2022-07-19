@@ -136,7 +136,6 @@ export default defineComponent({
     )
     const headerTitles = [
       { title: 'Request ID' },
-      { title: 'Sender' },
       { title: 'Oracle Script ID' },
       { title: 'Report Status' },
       { title: 'Timestamp' },
