@@ -248,4 +248,18 @@ export default defineComponent({
     grid: none;
   }
 }
+body.dark {
+  .ibc-view__table {
+    border: 0.1rem solid var(--d-clr__action);
+  }
+  .ibc-view__show-button {
+    color: var(--d-clr__action);
+  }
+  .ibc-view__arrow-icon {
+    fill: var(--d-clr__action);
+  }
+  .ibc-view__arrow-icon--active {
+    fill: var(--d-clr__action);
+  }
+}
 </style>

@@ -109,6 +109,7 @@ export default defineComponent({
   list-style-type: none;
   margin: 0;
   padding: 0;
+  user-select: none;
 }
 .v-pagination__control {
   display: flex;
@@ -171,5 +172,33 @@ li {
   margin: 0 0.2rem;
   min-width: 2.6rem;
   height: 3.6rem;
+}
+body.dark {
+  .v-pagination__control {
+    border: 0.1rem solid var(--d-clr__input-border);
+    fill: var(--d-clr__input-border);
+  }
+  .v-pagination__control--active {
+    border: 0.1rem solid var(--d-clr__action);
+    fill: var(--d-clr__action);
+    &:hover {
+      svg {
+        fill: var(--d-clr__btn-hover);
+      }
+      border-color: var(--d-clr__btn-hover);
+    }
+  }
+  .v-pagination__control-arrow {
+    fill: var(--d-clr__input-border);
+  }
+  .v-pagination__input {
+    border: 0.1rem solid var(--d-clr__input-border);
+    &:hover {
+      border: 0.1rem solid var(--d-clr__action);
+    }
+  }
+  li {
+    background: var(--d-clr__main-bg);
+  }
 }
 </style>

@@ -213,4 +213,25 @@ export default defineComponent({
     top: 8.5rem;
   }
 }
+body.dark {
+  .nav__link {
+    &:hover {
+      color: var(--d-clr__action);
+    }
+    &.router-link-exact-active > span {
+      color: var(--d-clr__action);
+    }
+  }
+  @media (max-width: 768px) {
+    .nav {
+      background: #000;
+    }
+    .nav__link {
+      border-bottom: 0.1rem solid #ced4da;
+      &:hover {
+        background: rgba(204, 228, 255, 0.4);
+      }
+    }
+  }
+}
 </style>

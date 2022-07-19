@@ -16,7 +16,7 @@
     </div>
     <div class="sort-line__selection">
       <div class="sort-line__selection-item">
-        <span class="sort-line__selection-item-title">Sort by</span>
+        <span class="sort-line__selection-item-title">Sort By</span>
         <VuePicker
           class="sort-line__vue-picker _vue-picker"
           name="filter"
@@ -212,6 +212,18 @@ export default defineComponent({
 
   .sort-line__vue-picker {
     width: 100%;
+  }
+}
+body.dark .sort-line__search {
+  &:hover,
+  &:active,
+  &:focus,
+  &:focus-within {
+    color: var(--d-clr__text);
+    border-color: var(--d-clr__text);
+    svg {
+      fill: var(--d-clr__text);
+    }
   }
 }
 </style>

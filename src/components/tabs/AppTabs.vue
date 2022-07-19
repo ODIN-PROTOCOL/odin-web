@@ -69,4 +69,12 @@ export default defineComponent({
     border-bottom: 0.2rem solid var(--clr__action);
   }
 }
+body.dark {
+  .app-tabs__header-item {
+    border-bottom: 0.2rem solid var(--d-clr__table-head);
+    &.selected {
+      border-bottom: 0.2rem solid var(--d-clr__action);
+    }
+  }
+}
 </style>

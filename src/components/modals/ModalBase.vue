@@ -104,4 +104,10 @@ export default defineComponent({
     overflow: unset;
   }
 }
+body.dark {
+  .modal-base__content {
+    background: var(--d-clr__modal-content-bg);
+    box-shadow: 0 0.4rem 2.4rem var(--clr__modal-content-shadow);
+  }
+}
 </style>

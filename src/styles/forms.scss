@@ -160,3 +160,18 @@
     }
   }
 }
+body.dark {
+  .app-form {
+    &__field-input-wrapper {
+      span {
+        color: var(--d-clr__text-muted);
+      }
+    }
+    &__field-note {
+      color: var(--d-clr__text-muted);
+    }
+    &__field-err {
+      color: var(--d-clr__danger);
+    }
+  }
+}

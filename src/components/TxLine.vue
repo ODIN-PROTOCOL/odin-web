@@ -1,7 +1,7 @@
 <template>
   <div class="app-table__row">
     <div class="app-table__cell">
-      <span class="app-table__title">Transaction hash</span>
+      <span class="app-table__title">Transaction Hash</span>
       <a
         class="app-table__cell-txt app-table__link"
         :href="`${API_CONFIG.odinScan}/transactions/${getRequestItemTxHash}`"

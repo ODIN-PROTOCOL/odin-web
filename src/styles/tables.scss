@@ -208,3 +208,15 @@
     grid: none;
   }
 }
+body.dark {
+  .app-table {
+    &__link {
+      color: var(--d-clr__action);
+    }
+  }
+  .info-table {
+    &__row-link {
+      color: var(--d-clr__action);
+    }
+  }
+}

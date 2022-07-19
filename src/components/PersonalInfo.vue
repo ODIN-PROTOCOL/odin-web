@@ -1,7 +1,7 @@
 <template>
   <div class="personal-info mg-b40">
     <div class="personal-info__card card-frame">
-      <h3 class="personal-info__card-title">Your address</h3>
+      <h3 class="personal-info__card-title">Your Address</h3>
       <div
         class="personal-info__card-address app-table__cell-txt"
         :title="accountAddress"
@@ -29,7 +29,7 @@
         <h2 class="personal-info__card-title">Balance</h2>
         <div class="personal-info__card-btn-wrapper">
           <a class="personal-info__link-scan" :href="accountLink"
-            >Go to account explorer
+            >Go to Account Explorer
           </a>
           <a
             class="personal-info__link-scan personal-info__link-scan--mobile"
@@ -259,6 +259,17 @@ export default defineComponent({
     display: flex;
     align-items: center;
     gap: 1rem;
+  }
+}
+body.dark {
+  .personal-info__link-scan {
+    color: var(--d-clr__action);
+  }
+  .personal-info__card-balance-row-value {
+    color: var(--d-clr__text);
+  }
+  .personal-info__card-address {
+    color: var(--d-clr__text-muted);
   }
 }
 </style>

@@ -155,3 +155,73 @@
     background: var(--clr__btn-disabled);
   }
 }
+
+body.dark {
+  .app-btn {
+
+    background: var(--d-clr__btn-normal);
+    color: var(--d-clr__text-on-action);
+
+    &--outlined {
+      background: var(--d-clr__main-bg);
+      color: var(--d-clr__action);
+      border: 0.1rem solid var(--d-clr__btn-normal);
+    }
+
+    &--edit{
+      background: var(-d-clr__main-bg);
+      color: var(--d-clr__action);
+      border: 0.1rem solid var(--d-clr__btn-normal);
+    }
+  
+    &:focus {
+      border: 0.1rem solid var(--d-clr__btn-normal);
+      background: var(--d-clr__btn-hover);
+    }
+    &:hover {
+      background: var(--d-clr__btn-hover);
+    }
+    &:active {
+      background: var(--d-clr__btn-pressed);
+    }
+    &:disabled {
+      background: var(--d-clr__btn-disabled);
+    }
+    &--outline-red {
+      background: var(--d-clr__main-bg);
+      color: var(--d-clr__btn-normal-red);
+      border: 0.1rem solid var(--d-clr__btn-normal-red);
+      &:focus {
+        color: var(--d-clr__text-on-action);
+        border: 0.1rem solid var(--d-clr__btn-pressed-red);
+        background: var(--d-clr__btn-hover-red);
+      }
+  
+      &:hover {
+        color: var(--d-clr__text-on-action);
+        border: 0.1rem solid transparent;
+        background: var(--d-clr__btn-hover-red);
+      }
+  
+      &:active {
+        color: var(--d-clr__text-on-action);
+        border: 0.1rem solid transparent;
+        background: var(--d-clr__btn-pressed-red);
+      }
+  
+      &:disabled {
+        color: var(--d-clr__text-on-action);
+        border: 0.1rem solid transparent;
+        background: var(--d-clr__btn-disabled-red);
+      }
+    }
+  }
+  .app-ico-btn {
+    &.modal-base__close-btn {
+      background-color: var(--d-clr__text);
+    }
+    &:hover {
+      background-color: var(--d-clr__action-extra-muted);
+    }
+  }
+}

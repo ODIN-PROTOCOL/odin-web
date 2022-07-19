@@ -136,4 +136,22 @@ export default defineComponent({
     }
   }
 }
+body.dark {
+  .drag {
+    border: 1px dashed var(--d-clr__action);
+    &__title {
+      color: var(--d-clr__action);
+    }
+    &__text {
+      color: #212529;
+      &--gray {
+        color: #6c757d;
+      }
+    }
+    &__button {
+      border: 0.1rem solid var(--d-clr__action);
+      color: var(--d-clr__action);
+    }
+  }
+}
 </style>

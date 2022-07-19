@@ -125,4 +125,17 @@ export default defineComponent({
     }
   }
 }
+body.dark {
+  .copy-button-with-text {
+  background: var(--d-clr__main-bg);
+  color: var(--d-clr__action);
+  border: 1px solid var(--d-clr__btn-normal);
+  &:hover {
+    color: var(--d-clr__action-disabled);
+    .copy-button-with-text__copy-icon {
+      fill: var(--d-clr__action-disabled);
+    }
+  }
+}
+}
 </style>

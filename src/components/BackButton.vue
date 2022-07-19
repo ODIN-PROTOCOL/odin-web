@@ -1,17 +1,18 @@
 <template>
   <div class="back-btn__wrapper">
     <button class="back-btn" @click.prevent="routerBack()">
-      <img src="@/assets/icons/back-arrow.svg" alt="back" />
+      <img :src="settings && settings.theme === 'dark' ? require('@/assets/icons/white-arrow.svg') : require('@/assets/icons/back-arrow.svg')" alt="back" />
     </button>
     <button class="back-btn__mobile" @click.prevent="routerBack()">
-      <img src="@/assets/icons/back-arrow-small.svg" alt="back" />
+      <img :src="settings && settings.theme === 'dark' ? require('@/assets/icons/white-arrow-small.svg') : require('@/assets/icons/back-arrow-small.svg')" alt="back" />
       <span>{{ text }}</span>
     </button>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { Settings, SettingsStateSymbol } from '@/ThemeProvider';
+import { defineComponent, inject } from 'vue'
 import { Router, useRouter } from 'vue-router'
 
 export default defineComponent({
@@ -20,12 +21,13 @@ export default defineComponent({
   },
   setup: function () {
     const router: Router = useRouter()
+    const settings: Settings | undefined = inject(SettingsStateSymbol);
 
     const routerBack = (): void => {
       router.back()
     }
 
-    return { routerBack }
+    return { settings, routerBack }
   },
 })
 </script>

@@ -20,7 +20,7 @@
         animation="wave"
         color="rgb(225, 229, 233)"
       />
-      <p v-else>{{ requestsCount }} requests found</p>
+      <p v-else>{{ requestsCount }} Requests Found</p>
     </div>
 
     <div class="app-table requests__table">

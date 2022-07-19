@@ -32,4 +32,7 @@ export default defineComponent({
   justify-content: center;
   color: var(--clr-text);
 }
+body.dark .app-pagination {
+  color: var(--d-clr-text);
+}
 </style>

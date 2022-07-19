@@ -182,4 +182,13 @@ export default defineComponent({
   position: relative;
   width: 100%;
 }
+body.dark {
+  .receive-modal__social-icon-text {
+    color: var(--d-clr__text);
+  }
+  .receive-modal__info-address {
+    color: var(--clr__text);
+    background: var(--d-clr__modal-field-bg);
+  }
+}
 </style>

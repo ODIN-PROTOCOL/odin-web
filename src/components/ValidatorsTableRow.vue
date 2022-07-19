@@ -90,9 +90,9 @@
           <button
             class="app-btn app-btn--outlined app-btn--very-small w-min108"
             type="button"
-            @click="selectedBtn('Claim rewards')"
+            @click="selectedBtn('Claim Rewards')"
           >
-            Claim rewards
+            Claim Rewards
           </button>
           <button
             class="app-btn app-btn--outline-red app-btn--very-small w-min108"

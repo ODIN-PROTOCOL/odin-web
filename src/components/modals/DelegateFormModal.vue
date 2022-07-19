@@ -241,12 +241,21 @@ export function showDelegateFormDialog(
   font-weight: 600;
   font-size: 1.6rem;
   line-height: 2.4rem;
+  color: var(--clr__text);
 }
 
 @include respond-to(small) {
   .delegate-form-modal__field-balance {
     gap: 1.6rem;
     flex-direction: column;
+  }
+}
+body.dark {
+  .delegate-form-modal__field-balance-row {
+    background: var(--d-clr__modal-field-bg);
+  }
+  .delegate-form-modal__field-lbl {
+    color: var(--d-clr__modal-backdrop-bg);
   }
 }
 </style>

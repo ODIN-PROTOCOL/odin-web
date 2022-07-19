@@ -37,6 +37,7 @@
     width: 100%;
   }
 }
+
 .card-frame {   
   padding: 3.2rem;
   border: 0.1rem solid var(--clr__frame-border);
@@ -44,5 +45,13 @@
   border-radius: 0.8rem;
   @media screen and (max-width: 768px) {
     padding: 3.2rem 2.4rem;
+  }
+}
+
+body.dark {
+  .info-card {
+    &__row-link {
+      color: var(--d-clr__action);
+    }
   }
 }

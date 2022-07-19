@@ -96,4 +96,13 @@ export default defineComponent({
     background: var(--clr__tooltip-bg);
   }
 }
+body.dark {
+  .copy-text__btn-copied-tip {
+    background: var(--d-clr__tooltip-bg);
+    color: var(--d-clr__tooltip-text);
+    &:before {
+      background: var(--d-clr__tooltip-bg);
+    }
+  }
+}
 </style>

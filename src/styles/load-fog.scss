@@ -21,3 +21,12 @@
     }
   }
 }
+body.dark {
+  .load-fog {
+    &_show {
+      &:after {
+        background: var(--load-fog__bg, rgba($d-clr-main-bg, 0.65));
+      }
+    }
+  }
+}

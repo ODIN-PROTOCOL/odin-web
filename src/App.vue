@@ -6,9 +6,14 @@
         :class="{ 'view-header_mobile': isOpen }"
       >
         <div class="header-wrapper">
-          <img
+          <img v-if="settingsData.theme === 'dark'"
             class="header-wrapper__logo"
-            src="~@/assets/brand/odin-logo-black.png"
+            src="~@/assets/brand/odin-logo-white.png"
+            alt="Logo"
+          />
+          <img v-else
+            class="header-wrapper__logo"
+            src= "~@/assets/brand/odin-logo-black.png"
             alt="Logo"
           />
           <Nav :isOpen="isOpen" @closeBurger="closeBurger" />
@@ -17,6 +22,7 @@
             @click="burgerMenuHandler($event)"
             :isOpen="isOpen"
             class="burger-menu"
+            :fill="settingsData.theme == 'dark' ? '#fff' : undefined"
           />
         </div>
       </header>
@@ -58,20 +64,25 @@
 
 <script lang="ts">
 import '@invisiburu/vue-picker/dist/vue-picker.min.css'
-import { computed, defineComponent, onMounted, ref } from 'vue'
+import { computed, defineComponent, inject, onMounted, ref } from 'vue'
+
 import { dialogs } from '@/helpers/dialogs'
+import emitter from '@/helpers/emmiter'
+
 import { useAuthorization } from '@/composables/useAuthorization'
+
 import Nav from '@/components/Nav.vue'
 import UserWidget from '@/components/UserWidget.vue'
 import BurgerMenu from '@/components/BurgerMenu.vue'
-
 import InfoNotificationIcon from '@/components/icons/InfoNotificationIcon.vue'
 import SuccessNotificationIcon from '@/components/icons/SuccessNotificationIcon.vue'
 import FailedNotificationIcon from '@/components/icons/FailedNotificationIcon.vue'
 import CancelIcon from '@/components/icons/CancelIcon.vue'
 import { notify } from '@kyvg/vue3-notification'
+import { Settings, SettingsStateSymbol, SettingsUpdateSymbol } from '@/ThemeProvider'
 import emitter from '@/helpers/emmiter'
 import { useRoute } from 'vue-router'
+
 type NotificationInfo = {
   error: Error
   typeNotification?: string
@@ -85,6 +96,34 @@ export default defineComponent({
     FailedNotificationIcon,
     SuccessNotificationIcon,
     CancelIcon,
+  },
+  data() {
+    return {
+      settingsData: {
+        language: 'en',
+        theme: window.localStorage.getItem('theme') || 'light',
+      }
+    }
+  },
+  provide() {
+    document.body.classList.add(this.settingsData.theme); // Add theme on initial render
+    return {
+      [SettingsStateSymbol]: computed(() => this.settingsData),
+      [SettingsUpdateSymbol]: (value: Settings) => {
+        if (this.settingsData) {
+          this.settingsData.language = value.language;
+          this.settingsData.theme = value.theme;
+
+          // Memory for future sessions
+          window.localStorage.setItem('theme', value.theme);
+
+          // Change Theme
+          document.body.removeAttribute('class');
+          document.body.classList.add(value.theme);
+        }
+        console.log(this.settingsData)
+      }
+    }
   },
   setup() {
     const notification = ref<NotificationInfo>()
@@ -137,6 +176,7 @@ export default defineComponent({
       closeBurger,
       notification,
       isAuthPage,
+
     }
   },
 })
@@ -182,6 +222,11 @@ export default defineComponent({
   .burger-menu {
     display: flex;
     flex-shrink: 0;
+  }
+  body.dark {
+    .view-header_mobile {
+      background: var(--d-clr__main-bg);
+    }
   }
 }
 </style>

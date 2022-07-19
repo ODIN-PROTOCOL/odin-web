@@ -85,4 +85,93 @@
   --clr__vue-notifications-info-border: #{$clr-vue-notifications-info-border};
   // Auth 
   --clr__auth-base-bg: #{$clr-auth-base-bg};
+
+  // ----------- DARK THEME ------------- //
+
+  --d-clr__main-bg: #{$d-clr-main-bg};
+  --d-clr__splash-bg: #{$d-clr-splash-bg};
+  --d-clr__text: #{$d-clr-text};
+  --d-clr__text-muted: #{$d-clr-text-muted};
+  --d-clr__text-on-action: #{$d-clr-text-on-action};
+  --d-clr__action: #{$d-clr-action};
+  --d-clr__action-disabled: #{$d-clr-action-disabled};
+  --d-clr__danger: #{$d-clr-danger};
+  --d-clr__action-extra-muted: #{$d-clr-action-extra-muted};
+  --d-clr__grey-bg : #{$d-clr-grey-bg};
+
+  // Buttons
+  --d-clr__btn-normal: #{$d-clr-btn-normal};
+  --d-clr__btn-hover: #{$d-clr-btn-hover};
+  --d-clr__btn-pressed: #{$d-clr-btn-pressed};
+  --d-clr__btn-disabled: #{$d-clr-btn-disabled};
+  --d-clr__btn-normal-red: #{$d-clr-btn-normal-red};
+  --d-clr__btn-hover-red: #{$d-clr-btn-hover-red};
+  --d-clr__btn-pressed-red: #{$d-clr-btn-pressed-red};
+  --d-clr__btn-disabled-red: #{$d-clr-btn-disabled-red};
+
+  // Inputs
+  --d-clr__input-bg: #{$d-clr-input-bg};
+  --d-clr__input-bg-disabled: #{$d-clr-input-bg-disabled};
+  --d-clr__input-border: #{$d-clr-input-border};
+
+  // Tables
+  --d-clr__table-border: #{$d-clr-table-border};
+  --d-clr__table-row-hover: #{$d-clr-table-row-hover};
+  --d-clr__table-head: #{$d-clr-table-head};
+
+  // Dropdown
+
+  // Shadows
+  --d-clr__dropdown-shadow: #{$d-clr-dropdown-shadow};
+  --d-clr__dropdown-link: #{$d-clr-dropdown-link};
+
+  // Tips
+  --d-clr__tooltip-bg: #{$d-clr-tooltip-bg};
+  --d-clr__tooltip-text: #{$d-clr-tooltip-text};
+
+  // Modals
+  --d-clr__modal-backdrop-bg: #{$d-clr-modal-backdrop-bg};
+  --d-clr__modal-content-bg: #{$d-clr-modal-content-bg};
+  --d-clr__modal-content-shadow: #{$d-clr-modal-content-shadow};
+  --d-clr__modal-field-bg: #{$d-clr-modal-field-bg};
+
+  // Scrollbar
+  --d-clr__scrollbar-thumb: #{$d-clr-scrollbar-thumb};
+  --d-clr__scrollbar-track: #{$d-clr-scrollbar-track};
+
+  // Progressbar
+  --d-clr__progressbar-track: #{$d-clr-progressbar-track};
+  --d-clr__progressbar-positive: #{$d-clr-progressbar-positive};
+  --d-clr__progressbar-negative: #{$d-clr-progressbar-negative};
+  
+  // Status
+  --d-clr__status-default: #{$d-clr-status-default};
+  --d-clr__status-success: #{$d-clr-status-success};
+  --d-clr__status-pending: #{$d-clr-status-pending};
+  --d-clr__status-error: #{$d-clr-status-error};
+  --d-clr__status-progress: #{$d-clr-status-progress};
+  --d-clr__oracle-status-success: #{$d-clr-oracle-status-success};
+  --d-clr__oracle-status-error: #{$d-clr-oracle-status-error};
+  // Chart
+  --d-clr__chart-default: #{$d-clr-chart-default};
+
+  // Frame
+  --d-clr__frame-border: #{$d-clr-frame-border};
+  --d-clr__frame-box-shadow: #{$d-clr-frame-box-shadow};
+  
+  // Wallet 
+  --d-clr__wallet-info-border: #{$d-clr-wallet-info-border};
+  --d-clr__wallet-info-box-shadow: #{$d-clr-wallet-info-box-shadow};
+
+  // Vue Picker 
+  --d-clr__vue-picker-box-shadow: #{$d-clr-vue-picker-box-shadow};
+  --d-clr__vue-picker-current-option: #{$d-clr-vue-picker-current-option};
+  
+  // Vue Notifications
+  --d-clr__vue-notifications-box-shadow: #{$d-clr-vue-notifications-box-shadow};
+  --d-clr__vue-notifications-failed-border: #{$d-clr-vue-notifications-failed-border};
+  --d-clr__vue-notifications-success-border: #{$d-clr-vue-notifications-success-border};
+  --d-clr__vue-notifications-info-border: #{$d-clr-vue-notifications-info-border};
+  // Auth 
+  --d-clr__auth-base-bg: #{$d-clr-auth-base-bg};
 }
