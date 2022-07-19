@@ -37,6 +37,8 @@ import hljsVuePlugin from '@highlightjs/vue-plugin'
 import SkeletonLoaderVueSample from 'skeleton-loader-vue/src/components/Loader.vue'
 hljs.registerLanguage('python', python)
 hljs.registerLanguage('rust', rust)
+import { DefaultApolloClient } from '@vue/apollo-composable'
+import { apolloClient } from './api/apollo-provider'
 
 async function _main() {
   try {
@@ -83,6 +85,7 @@ async function _main() {
   app.config.globalProperties.$convertLokiToOdin = convertLokiToOdin
   app.config.globalProperties.$convertLokiToOdinThousands =
     convertLokiToOdinThousands
+  app.provide(DefaultApolloClient, apolloClient)
   app.use(router)
   app.use(Notifications)
   app.use(hljsVuePlugin)

@@ -19,9 +19,11 @@
             <label class="undelegate-form-modal__field-lbl">From</label>
             <CopyText
               class="undelegate-form-modal__copy-text"
-              :text="validator.operatorAddress"
-              :title="validator.operatorAddress"
-              :displayText="$cropAddress(validator.operatorAddress)"
+              :text="validator.validatorInfo.operatorAddress"
+              :title="validator.validatorInfo.operatorAddress"
+              :displayText="
+                $cropAddress(validator.validatorInfo.operatorAddress)
+              "
             />
           </div>
           <div class="undelegate-form-modal__field-wrapper">
@@ -31,9 +33,17 @@
               </label>
               <p
                 class="undelegate-form-modal__field-balance-value"
-                :title="$convertLokiToOdin(validator.minSelfDelegation)"
+                :title="
+                  $convertLokiToOdin(
+                    validator.validatorCommissions[0]?.minSelfDelegation
+                  )
+                "
               >
-                {{ $convertLokiToOdin(validator.minSelfDelegation) }}
+                {{
+                  $convertLokiToOdin(
+                    validator.validatorCommissions[0]?.minSelfDelegation
+                  )
+                }}
               </p>
             </div>
 
@@ -117,15 +127,18 @@ import { convertLokiToOdin, convertOdinToLoki } from '@/helpers/converters'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase, { SCHEMES } from './ModalBase.vue'
 import CopyText from '@/components/CopyText.vue'
-import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { coin } from '@cosmjs/amino'
 import { useBalances } from '@/composables/useBalances'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import InfoIcon from '@/components/icons/InfoIcon.vue'
+import { ValidatorInfoModify } from '@/helpers/validatorDecoders'
 
 const UndelegateFormDialog = defineComponent({
   props: {
-    validator: { type: Object as PropType<ValidatorDecoded>, required: true },
+    validator: {
+      type: Object as PropType<ValidatorInfoModify>,
+      required: true,
+    },
     delegation: {
       type: Object as PropType<DelegationResponse>,
       required: true,
@@ -157,7 +170,7 @@ const UndelegateFormDialog = defineComponent({
       try {
         await callers.validatorUndelegate({
           delegatorAddress: wallet.account.address,
-          validatorAddress: props.validator.operatorAddress,
+          validatorAddress: props.validator.validatorInfo.operatorAddress,
           amount: coin(convertOdinToLoki(form.amount.val()), COINS_LIST.LOKI),
         })
         await useBalances().load()
@@ -188,7 +201,7 @@ export function showUndelegateFormDialog(
     onSubmit?: DialogHandler
     onClose?: DialogHandler
   },
-  props: { validator: ValidatorDecoded; delegation: DelegationResponse }
+  props: { validator: ValidatorInfoModify; delegation: DelegationResponse }
 ): Promise<unknown | null> {
   return dialogs.show(UndelegateFormDialog, callbacks, { props })
 }
