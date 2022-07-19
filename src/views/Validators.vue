@@ -95,7 +95,10 @@
         <span class="validators__table-head-item">Rank</span>
         <span class="validators__table-head-item">Validator</span>
         <span class="validators__table-head-item">Delegated</span>
-        <span class="validators__table-head-item">Commission</span>
+        <span
+          class="validators__table-head-item validators__table-head-item--center"
+          >Commission</span
+        >
         <span
           v-if="tabStatus !== inactiveValidatorsTitle"
           class="validators__table-head-item"
@@ -116,10 +119,10 @@
               :key="validator.operatorAddress"
               @selectedBtn="openModal"
               :validator="validator"
-              :tabStatus="tabStatus"
-              :inactiveValidatorsTitle="inactiveValidatorsTitle"
+              :tab-status="tabStatus"
+              :inactive-validators-title="inactiveValidatorsTitle"
               :delegations="delegations"
-              :hasActionButtons="!!accountAddress"
+              :has-action-buttons="Boolean(accountAddress)"
             />
           </template>
           <template v-else>
@@ -128,10 +131,10 @@
               :key="validator.operatorAddress"
               @selectedBtn="openModal"
               :validator="validator"
-              :tabStatus="tabStatus"
-              :inactiveValidatorsTitle="inactiveValidatorsTitle"
+              :tab-status="tabStatus"
+              :inactive-validators-title="inactiveValidatorsTitle"
               :delegations="delegations"
-              :hasActionButtons="!!accountAddress"
+              :has-action-buttons="Boolean(accountAddress)"
             />
           </template>
         </template>
@@ -157,7 +160,10 @@
       />
     </template>
 
-    <div class="view-main__mobile-activities validators__mobile-activities">
+    <div
+      v-if="accountAddress"
+      class="view-main__mobile-activities validators__mobile-activities"
+    >
       <button
         v-if="isDelegator && delegations && validators"
         class="app-btn w-full app-btn--medium"
@@ -614,20 +620,6 @@ export default defineComponent({
     margin-bottom: 1.6rem;
   }
 }
-.validators__table--unauthenticated {
-  .validators__table-head,
-  .validators-table-row {
-    gap: 2rem;
-    grid:
-      auto /
-      minmax(2rem, 5rem)
-      minmax(5rem, 1fr)
-      minmax(6rem, 0.5fr)
-      minmax(8rem, 0.5fr)
-      minmax(7rem, 0.5fr)
-      minmax(6rem, 8rem);
-  }
-}
 
 .validators__table--inactive {
   .validators__table-head,
@@ -761,6 +753,12 @@ export default defineComponent({
   .validators__table--inactive {
     .validators__table-head,
     .validators__table-row {
+      grid: none;
+    }
+  }
+  .validators__table--unauthenticated {
+    .validators__table-head,
+    .validators-table-row {
       grid: none;
     }
   }
