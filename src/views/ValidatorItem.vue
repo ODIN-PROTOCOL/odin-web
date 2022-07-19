@@ -164,6 +164,9 @@ export default defineComponent({
     }
 
     const getDelegations = async () => {
+      if (wallet.isEmpty) {
+        return
+      }
       try {
         // TODO: delegations returns invalid delegator's amount?
         const response = await callers.getDelegations(wallet.account.address)
