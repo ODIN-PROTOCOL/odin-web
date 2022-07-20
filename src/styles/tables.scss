@@ -112,22 +112,21 @@
 .data-sources__table-row {
   grid:
     auto /
-    minmax(2rem, 0.5fr)
     minmax(4rem, 2fr)
     minmax(4rem, 2fr)
     minmax(4rem, 2fr)
-    minmax(8rem, 2fr)
-    minmax(8rem, 2fr);
+    minmax(4rem, 1.75fr)
+    minmax(10rem, 1.25fr)
+    minmax(8rem, 1fr);
 }
 .requests__table-head,
 .requests__table-row {
   grid:
     auto /
-    minmax(7rem, 0.5fr)
-    minmax(8rem, 3fr)
-    minmax(10rem, 1fr)
+    minmax(7rem, 1fr)
+    minmax(10rem, 1.5fr)
     minmax(8rem, 2fr)
-    minmax(10rem, 1.5fr);
+    minmax(10rem, 2fr);
 }
 .validators__table-head,
 .validators__table-row,
@@ -139,10 +138,26 @@
     minmax(5rem, 1fr)
     minmax(6rem, 0.5fr)
     minmax(8rem, 0.5fr)
-    minmax(7rem, 0.5fr)
+    minmax(7rem, 1fr)
     minmax(6rem, 8rem)
     minmax(24rem, 1.5fr);
 }
+.validators__table--unauthenticated {
+  .validators__table-head,
+  .validators-table-row,
+  .validators__table-row {
+    gap: 2rem;
+    grid:
+      auto /
+      minmax(2rem, 5rem)
+      minmax(5rem, 1fr)
+      minmax(6rem, 1fr)
+      minmax(8rem, 0.5fr)
+      minmax(7rem, 1fr)
+      minmax(6rem, 10rem);
+  }
+}
+
 .oracle-scripts__table-head,
 .oracle-scripts__table-row {
   grid:
@@ -195,6 +210,13 @@
     minmax(8rem, 2fr);
 }
 @include respond-to(tablet) {
+  .validators__table--unauthenticated {
+    .validators__table-head,
+    .validators__table-row,
+    .validators-table-row {
+      grid: none;
+    }
+  }
   .data-sources__table-row,
   .requests__table-row,
   .validators__table-row,
@@ -203,8 +225,7 @@
   .governance__table-row,
   .requests-oracle-script__row,
   .requests-data-source__row,
-  .delegators-table__table-row,
-  .validators-table-row   {
+  .delegators-table__table-row {
     grid: none;
   }
 }

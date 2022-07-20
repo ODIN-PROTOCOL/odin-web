@@ -19,7 +19,7 @@ const MINIGEO_DENOM = 'MINIGEO'
 const LOKI_MULTIPLIER = 1000000
 
 export function convertLokiToOdin(
-  amount: string | number | undefined,
+  amount: string | BigNumber | undefined,
   options?: ConverterOptions,
   denom = ODIN_DENOM
 ): string | BigNumber {
@@ -30,7 +30,8 @@ export function convertLokiToOdin(
   } else {
     denom = GEO_DENOM
   }
-  let res = null
+
+  let res: BigNumber
   if (options && options.withPrecise) {
     res = big.fromPrecise(big.multiply(amount, ODIN_MULTIPLIER))
   } else {

@@ -71,6 +71,7 @@
           class="validators-item__validator-status"
         />
       </div>
+      {{ hasActionButtons }}
       <div v-if="hasActionButtons" class="app-table__cell">
         <div
           class="app-table__activities validators-table-row-mobile__activities"
