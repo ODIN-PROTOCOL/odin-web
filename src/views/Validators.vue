@@ -329,6 +329,7 @@ export default defineComponent({
       }
       lockLoading()
       try {
+        const totalStaked = Number(result.value?.stakingPool[0].bondedTokens)
         const copyActiveValidator =
           result.value?.validator?.filter(
             (item: ValidatorsInfo) => item?.validatorStatuses[0]?.status === 3
@@ -351,6 +352,9 @@ export default defineComponent({
                 isActive: await isActiveValidator(
                   item.validatorInfo?.operatorAddress
                 ).then((req) => req),
+                votingPowerPercent:
+                  (Number(item.validatorInfo.delegatorShares) / totalStaked) *
+                  100,
               }
             }
           )
@@ -369,6 +373,9 @@ export default defineComponent({
                 isActive: await isActiveValidator(
                   item.validatorInfo?.operatorAddress
                 ).then((req) => req),
+                votingPowerPercent:
+                  (item.validatorVotingPowers[0]?.votingPower / totalStaked) *
+                  100,
               }
             }
           )

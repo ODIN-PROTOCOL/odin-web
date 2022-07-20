@@ -40,11 +40,8 @@
           )
         "
       >
-        {{
-          $convertLokiToOdin(
-            Number(validator.validatorInfo.delegatorShares).toFixed(6)
-          )
-        }}
+        {{ $formatCoin(validator.validatorInfo.delegatorShares, 'ODIN', true) }}
+        ({{ validator.votingPowerPercent?.toFixed(2) }}%)
       </span>
     </div>
     <template v-if="isShowValidatorDetails">

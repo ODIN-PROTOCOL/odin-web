@@ -33,10 +33,15 @@
         "
       >
         {{
-          $convertLokiToOdin(
-            Number(validator.validatorInfo.delegatorShares).toFixed(6)
+          $formatCoin(
+            $convertLokiToOdin(validator.validatorInfo.delegatorShares, {
+              onlyNumber: true,
+            }),
+            'ODIN',
+            true
           )
         }}
+        ({{ validator.votingPowerPercent?.toFixed(2) }}%)
       </span>
     </div>
     <div class="app-table__cell validators-table-row__cell--center">

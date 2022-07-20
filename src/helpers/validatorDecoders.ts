@@ -9,7 +9,12 @@ import { ValidatorsInfo } from '@/graphql/types'
 export type ValidatorDecoded = Modify<Validator, { consensusPubkey?: string }>
 export type ValidatorInfoModify = Modify<
   ValidatorsInfo,
-  { isActive?: boolean; rank: number; uptime: number }
+  {
+    isActive?: boolean
+    rank: number
+    uptime: number
+    votingPowerPercent?: number
+  }
 >
 export type TransferValidator = Modify<
   ValidatorDecoded,
