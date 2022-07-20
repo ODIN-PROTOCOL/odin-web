@@ -7,7 +7,7 @@
         }}</span>
         <TitledLink
           class="app-table__cell-txt app-table__link"
-          :text="validator?.validatorDescriptions[0]?.moniker || '???'"
+          :text="validator?.validatorDescriptions[0]?.moniker"
           :to="`/validators/${validator?.validatorInfo.operatorAddress}`"
         />
       </div>
@@ -53,7 +53,7 @@
         <span class="app-table__title">Commission</span>
         <span>
           {{
-            +(validator?.validatorCommissions[0]?.commission * 100).toFixed(2)
+            $trimZeros(validator?.validatorCommissions[0]?.commission * 100, 2)
           }}%
         </span>
       </div>
@@ -62,7 +62,7 @@
         <Progressbar
           :min="0"
           :max="100"
-          :current="Number(validator?.uptime?.toFixed(2)) || 0"
+          :current="$trimZeros(validator?.uptime, 2) || 0"
           is-for-validators
         />
       </div>
@@ -75,7 +75,6 @@
           class="validators-item__validator-status"
         />
       </div>
-      {{ hasActionButtons }}
       <div v-if="hasActionButtons" class="app-table__cell">
         <div
           class="app-table__activities validators-table-row-mobile__activities"
@@ -129,14 +128,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType } from 'vue'
+import { defineComponent, ref, PropType, watch, toRef } from 'vue'
 import TitledLink from '@/components/TitledLink.vue'
 import Progressbar from '@/components/Progressbar.vue'
 import ValidatorStatus from '@/components/ValidatorStatus.vue'
 import ArrowIcon from '@/components/icons/ArrowIcon.vue'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
-import { VALIDATOR_STATUS } from '@/helpers/validatorHelpers'
-import { ValidatorInfoModify } from '@/helpers/validatorDecoders'
+import {
+  ValidatorInfoModify,
+  VALIDATOR_STATUS,
+} from '@/helpers/validatorHelpers'
 
 export default defineComponent({
   components: {
@@ -155,13 +156,13 @@ export default defineComponent({
       required: true,
     },
     tabStatus: { type: String, required: true },
+    currentPage: { type: Number, required: true },
     inactiveValidatorsTitle: { type: String, required: true },
     hasActionButtons: { type: Boolean, required: true },
   },
   setup(props, { emit }) {
-    const ITEMS_PER_PAGE = 50
-    const currentPage = ref(1)
-    const totalPages = ref(0)
+    const tabStatus = toRef(props, 'tabStatus')
+    const currentPage = toRef(props, 'currentPage')
     const isShowValidatorDetails = ref(false)
 
     const validatorStatus = () => {
@@ -177,11 +178,11 @@ export default defineComponent({
     const selectedBtn = (typeBtn: string) => {
       emit('selectedBtn', { typeBtn, validator: props.validator })
     }
-
+    watch(
+      [tabStatus, currentPage],
+      () => (isShowValidatorDetails.value = false)
+    )
     return {
-      ITEMS_PER_PAGE,
-      totalPages,
-      currentPage,
       validatorStatus,
       isShowValidatorDetails,
       selectedBtn,

@@ -67,7 +67,7 @@ import { big } from '@/helpers/bigMath'
 import { coin } from '@cosmjs/amino'
 import { parseLogsToGetRewardsAmount } from '@/helpers/helpers'
 import ModalBase from '@/components/modals/ModalBase.vue'
-import { ValidatorInfoModify } from '@/helpers/validatorDecoders'
+import { ValidatorInfoModify } from '@/helpers/validatorHelpers'
 
 const defaultBalanceBlank: Coin = { amount: '0', denom: COINS_LIST.LOKI }
 

@@ -50,6 +50,7 @@ export interface ValidatorsInfo {
     delegatorShares: string
     operatorAddress: string
     selfDelegateAddress: string
+    consensusAddress: string
   }
   validatorVotingPowers: [
     {

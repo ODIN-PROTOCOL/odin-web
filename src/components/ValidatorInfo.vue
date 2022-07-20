@@ -181,7 +181,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType, ref, onMounted } from 'vue'
-import { ValidatorDecoded } from '@/helpers/validatorDecoders'
+import { ValidatorDecoded } from '@/helpers/validatorHelpers'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'

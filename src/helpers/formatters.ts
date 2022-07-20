@@ -184,3 +184,14 @@ export function capitalizeFirstLetter(value: string): string {
   if (!value) return value
   return value[0].toUpperCase() + value.slice(1)
 }
+
+export function trimLeadingZeros(
+  data: string | number,
+  fractionDigits = 6
+): number {
+  if (typeof data === 'string') {
+    return Number(Number(data).toFixed(fractionDigits))
+  } else {
+    return Number(data.toFixed(fractionDigits))
+  }
+}

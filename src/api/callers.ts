@@ -15,7 +15,7 @@ import { wallet } from './wallet'
 import { mapResponse, sendPost, sendGet } from './callersHelpers'
 import { cacheAnswers } from '@/helpers/requests'
 import { decodeProposal } from '@/helpers/proposalDecoders'
-import { decodeValidators } from '@/helpers/validatorDecoders'
+
 import { NumLike } from '@/helpers/casts'
 import { API_CONFIG } from './api-config'
 import {
@@ -165,14 +165,6 @@ const makeCallers = () => {
     getRate: querier((qc) => qc.coinswap.unverified.rate),
     getTreasuryPool: querier((qc) => qc.mint.unverified.treasuryPool),
     getTotalSupply: querier((qc) => qc.bank.totalSupply),
-    getValidators: querier((qc) =>
-      mapResponse(qc.staking.validators, (response) => {
-        return {
-          ...response,
-          validators: decodeValidators(response.validators),
-        }
-      })
-    ),
     getActiveValidators: querier((qc) => qc.oracle.unverified.activeValidators),
     getValidator: querier((qc) => qc.staking.validator),
     getValidatorStatus: querier((qc) => qc.oracle.unverified.validator),

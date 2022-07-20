@@ -313,6 +313,9 @@ export default defineComponent({
     flex: 1;
   }
 }
+.validators-item__validator-status {
+  margin-right: 2rem;
+}
 @include respond-to(tablet) {
   .validators-item {
     padding-bottom: 10rem;

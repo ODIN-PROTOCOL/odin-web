@@ -5,7 +5,6 @@
       'validators-table-row--top':
         validator?.validatorStatuses[0]?.status === VALIDATOR_STATUS.active &&
         delegations[validator.validatorInfo.operatorAddress],
-      'validators-table-row--inactive': tabStatus === inactiveValidatorsTitle,
     }"
   >
     <div class="app-table__cell">
@@ -16,7 +15,7 @@
       <span class="app-table__title">Validator</span>
       <TitledLink
         class="app-table__cell-txt app-table__link"
-        :text="validator?.validatorDescriptions[0]?.moniker || '???'"
+        :text="validator?.validatorDescriptions[0]?.moniker"
         :to="`/validators/${validator?.validatorInfo.operatorAddress}`"
       />
     </div>
@@ -25,7 +24,7 @@
       <span
         :title="
           $convertLokiToOdin(
-            Number(validator.validatorInfo.delegatorShares).toFixed(6),
+            $trimZeros(validator.validatorInfo.delegatorShares),
             {
               onlyNumber: true,
             }
@@ -34,17 +33,17 @@
       >
         {{
           $convertLokiToOdin(
-            Number(validator.validatorInfo.delegatorShares).toFixed(6),
+            $trimZeros(validator.validatorInfo.delegatorShares),
             { withDenom: true }
           )
         }}
       </span>
     </div>
-    <div class="app-table__cell validators-table-row__cell--center">
+    <div class="app-table__cell validators-table-row__cell--margin-left">
       <span class="app-table__title">Commission</span>
       <span>
         {{
-          +(validator?.validatorCommissions[0]?.commission * 100).toFixed(2)
+          $trimZeros(validator?.validatorCommissions[0]?.commission * 100, 2)
         }}%
       </span>
     </div>
@@ -53,7 +52,7 @@
       <Progressbar
         :min="0"
         :max="100"
-        :current="Number(validator?.uptime?.toFixed(2)) || 0"
+        :current="$trimZeros(validator?.uptime, 2) || 0"
         is-for-validators
       />
     </div>
@@ -115,13 +114,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import TitledLink from '@/components/TitledLink.vue'
 import Progressbar from '@/components/Progressbar.vue'
 import ValidatorStatus from '@/components/ValidatorStatus.vue'
-import { ValidatorInfoModify } from '@/helpers/validatorDecoders'
+import {
+  ValidatorInfoModify,
+  VALIDATOR_STATUS,
+} from '@/helpers/validatorHelpers'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
-import { VALIDATOR_STATUS } from '@/helpers/validatorHelpers'
 
 export default defineComponent({
   components: {
@@ -144,10 +145,6 @@ export default defineComponent({
     hasActionButtons: { type: Boolean, required: true },
   },
   setup(props, { emit }) {
-    const ITEMS_PER_PAGE = 50
-    const currentPage = ref(1)
-    const totalPages = ref(0)
-
     const validatorStatus = () => {
       if (
         props.validator?.validatorStatuses[0]?.status ===
@@ -163,9 +160,6 @@ export default defineComponent({
     }
 
     return {
-      ITEMS_PER_PAGE,
-      totalPages,
-      currentPage,
       validatorStatus,
       selectedBtn,
       VALIDATOR_STATUS,
@@ -175,18 +169,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.validators-table-row--inactive {
-  gap: 2rem;
-  grid:
-    auto /
-    minmax(2rem, 5rem)
-    minmax(5rem, 1.5fr)
-    minmax(6rem, 1fr)
-    minmax(8rem, 0.5fr)
-    minmax(7rem, 8.7rem)
-    minmax(24rem, 1.5fr);
-}
-
 .validators-table-row {
   padding: 3.2rem 0 2rem;
   align-items: center;
@@ -212,28 +194,7 @@ export default defineComponent({
 .validators-table-row__cell--center {
   justify-content: center;
 }
-
-@include respond-to(tablet) {
-  .validators-table-row__activities {
-    width: 100%;
-  }
-
-  .validators-table-row__activities-item {
-    & > * {
-      flex: 1;
-    }
-  }
-
-  .validators-table-row__cell--center {
-    justify-content: flex-start;
-  }
-
-  .validators-table-row__head--center {
-    text-align: start;
-  }
-
-  .validators-table-row__head--end {
-    text-align: start;
-  }
+.validators-table-row__cell--margin-left {
+  margin-left: 2rem;
 }
 </style>

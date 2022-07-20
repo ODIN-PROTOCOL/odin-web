@@ -53,6 +53,7 @@ import { DelegationDelegatorReward } from 'cosmjs-types/cosmos/distribution/v1be
 import { DecCoin } from 'cosmjs-types/cosmos/base/v1beta1/coin'
 import ModalBase from '@/components/modals/ModalBase.vue'
 import { convertLokiToOdin } from '@/helpers/converters'
+import { trimLeadingZeros } from '@/helpers/formatters'
 
 export default defineComponent({
   components: { ModalBase },
@@ -74,7 +75,7 @@ export default defineComponent({
           withPrecise: true,
           onlyNumber: true,
         })
-        odinRewardsValue.value = Number(odinRewardsValue.value.toFixed(6))
+        odinRewardsValue.value = trimLeadingZeros(odinRewardsValue.value)
       } catch (error) {
         handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }

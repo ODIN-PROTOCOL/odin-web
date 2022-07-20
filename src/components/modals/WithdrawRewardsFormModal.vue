@@ -51,7 +51,8 @@ import { preventIf } from '@/helpers/functions'
 import ModalBase from './ModalBase.vue'
 import { usePoll } from '@/composables/usePoll'
 import { convertLokiToOdin } from '@/helpers/converters'
-import { ValidatorInfoModify } from '@/helpers/validatorDecoders'
+import { ValidatorInfoModify } from '@/helpers/validatorHelpers'
+import { trimLeadingZeros } from '@/helpers/formatters'
 
 const WithdrawFormDialog = defineComponent({
   props: {
@@ -81,7 +82,7 @@ const WithdrawFormDialog = defineComponent({
               onlyNumber: true,
             }
           )
-          odinRewardsValue.value = Number(odinRewardsValue.value.toFixed(6))
+          odinRewardsValue.value = trimLeadingZeros(odinRewardsValue.value)
         } else {
           odinRewardsValue.value = 0
         }

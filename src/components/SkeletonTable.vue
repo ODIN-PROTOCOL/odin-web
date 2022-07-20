@@ -2,7 +2,7 @@
   <div
     v-for="(arr, index) in skeletonLoaderArray"
     :key="index"
-    class="skeleton-table__row app-table__row"
+    class="skeleton-table app-table__row"
     :class="classString"
   >
     <div
@@ -37,7 +37,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, computed } from 'vue'
 
 export default defineComponent({
   props: {
@@ -48,8 +48,8 @@ export default defineComponent({
     skeletonRadius: { type: Number, default: 32 },
   },
   setup(props) {
-    const skeletonLoaderArray = Array(Number(props.tableSize)).fill(
-      props.headerTitles
+    const skeletonLoaderArray = computed(() =>
+      Array(Number(props.tableSize)).fill(props.headerTitles)
     )
     return { skeletonLoaderArray }
   },

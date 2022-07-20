@@ -84,21 +84,12 @@
         </button>
       </div>
     </div>
-    <div
-      class="app-table validators__table"
-      :class="{
-        'validators__table--inactive': tabStatus === inactiveValidatorsTitle,
-        'validators__table--unauthenticated': !accountAddress,
-      }"
-    >
+    <div class="app-table validators__table" :class="validatorTableClass">
       <div class="app-table__head validators__table-head">
         <span class="validators__table-head-item">Rank</span>
         <span class="validators__table-head-item">Validator</span>
         <span class="validators__table-head-item">Delegated</span>
-        <span
-          class="validators__table-head-item validators__table-head-item--center"
-          >Commission</span
-        >
+        <span class="validators__table-head-item">Commission</span>
         <span
           v-if="tabStatus !== inactiveValidatorsTitle"
           class="validators__table-head-item"
@@ -135,14 +126,15 @@
               :inactive-validators-title="inactiveValidatorsTitle"
               :delegations="delegations"
               :has-action-buttons="Boolean(accountAddress)"
+              :current-page="currentPage"
             />
           </template>
         </template>
         <template v-else>
           <SkeletonTable
-            v-if="isLoading || loading"
+            v-if="isLoading || isValidatorsResponseLoading"
             :header-titles="headerTitles"
-            class-string="validators__table-row"
+            class-string="validators-table-row"
           />
           <div v-else class="app-table__empty-stub">
             <p class="empty mg-t32">No items yet</p>
@@ -278,28 +270,53 @@ export default defineComponent({
 
     const headerTitles = computed(() => {
       if (windowInnerWidth.value > 768) {
-        return [
-          { title: 'Rank' },
-          { title: 'Validator' },
-          { title: 'Delegated' },
-          { title: 'Commission' },
-          { title: 'Uptime' },
-          { title: 'Oracle Status' },
-        ]
+        if (tabStatus.value === inactiveValidatorsTitle.value) {
+          return [
+            { title: 'Rank' },
+            { title: 'Validator' },
+            { title: 'Delegated' },
+            { title: 'Commission' },
+            { title: 'Status' },
+          ]
+        } else {
+          return [
+            { title: 'Rank' },
+            { title: 'Validator' },
+            { title: 'Delegated' },
+            { title: 'Commission' },
+            { title: 'Uptime' },
+            { title: 'Status' },
+          ]
+        }
       } else {
         return [{ title: '' }, { title: 'Delegated' }]
       }
     })
-
     const accountAddress = ref(wallet.isEmpty ? '' : wallet.account.address)
 
-    const { result, loading } = useQuery<ValidatorsResponse>(ValidatorsQuery)
+    const validatorTableClass = computed(() => {
+      if (
+        tabStatus.value === inactiveValidatorsTitle.value &&
+        !accountAddress.value
+      ) {
+        return 'validators__table--unauthenticated-inactive'
+      } else if (tabStatus.value === inactiveValidatorsTitle.value) {
+        return 'validators__table--inactive'
+      } else if (!accountAddress.value) {
+        return 'validators__table--unauthenticated'
+      } else {
+        return ''
+      }
+    })
+
+    const { result, loading: isValidatorsResponseLoading } =
+      useQuery<ValidatorsResponse>(ValidatorsQuery)
 
     const signedBlocks = computed(() =>
       Number(result.value?.slashingParams[0]?.params?.signed_blocks_window)
     )
 
-    watch([loading], async () => {
+    watch([isValidatorsResponseLoading], async () => {
       await getValidators()
     })
 
@@ -330,7 +347,7 @@ export default defineComponent({
       releaseLoading()
     }
     const getValidators = async () => {
-      if (loading.value) {
+      if (isValidatorsResponseLoading.value) {
         return
       }
       lockLoading()
@@ -595,7 +612,8 @@ export default defineComponent({
       openModal,
       activeValidators,
       accountAddress,
-      loading,
+      isValidatorsResponseLoading,
+      validatorTableClass,
     }
   },
 })
@@ -618,21 +636,6 @@ export default defineComponent({
   gap: 2.4rem;
   & > *:not(:last-child) {
     margin-bottom: 1.6rem;
-  }
-}
-
-.validators__table--inactive {
-  .validators__table-head,
-  .validators-table-row {
-    gap: 2rem;
-    grid:
-      auto /
-      minmax(2rem, 5rem)
-      minmax(5rem, 1.5fr)
-      minmax(6rem, 1fr)
-      minmax(8rem, 0.5fr)
-      minmax(7rem, 8.7rem)
-      minmax(24rem, 1.5fr);
   }
 }
 
@@ -750,18 +753,7 @@ export default defineComponent({
   .validators--large-padding {
     padding-bottom: 20rem;
   }
-  .validators__table--inactive {
-    .validators__table-head,
-    .validators__table-row {
-      grid: none;
-    }
-  }
-  .validators__table--unauthenticated {
-    .validators__table-head,
-    .validators-table-row {
-      grid: none;
-    }
-  }
+
   .validators__count-info {
     margin-bottom: 0;
   }

@@ -28,6 +28,7 @@ export const ValidatorsQuery = gql`
         delegatorShares: delegator_shares
         operatorAddress: operator_address
         selfDelegateAddress: self_delegate_address
+        consensusAddress: consensus_address
       }
       validatorVotingPowers: validator_voting_powers(
         offset: 0

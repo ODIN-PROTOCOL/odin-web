@@ -21,7 +21,7 @@
               class="undelegate-form-modal__copy-text"
               :text="validator.validatorInfo.operatorAddress"
               :title="validator.validatorInfo.operatorAddress"
-              :displayText="
+              :display-text="
                 $cropAddress(validator.validatorInfo.operatorAddress)
               "
             />
@@ -131,7 +131,7 @@ import { coin } from '@cosmjs/amino'
 import { useBalances } from '@/composables/useBalances'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import InfoIcon from '@/components/icons/InfoIcon.vue'
-import { ValidatorInfoModify } from '@/helpers/validatorDecoders'
+import { ValidatorInfoModify } from '@/helpers/validatorHelpers'
 
 const UndelegateFormDialog = defineComponent({
   props: {

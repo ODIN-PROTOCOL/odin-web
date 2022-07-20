@@ -251,7 +251,7 @@ import { preventIf } from '@/helpers/functions'
 import { convertLokiToOdin, convertOdinToLoki } from '@/helpers/converters'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase, { SCHEMES } from './ModalBase.vue'
-import { ValidatorDecoded } from '@/helpers/validatorDecoders'
+import { ValidatorInfoModify } from '@/helpers/validatorHelpers'
 import { coin } from '@cosmjs/amino'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -259,12 +259,11 @@ import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
-import { ValidatorsInfo } from '@/graphql/types'
 
 const StakeTransferFormModal = defineComponent({
   props: {
     validators: {
-      type: Array as PropType<ValidatorsInfo[]>,
+      type: Array as PropType<ValidatorInfoModify[]>,
       required: true,
     },
     delegation: {
@@ -278,7 +277,7 @@ const StakeTransferFormModal = defineComponent({
     const delegatedAdress = Object.keys(props.delegation)
     const isShowToAdressOption = ref(true)
     const delegatedValidators = ref()
-    const allValidators = ref<Array<ValidatorsInfo>>(props.validators)
+    const allValidators = ref<Array<ValidatorInfoModify>>(props.validators)
     const maxAmount: ComputedRef<number> = computed(
       () =>
         Number(
@@ -319,7 +318,7 @@ const StakeTransferFormModal = defineComponent({
       (validatorAddress: string) => {
         return {
           ...allValidators.value.find(
-            (validator: ValidatorsInfo) =>
+            (validator: ValidatorInfoModify) =>
               validator?.validatorInfo.operatorAddress === validatorAddress
           ),
           delegation: props.delegation[validatorAddress],
@@ -328,7 +327,7 @@ const StakeTransferFormModal = defineComponent({
     )
     form.sender.val(delegatedValidators.value[0].validatorInfo.operatorAddress)
     const filtredValidators = computed(() =>
-      allValidators.value.map((validator: ValidatorsInfo) => {
+      allValidators.value.map((validator: ValidatorInfoModify) => {
         return {
           ...validator,
           delegation:
@@ -357,7 +356,7 @@ const StakeTransferFormModal = defineComponent({
           form.receiver.err('Choose another validator')
         } else {
           const findValidator = filtredValidators.value.find(
-            (item: ValidatorsInfo) =>
+            (item: ValidatorInfoModify) =>
               item?.validatorInfo.operatorAddress === form.receiver.val()
           )
           if (!findValidator) {
@@ -393,10 +392,10 @@ const StakeTransferFormModal = defineComponent({
         }
       }
     )
-    const isHaveSameValueInReceiver = (validator: ValidatorsInfo) => {
+    const isHaveSameValueInReceiver = (validator: ValidatorInfoModify) => {
       return validator.validatorInfo.operatorAddress === form.receiver.val()
     }
-    const isHaveSameValueInSender = (validator: ValidatorsInfo) => {
+    const isHaveSameValueInSender = (validator: ValidatorInfoModify) => {
       return validator.validatorInfo.operatorAddress === form.sender.val()
     }
     const changeField = async () => {
@@ -453,7 +452,7 @@ export function showUndelegateFormDialog(
     onSubmit?: DialogHandler
     onClose?: DialogHandler
   },
-  props: { validators: ValidatorDecoded; delegation: DelegationResponse }
+  props: { validators: ValidatorInfoModify; delegation: DelegationResponse }
 ): Promise<unknown | null> {
   return dialogs.show(StakeTransferFormModal, callbacks, { props })
 }

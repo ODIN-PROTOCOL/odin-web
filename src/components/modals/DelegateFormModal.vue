@@ -109,12 +109,11 @@ import { preventIf } from '@/helpers/functions'
 import { convertLokiToOdin, convertOdinToLoki } from '@/helpers/converters'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
-import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { useBalances } from '@/composables/useBalances'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { coin, Coin } from '@cosmjs/amino'
 import { big as bigMath } from '@/helpers/bigMath'
-import { ValidatorInfoModify } from '@/helpers/validatorDecoders'
+import { ValidatorInfoModify } from '@/helpers/validatorHelpers'
 
 const defaultBalanceBlank: Coin = { amount: '0', denom: COINS_LIST.LOKI }
 
@@ -198,7 +197,7 @@ export function showDelegateFormDialog(
     onSubmit?: DialogHandler
     onClose?: DialogHandler
   },
-  props: { validator: ValidatorDecoded; delegation?: DelegationResponse }
+  props: { validator: ValidatorInfoModify; delegation?: DelegationResponse }
 ): Promise<unknown | null> {
   return dialogs.show(DelegateFormDialog, callbacks, { props })
 }
