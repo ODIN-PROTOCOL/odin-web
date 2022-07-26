@@ -2,7 +2,13 @@
   <div class="search">
     <transition name="slide-fade">
       <div class="search__input" v-if="data.isOpen">
-        <InputField v-model="data.searchValue" placeholder="Search" />
+        <InputField v-model="data.searchValue" placeholder="Search" >
+        <template v-if="data.searchValue">
+            <button @click="clearText()" class="search__clear">
+              <CancelIcon />
+            </button>
+          </template>
+        </InputField>
       </div>
     </transition>
     <button
@@ -26,7 +32,7 @@ type Data = {
 }
 
 export default defineComponent({
-  components: { InputField, SearchIcon },
+  components: { InputField, SearchIcon, CancelIcon },
   setup() {
     const data = reactive<Data>({
       isOpen: false,
@@ -44,7 +50,11 @@ export default defineComponent({
       searchClick(data.searchValue)
     }
 
-    return { openAndSearch, data }
+    const clearText = (): void => {
+      data.searchValue = ''
+    }
+
+    return { openAndSearch, data, clearText }
   },
 })
 </script>
@@ -80,6 +90,12 @@ export default defineComponent({
       }
     }
   }
+}
+.search__clear {
+  overflow: visible;
+  position: absolute;
+  right: 0;
+  top: 1.3rem;
 }
 @media (max-width: 768px) {
   .search {

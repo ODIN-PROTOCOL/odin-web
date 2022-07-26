@@ -76,6 +76,11 @@
             class="validators__filter-search-input"
             @keydown.enter="filterValidators()"
           />
+          <template v-if="searchValue">
+            <button @click="clearText()" class="validators-search__clear">
+              <CancelIcon className="validators__filter-search-cancel-button" />
+            </button>
+          </template>
         </div>
         <button
           class="validators__filter-search-button"
@@ -201,6 +206,7 @@ import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
 import { isActiveValidator } from '@/helpers/validatorHelpers'
 import InputField from '@/components/fields/InputField.vue'
 import SearchIcon from '@/components/icons/SearchIcon.vue'
+import CancelIcon from '@/components/icons/CancelIcon.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 import ValidatorsTableRowMobile from '@/components/ValidatorsTableRowMobile.vue'
 import ValidatorsTableRow from '@/components/ValidatorsTableRow.vue'
@@ -210,6 +216,7 @@ export default defineComponent({
     AppPagination,
     InputField,
     SearchIcon,
+    CancelIcon,
     SkeletonTable,
     ValidatorsTableRowMobile,
     ValidatorsTableRow,
@@ -501,6 +508,11 @@ export default defineComponent({
         }
       )
     }
+
+    const clearText = (): void => {
+      searchValue.value = ''
+    }
+
     const openModal = (event: {
       typeBtn: string
       validator: ValidatorDecoded
@@ -552,6 +564,7 @@ export default defineComponent({
       myDelegationsValitors,
       isDisabledDelegationsTab,
       tabStatus,
+      clearText,
       headerTitles,
       validatorStatus,
       windowInnerWidth,
@@ -636,7 +649,7 @@ export default defineComponent({
   color: var(--clr__input-border);
   svg {
     transition: all 0.5s ease;
-    fill: var(--clr__input-border);
+    fill: var(--clr__text-muted);
   }
   &:hover,
   &:active,
@@ -651,9 +664,9 @@ export default defineComponent({
   &:disabled {
     border-color: var(--clr__input-border);
     color: var(--clr__input-border);
-    svg {
-      fill: var(--clr__input-border);
-    }
+  }
+  svg.validators__filter-search-cancel-button {
+    fill: var(--clr__text-muted);
   }
 }
 .validators__filter-search-input-wrapper {
@@ -719,6 +732,19 @@ export default defineComponent({
   &.selected {
     font-weight: 600;
     border-bottom: 0.2rem solid var(--clr__action);
+  }
+}
+.validators-search__clear {
+  overflow: visible;
+  position: absolute;
+  right: 0;
+  top: 1.3rem;
+}
+
+@include respond-to(medium) {
+  .validators__table-head,
+  .validators__table-row {
+    gap: 1.6rem;
   }
 }
 @include respond-to(tablet) {
