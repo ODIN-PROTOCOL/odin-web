@@ -25,7 +25,6 @@
 import { defineComponent, reactive } from 'vue'
 import InputField from '@/components/fields/InputField.vue'
 import SearchIcon from '@/components/icons/SearchIcon.vue'
-import CancelIcon from '@/components/icons/CancelIcon.vue'
 
 type Data = {
   isOpen: boolean
