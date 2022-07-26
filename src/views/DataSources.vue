@@ -3,6 +3,7 @@
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Data Sources</h2>
       <button
+        v-if="accountAddress"
         class="data-sources__title-btn app-btn app-btn--medium"
         type="button"
         @click="createDataSource()"
@@ -32,47 +33,49 @@
 
     <div class="app-table">
       <div class="app-table__head data-sources__table-head">
-        <span>ID</span>
         <span>Data Source</span>
         <span>Description</span>
         <span>Price</span>
+        <span>Requests</span>
         <span>Timestamp</span>
       </div>
       <div class="app-table__body">
         <template v-if="dataSources?.length">
           <div
             v-for="item in dataSources"
-            :key="item.attributes.id"
+            :key="item.id"
             class="app-table__row data-sources__table-row"
           >
-            <div class="app-table__cell">
-              <span class="app-table__title">ID</span>
-              <span>#{{ item.attributes.id }}</span>
-            </div>
             <div class="app-table__cell">
               <span class="app-table__title">Data Source</span>
               <TitledLink
                 class="app-table__cell-txt app-table__link"
-                :text="item.attributes.name"
-                :to="`/data-sources/${item.attributes.id.toString()}`"
+                :text="`#${item.id}${item.name}`"
+                :to="`/data-sources/${item.id}`"
               />
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Description</span>
               <span>
-                {{ item.attributes.description || '-' }}
+                {{ item.attributes.description || 'No description' }}
               </span>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Price</span>
               <span>
-                {{ convertLokiToOdin(Number(item.attributes.fee_amount)) }}
+                {{ convertLokiToOdin(Number(item.fee_amount)) }}
+              </span>
+            </div>
+            <div class="app-table__cell">
+              <span class="app-table__title">Requests</span>
+              <span>
+                {{ item.requestCount }}
               </span>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Timestamp</span>
               <span>
-                {{ $fDate(new Date(item.attributes.timestamp * 1000)) || '-' }}
+                {{ $fDate(new Date(item.timestamp * 1000)) || '-' }}
               </span>
             </div>
             <div class="app-table__cell">
@@ -81,10 +84,10 @@
                   class="app-table__activities-item data-sources__table-activities-item"
                 >
                   <button
-                    v-if="accountAddress === item.attributes.owner"
+                    v-if="accountAddress === item.owner"
                     class="app-btn app-btn--edit"
                     type="button"
-                    @click="editDataSource(item.attributes)"
+                    @click="editDataSource(item)"
                   >
                     Edit
                   </button>
@@ -115,7 +118,7 @@
       />
     </template>
 
-    <div class="view-main__mobile-activities">
+    <div v-if="accountAddress" class="view-main__mobile-activities">
       <button
         class="app-btn w-full app-btn--medium"
         type="button"
@@ -136,10 +139,10 @@ import TitledLink from '@/components/TitledLink.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import DataSourceFormModal from '@/components/modals/DataSourceFormModal.vue'
-import { wallet } from '@/api/wallet'
 import SortLine from '@/components/SortLine.vue'
 import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
 import { convertLokiToOdin } from '@/helpers/converters'
+import { wallet } from '@/api/wallet'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 
 export default defineComponent({
@@ -156,7 +159,8 @@ export default defineComponent({
     const totalPages = ref(0)
     const dataSourcesCount = ref(0)
     const dataSources = ref([])
-    const accountAddress = wallet.account.address
+
+    const accountAddress = ref(wallet.isEmpty ? '' : wallet.account.address)
     const sortingActivitiesValue = ref(ACTIVITIES_SORT.latest)
     const sortingOwnersValue = ref(OWNERS_SORT.all)
     const dataSourceName = ref('')
@@ -165,6 +169,7 @@ export default defineComponent({
       { title: 'Data Source' },
       { title: 'Description' },
       { title: 'Price' },
+      { title: 'Requests' },
       { title: 'Timestamp' },
     ]
     const loadDataSources = async () => {
@@ -180,7 +185,14 @@ export default defineComponent({
             dataSourceName.value
           )
           .then((response) => response.json())
-        dataSources.value = data
+        dataSources.value = await Promise.all(
+          data.map(async (item: { attributes: { id: number } }) => {
+            const resp = await callers.getDataSourceRequestCount(
+              item.attributes.id
+            )
+            return { ...item.attributes, requestCount: resp.data.total_count }
+          })
+        )
         dataSourcesCount.value = total_count
         totalPages.value = Math.ceil(dataSourcesCount.value / ITEMS_PER_PAGE)
       } catch (error) {
@@ -214,7 +226,12 @@ export default defineComponent({
     }
 
     watch(
-      [sortingActivitiesValue, sortingOwnersValue, dataSourceName],
+      [
+        sortingActivitiesValue,
+        sortingOwnersValue,
+        dataSourceName,
+        accountAddress,
+      ],
       async () => {
         currentPage.value = 1
         await loadDataSources()

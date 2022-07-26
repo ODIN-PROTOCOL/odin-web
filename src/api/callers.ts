@@ -19,7 +19,6 @@ import { decodeValidators } from '@/helpers/validatorDecoders'
 import { NumLike } from '@/helpers/casts'
 import { API_CONFIG } from './api-config'
 import {
-  MsgCreateValidator,
   MsgDelegate,
   MsgUndelegate,
   MsgBeginRedelegate,
@@ -54,6 +53,11 @@ const makeCallers = () => {
     ) => {
       return sendGet(
         `${API_CONFIG.telemetryUrl}/data_sources?page[number]=${page_number}&page[limit]=${page_limit}&sort=${activities}&owner=${owner}&name=${name}`
+      )
+    },
+    getDataSourceRequestCount: (data_source_id: number) => {
+      return axiosWrapper.get(
+        `${API_CONFIG.telemetryUrl}/requests/data_sources/${data_source_id}`
       )
     },
     getDataSource: querier((qc) => qc.oracle.unverified.dataSource),
@@ -166,11 +170,6 @@ const makeCallers = () => {
     getRate: querier((qc) => qc.coinswap.unverified.rate),
     getTreasuryPool: querier((qc) => qc.mint.unverified.treasuryPool),
     getTotalSupply: querier((qc) => qc.bank.totalSupply),
-
-    createValidator: broadcaster<MsgCreateValidator>(
-      '/cosmos.staking.v1beta1.MsgCreateValidator',
-      MsgCreateValidator
-    ),
     getValidators: querier((qc) =>
       mapResponse(qc.staking.validators, (response) => {
         return {

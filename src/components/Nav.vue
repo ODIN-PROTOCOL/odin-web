@@ -1,5 +1,11 @@
 <template>
-  <div class="nav" :class="{ 'nav--mobile': isOpen }">
+  <div
+    class="nav"
+    :class="{
+      'nav--mobile': isOpen,
+      'nav--mobile-not-authenticated': isOpen && !isLoggedIn,
+    }"
+  >
     <div class="nav__wrap-cont">
       <router-link
         @click="closeBurger"
@@ -25,13 +31,14 @@
       >
         <span>Requests</span>
       </router-link>
-      <LinksDropdown
-        @click="openDropdownValidators"
-        @redirect="closeBurger"
-        :is-dropdown-open="isValidatorsDropdownOpen"
-        :list="ValidatorsList"
-        :isActive="isDropdownActive"
-      />
+      <router-link
+        @click="closeBurger"
+        class="nav__link"
+        data-text="Validators"
+        :to="{ name: 'Validators' }"
+      >
+        <span>Validators</span>
+      </router-link>
       <router-link
         @click="closeBurger"
         :to="{ name: 'Governance' }"
@@ -49,7 +56,7 @@
         <span>IBCs</span>
       </router-link>
     </div>
-    <div class="nav__activities">
+    <div class="nav__activities" v-if="isLoggedIn">
       <button
         class="app-btn log-out-btn app-btn--medium"
         type="button"
@@ -63,37 +70,20 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { defineComponent, onMounted, onUnmounted } from 'vue'
 import { useAuthorization } from '@/composables/useAuthorization'
 import router from '@/router'
-import LinksDropdown from '@/components/LinksDropdown.vue'
 import ExitIcon from '@/components/icons/ExitIcon.vue'
 import { WalletTypes, wallet } from '@/api/wallet'
-import { isMobile } from '@/helpers/helpers'
 
 export default defineComponent({
-  components: { LinksDropdown, ExitIcon },
+  components: { ExitIcon },
   emits: ['closeBurger'],
   props: {
     isOpen: { type: Boolean, default: false },
   },
-  setup(props, { emit }) {
-    const ValidatorsList = {
-      name: 'Validators',
-      links: [
-        {
-          to: 'Validators',
-          text: 'Validators',
-        },
-        {
-          to: 'OracleValidators',
-          text: 'Oracle validators',
-        },
-      ],
-    }
+  setup(_, { emit }) {
     const auth = useAuthorization()
-    const route = useRoute()
     const logOutAndLeave = () => {
       auth.logOut()
       router.push({ name: 'Auth' })
@@ -101,26 +91,9 @@ export default defineComponent({
     const closeBurger = () => {
       emit('closeBurger')
     }
-    watch(
-      () => route.path,
-      () => {
-        handleDropdownActive()
-      }
-    )
-    const isDropdownActive = ref(false)
-    const urls = ['/validators', '/oracle-validators']
-    const handleDropdownActive = () => {
-      isDropdownActive.value = urls.indexOf(route.path) > -1
-    }
 
-    const isValidatorsDropdownOpen = ref(false)
-    const openDropdownValidators = () => {
-      if (isMobile()) {
-        isValidatorsDropdownOpen.value = !isValidatorsDropdownOpen.value
-      }
-    }
     onMounted(() => {
-      if (wallet.type === WalletTypes.KEPLR_WALLET) {
+      if (!wallet.isEmpty && wallet.type === WalletTypes.KEPLR_WALLET) {
         window.addEventListener('keplr_keystorechange', logOutAndLeave)
       }
     })
@@ -131,11 +104,8 @@ export default defineComponent({
 
     return {
       logOutAndLeave,
-      ValidatorsList,
-      openDropdownValidators,
-      isValidatorsDropdownOpen,
       closeBurger,
-      isDropdownActive,
+      isLoggedIn: auth.isLoggedIn,
     }
   },
 })
@@ -237,6 +207,10 @@ export default defineComponent({
     position: fixed;
     top: 9.7rem;
     left: 0;
+  }
+
+  .nav--mobile-not-authenticated {
+    top: 8.5rem;
   }
 }
 </style>

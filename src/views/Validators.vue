@@ -9,13 +9,6 @@
       <h2 class="view-main__title">All Validators</h2>
       <div class="validators__title-btn-wrraper">
         <button
-          class="validators__title-btn app-btn app-btn--medium"
-          type="button"
-          @click="becomeValidator()"
-        >
-          Become a validator
-        </button>
-        <button
           v-if="isDelegator && delegations && validators"
           class="validators__title-btn app-btn app-btn--medium"
           type="button"
@@ -101,6 +94,7 @@
       class="app-table validators__table"
       :class="{
         'validators__table--inactive': tabStatus === inactiveValidatorsTitle,
+        'validators__table--unauthenticated': !accountAddress,
       }"
     >
       <div class="app-table__head validators__table-head">
@@ -131,6 +125,7 @@
               :tabStatus="tabStatus"
               :inactiveValidatorsTitle="inactiveValidatorsTitle"
               :delegations="delegations"
+              :hasActionButtons="!!accountAddress"
             />
           </template>
           <template v-else>
@@ -142,6 +137,7 @@
               :tabStatus="tabStatus"
               :inactiveValidatorsTitle="inactiveValidatorsTitle"
               :delegations="delegations"
+              :hasActionButtons="!!accountAddress"
             />
           </template>
         </template>
@@ -168,13 +164,6 @@
     </template>
 
     <div class="view-main__mobile-activities validators__mobile-activities">
-      <button
-        class="app-btn w-full app-btn--medium"
-        type="button"
-        @click="becomeValidator()"
-      >
-        Become a validator
-      </button>
       <button
         v-if="isDelegator && delegations && validators"
         class="app-btn w-full app-btn--medium"
@@ -211,7 +200,6 @@ import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import WithdrawRewardsFormModal from '@/components/modals/WithdrawRewardsFormModal.vue'
 import DelegateFormModal from '@/components/modals/DelegateFormModal.vue'
 import UndelegateFormModal from '@/components/modals/UndelegateFormModal.vue'
-import BecomeValidatorFormModal from '@/components/modals/BecomeValidatorFormModal.vue'
 import StakeTransferFormModal from '@/components/modals/StakeTransferFormModal.vue'
 import ClaimAllRewardsFormModal from '@/components/modals/ClaimAllRewardsFormModal.vue'
 import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
@@ -294,6 +282,9 @@ export default defineComponent({
         return [{ title: '' }, { title: 'Delegated' }]
       }
     })
+
+    const accountAddress = wallet.isEmpty ? '' : wallet.account.address
+
     const getValidators = async () => {
       lockLoading()
       try {
@@ -357,10 +348,13 @@ export default defineComponent({
     }
 
     const getDelegations = async () => {
+      if (!accountAddress) {
+        return
+      }
       lockLoading()
       try {
         // TODO: delegations returns invalid delegator's amount?
-        const response = await callers.getDelegations(wallet.account.address)
+        const response = await callers.getDelegations(accountAddress)
 
         const _delegations: { [k: string]: DelegationResponse } = {}
         for (const delegation of response.delegationResponses) {
@@ -433,15 +427,6 @@ export default defineComponent({
     const loadData = async () => {
       await getDelegations()
       await getValidators()
-    }
-
-    const becomeValidator = async () => {
-      await showDialogHandler(BecomeValidatorFormModal, {
-        onSubmit: async (d) => {
-          d.kill()
-          await loadData()
-        },
-      })
     }
 
     const claimAllRewards = async () => {
@@ -564,7 +549,6 @@ export default defineComponent({
       getDelegations,
       paginationHandler,
       selectTab,
-      becomeValidator,
       withdrawRewards,
       claimAllRewards,
       delegate,
@@ -585,6 +569,7 @@ export default defineComponent({
       validatorStatus,
       windowInnerWidth,
       openModal,
+      accountAddress,
     }
   },
 })
@@ -609,6 +594,21 @@ export default defineComponent({
     margin-bottom: 1.6rem;
   }
 }
+.validators__table--unauthenticated {
+  .validators__table-head,
+  .validators-table-row {
+    gap: 2rem;
+    grid:
+      auto /
+      minmax(2rem, 5rem)
+      minmax(5rem, 1fr)
+      minmax(6rem, 0.5fr)
+      minmax(8rem, 0.5fr)
+      minmax(7rem, 0.5fr)
+      minmax(6rem, 8rem);
+  }
+}
+
 .validators__table--inactive {
   .validators__table-head,
   .validators-table-row {
@@ -623,6 +623,7 @@ export default defineComponent({
       minmax(24rem, 1.5fr);
   }
 }
+
 .validators__count-info {
   margin-bottom: 3.2rem;
 }

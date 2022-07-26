@@ -34,7 +34,7 @@
           <div class="info-card__row">
             <span class="info-card__row-title">Description</span>
             <span class="info-card__row-value">
-              {{ dataSourceData.description }}
+              {{ dataSourceData.description || 'No description' }}
             </span>
           </div>
         </div>
@@ -104,7 +104,10 @@ export default defineComponent({
     const dataSourceRequests = ref({})
     const dataSourceCode = ref('')
     const isDataSourceOwner = computed(() => {
-      return wallet.account.address === dataSourceData.value?.owner
+      return (
+        !wallet.isEmpty &&
+        wallet.account.address === dataSourceData.value?.owner
+      )
     })
     const getDataSource = async () => {
       lockLoading()

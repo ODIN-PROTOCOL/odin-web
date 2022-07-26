@@ -30,7 +30,6 @@
     "highlight.js": "^11.5.0",
     "lodash-es": "^4.17.21",
     "long": "^4.0.0",
-    "lorem-ipsum": "^2.0.3",
     "mitt": "^3.0.0",
     "protobufjs": "^6.10.2",
     "qrcode.vue": "^3.3.3",

@@ -41,7 +41,7 @@
           </template>
         </VuePicker>
       </div>
-      <div class="sort-line__selection-item">
+      <div v-if="!wallet.isEmpty" class="sort-line__selection-item">
         <span class="sort-line__selection-item-title">{{ title }}</span>
         <VuePicker
           class="sort-line__vue-picker _vue-picker"
@@ -74,10 +74,12 @@ import SearchIcon from '@/components/icons/SearchIcon.vue'
 import CancelIcon from '@/components/icons/CancelIcon.vue'
 import {
   sortingActivities,
-  sortingOwners,
+  getSortingOwners,
   ACTIVITIES_SORT,
   OWNERS_SORT,
 } from '@/helpers/sortingHelpers'
+
+import { wallet } from '@/api/wallet'
 
 export default defineComponent({
   components: { InputField, SearchIcon, CancelIcon },
@@ -92,6 +94,8 @@ export default defineComponent({
     const sortByActivites = ref(ACTIVITIES_SORT.latest)
     const sortByOwners = ref(OWNERS_SORT.all)
     const searchValue = ref('')
+    const walletAddress = wallet.isEmpty ? '' : wallet.account.address
+    const sortingOwners = ref(getSortingOwners(wallet.isEmpty, walletAddress))
 
     const inputChange = () => {
       emit('update:oracleScriptsName', searchValue.value)
@@ -124,6 +128,7 @@ export default defineComponent({
       sortByOwners,
       searchValue,
       clearText,
+      wallet,
     }
   },
 })
