@@ -48,14 +48,17 @@ import { callers } from '@/api/callers'
 import { DialogHandler, dialogs } from '@/helpers/dialogs'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
-import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import ModalBase from './ModalBase.vue'
 import { usePoll } from '@/composables/usePoll'
 import { convertLokiToOdin } from '@/helpers/converters'
+import { ValidatorInfoModify } from '@/helpers/validatorDecoders'
 
 const WithdrawFormDialog = defineComponent({
   props: {
-    validator: { type: Object as PropType<ValidatorDecoded>, required: true },
+    validator: {
+      type: Object as PropType<ValidatorInfoModify>,
+      required: true,
+    },
   },
   components: { ModalBase },
   setup(props) {
@@ -67,14 +70,21 @@ const WithdrawFormDialog = defineComponent({
       try {
         const response = await callers.getDelegationDelegatorReward(
           wallet.account.address,
-          props.validator.operatorAddress
+          props.validator.validatorInfo.operatorAddress
         )
         rewards.value = response.rewards
-        odinRewardsValue.value = convertLokiToOdin(response.rewards[0].amount, {
-          withPrecise: true,
-          onlyNumber: true,
-        })
-        odinRewardsValue.value = Number(odinRewardsValue.value.toFixed(6))
+        if (response.rewards.length) {
+          odinRewardsValue.value = convertLokiToOdin(
+            response.rewards[0].amount,
+            {
+              withPrecise: true,
+              onlyNumber: true,
+            }
+          )
+          odinRewardsValue.value = Number(odinRewardsValue.value.toFixed(6))
+        } else {
+          odinRewardsValue.value = 0
+        }
       } catch (error) {
         handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
@@ -87,7 +97,7 @@ const WithdrawFormDialog = defineComponent({
       try {
         await callers.withdrawDelegatorRewards({
           delegatorAddress: wallet.account.address,
-          validatorAddress: props.validator.operatorAddress,
+          validatorAddress: props.validator.validatorInfo.operatorAddress,
         })
         onSubmit()
         handleNotificationInfo(

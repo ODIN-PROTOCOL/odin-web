@@ -60,7 +60,6 @@ export default defineComponent({
   height: 2.8rem;
   padding: 0.4rem 1.2rem 0.4rem 0.8rem;
   gap: 0.4rem;
-  margin-right: 2rem;
   &--inactive {
     gap: 0.5rem;
     width: 8.7rem;

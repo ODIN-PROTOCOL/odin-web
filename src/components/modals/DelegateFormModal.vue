@@ -114,12 +114,16 @@ import { useBalances } from '@/composables/useBalances'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { coin, Coin } from '@cosmjs/amino'
 import { big as bigMath } from '@/helpers/bigMath'
+import { ValidatorInfoModify } from '@/helpers/validatorDecoders'
 
 const defaultBalanceBlank: Coin = { amount: '0', denom: COINS_LIST.LOKI }
 
 const DelegateFormDialog = defineComponent({
   props: {
-    validator: { type: Object as PropType<ValidatorDecoded>, required: true },
+    validator: {
+      type: Object as PropType<ValidatorInfoModify>,
+      required: true,
+    },
     delegation: { type: Object as PropType<DelegationResponse> },
   },
   components: { ModalBase },
@@ -161,7 +165,7 @@ const DelegateFormDialog = defineComponent({
       try {
         await callers.validatorDelegate({
           delegatorAddress: wallet.account.address,
-          validatorAddress: props.validator.operatorAddress,
+          validatorAddress: props.validator.validatorInfo.operatorAddress,
           amount: coin(convertOdinToLoki(form.amount.val()), COINS_LIST.LOKI),
         })
         await loadBalances()

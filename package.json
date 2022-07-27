@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@apollo/client": "^3.6.8",
     "@bandprotocol/bandchain.js": "^2.0.2",
     "@bandprotocol/obi.js": "^1.0.7",
     "@cosmjs/crypto": "^0.27.1",
@@ -33,7 +34,11 @@
     "mitt": "^3.0.0",
     "protobufjs": "^6.10.2",
     "qrcode.vue": "^3.3.3",
+    "graphql": "^16.5.0",
+    "graphql-tag": "^2.12.6",
     "skeleton-loader-vue": "^1.0.10",
+    "@vue/apollo-composable": "^4.0.0-alpha.17",
+    "@vue/apollo-option": "^4.0.0-alpha.17",
     "vue": "^3.0.0",
     "vue-chart-3": "^0.5.8",
     "vue-router": "^4.0.0-0",

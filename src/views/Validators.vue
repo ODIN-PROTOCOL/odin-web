@@ -26,7 +26,6 @@
         </button>
       </div>
     </div>
-
     <div class="validators__count-info">
       <skeleton-loader
         v-if="isLoading"
@@ -101,7 +100,10 @@
         <span class="validators__table-head-item">Rank</span>
         <span class="validators__table-head-item">Validator</span>
         <span class="validators__table-head-item">Delegated</span>
-        <span class="validators__table-head-item">Commission</span>
+        <span
+          class="validators__table-head-item validators__table-head-item--center"
+          >Commission</span
+        >
         <span
           v-if="tabStatus !== inactiveValidatorsTitle"
           class="validators__table-head-item"
@@ -115,17 +117,17 @@
         <span class="validators__table-head-item"></span>
       </div>
       <div class="app-table__body">
-        <template v-if="filteredValidators?.length">
+        <template v-if="filteredValidators?.length && activeValidators.length">
           <template v-if="windowInnerWidth > 768">
             <ValidatorsTableRow
               v-for="validator in filteredValidators"
               :key="validator.operatorAddress"
               @selectedBtn="openModal"
               :validator="validator"
-              :tabStatus="tabStatus"
-              :inactiveValidatorsTitle="inactiveValidatorsTitle"
+              :tab-status="tabStatus"
+              :inactive-validators-title="inactiveValidatorsTitle"
               :delegations="delegations"
-              :hasActionButtons="!!accountAddress"
+              :has-action-buttons="Boolean(accountAddress)"
             />
           </template>
           <template v-else>
@@ -134,16 +136,16 @@
               :key="validator.operatorAddress"
               @selectedBtn="openModal"
               :validator="validator"
-              :tabStatus="tabStatus"
-              :inactiveValidatorsTitle="inactiveValidatorsTitle"
+              :tab-status="tabStatus"
+              :inactive-validators-title="inactiveValidatorsTitle"
               :delegations="delegations"
-              :hasActionButtons="!!accountAddress"
+              :has-action-buttons="Boolean(accountAddress)"
             />
           </template>
         </template>
         <template v-else>
           <SkeletonTable
-            v-if="isLoading"
+            v-if="isLoading || loading"
             :header-titles="headerTitles"
             class-string="validators__table-row"
           />
@@ -163,7 +165,10 @@
       />
     </template>
 
-    <div class="view-main__mobile-activities validators__mobile-activities">
+    <div
+      v-if="accountAddress"
+      class="view-main__mobile-activities validators__mobile-activities"
+    >
       <button
         v-if="isDelegator && delegations && validators"
         class="app-btn w-full app-btn--medium"
@@ -185,16 +190,20 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, computed, onUnmounted } from 'vue'
+import {
+  defineComponent,
+  ref,
+  onMounted,
+  computed,
+  onUnmounted,
+  watch,
+} from 'vue'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
-import { COINS_LIST } from '@/api/api-config'
-import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
-import { getTransformedValidators } from '@/helpers/validatorHelpers'
-import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import WithdrawRewardsFormModal from '@/components/modals/WithdrawRewardsFormModal.vue'
@@ -210,6 +219,9 @@ import CancelIcon from '@/components/icons/CancelIcon.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 import ValidatorsTableRowMobile from '@/components/ValidatorsTableRowMobile.vue'
 import ValidatorsTableRow from '@/components/ValidatorsTableRow.vue'
+import { useQuery } from '@vue/apollo-composable'
+import { ValidatorsQuery } from '@/graphql/queries'
+import { ValidatorsResponse, ValidatorsInfo } from '@/graphql/types'
 
 export default defineComponent({
   components: {
@@ -234,9 +246,9 @@ export default defineComponent({
     const isDelegator = computed(
       () => Object.keys(delegations.value).length !== 0
     )
-    const activeValidators = ref<ValidatorDecoded[]>([])
-    const inactiveValidators = ref<ValidatorDecoded[]>([])
-    const allValitors = ref<ValidatorDecoded[]>([])
+    const allValitors = ref<ValidatorsInfo[]>([])
+    const activeValidators = ref<ValidatorsInfo[]>([])
+    const inactiveValidators = ref<ValidatorsInfo[]>([])
     const delegatedAdress = ref<string[]>([])
     const activeValidatorsTitle = computed(() =>
       activeValidators.value?.length
@@ -248,16 +260,18 @@ export default defineComponent({
         ? `My delegations (${myDelegationsValitors.value?.length})`
         : 'My delegations'
     )
+
     const myDelegationsValitors = computed(() =>
       delegatedAdress.value.map((validatorAddress: string) => {
         return {
           ...allValitors.value.find(
-            (validator: ValidatorDecoded) =>
-              validator.operatorAddress === validatorAddress
+            (validator: ValidatorsInfo) =>
+              validator.validatorInfo.operatorAddress === validatorAddress
           ),
         }
       })
     )
+
     const windowInnerWidth = ref(document.documentElement.clientWidth)
     const updateWidth = () => {
       windowInnerWidth.value = document.documentElement.clientWidth
@@ -268,6 +282,7 @@ export default defineComponent({
     const isDisabledDelegationsTab = computed(() =>
       Boolean(myDelegationsValitors.value.length)
     )
+
     const headerTitles = computed(() => {
       if (windowInnerWidth.value > 768) {
         return [
@@ -283,78 +298,26 @@ export default defineComponent({
       }
     })
 
-    const accountAddress = wallet.isEmpty ? '' : wallet.account.address
+    const accountAddress = ref(wallet.isEmpty ? '' : wallet.account.address)
 
-    const getValidators = async () => {
-      lockLoading()
-      try {
-        const bonded = await callers.getValidators('BOND_STATUS_BONDED')
-        const unbonding = await callers.getValidators('BOND_STATUS_UNBONDING')
-        const unbonded = await callers.getValidators('BOND_STATUS_UNBONDED')
-        const allUptime = await callers
-          .getValidatorUptime()
-          .then((resp) => resp.json())
+    const { result, loading } = useQuery<ValidatorsResponse>(ValidatorsQuery)
 
-        activeValidators.value = await Promise.all(
-          await getTransformedValidators([...bonded.validators]).then(
-            (validators) =>
-              validators.map(async (item) => {
-                return {
-                  ...item,
-                  isActive: await isActiveValidator(item.operatorAddress),
-                  uptimeInfo: allUptime.find(
-                    (name: { operator_address: string }) =>
-                      name.operator_address === item.operatorAddress
-                  ),
-                }
-              })
-          )
-        )
+    const signedBlocks = computed(() =>
+      Number(result.value?.slashingParams[0]?.params?.signed_blocks_window)
+    )
 
-        inactiveValidators.value = await Promise.all(
-          await getTransformedValidators([
-            ...unbonded.validators,
-            ...unbonding.validators,
-          ]).then((validators) =>
-            validators.map(async (item) => {
-              return {
-                ...item,
-                isActive: await isActiveValidator(item.operatorAddress),
-                uptimeInfo: allUptime.find(
-                  (name: { operator_address: string }) =>
-                    name.operator_address === item.operatorAddress
-                ),
-              }
-            })
-          )
-        )
-        allValitors.value = [
-          ...inactiveValidators.value,
-          ...activeValidators.value,
-        ]
-        validators.value = isDisabledDelegationsTab.value
-          ? [...myDelegationsValitors.value]
-          : [...activeValidators.value]
-        tabStatus.value = isDisabledDelegationsTab.value
-          ? myValidatorsTitle.value
-          : activeValidatorsTitle.value
-        validatorsCount.value =
-          activeValidators.value.length + inactiveValidators.value.length
-        filterValidators(currentPage.value)
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
-    }
+    watch([loading], async () => {
+      await getValidators()
+    })
 
     const getDelegations = async () => {
-      if (!accountAddress) {
+      if (!accountAddress.value) {
         return
       }
       lockLoading()
       try {
         // TODO: delegations returns invalid delegator's amount?
-        const response = await callers.getDelegations(accountAddress)
+        const response = await callers.getDelegations(accountAddress.value)
 
         const _delegations: { [k: string]: DelegationResponse } = {}
         for (const delegation of response.delegationResponses) {
@@ -370,6 +333,81 @@ export default defineComponent({
         // error is ignored, since no delegations also throws the error
         delegations.value = {}
         tabStatus.value = activeValidatorsTitle.value
+      }
+      releaseLoading()
+    }
+    const getValidators = async () => {
+      if (loading.value) {
+        return
+      }
+      lockLoading()
+      try {
+        const totalStaked = Number(result.value?.stakingPool[0].bondedTokens)
+        const copyActiveValidator =
+          result.value?.validator?.filter(
+            (item: ValidatorsInfo) => item?.validatorStatuses[0]?.status === 3
+          ) || []
+        const copyInactiveValidator =
+          result.value?.validator?.filter(
+            (item: ValidatorsInfo) => item?.validatorStatuses[0]?.status !== 3
+          ) || []
+        activeValidators.value = (await Promise.all(
+          copyActiveValidator.map(
+            async (item: ValidatorsInfo, index: number) => {
+              return {
+                ...item,
+                rank: index + 1,
+                uptime:
+                  ((signedBlocks.value -
+                    item.validatorSigningInfos[0]?.missedBlocksCounter) /
+                    signedBlocks.value) *
+                  100,
+                isActive: await isActiveValidator(
+                  item.validatorInfo?.operatorAddress
+                ).then((req) => req),
+                votingPowerPercent:
+                  (Number(item.validatorInfo.delegatorShares) / totalStaked) *
+                  100,
+              }
+            }
+          )
+        )) as unknown as ValidatorsInfo[]
+        inactiveValidators.value = (await Promise.all(
+          copyInactiveValidator.map(
+            async (item: ValidatorsInfo, index: number) => {
+              return {
+                ...item,
+                rank: index + 1,
+                uptime:
+                  ((signedBlocks.value -
+                    item.validatorSigningInfos[0]?.missedBlocksCounter) /
+                    signedBlocks.value) *
+                  100,
+                isActive: await isActiveValidator(
+                  item.validatorInfo?.operatorAddress
+                ).then((req) => req),
+                votingPowerPercent:
+                  (item.validatorVotingPowers[0]?.votingPower / totalStaked) *
+                  100,
+              }
+            }
+          )
+        )) as unknown as ValidatorsInfo[]
+
+        allValitors.value = [
+          ...inactiveValidators.value,
+          ...activeValidators.value,
+        ]
+        validators.value = isDisabledDelegationsTab.value
+          ? [...myDelegationsValitors.value]
+          : [...activeValidators.value]
+        tabStatus.value = isDisabledDelegationsTab.value
+          ? myValidatorsTitle.value
+          : activeValidatorsTitle.value
+        validatorsCount.value = allValitors.value.length
+        filterValidators(currentPage.value)
+      } catch (error) {
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
       }
       releaseLoading()
     }
@@ -425,8 +463,10 @@ export default defineComponent({
       }
     }
     const loadData = async () => {
+      lockLoading()
       await getDelegations()
       await getValidators()
+      releaseLoading()
     }
 
     const claimAllRewards = async () => {
@@ -438,8 +478,8 @@ export default defineComponent({
       })
     }
 
-    const withdrawRewards = async (validator: ValidatorDecoded) => {
-      if (!delegations.value[validator.operatorAddress]) return
+    const withdrawRewards = async (validator: ValidatorsInfo) => {
+      if (!delegations.value[validator.validatorInfo.operatorAddress]) return
       await showDialogHandler(
         WithdrawRewardsFormModal,
         {
@@ -452,7 +492,7 @@ export default defineComponent({
       )
     }
 
-    const delegate = async (validator: ValidatorDecoded) => {
+    const delegate = async (validator: ValidatorsInfo) => {
       await showDialogHandler(
         DelegateFormModal,
         {
@@ -461,11 +501,15 @@ export default defineComponent({
             await loadData()
           },
         },
-        { validator, delegation: delegations.value[validator.operatorAddress] }
+        {
+          validator,
+          delegation:
+            delegations.value[validator.validatorInfo.operatorAddress],
+        }
       )
     }
 
-    const redelegate = async (validator: ValidatorDecoded) => {
+    const redelegate = async (validator: ValidatorsInfo) => {
       await showDialogHandler(
         RedelegateFormModal,
         {
@@ -474,12 +518,16 @@ export default defineComponent({
             await loadData()
           },
         },
-        { validator, delegation: delegations.value[validator.operatorAddress] }
+        {
+          validator,
+          delegation:
+            delegations.value[validator.validatorInfo.operatorAddress],
+        }
       )
     }
 
-    const undelegate = async (validator: ValidatorDecoded) => {
-      if (!delegations.value[validator.operatorAddress]) return
+    const undelegate = async (validator: ValidatorsInfo) => {
+      if (!delegations.value[validator.validatorInfo.operatorAddress]) return
       await showDialogHandler(
         UndelegateFormModal,
         {
@@ -488,7 +536,11 @@ export default defineComponent({
             await loadData()
           },
         },
-        { validator, delegation: delegations.value[validator.operatorAddress] }
+        {
+          validator,
+          delegation:
+            delegations.value[validator.validatorInfo.operatorAddress],
+        }
       )
     }
 
@@ -515,7 +567,7 @@ export default defineComponent({
 
     const openModal = (event: {
       typeBtn: string
-      validator: ValidatorDecoded
+      validator: ValidatorsInfo
     }) => {
       if (event.typeBtn === 'Delegate') {
         delegate(event.validator)
@@ -535,7 +587,6 @@ export default defineComponent({
       window.removeEventListener('resize', updateWidth)
     })
     return {
-      COINS_LIST,
       ITEMS_PER_PAGE,
       totalPages,
       currentPage,
@@ -545,15 +596,8 @@ export default defineComponent({
       validators,
       delegations,
       isLoading,
-      getValidators,
-      getDelegations,
       paginationHandler,
       selectTab,
-      withdrawRewards,
-      claimAllRewards,
-      delegate,
-      redelegate,
-      undelegate,
       isDelegator,
       activeValidatorsTitle,
       inactiveValidatorsTitle,
@@ -561,7 +605,7 @@ export default defineComponent({
       filterValidators,
       stakeTransfer,
       myValidatorsTitle,
-      myDelegationsValitors,
+      claimAllRewards,
       isDisabledDelegationsTab,
       tabStatus,
       clearText,
@@ -569,7 +613,9 @@ export default defineComponent({
       validatorStatus,
       windowInnerWidth,
       openModal,
+      activeValidators,
       accountAddress,
+      loading,
     }
   },
 })
@@ -592,20 +638,6 @@ export default defineComponent({
   gap: 2.4rem;
   & > *:not(:last-child) {
     margin-bottom: 1.6rem;
-  }
-}
-.validators__table--unauthenticated {
-  .validators__table-head,
-  .validators-table-row {
-    gap: 2rem;
-    grid:
-      auto /
-      minmax(2rem, 5rem)
-      minmax(5rem, 1fr)
-      minmax(6rem, 0.5fr)
-      minmax(8rem, 0.5fr)
-      minmax(7rem, 0.5fr)
-      minmax(6rem, 8rem);
   }
 }
 
@@ -754,6 +786,12 @@ export default defineComponent({
   .validators__table--inactive {
     .validators__table-head,
     .validators__table-row {
+      grid: none;
+    }
+  }
+  .validators__table--unauthenticated {
+    .validators__table-head,
+    .validators-table-row {
       grid: none;
     }
   }

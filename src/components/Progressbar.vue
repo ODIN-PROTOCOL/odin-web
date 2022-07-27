@@ -1,7 +1,7 @@
 <template>
   <div class="progressbar">
     <div class="progressbar__info" v-if="isForValidators">
-      <span class="progressbar__info-item">{{ progress }} %</span>
+      <span class="progressbar__info-item">{{ current }} %</span>
     </div>
     <div class="progressbar__info" v-else>
       <span class="progressbar__info-item">Min {{ min }}</span>

@@ -11,8 +11,10 @@ export enum VALIDATOR_STATUS {
 export const isActiveValidator = async (
   validatorAddress: string
 ): Promise<boolean> => {
-  const response = await callers.getValidatorStatus(validatorAddress)
-  return response.status?.isActive ? true : false
+  const response = await callers
+    .getValidatorStatus(validatorAddress)
+    .then((req) => req.status?.isActive)
+  return Boolean(response)
 }
 
 const _sortValidatorsByDelegated = (

@@ -63,7 +63,6 @@
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Timestamp</span>
-              <div>{{}}</div>
               <span>{{
                 $fDate(new Date(item.result.request_time * 1000))
               }}</span>
@@ -136,7 +135,6 @@ export default defineComponent({
     )
     const headerTitles = [
       { title: 'Request ID' },
-      { title: 'Sender' },
       { title: 'Oracle Script ID' },
       { title: 'Report Status' },
       { title: 'Timestamp' },

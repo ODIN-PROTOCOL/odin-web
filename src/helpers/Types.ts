@@ -12,6 +12,10 @@ export interface IAttributesItem {
   value: string
 }
 
+export type AmountDetails = {
+  amount: string
+  denom: string
+}
 export type DecodedTxData = {
   voter?: string
   type: string
@@ -29,11 +33,6 @@ export type DecodedTxData = {
   memo?: string
   gasWanted?: string | number
   gasUsed?: string | number
-}
-
-export type AmountDetails = {
-  amount: string
-  denom: string
 }
 
 export type txFromTelemetry = {
