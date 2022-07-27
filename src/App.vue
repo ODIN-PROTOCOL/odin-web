@@ -6,14 +6,16 @@
         :class="{ 'view-header_mobile': isOpen }"
       >
         <div class="header-wrapper">
-          <img v-if="settingsData.theme === 'dark'"
+          <img
+            v-if="settingsData.theme === 'dark'"
             class="header-wrapper__logo"
             src="~@/assets/brand/odin-logo-white.png"
             alt="Logo"
           />
-          <img v-else
+          <img
+            v-else
             class="header-wrapper__logo"
-            src= "~@/assets/brand/odin-logo-black.png"
+            src="~@/assets/brand/odin-logo-black.png"
             alt="Logo"
           />
           <Nav :isOpen="isOpen" @closeBurger="closeBurger" />
@@ -79,8 +81,11 @@ import SuccessNotificationIcon from '@/components/icons/SuccessNotificationIcon.
 import FailedNotificationIcon from '@/components/icons/FailedNotificationIcon.vue'
 import CancelIcon from '@/components/icons/CancelIcon.vue'
 import { notify } from '@kyvg/vue3-notification'
-import { Settings, SettingsStateSymbol, SettingsUpdateSymbol } from '@/ThemeProvider'
-import emitter from '@/helpers/emmiter'
+import {
+  Settings,
+  SettingsStateSymbol,
+  SettingsUpdateSymbol,
+} from '@/ThemeProvider'
 import { useRoute } from 'vue-router'
 
 type NotificationInfo = {
@@ -102,27 +107,27 @@ export default defineComponent({
       settingsData: {
         language: 'en',
         theme: window.localStorage.getItem('theme') || 'light',
-      }
+      },
     }
   },
   provide() {
-    document.body.classList.add(this.settingsData.theme); // Add theme on initial render
+    document.body.classList.add(this.settingsData.theme) // Add theme on initial render
     return {
       [SettingsStateSymbol]: computed(() => this.settingsData),
       [SettingsUpdateSymbol]: (value: Settings) => {
         if (this.settingsData) {
-          this.settingsData.language = value.language;
-          this.settingsData.theme = value.theme;
+          this.settingsData.language = value.language
+          this.settingsData.theme = value.theme
 
           // Memory for future sessions
-          window.localStorage.setItem('theme', value.theme);
+          window.localStorage.setItem('theme', value.theme)
 
           // Change Theme
-          document.body.removeAttribute('class');
-          document.body.classList.add(value.theme);
+          document.body.removeAttribute('class')
+          document.body.classList.add(value.theme)
         }
         console.log(this.settingsData)
-      }
+      },
     }
   },
   setup() {
@@ -176,7 +181,6 @@ export default defineComponent({
       closeBurger,
       notification,
       isAuthPage,
-
     }
   },
 })
