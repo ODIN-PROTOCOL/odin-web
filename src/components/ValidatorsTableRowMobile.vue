@@ -7,8 +7,8 @@
         }}</span>
         <TitledLink
           class="app-table__cell-txt app-table__link"
-          :text="validator?.validatorDescriptions[0]?.moniker"
-          :to="`/validators/${validator?.validatorInfo.operatorAddress}`"
+          :text="validator?.descriptions[0]?.moniker"
+          :to="`/validators/${validator?.info.operatorAddress}`"
         />
       </div>
       <div class="validators-table-row-mobile__show">
@@ -33,7 +33,7 @@
       <span
         :title="
           $convertLokiToOdin(
-            Number(validator.validatorInfo.delegatorShares).toFixed(6),
+            Number(validator.info.delegatorShares).toFixed(6),
             {
               onlyNumber: true,
             }
@@ -42,7 +42,7 @@
       >
         {{
           $convertLokiToOdin(
-            Number(validator.validatorInfo.delegatorShares).toFixed(6),
+            Number(validator.info.delegatorShares).toFixed(6),
             { withDenom: true }
           )
         }}
@@ -52,9 +52,7 @@
       <div class="app-table__cell">
         <span class="app-table__title">Commission</span>
         <span>
-          {{
-            $trimZeros(validator?.validatorCommissions[0]?.commission * 100, 2)
-          }}%
+          {{ $trimZeros(validator?.commissions[0]?.commission * 100, 2) }}%
         </span>
       </div>
       <div v-if="tabStatus !== inactiveValidatorsTitle" class="app-table__cell">
@@ -80,14 +78,11 @@
           class="app-table__activities validators-table-row-mobile__activities"
         >
           <div
-            v-if="
-              validator?.validatorStatuses[0]?.status ===
-              VALIDATOR_STATUS.active
-            "
+            v-if="validator?.statuses[0]?.status === VALIDATOR_STATUS.active"
             class="app-table__activities-item validators-table-row-mobile__activities-item"
           >
             <button
-              v-if="delegations[validator.validatorInfo.operatorAddress]"
+              v-if="delegations[validator.info.operatorAddress]"
               class="app-btn app-btn--outlined app-btn--very-small w-min108"
               type="button"
               @click="selectedBtn('Regelate')"
@@ -103,7 +98,7 @@
             </button>
           </div>
           <div
-            v-if="delegations[validator.validatorInfo.operatorAddress]"
+            v-if="delegations[validator.info.operatorAddress]"
             class="app-table__activities-item validators-table-row-mobile__activities-item"
           >
             <button
@@ -166,10 +161,7 @@ export default defineComponent({
     const isShowValidatorDetails = ref(false)
 
     const validatorStatus = () => {
-      if (
-        props.validator?.validatorStatuses[0]?.status ===
-        VALIDATOR_STATUS.active
-      ) {
+      if (props.validator?.statuses[0]?.status === VALIDATOR_STATUS.active) {
         return props.validator.isActive ? 'success' : 'error'
       } else {
         return 'inactive'

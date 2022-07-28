@@ -71,7 +71,7 @@ const WithdrawFormDialog = defineComponent({
       try {
         const response = await callers.getDelegationDelegatorReward(
           wallet.account.address,
-          props.validator.validatorInfo.operatorAddress
+          props.validator.info.operatorAddress
         )
         rewards.value = response.rewards
         if (response.rewards.length) {
@@ -98,7 +98,7 @@ const WithdrawFormDialog = defineComponent({
       try {
         await callers.withdrawDelegatorRewards({
           delegatorAddress: wallet.account.address,
-          validatorAddress: props.validator.validatorInfo.operatorAddress,
+          validatorAddress: props.validator.info.operatorAddress,
         })
         onSubmit()
         handleNotificationInfo(

@@ -176,15 +176,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import {
-  defineComponent,
-  ref,
-  onMounted,
-  computed,
-  onUnmounted,
-  watch,
-} from 'vue'
+<script setup lang="ts">
+import { ref, onMounted, computed, onUnmounted, watch } from 'vue'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
@@ -208,414 +201,349 @@ import ValidatorsTableRow from '@/components/ValidatorsTableRow.vue'
 import { useQuery } from '@vue/apollo-composable'
 import { ValidatorsQuery } from '@/graphql/queries'
 import { ValidatorsResponse, ValidatorsInfo } from '@/graphql/types'
+import { ValidatorInfoModify } from '@/helpers/validatorHelpers'
 
-export default defineComponent({
-  components: {
-    AppPagination,
-    InputField,
-    SearchIcon,
-    SkeletonTable,
-    ValidatorsTableRowMobile,
-    ValidatorsTableRow,
-  },
-  setup() {
-    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 50
-    const currentPage = ref(1)
-    const totalPages = ref()
-    const filteredValidatorsCount = ref(0)
-    const validatorsCount = ref(0)
-    const filteredValidators = ref()
-    const validators = ref()
-    const delegations = ref<{ [k: string]: DelegationResponse }>({})
-    const isDelegator = computed(
-      () => Object.keys(delegations.value).length !== 0
-    )
-    const allValitors = ref<ValidatorsInfo[]>([])
-    const activeValidators = ref<ValidatorsInfo[]>([])
-    const inactiveValidators = ref<ValidatorsInfo[]>([])
-    const delegatedAdress = ref<string[]>([])
-    const activeValidatorsTitle = computed(() =>
-      activeValidators.value?.length
-        ? `Active (${activeValidators.value?.length})`
-        : 'Active'
-    )
-    const myValidatorsTitle = computed(() =>
-      activeValidators.value?.length
-        ? `My delegations (${myDelegationsValitors.value?.length})`
-        : 'My delegations'
-    )
+const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+const ITEMS_PER_PAGE = 50
+const currentPage = ref(1)
+const totalPages = ref()
+const filteredValidatorsCount = ref(0)
+const validatorsCount = ref(0)
+const filteredValidators = ref()
+const validators = ref()
+const delegations = ref<{ [k: string]: DelegationResponse }>({})
+const isDelegator = computed(() => Object.keys(delegations.value).length !== 0)
+const allValitors = ref<ValidatorsInfo[]>([])
+const activeValidators = ref<ValidatorsInfo[]>([])
+const inactiveValidators = ref<ValidatorsInfo[]>([])
+const delegatedAdress = ref<string[]>([])
+const accountAddress = ref(wallet.isEmpty ? '' : wallet.account.address)
+const activeValidatorsTitle = computed(() =>
+  activeValidators.value?.length
+    ? `Active (${activeValidators.value?.length})`
+    : 'Active',
+)
+const myValidatorsTitle = computed(() =>
+  activeValidators.value?.length
+    ? `My delegations (${myDelegationsValitors.value?.length})`
+    : 'My delegations',
+)
 
-    const myDelegationsValitors = computed(() =>
-      delegatedAdress.value.map((validatorAddress: string) => {
+const myDelegationsValitors = computed(() =>
+  delegatedAdress.value.map((validatorAddress: string) => {
+    return {
+      ...allValitors.value.find(
+        (validator: ValidatorsInfo) =>
+          validator.info.operatorAddress === validatorAddress,
+      ),
+    }
+  }),
+)
+
+const windowInnerWidth = ref(document.documentElement.clientWidth)
+const updateWidth = () => {
+  windowInnerWidth.value = document.documentElement.clientWidth
+}
+const inactiveValidatorsTitle = ref('Inactive')
+const tabStatus = ref(activeValidatorsTitle.value)
+const searchValue = ref('')
+const isDisabledDelegationsTab = computed(() =>
+  Boolean(myDelegationsValitors.value.length),
+)
+
+const headerTitles = computed(() => {
+  if (windowInnerWidth.value > 768) {
+    if (tabStatus.value === inactiveValidatorsTitle.value) {
+      return [
+        { title: 'Rank' },
+        { title: 'Validator' },
+        { title: 'Delegated' },
+        { title: 'Commission' },
+        { title: 'Status' },
+      ]
+    } else {
+      return [
+        { title: 'Rank' },
+        { title: 'Validator' },
+        { title: 'Delegated' },
+        { title: 'Commission' },
+        { title: 'Uptime' },
+        { title: 'Status' },
+      ]
+    }
+  } else {
+    return [{ title: '' }, { title: 'Delegated' }]
+  }
+})
+
+const validatorTableClass = computed(() => {
+  if (
+    tabStatus.value === inactiveValidatorsTitle.value &&
+    !accountAddress.value
+  ) {
+    return 'validators__table--unauthenticated-inactive'
+  } else if (tabStatus.value === inactiveValidatorsTitle.value) {
+    return 'validators__table--inactive'
+  } else if (!accountAddress.value) {
+    return 'validators__table--unauthenticated'
+  } else {
+    return ''
+  }
+})
+
+const { result, loading: isValidatorsResponseLoading } =
+  useQuery<ValidatorsResponse>(ValidatorsQuery)
+
+const signedBlocks = computed(() =>
+  Number(result.value?.slashingParams[0]?.params?.signed_blocks_window),
+)
+
+watch([isValidatorsResponseLoading], async () => {
+  await getValidators()
+})
+
+const getDelegations = async () => {
+  if (!accountAddress.value) {
+    return
+  }
+  lockLoading()
+  try {
+    // TODO: delegations returns invalid delegator's amount?
+    const response = await callers.getDelegations(accountAddress.value)
+
+    const _delegations: { [k: string]: DelegationResponse } = {}
+    for (const delegation of response.delegationResponses) {
+      if (!delegation.delegation?.validatorAddress) continue
+      _delegations[delegation.delegation.validatorAddress] = delegation
+    }
+    delegations.value = _delegations
+    delegatedAdress.value = Object.keys(delegations.value)
+    tabStatus.value = isDisabledDelegationsTab.value
+      ? myValidatorsTitle.value
+      : activeValidatorsTitle.value
+  } catch (error) {
+    // error is ignored, since no delegations also throws the error
+    delegations.value = {}
+    tabStatus.value = activeValidatorsTitle.value
+  }
+  releaseLoading()
+}
+
+const getValidators = async () => {
+  if (isValidatorsResponseLoading.value) {
+    return
+  }
+  lockLoading()
+  try {
+    const copyActiveValidator =
+      result.value?.validator?.filter(
+        (item: ValidatorsInfo) => item?.statuses[0]?.status === 3,
+      ) || []
+    const copyInactiveValidator =
+      result.value?.validator?.filter(
+        (item: ValidatorsInfo) => item?.statuses[0]?.status !== 3,
+      ) || []
+    activeValidators.value = (await Promise.all(
+      copyActiveValidator.map(async (item: ValidatorsInfo, index: number) => {
         return {
-          ...allValitors.value.find(
-            (validator: ValidatorsInfo) =>
-              validator.validatorInfo.operatorAddress === validatorAddress
+          ...item,
+          rank: index + 1,
+          uptime:
+            ((signedBlocks.value - item.signingInfos[0]?.missedBlocksCounter) /
+              signedBlocks.value) *
+            100,
+          isActive: await isActiveValidator(item.info?.operatorAddress).then(
+            (req) => req,
           ),
         }
-      })
+      }),
+    )) as unknown as ValidatorsInfo[]
+    inactiveValidators.value = (await Promise.all(
+      copyInactiveValidator.map(async (item: ValidatorsInfo, index: number) => {
+        return {
+          ...item,
+          rank: index + 1,
+          uptime:
+            ((signedBlocks.value - item.signingInfos[0]?.missedBlocksCounter) /
+              signedBlocks.value) *
+            100,
+          isActive: await isActiveValidator(item.info?.operatorAddress).then(
+            (req) => req,
+          ),
+        }
+      }),
+    )) as unknown as ValidatorsInfo[]
+
+    allValitors.value = [...inactiveValidators.value, ...activeValidators.value]
+    validators.value = isDisabledDelegationsTab.value
+      ? [...myDelegationsValitors.value]
+      : [...activeValidators.value]
+    tabStatus.value = isDisabledDelegationsTab.value
+      ? myValidatorsTitle.value
+      : activeValidatorsTitle.value
+    validatorsCount.value = allValitors.value.length
+    filterValidators(currentPage.value)
+  } catch (error) {
+    throw error as Error
+  }
+  releaseLoading()
+}
+
+const filterValidators = (newPage = 1) => {
+  let tempArr = validators.value
+  if (searchValue.value.trim()) {
+    tempArr = tempArr.filter((item: { description: { moniker: string } }) =>
+      item.description.moniker
+        .toLowerCase()
+        .includes(searchValue.value.toLowerCase()),
     )
-
-    const windowInnerWidth = ref(document.documentElement.clientWidth)
-    const updateWidth = () => {
-      windowInnerWidth.value = document.documentElement.clientWidth
-    }
-    const inactiveValidatorsTitle = ref('Inactive')
-    const tabStatus = ref(activeValidatorsTitle.value)
-    const searchValue = ref('')
-    const isDisabledDelegationsTab = computed(() =>
-      Boolean(myDelegationsValitors.value.length)
+  }
+  if (newPage === 1) {
+    filteredValidators.value = tempArr?.slice(0, newPage * ITEMS_PER_PAGE)
+  } else {
+    filteredValidators.value = tempArr?.slice(
+      (newPage - 1) * ITEMS_PER_PAGE,
+      (newPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE,
     )
+  }
+  filteredValidatorsCount.value = tempArr.length
+  totalPages.value = Math.ceil(filteredValidatorsCount.value / ITEMS_PER_PAGE)
+  currentPage.value = newPage
+}
 
-    const headerTitles = computed(() => {
-      if (windowInnerWidth.value > 768) {
-        if (tabStatus.value === inactiveValidatorsTitle.value) {
-          return [
-            { title: 'Rank' },
-            { title: 'Validator' },
-            { title: 'Delegated' },
-            { title: 'Commission' },
-            { title: 'Status' },
-          ]
-        } else {
-          return [
-            { title: 'Rank' },
-            { title: 'Validator' },
-            { title: 'Delegated' },
-            { title: 'Commission' },
-            { title: 'Uptime' },
-            { title: 'Status' },
-          ]
-        }
-      } else {
-        return [{ title: '' }, { title: 'Delegated' }]
-      }
-    })
-    const accountAddress = ref(wallet.isEmpty ? '' : wallet.account.address)
-
-    const validatorTableClass = computed(() => {
-      if (
-        tabStatus.value === inactiveValidatorsTitle.value &&
-        !accountAddress.value
-      ) {
-        return 'validators__table--unauthenticated-inactive'
-      } else if (tabStatus.value === inactiveValidatorsTitle.value) {
-        return 'validators__table--inactive'
-      } else if (!accountAddress.value) {
-        return 'validators__table--unauthenticated'
-      } else {
-        return ''
-      }
-    })
-
-    const { result, loading: isValidatorsResponseLoading } =
-      useQuery<ValidatorsResponse>(ValidatorsQuery)
-
-    const signedBlocks = computed(() =>
-      Number(result.value?.slashingParams[0]?.params?.signed_blocks_window)
-    )
-
-    watch([isValidatorsResponseLoading], async () => {
-      await getValidators()
-    })
-
-    const getDelegations = async () => {
-      if (!accountAddress.value) {
-        return
-      }
-      lockLoading()
-      try {
-        // TODO: delegations returns invalid delegator's amount?
-        const response = await callers.getDelegations(accountAddress.value)
-
-        const _delegations: { [k: string]: DelegationResponse } = {}
-        for (const delegation of response.delegationResponses) {
-          if (!delegation.delegation?.validatorAddress) continue
-          _delegations[delegation.delegation.validatorAddress] = delegation
-        }
-        delegations.value = _delegations
-        delegatedAdress.value = Object.keys(delegations.value)
-        tabStatus.value = isDisabledDelegationsTab.value
-          ? myValidatorsTitle.value
-          : activeValidatorsTitle.value
-      } catch (error) {
-        // error is ignored, since no delegations also throws the error
-        delegations.value = {}
-        tabStatus.value = activeValidatorsTitle.value
-      }
-      releaseLoading()
+const paginationHandler = (num: number) => {
+  filterValidators(num)
+}
+const selectTab = async (title: string) => {
+  if (title !== tabStatus.value) {
+    tabStatus.value = title
+    if (tabStatus.value === activeValidatorsTitle.value) {
+      validators.value = [...activeValidators.value]
+    } else if (tabStatus.value === inactiveValidatorsTitle.value) {
+      validators.value = [...inactiveValidators.value]
+    } else if (tabStatus.value === myValidatorsTitle.value) {
+      validators.value = [...myDelegationsValitors.value]
     }
-    const getValidators = async () => {
-      if (isValidatorsResponseLoading.value) {
-        return
-      }
-      lockLoading()
-      try {
-        const copyActiveValidator =
-          result.value?.validator?.filter(
-            (item: ValidatorsInfo) => item?.validatorStatuses[0]?.status === 3
-          ) || []
-        const copyInactiveValidator =
-          result.value?.validator?.filter(
-            (item: ValidatorsInfo) => item?.validatorStatuses[0]?.status !== 3
-          ) || []
-        activeValidators.value = (await Promise.all(
-          copyActiveValidator.map(
-            async (item: ValidatorsInfo, index: number) => {
-              return {
-                ...item,
-                rank: index + 1,
-                uptime:
-                  ((signedBlocks.value -
-                    item.validatorSigningInfos[0]?.missedBlocksCounter) /
-                    signedBlocks.value) *
-                  100,
-                isActive: await isActiveValidator(
-                  item.validatorInfo?.operatorAddress
-                ).then((req) => req),
-              }
-            }
-          )
-        )) as unknown as ValidatorsInfo[]
-        inactiveValidators.value = (await Promise.all(
-          copyInactiveValidator.map(
-            async (item: ValidatorsInfo, index: number) => {
-              return {
-                ...item,
-                rank: index + 1,
-                uptime:
-                  ((signedBlocks.value -
-                    item.validatorSigningInfos[0]?.missedBlocksCounter) /
-                    signedBlocks.value) *
-                  100,
-                isActive: await isActiveValidator(
-                  item.validatorInfo?.operatorAddress
-                ).then((req) => req),
-              }
-            }
-          )
-        )) as unknown as ValidatorsInfo[]
+    filterValidators(1)
+  }
+}
 
-        allValitors.value = [
-          ...inactiveValidators.value,
-          ...activeValidators.value,
-        ]
-        validators.value = isDisabledDelegationsTab.value
-          ? [...myDelegationsValitors.value]
-          : [...activeValidators.value]
-        tabStatus.value = isDisabledDelegationsTab.value
-          ? myValidatorsTitle.value
-          : activeValidatorsTitle.value
-        validatorsCount.value = allValitors.value.length
-        filterValidators(currentPage.value)
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
-    }
+const loadData = async () => {
+  lockLoading()
+  try {
+    await getValidators()
+    await getDelegations()
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
 
-    const filterValidators = (newPage = 1) => {
-      let tempArr = validators.value
-      if (searchValue.value.trim()) {
-        tempArr = tempArr.filter((item: { description: { moniker: string } }) =>
-          item.description.moniker
-            .toLowerCase()
-            .includes(searchValue.value.toLowerCase())
-        )
-      }
-      if (newPage === 1) {
-        filteredValidators.value = tempArr?.slice(0, newPage * ITEMS_PER_PAGE)
-      } else {
-        filteredValidators.value = tempArr?.slice(
-          (newPage - 1) * ITEMS_PER_PAGE,
-          (newPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE
-        )
-      }
-      filteredValidatorsCount.value = tempArr.length
-      totalPages.value = Math.ceil(
-        filteredValidatorsCount.value / ITEMS_PER_PAGE
-      )
-      currentPage.value = newPage
-    }
-
-    const paginationHandler = (num: number) => {
-      filterValidators(num)
-    }
-    const selectTab = async (title: string) => {
-      if (title !== tabStatus.value) {
-        tabStatus.value = title
-        if (tabStatus.value === activeValidatorsTitle.value) {
-          validators.value = [...activeValidators.value]
-        } else if (tabStatus.value === inactiveValidatorsTitle.value) {
-          validators.value = [...inactiveValidators.value]
-        } else if (tabStatus.value === myValidatorsTitle.value) {
-          validators.value = [...myDelegationsValitors.value]
-        }
-        filterValidators(1)
-      }
-    }
-    const validatorStatus = (validator: {
-      status: number
-      isActive: boolean
-    }) => {
-      if (validator.status === 3) {
-        return validator.isActive ? 'success' : 'error'
-      } else {
-        return 'inactive'
-      }
-    }
-    const loadData = async () => {
-      lockLoading()
-      await getDelegations()
-      await getValidators()
-      releaseLoading()
-    }
-
-    const claimAllRewards = async () => {
-      await showDialogHandler(ClaimAllRewardsFormModal, {
-        onSubmit: async (d) => {
-          d.kill()
-          await loadData()
-        },
-      })
-    }
-
-    const withdrawRewards = async (validator: ValidatorsInfo) => {
-      if (!delegations.value[validator.validatorInfo.operatorAddress]) return
-      await showDialogHandler(
-        WithdrawRewardsFormModal,
-        {
-          onSubmit: async (d) => {
-            d.kill()
-            await loadData()
-          },
-        },
-        { validator }
-      )
-    }
-
-    const delegate = async (validator: ValidatorsInfo) => {
-      await showDialogHandler(
-        DelegateFormModal,
-        {
-          onSubmit: async (d) => {
-            d.kill()
-            await loadData()
-          },
-        },
-        {
-          validator,
-          delegation:
-            delegations.value[validator.validatorInfo.operatorAddress],
-        }
-      )
-    }
-
-    const redelegate = async (validator: ValidatorsInfo) => {
-      await showDialogHandler(
-        RedelegateFormModal,
-        {
-          onSubmit: async (d) => {
-            d.kill()
-            await loadData()
-          },
-        },
-        {
-          validator,
-          delegation:
-            delegations.value[validator.validatorInfo.operatorAddress],
-        }
-      )
-    }
-
-    const undelegate = async (validator: ValidatorsInfo) => {
-      if (!delegations.value[validator.validatorInfo.operatorAddress]) return
-      await showDialogHandler(
-        UndelegateFormModal,
-        {
-          onSubmit: async (d) => {
-            d.kill()
-            await loadData()
-          },
-        },
-        {
-          validator,
-          delegation:
-            delegations.value[validator.validatorInfo.operatorAddress],
-        }
-      )
-    }
-
-    const stakeTransfer = async () => {
-      if (!delegations.value) return
-      await showDialogHandler(
-        StakeTransferFormModal,
-        {
-          onSubmit: async (d) => {
-            d.kill()
-            await loadData()
-          },
-        },
-        {
-          validators: allValitors.value,
-          delegation: delegations.value,
-        }
-      )
-    }
-    const openModal = (event: {
-      typeBtn: string
-      validator: ValidatorsInfo
-    }) => {
-      if (event.typeBtn === 'Delegate') {
-        delegate(event.validator)
-      } else if (event.typeBtn === 'Regelate') {
-        redelegate(event.validator)
-      } else if (event.typeBtn === 'Claim rewards') {
-        withdrawRewards(event.validator)
-      } else if (event.typeBtn === 'Undelegate') {
-        undelegate(event.validator)
-      }
-    }
-    onMounted(async () => {
-      window.addEventListener('resize', updateWidth)
+const claimAllRewards = async () => {
+  await showDialogHandler(ClaimAllRewardsFormModal, {
+    onSubmit: async (d) => {
+      d.kill()
       await loadData()
-    })
-    onUnmounted(async () => {
-      window.removeEventListener('resize', updateWidth)
-    })
-    return {
-      ITEMS_PER_PAGE,
-      totalPages,
-      currentPage,
-      filteredValidatorsCount,
-      validatorsCount,
-      filteredValidators,
-      validators,
-      delegations,
-      isLoading,
-      paginationHandler,
-      selectTab,
-      isDelegator,
-      activeValidatorsTitle,
-      inactiveValidatorsTitle,
-      searchValue,
-      filterValidators,
-      stakeTransfer,
-      myValidatorsTitle,
-      claimAllRewards,
-      isDisabledDelegationsTab,
-      tabStatus,
-      headerTitles,
-      validatorStatus,
-      windowInnerWidth,
-      openModal,
-      activeValidators,
-      accountAddress,
-      isValidatorsResponseLoading,
-      validatorTableClass,
-    }
-  },
+    },
+  })
+}
+
+const withdrawRewards = async (validator: ValidatorInfoModify) => {
+  if (!delegations.value[validator.info.operatorAddress]) return
+  await showDialogHandler(
+    WithdrawRewardsFormModal,
+    {
+      onSubmit: async (d) => {
+        d.kill()
+        await loadData()
+      },
+    },
+    { validator },
+  )
+}
+
+const delegate = async (validator: ValidatorInfoModify) => {
+  await showDialogHandler(
+    DelegateFormModal,
+    {
+      onSubmit: async (d) => {
+        d.kill()
+        await loadData()
+      },
+    },
+    {
+      validator,
+      delegation: delegations.value[validator.info.operatorAddress],
+    },
+  )
+}
+
+const redelegate = async (validator: ValidatorInfoModify) => {
+  await showDialogHandler(
+    RedelegateFormModal,
+    {
+      onSubmit: async (d) => {
+        d.kill()
+        await loadData()
+      },
+    },
+    {
+      validator,
+      delegation: delegations.value[validator.info.operatorAddress],
+    },
+  )
+}
+
+const undelegate = async (validator: ValidatorInfoModify) => {
+  if (!delegations.value[validator.info.operatorAddress]) return
+  await showDialogHandler(
+    UndelegateFormModal,
+    {
+      onSubmit: async (d) => {
+        d.kill()
+        await loadData()
+      },
+    },
+    {
+      validator,
+      delegation: delegations.value[validator.info.operatorAddress],
+    },
+  )
+}
+
+const stakeTransfer = async () => {
+  if (!delegations.value) return
+  await showDialogHandler(
+    StakeTransferFormModal,
+    {
+      onSubmit: async (d) => {
+        d.kill()
+        await loadData()
+      },
+    },
+    {
+      validators: allValitors.value,
+      delegation: delegations.value,
+    },
+  )
+}
+const openModal = (event: { typeBtn: string; validator: ValidatorsInfo }) => {
+  if (event.typeBtn === 'Delegate') {
+    delegate(event.validator)
+  } else if (event.typeBtn === 'Regelate') {
+    redelegate(event.validator)
+  } else if (event.typeBtn === 'Claim rewards') {
+    withdrawRewards(event.validator)
+  } else if (event.typeBtn === 'Undelegate') {
+    undelegate(event.validator)
+  }
+}
+onMounted(async () => {
+  window.addEventListener('resize', updateWidth)
+  await loadData()
+})
+onUnmounted(async () => {
+  window.removeEventListener('resize', updateWidth)
 })
 </script>
 

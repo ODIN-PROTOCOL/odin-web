@@ -1,76 +1,79 @@
 <template>
   <div
     class="view-main validators-item"
-    :class="
-      delegations[validator?.operatorAddress]
-        ? 'validators-item--large-padding'
-        : ''
-    "
+    :class="delegation.balance ? 'validators-item--large-padding' : ''"
   >
     <div class="view-main__title-wrapper validators-item__title-wrapper">
       <BackButton text="Validators" class="validators-item__back-btn" />
       <h2 class="view-main__title validators-item__title">Validator</h2>
-      <div
-        v-if="!isLoading && validator"
-        class="validators-item__validator-address"
-      >
-        <p
-          :title="validator?.operatorAddress"
-          class="view-main__subtitle validators-item__subtitle"
+      <template v-if="validator">
+        <div class="validators-item__validator-address">
+          <p
+            :title="validator.info.operatorAddress"
+            class="view-main__subtitle validators-item__subtitle"
+          >
+            {{ validator.info.operatorAddress }}
+          </p>
+          <CopyButton
+            :text="String(validator.info.operatorAddress)"
+            class="mg-l8"
+          />
+        </div>
+        <ValidatorStatus
+          :width="14"
+          :height="14"
+          :status="validatorStatus"
+          class="validators-item__validator-status"
+        />
+        <div
+          v-if="delegation.balance"
+          class="validators-item__activities validators-item__activities--top fx-sae"
         >
-          {{ validator?.operatorAddress }}
-        </p>
-        <CopyButton :text="String(validator?.operatorAddress)" class="mg-l8" />
-      </div>
-      <ValidatorStatus
-        v-if="!isLoading && validator"
-        :width="14"
-        :height="14"
-        :status="validatorStatus"
-        class="validators-item__validator-status"
-      />
-      <div
-        v-if="delegations[validator?.operatorAddress]"
-        class="validators-item__activities validators-item__activities--top fx-sae"
-      >
-        <button
-          @click="withdrawRewards"
-          type="button"
-          class="app-btn app-btn--small w-min150"
-        >
-          Claim rewards
-        </button>
-      </div>
+          <button
+            @click="withdrawRewards(validator)"
+            type="button"
+            class="app-btn app-btn--small w-min150"
+          >
+            Claim rewards
+          </button>
+        </div>
+      </template>
     </div>
-
-    <template v-if="validator">
-      <ValidatorInfo :validator="validator" />
-      <AppTabs>
-        <AppTab title="Oracle Reports">
-          <OracleReportsTable :proposerAddress="validator.operatorAddress" />
-        </AppTab>
-        <AppTab :title="delegatorsTitle">
-          <DelegatorsTable :delegators="delegators" :is-loading="isLoading" />
-        </AppTab>
-        <AppTab title="Proposed Blocks">
-          <ProposedBlocksTable :proposerAddress="validator?.operatorAddress" />
-        </AppTab>
-      </AppTabs>
+    <template v-if="!isLoading && !isValidatorResponseLoading">
+      <template v-if="validator">
+        <ValidatorInfo
+          :validator="validator"
+          :delegation="delegation"
+          @selectedBtn="openModal"
+        />
+        <AppTabs>
+          <AppTab title="Oracle Reports">
+            <OracleReportsTable :proposerAddress="operatorAddress" />
+          </AppTab>
+          <AppTab :title="delegatorsTitle">
+            <DelegatorsTable :delegators="delegators" :is-loading="isLoading" />
+          </AppTab>
+          <AppTab title="Proposed Blocks">
+            <ProposedBlocksTable :proposerAddress="operatorAddress" />
+          </AppTab>
+        </AppTabs>
+      </template>
+      <template v-else>
+        <div class="app-table__empty-stub">
+          <p class="empty mg-t32">Validator not found!</p>
+        </div>
+      </template>
     </template>
     <template v-else>
       <div class="app-table__empty-stub">
-        <p v-if="isLoading" class="empty mg-t32">Loading…</p>
-        <p v-else class="empty mg-t32">Validator not found!</p>
+        <p class="empty mg-t32">Loading…</p>
       </div>
     </template>
-    <div
-      v-if="delegations[validator?.operatorAddress]"
-      class="view-main__mobile-activities"
-    >
+    <div v-if="delegation.balance" class="view-main__mobile-activities">
       <div class="validators-item__activities">
         <div class="validators-item__activities-item">
           <button
-            @click="withdrawRewards"
+            @click="withdrawRewards(validator)"
             type="button"
             class="validators-item__activities-btn app-btn"
           >
@@ -82,8 +85,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, onMounted, ref } from 'vue'
+<script setup lang="ts">
+import { computed, onMounted, ref, watch } from 'vue'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
@@ -107,167 +110,167 @@ import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 
-export default defineComponent({
-  components: {
-    BackButton,
-    CopyButton,
-    AppTabs,
-    AppTab,
-    ValidatorInfo,
-    OracleReportsTable,
-    DelegatorsTable,
-    ProposedBlocksTable,
-    ValidatorStatus,
-  },
-  setup: function () {
-    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const route: RouteLocationNormalizedLoaded = useRoute()
-    const validator = ref()
-    const delegators = ref<DelegationResponse[]>([])
+import { useQuery } from '@vue/apollo-composable'
+import { ValidatorQuery } from '@/graphql/queries'
+import { ValidatorResponse } from '@/graphql/types'
+import { ValidatorInfoModify } from '@/helpers/validatorHelpers'
 
-    const delegations = ref<{ [k: string]: DelegationResponse }>({})
-    const delegatorsTitle = computed(() =>
-      delegators.value?.length
-        ? `Delegators (${delegators.value?.length})`
-        : 'Delegators'
+const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+const route: RouteLocationNormalizedLoaded = useRoute()
+const validator = ref<ValidatorInfoModify>()
+const delegators = ref<DelegationResponse[]>([])
+
+const delegation = ref<DelegationResponse>({})
+const delegatorsTitle = computed(() =>
+  delegators.value?.length
+    ? `Delegators (${delegators.value?.length})`
+    : 'Delegators',
+)
+const operatorAddress = ref('')
+const { result, loading: isValidatorResponseLoading } =
+  useQuery<ValidatorResponse>(ValidatorQuery, {
+    address: String(route.params.address),
+  })
+
+const getValidator = async () => {
+  lockLoading()
+  try {
+    if (result.value?.validator) {
+      validator.value = {
+        ...result.value.validator[0],
+        isActive: await isActiveValidator(String(route.params.address)),
+      }
+      operatorAddress.value = validator.value.info.operatorAddress
+    }
+    await getDelegations()
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
+
+const validatorStatus = computed(() => {
+  if (validator.value?.statuses[0].status === 3) {
+    return validator.value.isActive ? 'success' : 'error'
+  } else {
+    return 'inactive'
+  }
+})
+
+const getDelegators = async () => {
+  const response = await callers.getValidatorDelegations(
+    String(route.params.address),
+  )
+  if (response.delegationResponses) {
+    delegators.value = response.delegationResponses
+  }
+}
+
+const getDelegations = async () => {
+  if (wallet.isEmpty) {
+    return
+  }
+  lockLoading()
+  try {
+    const response = await callers.getDelegationsV(
+      wallet.account.address,
+      operatorAddress.value,
     )
-    const getValidator = async () => {
-      lockLoading()
-      try {
-        const response = await callers.getValidator(
-          String(route.params.address)
-        )
-        validator.value = {
-          ...response.validator,
-          isActive: await isActiveValidator(String(route.params.address)),
-        }
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
-    }
+    if (response.delegationResponse)
+      delegation.value = response.delegationResponse
+  } catch (error) {
+    // error is ignored, since no delegations also throws the error
+  }
+  releaseLoading()
+}
 
-    const validatorStatus = computed(() => {
-      if (validator.value?.status === 3) {
-        return validator.value.isActive ? 'success' : 'error'
-      } else {
-        return 'inactive'
-      }
-    })
-    const getDelegators = async () => {
-      const response = await callers.getValidatorDelegations(
-        String(route.params.address)
-      )
-      if (response.delegationResponses) {
-        delegators.value = response.delegationResponses
-      }
-    }
+const loadData = async () => {
+  await getValidator()
+  await getDelegators()
+}
 
-    const getDelegations = async () => {
-      if (wallet.isEmpty) {
-        return
-      }
-      try {
-        // TODO: delegations returns invalid delegator's amount?
-        const response = await callers.getDelegations(wallet.account.address)
+const delegate = async (validator: ValidatorInfoModify) => {
+  await showDialogHandler(
+    DelegateFormModal,
+    {
+      onSubmit: async (d) => {
+        d.kill()
+        await loadData()
+      },
+    },
+    {
+      validator: validator,
+      delegation: delegation.value,
+    },
+  )
+}
 
-        const _delegations: { [k: string]: DelegationResponse } = {}
-        for (const delegation of response.delegationResponses) {
-          if (!delegation.delegation?.validatorAddress) continue
-          _delegations[delegation.delegation.validatorAddress] = delegation
-        }
-        delegations.value = _delegations
-      } catch (error) {
-        // error is ignored, since no delegations also throws the error
-      }
-    }
+const redelegate = async (validator: ValidatorInfoModify) => {
+  await showDialogHandler(
+    RedelegateFormModal,
+    {
+      onSubmit: async (d) => {
+        d.kill()
+        await loadData()
+      },
+    },
+    {
+      validator: validator,
+      delegation: delegation.value,
+    },
+  )
+}
 
-    const loadData = async () => {
-      await getValidator()
-      await getDelegators()
-      await getDelegations()
-    }
+const undelegate = async (validator: ValidatorInfoModify) => {
+  if (!delegation.value.balance) return
+  await showDialogHandler(
+    UndelegateFormModal,
+    {
+      onSubmit: async (d) => {
+        d.kill()
+        await loadData()
+      },
+    },
+    {
+      validator: validator,
+      delegation: delegation.value,
+    },
+  )
+}
 
-    const delegate = async () => {
-      await showDialogHandler(
-        DelegateFormModal,
-        {
-          onSubmit: async (d) => {
-            d.kill()
-            await loadData()
-          },
-        },
-        {
-          validator: validator.value,
-          delegation: delegations.value[String(route.params.address)],
-        }
-      )
-    }
+const withdrawRewards = async (validator: ValidatorInfoModify) => {
+  if (!delegation.value.balance) return
+  await showDialogHandler(
+    WithdrawRewardsFormModal,
+    {
+      onSubmit: async (d) => {
+        d.kill()
+        await loadData()
+      },
+    },
+    { validator: validator },
+  )
+}
+const openModal = (event: {
+  typeBtn: string
+  validator: ValidatorInfoModify
+}) => {
+  if (event.typeBtn === 'Delegate') {
+    delegate(event.validator)
+  } else if (event.typeBtn === 'Regelate') {
+    redelegate(event.validator)
+  } else if (event.typeBtn === 'Claim rewards') {
+    withdrawRewards(event.validator)
+  } else if (event.typeBtn === 'Undelegate') {
+    undelegate(event.validator)
+  }
+}
+watch([isValidatorResponseLoading], async () => {
+  await getValidator()
+})
 
-    const redelegate = async () => {
-      await showDialogHandler(
-        RedelegateFormModal,
-        {
-          onSubmit: async (d) => {
-            d.kill()
-            await loadData()
-          },
-        },
-        {
-          validator: validator.value,
-          delegation: delegations.value[String(route.params.address)],
-        }
-      )
-    }
-
-    const undelegate = async () => {
-      if (!delegations.value[validator.value.operatorAddress]) return
-      await showDialogHandler(
-        UndelegateFormModal,
-        {
-          onSubmit: async (d) => {
-            d.kill()
-            await loadData()
-          },
-        },
-        {
-          validator: validator.value,
-          delegation: delegations.value[validator.value.operatorAddress],
-        }
-      )
-    }
-
-    const withdrawRewards = async () => {
-      if (!delegations.value[validator.value.operatorAddress]) return
-      await showDialogHandler(
-        WithdrawRewardsFormModal,
-        {
-          onSubmit: async (d) => {
-            d.kill()
-            await loadData()
-          },
-        },
-        { validator: validator.value }
-      )
-    }
-
-    onMounted(async () => {
-      await loadData()
-    })
-
-    return {
-      validator,
-      delegators,
-      delegations,
-      withdrawRewards,
-      delegate,
-      redelegate,
-      undelegate,
-      delegatorsTitle,
-      validatorStatus,
-      isLoading,
-    }
-  },
+onMounted(async () => {
+  await loadData()
 })
 </script>
 

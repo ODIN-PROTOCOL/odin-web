@@ -37,11 +37,11 @@ const makeCallers = () => {
     getCounts: querier((qc) => qc.oracle.unverified.counts),
     createDataSource: broadcaster<MsgCreateDataSource>(
       '/oracle.v1.MsgCreateDataSource',
-      MsgCreateDataSource
+      MsgCreateDataSource,
     ),
     editDataSource: broadcaster<MsgEditDataSource>(
       '/oracle.v1.MsgEditDataSource',
-      MsgEditDataSource
+      MsgEditDataSource,
     ),
     getDataSources: querier((qc) => qc.oracle.unverified.dataSources),
     getSortedDataSources: (
@@ -49,25 +49,25 @@ const makeCallers = () => {
       page_limit: number,
       activities: string,
       owner: string,
-      name: string
+      name: string,
     ) => {
       return sendGet(
-        `${API_CONFIG.telemetryUrl}/data_sources?page[number]=${page_number}&page[limit]=${page_limit}&sort=${activities}&owner=${owner}&name=${name}`
+        `${API_CONFIG.telemetryUrl}/data_sources?page[number]=${page_number}&page[limit]=${page_limit}&sort=${activities}&owner=${owner}&name=${name}`,
       )
     },
     getDataSourceRequestCount: (data_source_id: number) => {
       return axiosWrapper.get(
-        `${API_CONFIG.telemetryUrl}/requests/data_sources/${data_source_id}`
+        `${API_CONFIG.telemetryUrl}/requests/data_sources/${data_source_id}`,
       )
     },
     getDataSource: querier((qc) => qc.oracle.unverified.dataSource),
     createOracleScript: broadcaster<MsgCreateOracleScript>(
       '/oracle.v1.MsgCreateOracleScript',
-      MsgCreateOracleScript
+      MsgCreateOracleScript,
     ),
     editOracleScript: broadcaster<MsgEditOracleScript>(
       '/oracle.v1.MsgEditOracleScript',
-      MsgEditOracleScript
+      MsgEditOracleScript,
     ),
     getOracleScripts: querier((qc) => qc.oracle.unverified.oracleScripts),
     getSortedOracleScripts: (
@@ -75,10 +75,10 @@ const makeCallers = () => {
       page_limit: number,
       activities: string,
       owner: string,
-      name: string
+      name: string,
     ) => {
       return sendGet(
-        `${API_CONFIG.telemetryUrl}/oracle_scripts?page[number]=${page_number}&page[limit]=${page_limit}&sort=${activities}&owner=${owner}&name=${name}`
+        `${API_CONFIG.telemetryUrl}/oracle_scripts?page[number]=${page_number}&page[limit]=${page_limit}&sort=${activities}&owner=${owner}&name=${name}`,
       )
     },
     getAccountTx: (
@@ -86,10 +86,10 @@ const makeCallers = () => {
       page_limit: number,
       owner: string,
       page_order: string,
-      tx_type: string
+      tx_type: string,
     ) => {
       return sendGet(
-        `${API_CONFIG.telemetryUrl}/account_txs/${owner}?page[number]=${page_number}&page[limit]=${page_limit}&page[order]=${page_order}&type=${tx_type}`
+        `${API_CONFIG.telemetryUrl}/account_txs/${owner}?page[number]=${page_number}&page[limit]=${page_limit}&page[order]=${page_order}&type=${tx_type}`,
       )
     },
     getChannel: querier((qc) => qc.ibc.channel.allChannels),
@@ -98,11 +98,11 @@ const makeCallers = () => {
     getOracleScript: querier((qc) => qc.oracle.unverified.oracleScript),
     createRequest: broadcaster<MsgRequestData>(
       '/oracle.v1.MsgRequestData',
-      MsgRequestData
+      MsgRequestData,
     ),
     getRequests: (page_limit: number, page_number: number) => {
       return axiosWrapper.get(
-        `${API_CONFIG.rpc}api/oracle/requests?limit=${page_limit}&offset=${page_number}&reverse=true`
+        `${API_CONFIG.rpc}api/oracle/requests?limit=${page_limit}&offset=${page_number}&reverse=true`,
       )
     },
     getRequest: (id: number) => {
@@ -112,22 +112,22 @@ const makeCallers = () => {
     getProposals: (
       page_number: number,
       page_limit: number,
-      page_reverse: boolean
+      page_reverse: boolean,
     ) => {
       return axiosWrapper.get(
-        `${API_CONFIG.api}cosmos/gov/v1beta1/proposals?pagination.offset=${page_number}&pagination.limit=${page_limit}&pagination.reverse=${page_reverse}`
+        `${API_CONFIG.api}cosmos/gov/v1beta1/proposals?pagination.offset=${page_number}&pagination.limit=${page_limit}&pagination.reverse=${page_reverse}`,
       )
     },
     createProposal: broadcaster<MsgSubmitProposal>(
       '/cosmos.gov.v1beta1.MsgSubmitProposal',
-      MsgSubmitProposal
+      MsgSubmitProposal,
     ),
     getProposal: querier((qc) =>
       mapResponse(qc.gov.unverified.proposal, (response) => {
         return {
           proposal: decodeProposal(response.proposal as Proposal),
         }
-      })
+      }),
     ),
     getReports: querier((qc) => qc.oracle.unverified.reporters),
     getProposalVote: querier((qc) => qc.gov.unverified.vote),
@@ -141,12 +141,12 @@ const makeCallers = () => {
     },
     getProposalsStatistic: () => {
       return sendGet(
-        `${API_CONFIG.telemetryUrl}/blocks/vote_proposals_statistics`
+        `${API_CONFIG.telemetryUrl}/blocks/vote_proposals_statistics`,
       )
     },
     proposalDeposit: broadcaster<MsgDeposit>(
       '/cosmos.gov.v1beta1.MsgDeposit',
-      MsgDeposit
+      MsgDeposit,
     ),
     proposalVote: broadcaster<MsgVote>('/cosmos.gov.v1beta1.MsgVote', MsgVote),
     getBalances: querier((qc) => () => {
@@ -156,7 +156,7 @@ const makeCallers = () => {
 
     createExchange: broadcaster<MsgExchange>(
       '/coinswap.MsgExchange',
-      MsgExchange
+      MsgExchange,
     ),
     createBinanceExchange: (req: {
       binance_address: string
@@ -176,41 +176,38 @@ const makeCallers = () => {
     getValidatorDelegations: querier((qc) => qc.staking.validatorDelegations),
     validatorDelegate: broadcaster<MsgDelegate>(
       '/cosmos.staking.v1beta1.MsgDelegate',
-      MsgDelegate
+      MsgDelegate,
     ),
     validatorDelegateToAnotherValidator: broadcaster<MsgBeginRedelegate>(
       '/cosmos.staking.v1beta1.MsgBeginRedelegate',
-      MsgBeginRedelegate
+      MsgBeginRedelegate,
     ),
     validatorUndelegate: broadcaster<MsgUndelegate>(
       '/cosmos.staking.v1beta1.MsgUndelegate',
-      MsgUndelegate
+      MsgUndelegate,
     ),
     getDelegations: querier((qc) => qc.staking.delegatorDelegations),
+    getDelegationsV: querier((qc) => qc.staking.delegation),
     withdrawCoinsToAcc: broadcaster<MsgWithdrawCoinsToAccFromTreasury>(
       '/mint.MsgWithdrawCoinsToAccFromTreasury',
-      MsgWithdrawCoinsToAccFromTreasury
+      MsgWithdrawCoinsToAccFromTreasury,
     ),
     withdrawDelegatorRewards: broadcaster<MsgWithdrawDelegatorReward>(
       '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward',
-      MsgWithdrawDelegatorReward
+      MsgWithdrawDelegatorReward,
     ),
     withdrawMultiDelegatorRewards: multiBroadcaster<MsgWithdrawDelegatorReward>(
       '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward',
-      MsgWithdrawDelegatorReward
+      MsgWithdrawDelegatorReward,
     ),
     getDelegationDelegatorReward: querier(
-      (qc) => qc.distribution.delegationRewards
+      (qc) => qc.distribution.delegationRewards,
     ),
     getDelegationRewards: querier(
-      (qc) => qc.distribution.delegationTotalRewards
+      (qc) => qc.distribution.delegationTotalRewards,
     ),
     getParams: querier((qc) => qc.mint.unverified.params),
     faucetRequest: (req: { denom: string }) => {
-      console.log({
-        address: wallet.account.address,
-        denom: req.denom,
-      })
       return sendPost(`${API_CONFIG.faucet}/request`, {
         address: wallet.account.address,
         denom: req.denom,
@@ -222,10 +219,10 @@ const makeCallers = () => {
     getProposedBlocks: (
       proposer: string,
       page_number: number,
-      page_limit: number
+      page_limit: number,
     ) => {
       return sendGet(
-        `${API_CONFIG.telemetryUrl}/validator/${proposer}/transactions?page[number]=${page_number}&page[limit]=${page_limit}&page[order]=desc`
+        `${API_CONFIG.telemetryUrl}/validator/${proposer}/transactions?page[number]=${page_number}&page[limit]=${page_limit}&page[order]=desc`,
       )
     },
     getDataSourceCode: (id: string) => {
@@ -234,19 +231,19 @@ const makeCallers = () => {
     getOracleScriptRequests: (
       id: string,
       page_number: number,
-      page_limit: number
+      page_limit: number,
     ) => {
       return sendGet(
-        `${API_CONFIG.telemetryUrl}/requests/oracle_scripts/${id}?page[number]=${page_number}&page[limit]=${page_limit}`
+        `${API_CONFIG.telemetryUrl}/requests/oracle_scripts/${id}?page[number]=${page_number}&page[limit]=${page_limit}`,
       )
     },
     getDataSourceRequests: (
       id: string,
       page_number: number,
-      page_limit: number
+      page_limit: number,
     ) => {
       return sendGet(
-        `${API_CONFIG.telemetryUrl}/requests/data_sources/${id}?page[number]=${page_number}&page[limit]=${page_limit}`
+        `${API_CONFIG.telemetryUrl}/requests/data_sources/${id}?page[number]=${page_number}&page[limit]=${page_limit}`,
       )
     },
     getValidatorUptime: () => {
@@ -254,7 +251,7 @@ const makeCallers = () => {
     },
     getOracleReports: (id: string, page_number: number, page_limit: number) => {
       return axiosWrapper.get(
-        `${API_CONFIG.telemetryUrl}/validator/${id}/reports?page[number]=${page_number}&page[limit]=${page_limit}`
+        `${API_CONFIG.telemetryUrl}/validator/${id}/reports?page[number]=${page_number}&page[limit]=${page_limit}`,
       )
     },
   }

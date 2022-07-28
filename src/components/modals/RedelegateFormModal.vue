@@ -100,7 +100,7 @@ export default defineComponent({
       try {
         const response = await callers.getDelegationDelegatorReward(
           wallet.account.address,
-          props.validator.validatorInfo.operatorAddress
+          props.validator.info.operatorAddress
         )
         rewards.value = deductFee(response.rewards)
       } catch (error) {
@@ -130,7 +130,7 @@ export default defineComponent({
         const amount = availableCoinForRedelegate.value.amount
         const claimTx = await callers.withdrawDelegatorRewards({
           delegatorAddress: wallet.account.address,
-          validatorAddress: props.validator.validatorInfo.operatorAddress,
+          validatorAddress: props.validator.info.operatorAddress,
         })
 
         let claimedAmount = parseLogsToGetRewardsAmount(
@@ -143,7 +143,7 @@ export default defineComponent({
 
         await callers.validatorDelegate({
           delegatorAddress: wallet.account.address,
-          validatorAddress: props.validator.validatorInfo.operatorAddress,
+          validatorAddress: props.validator.info.operatorAddress,
           amount: coin(Number(claimedAmount), COINS_LIST.LOKI),
         })
         onSubmit()

@@ -5,10 +5,10 @@
         <span class="validator-info__top-line-item-title">Moniker</span>
         <div class="validator-info__card-balance-row-value-wrapper">
           <span
-            :title="validator.description.moniker"
+            :title="validator.descriptions[0].moniker"
             class="validator-info__top-line-item-value"
           >
-            {{ validator.description.moniker }}
+            {{ validator.descriptions[0].moniker }}
           </span>
         </div>
       </div>
@@ -16,10 +16,10 @@
         <span class="validator-info__top-line-item-title">Status</span>
         <div class="validator-info__card-balance-row-value-wrapper">
           <span
-            :title="$tBondStatus(validator.status)"
+            :title="$tBondStatus(validator.statuses[0].status)"
             class="validator-info__top-line-item-value"
           >
-            {{ $tBondStatus(validator.status) }}
+            {{ $tBondStatus(validator.statuses[0].status) }}
           </span>
         </div>
       </div>
@@ -27,10 +27,10 @@
         <span class="validator-info__top-line-item-title">Jailed?</span>
         <div class="validator-info__card-balance-row-value-wrapper">
           <span
-            :title="validator.jailed ? 'Yes' : 'No'"
+            :title="validator.statuses[0].jailed ? 'Yes' : 'No'"
             class="validator-info__top-line-item-value"
           >
-            {{ validator.jailed ? 'Yes' : 'No' }}
+            {{ validator.statuses[0].jailed ? 'Yes' : 'No' }}
           </span>
         </div>
       </div>
@@ -38,10 +38,14 @@
         <span class="validator-info__top-line-item-title">Stake</span>
         <div class="validator-info__card-balance-row-value-wrapper">
           <span
-            :title="$convertLokiToOdin(validator.tokens, { withDenom: true })"
+            :title="$convertLokiToOdin(validator.info.delegatedAmount)"
             class="validator-info__top-line-item-value"
           >
-            {{ $convertLokiToOdin(validator.tokens, { withDenom: true }) }}
+            {{
+              $convertLokiToOdin(validator.info.delegatedAmount, {
+                withDenom: true,
+              })
+            }}
           </span>
         </div>
       </div>
@@ -49,12 +53,10 @@
         <span class="validator-info__top-line-item-title">Rate</span>
         <div class="validator-info__card-balance-row-value-wrapper">
           <span
-            :title="
-              $getPrecisePercents(validator.commission.commissionRates.rate)
-            "
+            :title="$trimZeros(validator?.commissions[0]?.commission * 100, 2)"
             class="validator-info__top-line-item-value"
           >
-            {{ $getPrecisePercents(validator.commission.commissionRates.rate) }}
+            {{ $trimZeros(validator?.commissions[0]?.commission * 100, 2) }}%
           </span>
         </div>
       </div>
@@ -69,10 +71,14 @@
             >
             <div class="validator-info__card-balance-row-value-wrapper">
               <span
-                :title="$convertLokiToOdin(validator.minSelfDelegation)"
+                :title="
+                  $convertLokiToOdin(validator.commissions[0].minSelfDelegation)
+                "
                 class="validator-info__card-balance-row-value app-table__cell-txt"
               >
-                {{ $convertLokiToOdin(validator.minSelfDelegation) }}
+                {{
+                  $convertLokiToOdin(validator.commissions[0].minSelfDelegation)
+                }}
               </span>
             </div>
           </div>
@@ -103,26 +109,26 @@
           class="validator-info__delegetion-btn-wrapper"
         >
           <button
-            v-if="delegations?.balance"
-            @click="undelegate"
-            class="validator-info__delegetion-btn app-btn app-btn--outline-red app-btn--very-small"
+            v-if="delegationsBalance"
             type="button"
+            class="validator-info__delegetion-btn app-btn app-btn--outline-red app-btn--very-small"
+            @click="selectedBtn('Undelegate')"
           >
             Undelegate
           </button>
           <button
-            v-if="delegations?.balance && validator.status === 3"
-            @click="redelegate"
+            v-if="delegationsBalance && validator.statuses[0].status === 3"
             type="button"
             class="validator-info__delegetion-btn app-btn app-btn--outlined app-btn--very-small"
+            @click="selectedBtn('Regelate')"
           >
             Redelegate
           </button>
           <button
-            v-if="validator.status === 3"
-            @click="delegate"
+            v-if="validator.statuses[0].status === 3"
             type="button"
             class="validator-info__delegetion-btn app-btn app-btn--very-small"
+            @click="selectedBtn('Delegate')"
           >
             Delegate
           </button>
@@ -135,12 +141,7 @@
             >Delegator shares</span
           >
           <span class="validator-info__description-item-value">
-            {{
-              $getPercentOutOfNumber(
-                validator.delegatorShares,
-                validator.tokens
-              )
-            }}
+            {{ delegetionSharesPercent }}%
           </span>
         </div>
         <div class="validator-info__description-item">
@@ -148,18 +149,16 @@
             {{ isMobile() ? 'Proposed blocks' : 'Amount of proposed blocks' }}
           </span>
           <span
-            :title="proposedBlocksCount"
+            :title="validator.blocksAggregate.aggregate.count"
             class="validator-info__description-item-value"
           >
-            {{ proposedBlocksCount }}
+            {{ validator.blocksAggregate.aggregate.count }}
           </span>
         </div>
         <div class="validator-info__description-item">
           <span class="validator-info__description-item-title">Max rate</span>
           <span class="validator-info__description-item-value">
-            {{
-              $getPrecisePercents(validator.commission.commissionRates.maxRate)
-            }}
+            {{ $trimZeros(validator.info.maxRate * 100, 2) }}%
           </span>
         </div>
         <div class="validator-info__description-item">
@@ -167,11 +166,7 @@
             >Max change rate</span
           >
           <span class="validator-info__description-item-value">
-            {{
-              $getPrecisePercents(
-                validator.commission.commissionRates.maxChangeRate
-              )
-            }}
+            {{ $trimZeros(validator.info.maxChangeRate * 100, 2) }}%
           </span>
         </div>
       </div>
@@ -179,119 +174,49 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType, ref, onMounted } from 'vue'
-import { ValidatorDecoded } from '@/helpers/validatorHelpers'
-import { callers } from '@/api/callers'
+<script setup lang="ts">
+import { computed, ref } from 'vue'
 import { wallet } from '@/api/wallet'
-import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
-import DelegateFormModal from '@/components/modals/DelegateFormModal.vue'
-import UndelegateFormModal from '@/components/modals/UndelegateFormModal.vue'
-import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
-import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { isMobile } from '@/helpers/helpers'
+import { ValidatorInfoModify } from '@/helpers/validatorHelpers'
 
-export default defineComponent({
-  props: {
-    validator: { type: Object as PropType<ValidatorDecoded>, required: true },
-  },
-  setup(props) {
-    const delegationsBalance = ref('0')
-    const proposedBlocksCount = ref(0)
-    const delegations = ref<DelegationResponse>({})
+enum EVENTS {
+  selectedBtn = 'selected-btn',
+}
 
-    const accountAddress = wallet.isEmpty ? '' : wallet.account.address
+const props = defineProps<{
+  validator: ValidatorInfoModify
+  delegation: DelegationResponse
+}>()
 
-    const getDelegations = async () => {
-      if (!accountAddress) {
-        return
-      }
-      try {
-        const response = await callers.getDelegations(accountAddress)
-        for (const delegation of response.delegationResponses) {
-          if (
-            delegation.delegation?.validatorAddress ===
-            props.validator.operatorAddress
-          ) {
-            delegationsBalance.value = String(delegation.balance?.amount)
-            delegations.value = delegation
-          }
-        }
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-    }
-    const getProposedBlocks = async () => {
-      const response = await callers
-        .getProposedBlocks(props.validator.operatorAddress, 0, 1)
-        .then((req) => req.json())
-      proposedBlocksCount.value = response?.total_count || 0
-    }
+const emit = defineEmits<{
+  (
+    e: EVENTS.selectedBtn,
+    payload: { typeBtn: string; validator: ValidatorInfoModify },
+  ): void
+}>()
 
-    const delegate = async () => {
-      await showDialogHandler(
-        DelegateFormModal,
-        {
-          onSubmit: async (d) => {
-            d.kill()
-            await getDelegations()
-          },
-        },
-        {
-          validator: props.validator,
-          delegation: delegations.value,
-        }
-      )
-    }
+const accountAddress = ref(wallet.isEmpty ? '' : wallet.account.address)
 
-    const redelegate = async () => {
-      await showDialogHandler(
-        RedelegateFormModal,
-        {
-          onSubmit: async (d) => {
-            d.kill()
-            await getDelegations()
-          },
-        },
-        {
-          validator: props.validator,
-          delegation: delegations.value,
-        }
-      )
-    }
-
-    const undelegate = async () => {
-      await showDialogHandler(
-        UndelegateFormModal,
-        {
-          onSubmit: async (d) => {
-            d.kill()
-            await getDelegations()
-          },
-        },
-        {
-          validator: props.validator,
-          delegation: delegations.value,
-        }
-      )
-    }
-    onMounted(async () => {
-      await getDelegations()
-      await getProposedBlocks()
-    })
-    return {
-      delegationsBalance,
-      delegate,
-      redelegate,
-      undelegate,
-      delegations,
-      proposedBlocksCount,
-      isMobile,
-      accountAddress,
-    }
-  },
+const delegationsBalance = computed(() => {
+  if (props.delegation?.balance) {
+    return Number(props.delegation.balance?.amount)
+  } else return 0
 })
+
+const delegetionSharesPercent = computed(() => {
+  if (Number(props.validator.info.delegatedAmount) !== 0) {
+    return (
+      (Number(props.validator.info.delegatorShares) * 100) /
+      Number(props.validator.info.delegatedAmount)
+    )
+  } else return 0
+})
+
+const selectedBtn = (typeBtn: string) => {
+  emit(EVENTS.selectedBtn, { typeBtn, validator: props.validator })
+}
 </script>
 
 <style lang="scss" scoped>

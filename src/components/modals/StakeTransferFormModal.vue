@@ -26,27 +26,19 @@
                   <VuePickerOption
                     v-for="(validator, key) in delegatedValidators"
                     :key="key"
-                    :value="validator?.validatorInfo.operatorAddress"
+                    :value="validator?.info.operatorAddress"
                     :isDisabled="isHaveSameValueInReceiver(validator)"
                   >
                     <div class="stake-transfer-form-modal__option frame">
                       <div class="stake-transfer-form-modal__option-info">
                         <label
                           class="stake-transfer-form-modal__option-moniker"
-                          :title="
-                            validator.validatorDescriptions[0]?.moniker || '-'
-                          "
+                          :title="validator.descriptions[0]?.moniker || '-'"
                         >
-                          {{
-                            validator.validatorDescriptions[0]?.moniker || '-'
-                          }}
+                          {{ validator.descriptions[0]?.moniker || '-' }}
                         </label>
                         <label class="stake-transfer-form-modal__option-adress">
-                          {{
-                            $cropAddress(
-                              validator?.validatorInfo.operatorAddress
-                            )
-                          }}
+                          {{ $cropAddress(validator?.info.operatorAddress) }}
                         </label>
                       </div>
                       <p
@@ -100,27 +92,19 @@
                   <VuePickerOption
                     v-for="(validator, key) in filtredValidators"
                     :key="key"
-                    :value="validator?.validatorInfo.operatorAddress"
+                    :value="validator?.info.operatorAddress"
                     :isDisabled="isHaveSameValueInSender(validator)"
                   >
                     <div class="stake-transfer-form-modal__option frame">
                       <div class="stake-transfer-form-modal__option-info">
                         <label
                           class="stake-transfer-form-modal__option-moniker"
-                          :title="
-                            validator.validatorDescriptions[0]?.moniker || '-'
-                          "
+                          :title="validator.descriptions[0]?.moniker || '-'"
                         >
-                          {{
-                            validator.validatorDescriptions[0]?.moniker || '-'
-                          }}
+                          {{ validator.descriptions[0]?.moniker || '-' }}
                         </label>
                         <label class="stake-transfer-form-modal__option-adress">
-                          {{
-                            $cropAddress(
-                              validator?.validatorInfo.operatorAddress
-                            )
-                          }}
+                          {{ $cropAddress(validator?.info.operatorAddress) }}
                         </label>
                       </div>
                       <p
@@ -319,34 +303,26 @@ const StakeTransferFormModal = defineComponent({
         return {
           ...allValidators.value.find(
             (validator: ValidatorInfoModify) =>
-              validator?.validatorInfo.operatorAddress === validatorAddress
+              validator?.info.operatorAddress === validatorAddress
           ),
           delegation: props.delegation[validatorAddress],
         }
       }
     )
-    form.sender.val(delegatedValidators.value[0].validatorInfo.operatorAddress)
+    form.sender.val(delegatedValidators.value[0].info.operatorAddress)
     const filtredValidators = computed(() =>
       allValidators.value.map((validator: ValidatorInfoModify) => {
         return {
           ...validator,
-          delegation:
-            props.delegation[validator?.validatorInfo.operatorAddress] || {},
+          delegation: props.delegation[validator?.info.operatorAddress] || {},
         }
       })
     )
 
-    if (
-      allValidators.value[0]?.validatorInfo.operatorAddress ===
-      form.sender.val()
-    ) {
-      form.receiver.val(
-        filtredValidators.value[1]?.validatorInfo.operatorAddress
-      )
+    if (allValidators.value[0]?.info.operatorAddress === form.sender.val()) {
+      form.receiver.val(filtredValidators.value[1]?.info.operatorAddress)
     } else {
-      form.receiver.val(
-        filtredValidators.value[0]?.validatorInfo.operatorAddress
-      )
+      form.receiver.val(filtredValidators.value[0]?.info.operatorAddress)
     }
     form.amount.val(String(maxAmount.value))
 
@@ -357,7 +333,7 @@ const StakeTransferFormModal = defineComponent({
         } else {
           const findValidator = filtredValidators.value.find(
             (item: ValidatorInfoModify) =>
-              item?.validatorInfo.operatorAddress === form.receiver.val()
+              item?.info.operatorAddress === form.receiver.val()
           )
           if (!findValidator) {
             form.receiver.err('Validator not found')
@@ -393,21 +369,18 @@ const StakeTransferFormModal = defineComponent({
       }
     )
     const isHaveSameValueInReceiver = (validator: ValidatorInfoModify) => {
-      return validator.validatorInfo.operatorAddress === form.receiver.val()
+      return validator.info.operatorAddress === form.receiver.val()
     }
     const isHaveSameValueInSender = (validator: ValidatorInfoModify) => {
-      return validator.validatorInfo.operatorAddress === form.sender.val()
+      return validator.info.operatorAddress === form.sender.val()
     }
     const changeField = async () => {
       allValidators.value = props.validators
       isShowToAdressOption.value = !isShowToAdressOption.value
-      if (
-        allValidators.value[0]?.validatorInfo.operatorAddress ===
-        form.sender.val()
-      ) {
-        form.receiver.val(allValidators.value[1]?.validatorInfo.operatorAddress)
+      if (allValidators.value[0]?.info.operatorAddress === form.sender.val()) {
+        form.receiver.val(allValidators.value[1]?.info.operatorAddress)
       } else {
-        form.receiver.val(allValidators.value[0]?.validatorInfo.operatorAddress)
+        form.receiver.val(allValidators.value[0]?.info.operatorAddress)
       }
     }
     const onSubmit = dialogs.getHandler('onSubmit')

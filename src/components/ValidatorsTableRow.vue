@@ -3,8 +3,8 @@
     class="validators-table-row app-table__row"
     :class="{
       'validators-table-row--top':
-        validator?.validatorStatuses[0]?.status === VALIDATOR_STATUS.active &&
-        delegations[validator.validatorInfo.operatorAddress],
+        validator?.statuses[0]?.status === VALIDATOR_STATUS.active &&
+        delegations[validator.info.operatorAddress],
     }"
   >
     <div class="app-table__cell">
@@ -15,36 +15,30 @@
       <span class="app-table__title">Validator</span>
       <TitledLink
         class="app-table__cell-txt app-table__link"
-        :text="validator?.validatorDescriptions[0]?.moniker"
-        :to="`/validators/${validator?.validatorInfo.operatorAddress}`"
+        :text="validator?.descriptions[0]?.moniker"
+        :to="`/validators/${validator?.info.operatorAddress}`"
       />
     </div>
     <div class="app-table__cell app-table__cell-txt">
       <span class="app-table__title">Delegated</span>
       <span
         :title="
-          $convertLokiToOdin(
-            $trimZeros(validator.validatorInfo.delegatorShares),
-            {
-              onlyNumber: true,
-            }
-          )
+          $convertLokiToOdin($trimZeros(validator.info.delegatorShares), {
+            onlyNumber: true,
+          })
         "
       >
         {{
-          $convertLokiToOdin(
-            $trimZeros(validator.validatorInfo.delegatorShares),
-            { withDenom: true }
-          )
+          $convertLokiToOdin($trimZeros(validator.info.delegatorShares), {
+            withDenom: true,
+          })
         }}
       </span>
     </div>
     <div class="app-table__cell validators-table-row__cell--margin-left">
       <span class="app-table__title">Commission</span>
       <span>
-        {{
-          $trimZeros(validator?.validatorCommissions[0]?.commission * 100, 2)
-        }}%
+        {{ $trimZeros(validator?.commissions[0]?.commission * 100, 2) }}%
       </span>
     </div>
     <div v-if="tabStatus !== inactiveValidatorsTitle" class="app-table__cell">
@@ -68,13 +62,11 @@
     <div v-if="hasActionButtons" class="app-table__cell">
       <div class="app-table__activities validators-table-row__activities">
         <div
-          v-if="
-            validator?.validatorStatuses[0]?.status === VALIDATOR_STATUS.active
-          "
+          v-if="validator?.statuses[0]?.status === VALIDATOR_STATUS.active"
           class="app-table__activities-item validators-table-row__activities-item"
         >
           <button
-            v-if="delegations[validator.validatorInfo.operatorAddress]"
+            v-if="delegations[validator.info.operatorAddress]"
             class="app-btn app-btn--outlined app-btn--very-small w-min108"
             type="button"
             @click="selectedBtn('Regelate')"
@@ -90,7 +82,7 @@
           </button>
         </div>
         <div
-          v-if="delegations[validator.validatorInfo.operatorAddress]"
+          v-if="delegations[validator.info.operatorAddress]"
           class="app-table__activities-item validators-table-row__activities-item"
         >
           <button
@@ -146,10 +138,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const validatorStatus = () => {
-      if (
-        props.validator?.validatorStatuses[0]?.status ===
-        VALIDATOR_STATUS.active
-      ) {
+      if (props.validator?.statuses[0]?.status === VALIDATOR_STATUS.active) {
         return props.validator?.isActive ? 'success' : 'error'
       } else {
         return 'inactive'

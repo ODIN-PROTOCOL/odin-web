@@ -19,11 +19,9 @@
             <label class="undelegate-form-modal__field-lbl">From</label>
             <CopyText
               class="undelegate-form-modal__copy-text"
-              :text="validator.validatorInfo.operatorAddress"
-              :title="validator.validatorInfo.operatorAddress"
-              :display-text="
-                $cropAddress(validator.validatorInfo.operatorAddress)
-              "
+              :text="validator.info.operatorAddress"
+              :title="validator.info.operatorAddress"
+              :display-text="$cropAddress(validator.info.operatorAddress)"
             />
           </div>
           <div class="undelegate-form-modal__field-wrapper">
@@ -35,13 +33,13 @@
                 class="undelegate-form-modal__field-balance-value"
                 :title="
                   $convertLokiToOdin(
-                    validator.validatorCommissions[0]?.minSelfDelegation
+                    validator.commissions[0]?.minSelfDelegation
                   )
                 "
               >
                 {{
                   $convertLokiToOdin(
-                    validator.validatorCommissions[0]?.minSelfDelegation
+                    validator.commissions[0]?.minSelfDelegation
                   )
                 }}
               </p>
@@ -170,7 +168,7 @@ const UndelegateFormDialog = defineComponent({
       try {
         await callers.validatorUndelegate({
           delegatorAddress: wallet.account.address,
-          validatorAddress: props.validator.validatorInfo.operatorAddress,
+          validatorAddress: props.validator.info.operatorAddress,
           amount: coin(convertOdinToLoki(form.amount.val()), COINS_LIST.LOKI),
         })
         await useBalances().load()

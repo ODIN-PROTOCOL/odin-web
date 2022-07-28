@@ -164,7 +164,7 @@ const DelegateFormDialog = defineComponent({
       try {
         await callers.validatorDelegate({
           delegatorAddress: wallet.account.address,
-          validatorAddress: props.validator.validatorInfo.operatorAddress,
+          validatorAddress: props.validator.info.operatorAddress,
           amount: coin(convertOdinToLoki(form.amount.val()), COINS_LIST.LOKI),
         })
         await loadBalances()

@@ -130,136 +130,105 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, ref, watch } from 'vue'
+<script setup lang="ts">
+import { onMounted, ref, watch } from 'vue'
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
-import TitledLink from '@/components/TitledLink.vue'
-import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
-import DataSourceFormModal from '@/components/modals/DataSourceFormModal.vue'
-import SortLine from '@/components/SortLine.vue'
 import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
 import { convertLokiToOdin } from '@/helpers/converters'
 import { wallet } from '@/api/wallet'
+import TitledLink from '@/components/TitledLink.vue'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
+import DataSourceFormModal from '@/components/modals/DataSourceFormModal.vue'
+import SortLine from '@/components/SortLine.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 
-export default defineComponent({
-  components: {
-    TitledLink,
-    AppPagination,
-    SortLine,
-    SkeletonTable,
-  },
-  setup: function () {
-    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 50
-    const currentPage = ref(1)
-    const totalPages = ref(0)
-    const dataSourcesCount = ref(0)
-    const dataSources = ref([])
+const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+const ITEMS_PER_PAGE = 50
+const currentPage = ref(1)
+const totalPages = ref(0)
+const dataSourcesCount = ref(0)
+const dataSources = ref([])
 
-    const accountAddress = ref(wallet.isEmpty ? '' : wallet.account.address)
-    const sortingActivitiesValue = ref(ACTIVITIES_SORT.latest)
-    const sortingOwnersValue = ref(OWNERS_SORT.all)
-    const dataSourceName = ref('')
-    const headerTitles = [
-      { title: 'ID' },
-      { title: 'Data Source' },
-      { title: 'Description' },
-      { title: 'Price' },
-      { title: 'Requests' },
-      { title: 'Timestamp' },
-    ]
-    const loadDataSources = async () => {
-      lockLoading()
-      try {
-        dataSources.value = []
-        const { data, total_count } = await callers
-          .getSortedDataSources(
-            currentPage.value - 1,
-            ITEMS_PER_PAGE,
-            sortingActivitiesValue.value,
-            sortingOwnersValue.value,
-            dataSourceName.value
-          )
-          .then((response) => response.json())
-        dataSources.value = await Promise.all(
-          data.map(async (item: { attributes: { id: number } }) => {
-            const resp = await callers.getDataSourceRequestCount(
-              item.attributes.id
-            )
-            return { ...item.attributes, requestCount: resp.data.total_count }
-          })
-        )
-        dataSourcesCount.value = total_count
-        totalPages.value = Math.ceil(dataSourcesCount.value / ITEMS_PER_PAGE)
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
-    }
-    const createDataSource = async () => {
-      await showDialogHandler(DataSourceFormModal, {
-        onSubmit: async (d) => {
-          d.kill()
-          await loadDataSources()
-        },
-      })
-    }
-    const editDataSource = async (dataSource: unknown) => {
-      await showDialogHandler(
-        DataSourceFormModal,
-        {
-          onSubmit: async (d) => {
-            d.kill()
-            await loadDataSources()
-          },
-        },
-        { dataSource }
+const accountAddress = ref(wallet.isEmpty ? '' : wallet.account.address)
+const sortingActivitiesValue = ref(ACTIVITIES_SORT.latest)
+const sortingOwnersValue = ref(OWNERS_SORT.all)
+const dataSourceName = ref('')
+const headerTitles = [
+  { title: 'ID' },
+  { title: 'Data Source' },
+  { title: 'Description' },
+  { title: 'Price' },
+  { title: 'Requests' },
+  { title: 'Timestamp' },
+]
+
+const loadDataSources = async () => {
+  lockLoading()
+  try {
+    dataSources.value = []
+    const { data, total_count } = await callers
+      .getSortedDataSources(
+        currentPage.value - 1,
+        ITEMS_PER_PAGE,
+        sortingActivitiesValue.value,
+        sortingOwnersValue.value,
+        dataSourceName.value,
       )
-    }
-    const paginationHandler = (num: number) => {
-      currentPage.value = num
-      loadDataSources()
-    }
-
-    watch(
-      [
-        sortingActivitiesValue,
-        sortingOwnersValue,
-        dataSourceName,
-        accountAddress,
-      ],
-      async () => {
-        currentPage.value = 1
-        await loadDataSources()
-      }
+      .then((response) => response.json())
+    dataSources.value = await Promise.all(
+      data.map(async (item: { attributes: { id: number } }) => {
+        const resp = await callers.getDataSourceRequestCount(item.attributes.id)
+        return { ...item.attributes, requestCount: resp.data.total_count }
+      }),
     )
+    dataSourcesCount.value = total_count
+    totalPages.value = Math.ceil(dataSourcesCount.value / ITEMS_PER_PAGE)
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
 
-    onMounted(async () => {
+const createDataSource = async () => {
+  await showDialogHandler(DataSourceFormModal, {
+    onSubmit: async (d) => {
+      d.kill()
       await loadDataSources()
-    })
+    },
+  })
+}
 
-    return {
-      isLoading,
-      ITEMS_PER_PAGE,
-      currentPage,
-      totalPages,
-      paginationHandler,
-      sortingActivitiesValue,
-      sortingOwnersValue,
-      accountAddress,
-      dataSourcesCount,
-      dataSources,
-      createDataSource,
-      editDataSource,
-      dataSourceName,
-      convertLokiToOdin,
-      headerTitles,
-    }
+const editDataSource = async (dataSource: unknown) => {
+  await showDialogHandler(
+    DataSourceFormModal,
+    {
+      onSubmit: async (d) => {
+        d.kill()
+        await loadDataSources()
+      },
+    },
+    { dataSource },
+  )
+}
+
+const paginationHandler = (num: number) => {
+  currentPage.value = num
+  loadDataSources()
+}
+
+watch(
+  [sortingActivitiesValue, sortingOwnersValue, dataSourceName, accountAddress],
+  async () => {
+    currentPage.value = 1
+    await loadDataSources()
   },
+)
+
+onMounted(async () => {
+  await loadDataSources()
 })
 </script>
 
