@@ -97,11 +97,11 @@ onMounted(() => {
 const isOpen = ref(false)
 const burgerMenuHandler = (event: Event | MouseEvent) => {
   event.preventDefault()
-  isOpen.value = isOpen.value !== true
+  isOpen.value = !isOpen.value
 }
 
 const closeBurger = () => {
-  if (isOpen.value === true) isOpen.value = false
+  isOpen.value = false
 }
 
 const route = useRoute()

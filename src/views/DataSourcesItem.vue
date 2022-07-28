@@ -72,8 +72,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, onMounted, computed } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted, computed } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
@@ -89,74 +89,54 @@ import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import DataSourceFormModal from '@/components/modals/DataSourceFormModal.vue'
 import { wallet } from '@/api/wallet'
 
-export default defineComponent({
-  components: {
-    BackButton,
-    AppTabs,
-    AppTab,
-    CodeTable,
-    RequestsDataSourceTable,
-  },
-  setup: function () {
-    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const route: RouteLocationNormalizedLoaded = useRoute()
-    const dataSourceData = ref()
-    const dataSourceRequests = ref({})
-    const dataSourceCode = ref('')
-    const isDataSourceOwner = computed(() => {
-      return (
-        !wallet.isEmpty &&
-        wallet.account.address === dataSourceData.value?.owner
-      )
-    })
-    const getDataSource = async () => {
-      lockLoading()
-      try {
-        const response = await callers.getDataSource(String(route.params.id))
-        dataSourceData.value = response.dataSource
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
-    }
-    const getDataSourceCode = async () => {
-      try {
-        dataSourceCode.value = await callers
-          .getDataSourceCode(String(route.params.id))
-          .then((response) => response.json())
-          .then((data) => data?.executable)
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-    }
-    const editDataSource = async (dataSource: unknown) => {
-      await showDialogHandler(
-        DataSourceFormModal,
-        {
-          onSubmit: async (d) => {
-            d.kill()
-            await getDataSource()
-          },
-        },
-        { dataSource }
-      )
-    }
-    onMounted(async () => {
-      await getDataSource()
-      await getDataSourceCode()
-    })
+const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+const route: RouteLocationNormalizedLoaded = useRoute()
+const dataSourceData = ref()
+const dataSourceCode = ref('')
+const isDataSourceOwner = computed(() => {
+  return (
+    !wallet.isEmpty && wallet.account.address === dataSourceData.value?.owner
+  )
+})
 
-    return {
-      API_CONFIG,
-      isLoading,
-      dataSourceData,
-      dataSourceCode,
-      dataSourceRequests,
-      getDataSourceCode,
-      editDataSource,
-      isDataSourceOwner,
-    }
-  },
+const getDataSource = async () => {
+  lockLoading()
+  try {
+    const response = await callers.getDataSource(String(route.params.id))
+    dataSourceData.value = response.dataSource
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
+
+const getDataSourceCode = async () => {
+  try {
+    dataSourceCode.value = await callers
+      .getDataSourceCode(String(route.params.id))
+      .then((response) => response.json())
+      .then((data) => data?.executable)
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+}
+
+const editDataSource = async (dataSource: unknown) => {
+  await showDialogHandler(
+    DataSourceFormModal,
+    {
+      onSubmit: async (d) => {
+        await getDataSource()
+        d.kill()
+      },
+    },
+    { dataSource },
+  )
+}
+
+onMounted(async () => {
+  await getDataSource()
+  await getDataSourceCode()
 })
 </script>
 

@@ -172,7 +172,7 @@ const getDelegations = async () => {
   }
   lockLoading()
   try {
-    const response = await callers.getDelegationsV(
+    const response = await callers.getDelegation(
       wallet.account.address,
       operatorAddress.value,
     )

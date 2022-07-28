@@ -187,7 +187,7 @@ const makeCallers = () => {
       MsgUndelegate,
     ),
     getDelegations: querier((qc) => qc.staking.delegatorDelegations),
-    getDelegationsV: querier((qc) => qc.staking.delegation),
+    getDelegation: querier((qc) => qc.staking.delegation),
     withdrawCoinsToAcc: broadcaster<MsgWithdrawCoinsToAccFromTreasury>(
       '/mint.MsgWithdrawCoinsToAccFromTreasury',
       MsgWithdrawCoinsToAccFromTreasury,

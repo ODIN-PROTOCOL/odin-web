@@ -195,8 +195,8 @@ const loadDataSources = async () => {
 const createDataSource = async () => {
   await showDialogHandler(DataSourceFormModal, {
     onSubmit: async (d) => {
-      d.kill()
       await loadDataSources()
+      d.kill()
     },
   })
 }
@@ -206,8 +206,8 @@ const editDataSource = async (dataSource: unknown) => {
     DataSourceFormModal,
     {
       onSubmit: async (d) => {
-        d.kill()
         await loadDataSources()
+        d.kill()
       },
     },
     { dataSource },
