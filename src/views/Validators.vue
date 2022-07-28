@@ -75,6 +75,11 @@
             class="validators__filter-search-input"
             @keydown.enter="filterValidators()"
           />
+          <template v-if="searchValue">
+            <button @click="clearText()" class="validators-search__clear">
+              <CancelIcon className="validators__filter-search-cancel-button" />
+            </button>
+          </template>
         </div>
         <button
           class="validators__filter-search-button"
@@ -195,6 +200,7 @@ import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
 import { isActiveValidator } from '@/helpers/validatorHelpers'
 import InputField from '@/components/fields/InputField.vue'
 import SearchIcon from '@/components/icons/SearchIcon.vue'
+import CancelIcon from '@/components/icons/CancelIcon.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 import ValidatorsTableRowMobile from '@/components/ValidatorsTableRowMobile.vue'
 import ValidatorsTableRow from '@/components/ValidatorsTableRow.vue'
@@ -228,6 +234,7 @@ const myValidatorsTitle = computed(() =>
     ? `My delegations (${myDelegationsValitors.value?.length})`
     : 'My delegations',
 )
+
 
 const myDelegationsValitors = computed(() =>
   delegatedAdress.value.map((validatorAddress: string) => {
@@ -356,6 +363,7 @@ const getValidators = async () => {
             (req) => req,
           ),
         }
+
       }),
     )) as unknown as ValidatorsInfo[]
     inactiveValidators.value = (await Promise.all(
@@ -423,6 +431,28 @@ const selectTab = async (title: string) => {
       validators.value = [...inactiveValidators.value]
     } else if (tabStatus.value === myValidatorsTitle.value) {
       validators.value = [...myDelegationsValitors.value]
+
+      )
+    }
+
+    const clearText = (): void => {
+      searchValue.value = ''
+    }
+
+    const openModal = (event: {
+      typeBtn: string
+      validator: ValidatorDecoded
+    }) => {
+      if (event.typeBtn === 'Delegate') {
+        delegate(event.validator)
+      } else if (event.typeBtn === 'Regelate') {
+        redelegate(event.validator)
+      } else if (event.typeBtn === 'Claim rewards') {
+        withdrawRewards(event.validator)
+      } else if (event.typeBtn === 'Undelegate') {
+        undelegate(event.validator)
+      }
+
     }
     filterValidators(1)
   }
@@ -444,6 +474,7 @@ const claimAllRewards = async () => {
     onSubmit: async (d) => {
       d.kill()
       await loadData()
+
     },
   })
 }
@@ -592,7 +623,7 @@ onUnmounted(async () => {
   color: var(--clr__input-border);
   svg {
     transition: all 0.5s ease;
-    fill: var(--clr__input-border);
+    fill: var(--clr__text-muted);
   }
   &:hover,
   &:active,
@@ -607,9 +638,9 @@ onUnmounted(async () => {
   &:disabled {
     border-color: var(--clr__input-border);
     color: var(--clr__input-border);
-    svg {
-      fill: var(--clr__input-border);
-    }
+  }
+  svg.validators__filter-search-cancel-button {
+    fill: var(--clr__text-muted);
   }
 }
 .validators__filter-search-input-wrapper {
@@ -675,6 +706,19 @@ onUnmounted(async () => {
   &.selected {
     font-weight: 600;
     border-bottom: 0.2rem solid var(--clr__action);
+  }
+}
+.validators-search__clear {
+  overflow: visible;
+  position: absolute;
+  right: 0;
+  top: 1.3rem;
+}
+
+@include respond-to(medium) {
+  .validators__table-head,
+  .validators__table-row {
+    gap: 1.6rem;
   }
 }
 @include respond-to(tablet) {
