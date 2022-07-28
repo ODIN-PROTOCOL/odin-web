@@ -21,7 +21,7 @@ const LOKI_MULTIPLIER = 1000000
 export function convertLokiToOdin(
   amount: string | BigNumber | undefined,
   options?: ConverterOptions,
-  denom = ODIN_DENOM
+  denom = ODIN_DENOM,
 ): string | BigNumber {
   if (!amount) return '-'
   if (Number.isNaN(Number(amount))) return '0'

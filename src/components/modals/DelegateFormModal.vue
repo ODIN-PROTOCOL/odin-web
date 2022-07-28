@@ -147,7 +147,7 @@ const DelegateFormDialog = defineComponent({
         validators.sixDecimalNumber,
         ...validators.num(
           0.000001,
-          Number(convertLokiToOdin(lokiBalance.amount))
+          Number(convertLokiToOdin(lokiBalance.amount)),
         ),
         validators.maxCharacters(32),
       ],
@@ -171,7 +171,7 @@ const DelegateFormDialog = defineComponent({
         onSubmit()
         handleNotificationInfo(
           'Successfully delegated',
-          TYPE_NOTIFICATION.success
+          TYPE_NOTIFICATION.success,
         )
       } catch (error) {
         handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
@@ -197,7 +197,7 @@ export function showDelegateFormDialog(
     onSubmit?: DialogHandler
     onClose?: DialogHandler
   },
-  props: { validator: ValidatorInfoModify; delegation?: DelegationResponse }
+  props: { validator: ValidatorInfoModify; delegation?: DelegationResponse },
 ): Promise<unknown | null> {
   return dialogs.show(DelegateFormDialog, callbacks, { props })
 }

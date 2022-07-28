@@ -53,12 +53,12 @@ export function formatCoin(coin: Coin, abbr?: boolean): string
 export function formatCoin(
   amount: NumLike,
   denom: string,
-  abbr?: boolean
+  abbr?: boolean,
 ): string
 export function formatCoin(
   in1: NumLike | Coin,
   in2?: string | boolean,
-  abbr?: boolean
+  abbr?: boolean,
 ): string {
   let amount: NumLike, denom: string
   if (in1 && typeof in1 === 'object' && 'amount' in in1) {
@@ -85,7 +85,7 @@ export function formatDate(
   format: string | DateFormatObject = {
     default: 'MMM d, yyyy, HH:mm',
     thisYear: 'HH:mm dd.MM.yy',
-  }
+  },
 ): string {
   try {
     if (Long.isLong(input)) input = input.toNumber() * 1000
@@ -100,7 +100,7 @@ export function formatDate(
 
 function _chooseFormat(
   input: Date | number,
-  format: string | DateFormatObject
+  format: string | DateFormatObject,
 ): string {
   if (typeof format === 'object') {
     if (format.thisDay && isToday(input)) {
@@ -130,7 +130,7 @@ function _tryInsertToday(input: Date | number, format: string): string {
 }
 
 export function formatDateDifference(
-  dateLeft: Long.Long | Date | number
+  dateLeft: Long.Long | Date | number,
 ): string {
   try {
     if (Long.isLong(dateLeft)) dateLeft = dateLeft.toNumber() * 1000
@@ -156,7 +156,7 @@ function _getDateDifference(dateLeft: Date | number): string {
 
 export function preciseFormatOdinCoin(amount: string): string {
   const res = bigMath.format(
-    bigMath.divide(bigMath.fromPrecise(amount), 1000000)
+    bigMath.divide(bigMath.fromPrecise(amount), 1000000),
   )
   return `${res} ODIN`
 }
@@ -173,10 +173,10 @@ export function preciseFormatCoin(amount: string, denom: string): string {
 
 export function getPercentOutOfNumber(
   number: string,
-  ofNumber: string
+  ofNumber: string,
 ): string {
   const percent = bigMath.fromPrecise(
-    bigMath.multiply(bigMath.divide(number, ofNumber), 100)
+    bigMath.multiply(bigMath.divide(number, ofNumber), 100),
   )
   return `${percent}%`
 }
@@ -187,7 +187,7 @@ export function capitalizeFirstLetter(value: string): string {
 
 export function trimLeadingZeros(
   data: string | number,
-  fractionDigits = 6
+  fractionDigits = 6,
 ): number {
   if (typeof data === 'string') {
     return Number(Number(data).toFixed(fractionDigits))

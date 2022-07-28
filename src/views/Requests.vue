@@ -131,7 +131,7 @@ export default defineComponent({
     const senderLink = computed(
       () => (item: { request: { client_id: string } }) => {
         return `${API_CONFIG.odinScan}/account/${item.request.client_id}`
-      }
+      },
     )
     const headerTitles = [
       { title: 'Request ID' },
@@ -145,7 +145,7 @@ export default defineComponent({
         requests.value = []
         const req = await callers.getRequests(
           ITEMS_PER_PAGE,
-          (currentPage.value - 1) * ITEMS_PER_PAGE
+          (currentPage.value - 1) * ITEMS_PER_PAGE,
         )
         requests.value = req.data.result.result.requests
         await getRequestsCount()
@@ -187,7 +187,7 @@ export default defineComponent({
             await getRequests()
           },
         },
-        { maxAskCount: maxAskCount.value }
+        { maxAskCount: maxAskCount.value },
       )
     }
 

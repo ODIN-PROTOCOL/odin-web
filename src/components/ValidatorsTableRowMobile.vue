@@ -36,14 +36,14 @@
             Number(validator.info.delegatorShares).toFixed(6),
             {
               onlyNumber: true,
-            }
+            },
           )
         "
       >
         {{
           $convertLokiToOdin(
             Number(validator.info.delegatorShares).toFixed(6),
-            { withDenom: true }
+            { withDenom: true },
           )
         }}
       </span>
@@ -172,7 +172,7 @@ export default defineComponent({
     }
     watch(
       [tabStatus, currentPage],
-      () => (isShowValidatorDetails.value = false)
+      () => (isShowValidatorDetails.value = false),
     )
     return {
       validatorStatus,

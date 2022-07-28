@@ -33,13 +33,13 @@
                 class="undelegate-form-modal__field-balance-value"
                 :title="
                   $convertLokiToOdin(
-                    validator.commissions[0]?.minSelfDelegation
+                    validator.commissions[0]?.minSelfDelegation,
                   )
                 "
               >
                 {{
                   $convertLokiToOdin(
-                    validator.commissions[0]?.minSelfDelegation
+                    validator.commissions[0]?.minSelfDelegation,
                   )
                 }}
               </p>
@@ -145,7 +145,7 @@ const UndelegateFormDialog = defineComponent({
   components: { ModalBase, CopyText, InfoIcon },
   setup(props) {
     const delegated = Number(
-      convertLokiToOdin(props.delegation.balance?.amount, { onlyNumber: true })
+      convertLokiToOdin(props.delegation.balance?.amount, { onlyNumber: true }),
     )
 
     const form = useForm({
@@ -175,7 +175,7 @@ const UndelegateFormDialog = defineComponent({
         onSubmit()
         handleNotificationInfo(
           'Successfully undelegated',
-          TYPE_NOTIFICATION.success
+          TYPE_NOTIFICATION.success,
         )
       } catch (error) {
         handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
@@ -199,7 +199,7 @@ export function showUndelegateFormDialog(
     onSubmit?: DialogHandler
     onClose?: DialogHandler
   },
-  props: { validator: ValidatorInfoModify; delegation: DelegationResponse }
+  props: { validator: ValidatorInfoModify; delegation: DelegationResponse },
 ): Promise<unknown | null> {
   return dialogs.show(UndelegateFormDialog, callbacks, { props })
 }

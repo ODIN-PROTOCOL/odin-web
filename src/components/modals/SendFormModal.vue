@@ -134,7 +134,7 @@ import { coin } from '@cosmjs/launchpad'
 import InfoIcon from '@/components/icons/InfoIcon.vue'
 
 export default defineComponent({
-  name: 'SendFormModal',
+  name: 'send-form-modal',
   components: { ModalBase, VuePicker, VuePickerOption, InfoIcon },
   props: {
     balance: { type: Array as PropType<Coin[]>, required: true },
@@ -178,7 +178,7 @@ export default defineComponent({
         validators.odinAddress,
         validators.exceptValue(
           wallet.account.address,
-          'It is not possible to send tokens to yourself'
+          'It is not possible to send tokens to yourself',
         ),
       ],
       amount: [
@@ -188,7 +188,7 @@ export default defineComponent({
         validators.sixDecimalNumber,
         ...validators.num(
           0.000001,
-          Number(convertLokiToOdin(selectedBalance.value.amount))
+          Number(convertLokiToOdin(selectedBalance.value.amount)),
         ),
         validators.maxCharacters(32),
       ],

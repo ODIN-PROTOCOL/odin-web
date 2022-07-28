@@ -93,14 +93,14 @@ export default defineComponent({
       return reward || defaultBalanceBlank
     })
     const isAvailableCoin = computed(
-      () => Number(availableCoinForRedelegate.value.amount) >= 0
+      () => Number(availableCoinForRedelegate.value.amount) >= 0,
     )
 
     const getRewards = async () => {
       try {
         const response = await callers.getDelegationDelegatorReward(
           wallet.account.address,
-          props.validator.info.operatorAddress
+          props.validator.info.operatorAddress,
         )
         rewards.value = deductFee(response.rewards)
       } catch (error) {
@@ -114,7 +114,7 @@ export default defineComponent({
           return {
             ...item,
             amount: Number(
-              big.subtract(big.fromPrecise(item.amount), fee.value)
+              big.subtract(big.fromPrecise(item.amount), fee.value),
             ).toFixed(),
           }
         }
@@ -135,7 +135,7 @@ export default defineComponent({
 
         let claimedAmount = parseLogsToGetRewardsAmount(
           'withdraw_rewards',
-          claimTx.rawLog
+          claimTx.rawLog,
         )
         // if the claim rewards transaction logs could not be parsed,
         // the number of coins with getRewards is used
@@ -149,7 +149,7 @@ export default defineComponent({
         onSubmit()
         handleNotificationInfo(
           'Successfully redelegated',
-          TYPE_NOTIFICATION.success
+          TYPE_NOTIFICATION.success,
         )
       } catch (error) {
         handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)

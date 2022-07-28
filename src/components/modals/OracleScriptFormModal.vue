@@ -199,7 +199,7 @@ export default defineComponent({
         onSubmit()
         handleNotificationInfo(
           'Oracle Script created',
-          TYPE_NOTIFICATION.success
+          TYPE_NOTIFICATION.success,
         )
       } catch (error) {
         handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)

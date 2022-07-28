@@ -71,7 +71,7 @@ const WithdrawFormDialog = defineComponent({
       try {
         const response = await callers.getDelegationDelegatorReward(
           wallet.account.address,
-          props.validator.info.operatorAddress
+          props.validator.info.operatorAddress,
         )
         rewards.value = response.rewards
         if (response.rewards.length) {
@@ -80,7 +80,7 @@ const WithdrawFormDialog = defineComponent({
             {
               withPrecise: true,
               onlyNumber: true,
-            }
+            },
           )
           odinRewardsValue.value = trimLeadingZeros(odinRewardsValue.value)
         } else {
@@ -103,7 +103,7 @@ const WithdrawFormDialog = defineComponent({
         onSubmit()
         handleNotificationInfo(
           'Successfully claimed',
-          TYPE_NOTIFICATION.success
+          TYPE_NOTIFICATION.success,
         )
       } catch (error) {
         handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)

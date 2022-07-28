@@ -235,7 +235,6 @@ const myValidatorsTitle = computed(() =>
     : 'My delegations',
 )
 
-
 const myDelegationsValitors = computed(() =>
   delegatedAdress.value.map((validatorAddress: string) => {
     return {
@@ -363,7 +362,6 @@ const getValidators = async () => {
             (req) => req,
           ),
         }
-
       }),
     )) as unknown as ValidatorsInfo[]
     inactiveValidators.value = (await Promise.all(
@@ -422,6 +420,7 @@ const filterValidators = (newPage = 1) => {
 const paginationHandler = (num: number) => {
   filterValidators(num)
 }
+
 const selectTab = async (title: string) => {
   if (title !== tabStatus.value) {
     tabStatus.value = title
@@ -431,28 +430,6 @@ const selectTab = async (title: string) => {
       validators.value = [...inactiveValidators.value]
     } else if (tabStatus.value === myValidatorsTitle.value) {
       validators.value = [...myDelegationsValitors.value]
-
-      )
-    }
-
-    const clearText = (): void => {
-      searchValue.value = ''
-    }
-
-    const openModal = (event: {
-      typeBtn: string
-      validator: ValidatorDecoded
-    }) => {
-      if (event.typeBtn === 'Delegate') {
-        delegate(event.validator)
-      } else if (event.typeBtn === 'Regelate') {
-        redelegate(event.validator)
-      } else if (event.typeBtn === 'Claim rewards') {
-        withdrawRewards(event.validator)
-      } else if (event.typeBtn === 'Undelegate') {
-        undelegate(event.validator)
-      }
-
     }
     filterValidators(1)
   }
@@ -474,7 +451,6 @@ const claimAllRewards = async () => {
     onSubmit: async (d) => {
       d.kill()
       await loadData()
-
     },
   })
 }
@@ -557,6 +533,9 @@ const stakeTransfer = async () => {
       delegation: delegations.value,
     },
   )
+}
+const clearText = (): void => {
+  searchValue.value = ''
 }
 const openModal = (event: { typeBtn: string; validator: ValidatorsInfo }) => {
   if (event.typeBtn === 'Delegate') {

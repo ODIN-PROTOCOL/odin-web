@@ -48,7 +48,7 @@
                             validator.delegation?.balance?.amount,
                             {
                               onlyNumber: true,
-                            }
+                            },
                           )
                         "
                       >
@@ -57,7 +57,7 @@
                             validator.delegation?.balance?.amount,
                             {
                               withDenom: true,
-                            }
+                            },
                           )
                         }}
                       </p>
@@ -115,7 +115,7 @@
                             validator.delegation?.balance?.amount,
                             {
                               onlyNumber: true,
-                            }
+                            },
                           )
                         "
                       >
@@ -124,7 +124,7 @@
                             validator.delegation?.balance?.amount,
                             {
                               withDenom: true,
-                            }
+                            },
                           )
                         }}
                       </p>
@@ -165,13 +165,13 @@
                       delegation[form.receiver]?.balance?.amount,
                       {
                         onlyNumber: true,
-                      }
+                      },
                     )
                   "
                 >
                   {{
                     $convertLokiToOdin(
-                      delegation[form.receiver]?.balance?.amount
+                      delegation[form.receiver]?.balance?.amount,
                     )
                   }}
                 </p>
@@ -269,9 +269,9 @@ const StakeTransferFormModal = defineComponent({
             props.delegation[form.sender.val()]?.balance?.amount,
             {
               onlyNumber: true,
-            }
-          )
-        ) || 0
+            },
+          ),
+        ) || 0,
     )
     const form = useForm({
       amount: [
@@ -303,11 +303,11 @@ const StakeTransferFormModal = defineComponent({
         return {
           ...allValidators.value.find(
             (validator: ValidatorInfoModify) =>
-              validator?.info.operatorAddress === validatorAddress
+              validator?.info.operatorAddress === validatorAddress,
           ),
           delegation: props.delegation[validatorAddress],
         }
-      }
+      },
     )
     form.sender.val(delegatedValidators.value[0].info.operatorAddress)
     const filtredValidators = computed(() =>
@@ -316,7 +316,7 @@ const StakeTransferFormModal = defineComponent({
           ...validator,
           delegation: props.delegation[validator?.info.operatorAddress] || {},
         }
-      })
+      }),
     )
 
     if (allValidators.value[0]?.info.operatorAddress === form.sender.val()) {
@@ -333,7 +333,7 @@ const StakeTransferFormModal = defineComponent({
         } else {
           const findValidator = filtredValidators.value.find(
             (item: ValidatorInfoModify) =>
-              item?.info.operatorAddress === form.receiver.val()
+              item?.info.operatorAddress === form.receiver.val(),
           )
           if (!findValidator) {
             form.receiver.err('Validator not found')
@@ -358,7 +358,7 @@ const StakeTransferFormModal = defineComponent({
         } catch (error) {
           form.receiver.err('Validator not found')
         }
-      }
+      },
     )
     watch(
       () => form.receiver.val(),
@@ -366,7 +366,7 @@ const StakeTransferFormModal = defineComponent({
         if (!form.receiver.errorIfDirty.value) {
           findReceiverValidator()
         }
-      }
+      },
     )
     const isHaveSameValueInReceiver = (validator: ValidatorInfoModify) => {
       return validator.info.operatorAddress === form.receiver.val()
@@ -397,7 +397,7 @@ const StakeTransferFormModal = defineComponent({
         onSubmit()
         handleNotificationInfo(
           'Successfully delegated',
-          TYPE_NOTIFICATION.success
+          TYPE_NOTIFICATION.success,
         )
       } catch (error) {
         handleNotificationInfo(error as Error, TYPE_NOTIFICATION.info)
@@ -425,7 +425,7 @@ export function showUndelegateFormDialog(
     onSubmit?: DialogHandler
     onClose?: DialogHandler
   },
-  props: { validators: ValidatorInfoModify; delegation: DelegationResponse }
+  props: { validators: ValidatorInfoModify; delegation: DelegationResponse },
 ): Promise<unknown | null> {
   return dialogs.show(StakeTransferFormModal, callbacks, { props })
 }

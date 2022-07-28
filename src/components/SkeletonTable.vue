@@ -49,7 +49,7 @@ export default defineComponent({
   },
   setup(props) {
     const skeletonLoaderArray = computed(() =>
-      Array(Number(props.tableSize)).fill(props.headerTitles)
+      Array(Number(props.tableSize)).fill(props.headerTitles),
     )
     return { skeletonLoaderArray }
   },
