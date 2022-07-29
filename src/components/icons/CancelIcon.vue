@@ -17,7 +17,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: 'CancelIcon',
+  name: 'cancel-icon',
   props: {
     className: { type: String },
     width: { type: Number, default: 14 },

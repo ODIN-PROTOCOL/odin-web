@@ -57,7 +57,6 @@ import {
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 import { API_CONFIG, COINS_LIST } from '@/api/api-config'
-import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { Coin, DecCoin } from 'cosmjs-types/cosmos/base/v1beta1/coin'
 import { dialogs } from '@/helpers/dialogs'
@@ -68,13 +67,17 @@ import { big } from '@/helpers/bigMath'
 import { coin } from '@cosmjs/amino'
 import { parseLogsToGetRewardsAmount } from '@/helpers/helpers'
 import ModalBase from '@/components/modals/ModalBase.vue'
+import { ValidatorInfoModify } from '@/helpers/validatorHelpers'
 
 const defaultBalanceBlank: Coin = { amount: '0', denom: COINS_LIST.LOKI }
 
 export default defineComponent({
   components: { ModalBase },
   props: {
-    validator: { type: Object as PropType<ValidatorDecoded>, required: true },
+    validator: {
+      type: Object as PropType<ValidatorInfoModify>,
+      required: true,
+    },
     delegation: { type: Object as PropType<DelegationResponse> },
   },
   setup(props) {
@@ -90,14 +93,14 @@ export default defineComponent({
       return reward || defaultBalanceBlank
     })
     const isAvailableCoin = computed(
-      () => Number(availableCoinForRedelegate.value.amount) >= 0
+      () => Number(availableCoinForRedelegate.value.amount) >= 0,
     )
 
     const getRewards = async () => {
       try {
         const response = await callers.getDelegationDelegatorReward(
           wallet.account.address,
-          props.validator.operatorAddress
+          props.validator.info.operatorAddress,
         )
         rewards.value = deductFee(response.rewards)
       } catch (error) {
@@ -111,7 +114,7 @@ export default defineComponent({
           return {
             ...item,
             amount: Number(
-              big.subtract(big.fromPrecise(item.amount), fee.value)
+              big.subtract(big.fromPrecise(item.amount), fee.value),
             ).toFixed(),
           }
         }
@@ -127,12 +130,12 @@ export default defineComponent({
         const amount = availableCoinForRedelegate.value.amount
         const claimTx = await callers.withdrawDelegatorRewards({
           delegatorAddress: wallet.account.address,
-          validatorAddress: props.validator.operatorAddress,
+          validatorAddress: props.validator.info.operatorAddress,
         })
 
         let claimedAmount = parseLogsToGetRewardsAmount(
           'withdraw_rewards',
-          claimTx.rawLog
+          claimTx.rawLog,
         )
         // if the claim rewards transaction logs could not be parsed,
         // the number of coins with getRewards is used
@@ -140,13 +143,13 @@ export default defineComponent({
 
         await callers.validatorDelegate({
           delegatorAddress: wallet.account.address,
-          validatorAddress: props.validator.operatorAddress,
+          validatorAddress: props.validator.info.operatorAddress,
           amount: coin(Number(claimedAmount), COINS_LIST.LOKI),
         })
         onSubmit()
         handleNotificationInfo(
           'Successfully redelegated',
-          TYPE_NOTIFICATION.success
+          TYPE_NOTIFICATION.success,
         )
       } catch (error) {
         handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)

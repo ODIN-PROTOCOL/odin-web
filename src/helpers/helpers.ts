@@ -26,7 +26,7 @@ export const copyValue = (text: string): void => {
 }
 
 export const prepareTransaction = async (
-  txs: readonly TxTelemetry[]
+  txs: readonly TxTelemetry[],
 ): Promise<Array<DecodedTxData>> => {
   let tempArr: Array<DecodedTxData> = []
   for (const tx of txs) {
@@ -35,8 +35,10 @@ export const prepareTransaction = async (
       sender,
       type,
       amount,
+      denom,
       time,
       fee,
+      feeDenom,
       memo,
       status,
       gasUsed,
@@ -51,8 +53,8 @@ export const prepareTransaction = async (
         time: time ? formatDate(Number(time), 'HH:mm dd.MM.yy') : '-',
         sender: sender ? sender : '',
         receiver: receiver ? receiver : '',
-        amount: convertLokiToOdin(amount),
-        fee: convertLokiToOdin(fee),
+        amount: convertLokiToOdin(String(amount), {}, denom),
+        fee: convertLokiToOdin(String(fee), {}, feeDenom),
         memo: memo ? memo : '-',
         status: Number(status) > -1 ? 'Success' : 'Failed',
         gasUsed: gasUsed ? gasUsed : '-',
@@ -67,7 +69,7 @@ const LOKI_STRING_LENGTH = 4
 
 export const parseLogsToGetRewardsAmount = (
   eventType: string,
-  logs: string | undefined
+  logs: string | undefined,
 ): string | null => {
   if (!logs) return null
   try {

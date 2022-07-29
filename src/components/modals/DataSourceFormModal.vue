@@ -224,7 +224,7 @@ export default defineComponent({
             executable: executableParsed,
             fee: coins(
               convertOdinToLoki(String(form.price.val())),
-              getDenom(form.assets.val())
+              getDenom(form.assets.val()),
             ),
             owner: wallet.account.address,
             sender: wallet.account.address,
@@ -236,7 +236,7 @@ export default defineComponent({
             executable: executableParsed,
             fee: coins(
               convertOdinToLoki(String(form.price.val())),
-              getDenom(form.assets.val())
+              getDenom(form.assets.val()),
             ),
             owner: wallet.account.address,
             sender: wallet.account.address,

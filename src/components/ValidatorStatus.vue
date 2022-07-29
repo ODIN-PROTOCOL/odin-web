@@ -23,7 +23,7 @@ import InactiveIcon from '@/components/icons/InactiveIcon.vue'
 import { VALIDATOR_STATUS_TYPE } from '@/helpers/helpers'
 
 export default defineComponent({
-  name: 'StatusIcon',
+  name: 'status-icon',
   props: {
     status: { type: String, required: true },
     width: { type: Number, default: 24 },
@@ -42,7 +42,7 @@ export default defineComponent({
     })
 
     const validatorStatusText = computed(() =>
-      props.status === VALIDATOR_STATUS_TYPE.inactive ? 'Inactive' : 'Oracle'
+      props.status === VALIDATOR_STATUS_TYPE.inactive ? 'Inactive' : 'Oracle',
     )
 
     return { component, validatorStatusText }
@@ -60,7 +60,6 @@ export default defineComponent({
   height: 2.8rem;
   padding: 0.4rem 1.2rem 0.4rem 0.8rem;
   gap: 0.4rem;
-  margin-right: 2rem;
   &--inactive {
     gap: 0.5rem;
     width: 8.7rem;

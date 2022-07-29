@@ -108,16 +108,16 @@ export default defineComponent({
     const addressLink = `${API_CONFIG.odinScan}/account/${wallet.account.address}`
     const textMessage = 'MY ODIN ACCOUNT:'
     const mailLink = encodeURI(
-      `mailto:?subject=${textMessage}&body=${addressLink}`
+      `mailto:?subject=${textMessage}&body=${addressLink}`,
     )
     const telegramLink = encodeURI(
-      `https://telegram.me/share/url?text=${textMessage}&url=${addressLink}`
+      `https://telegram.me/share/url?text=${textMessage}&url=${addressLink}`,
     )
     const whatsAppLink = encodeURI(
-      `https://api.whatsapp.com/send/?text=${textMessage}\n${addressLink}`
+      `https://api.whatsapp.com/send/?text=${textMessage}\n${addressLink}`,
     )
     const twitterLink = encodeURI(
-      `https://twitter.com/intent/tweet/?text=${textMessage}\n${addressLink}`
+      `https://twitter.com/intent/tweet/?text=${textMessage}\n${addressLink}`,
     )
     return {
       addressLink,

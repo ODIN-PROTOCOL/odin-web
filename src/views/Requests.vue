@@ -63,7 +63,6 @@
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Timestamp</span>
-              <div>{{}}</div>
               <span>{{
                 $fDate(new Date(item.result.request_time * 1000))
               }}</span>
@@ -132,11 +131,10 @@ export default defineComponent({
     const senderLink = computed(
       () => (item: { request: { client_id: string } }) => {
         return `${API_CONFIG.odinScan}/account/${item.request.client_id}`
-      }
+      },
     )
     const headerTitles = [
       { title: 'Request ID' },
-      { title: 'Sender' },
       { title: 'Oracle Script ID' },
       { title: 'Report Status' },
       { title: 'Timestamp' },
@@ -147,7 +145,7 @@ export default defineComponent({
         requests.value = []
         const req = await callers.getRequests(
           ITEMS_PER_PAGE,
-          (currentPage.value - 1) * ITEMS_PER_PAGE
+          (currentPage.value - 1) * ITEMS_PER_PAGE,
         )
         requests.value = req.data.result.result.requests
         await getRequestsCount()
@@ -189,7 +187,7 @@ export default defineComponent({
             await getRequests()
           },
         },
-        { maxAskCount: maxAskCount.value }
+        { maxAskCount: maxAskCount.value },
       )
     }
 

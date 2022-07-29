@@ -109,17 +109,20 @@ import { preventIf } from '@/helpers/functions'
 import { convertLokiToOdin, convertOdinToLoki } from '@/helpers/converters'
 import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
-import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { useBalances } from '@/composables/useBalances'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { coin, Coin } from '@cosmjs/amino'
 import { big as bigMath } from '@/helpers/bigMath'
+import { ValidatorInfoModify } from '@/helpers/validatorHelpers'
 
 const defaultBalanceBlank: Coin = { amount: '0', denom: COINS_LIST.LOKI }
 
 const DelegateFormDialog = defineComponent({
   props: {
-    validator: { type: Object as PropType<ValidatorDecoded>, required: true },
+    validator: {
+      type: Object as PropType<ValidatorInfoModify>,
+      required: true,
+    },
     delegation: { type: Object as PropType<DelegationResponse> },
   },
   components: { ModalBase },
@@ -144,7 +147,7 @@ const DelegateFormDialog = defineComponent({
         validators.sixDecimalNumber,
         ...validators.num(
           0.000001,
-          Number(convertLokiToOdin(lokiBalance.amount))
+          Number(convertLokiToOdin(lokiBalance.amount)),
         ),
         validators.maxCharacters(32),
       ],
@@ -161,14 +164,14 @@ const DelegateFormDialog = defineComponent({
       try {
         await callers.validatorDelegate({
           delegatorAddress: wallet.account.address,
-          validatorAddress: props.validator.operatorAddress,
+          validatorAddress: props.validator.info.operatorAddress,
           amount: coin(convertOdinToLoki(form.amount.val()), COINS_LIST.LOKI),
         })
         await loadBalances()
         onSubmit()
         handleNotificationInfo(
           'Successfully delegated',
-          TYPE_NOTIFICATION.success
+          TYPE_NOTIFICATION.success,
         )
       } catch (error) {
         handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
@@ -194,7 +197,7 @@ export function showDelegateFormDialog(
     onSubmit?: DialogHandler
     onClose?: DialogHandler
   },
-  props: { validator: ValidatorDecoded; delegation?: DelegationResponse }
+  props: { validator: ValidatorInfoModify; delegation?: DelegationResponse },
 ): Promise<unknown | null> {
   return dialogs.show(DelegateFormDialog, callbacks, { props })
 }

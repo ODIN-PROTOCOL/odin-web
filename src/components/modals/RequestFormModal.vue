@@ -200,7 +200,7 @@ export default defineComponent({
       isLoading.value = true
       try {
         const { oracleScript } = await callers.getOracleScript(
-          form.oracleScriptId.val()
+          form.oracleScriptId.val(),
         )
         callDataSchema.value = oracleScript?.schema
       } catch (error) {
@@ -217,7 +217,7 @@ export default defineComponent({
         return obi.encodeInput(JSON.parse(form.calldata.val()))
       } catch (error) {
         throw new ReferenceError(
-          'Invalid call data! Pay attention to the data schema!'
+          'Invalid call data! Pay attention to the data schema!',
         )
       }
     }
@@ -233,7 +233,7 @@ export default defineComponent({
           calldata: _processCallData(),
           feeLimit: coins(
             convertOdinToLoki(form.feeLimit.val()),
-            getDenom(form.assets.val())
+            getDenom(form.assets.val()),
           ),
           prepareGas: Long.fromNumber(200000),
           executeGas: Long.fromNumber(200000),

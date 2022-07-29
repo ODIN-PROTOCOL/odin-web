@@ -21,7 +21,7 @@ const LOKI_MULTIPLIER = 1000000
 export function convertLokiToOdin(
   amount: string | BigNumber | undefined,
   options?: ConverterOptions,
-  denom = ODIN_DENOM
+  denom = ODIN_DENOM,
 ): string | BigNumber {
   if (!amount) return '-'
   if (Number.isNaN(Number(amount))) return '0'
@@ -30,6 +30,7 @@ export function convertLokiToOdin(
   } else {
     denom = GEO_DENOM
   }
+
   let res: BigNumber
   if (options && options.withPrecise) {
     res = big.fromPrecise(big.multiply(amount, ODIN_MULTIPLIER))
@@ -52,12 +53,6 @@ export function convertOdinToLoki(amount: string): number {
 
   return big.multiply(num, LOKI_MULTIPLIER).toNumber()
 }
-export function getLokiFromString(value: string | undefined): string {
-  if (!value) {
-    return ''
-  }
-  return value.split('loki')[0]
-}
 
 export function getDenom(denom: string): string {
   if (denom.toUpperCase() === ODIN_DENOM) {
@@ -73,4 +68,10 @@ export function setDenom(denom: string): string {
   } else {
     return GEO_DENOM.toLowerCase()
   }
+}
+export function getLokiFromString(value: string | undefined): string {
+  if (!value) {
+    return ''
+  }
+  return value.split('loki')[0]
 }

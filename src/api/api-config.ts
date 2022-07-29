@@ -10,6 +10,7 @@ export const API_CONFIG = {
   odinScan: process.env.VUE_APP_ODIN_SCAN_URL as string,
   telemetryUrl: process.env.VUE_APP_TELEMETRY_URL?.slice(0, -1) as string,
   fee: process.env.VUE_APP_FEE as string,
+  graphqlUrl: process.env.VUE_APP_NEXT_PUBLIC_GRAPHQL_URL as string,
 }
 
 export const START_VALUE = {

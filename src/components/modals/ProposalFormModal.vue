@@ -228,7 +228,7 @@ export default defineComponent({
           },
           initialDeposit: coins(
             convertOdinToLoki(form.deposit.val()),
-            COINS_LIST.LOKI
+            COINS_LIST.LOKI,
           ),
           proposer: wallet.account.address,
         })
@@ -245,7 +245,7 @@ export default defineComponent({
       () => {
         form.changesKey.current.value = ''
         form.changesValue.current.value = ''
-      }
+      },
     )
 
     return {

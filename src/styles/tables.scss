@@ -123,26 +123,66 @@
 .requests__table-row {
   grid:
     auto /
-    minmax(7rem, 0.5fr)
-    minmax(8rem, 3fr)
-    minmax(10rem, 1fr)
+    minmax(7rem, 1fr)
+    minmax(10rem, 1.5fr)
     minmax(8rem, 2fr)
-    minmax(10rem, 1.5fr);
+    minmax(10rem, 2fr);
 }
 .validators__table-head,
-.validators__table-row,
 .validators-table-row {
   gap: 2rem;
   grid:
     auto /
     minmax(2rem, 5rem)
-    minmax(5rem, 1fr)
-    minmax(6rem, 0.5fr)
-    minmax(8rem, 0.5fr)
-    minmax(7rem, 0.5fr)
-    minmax(6rem, 8rem)
-    minmax(24rem, 1.5fr);
+    minmax(5rem, 1.25fr)
+    minmax(6rem, 1fr)
+    minmax(8rem, 1fr)
+    minmax(7rem, 1fr)
+    minmax(6rem, 1fr)
+    minmax(24rem, 25rem);
 }
+.validators__table--unauthenticated {
+  .validators__table-head,
+  .validators-table-row {
+    gap: 2rem;
+    grid:
+      auto /
+      minmax(2rem, 5rem)
+      minmax(5rem, 1.25fr)
+      minmax(6rem, 1fr)
+      minmax(8rem, 1fr)
+      minmax(7rem, 1fr)
+      minmax(6rem, 1fr);
+  }
+}
+.validators__table--inactive {
+  .validators__table-head,
+  .validators-table-row {
+    gap: 2rem;
+    grid:
+      auto /
+      minmax(2rem, 5rem)
+      minmax(5rem, 1.5fr)
+      minmax(6rem, 1.25fr)
+      minmax(8rem, 1fr)
+      minmax(7rem, 1fr)
+      minmax(24rem, 25rem);
+  }
+}
+.validators__table--unauthenticated-inactive {
+  .validators__table-head,
+  .validators-table-row {
+    gap: 2rem;
+    grid:
+      auto /
+      minmax(2rem, 5rem)
+      minmax(5rem, 1.5fr)
+      minmax(6rem, 1.5fr)
+      minmax(8rem, 1fr)
+      minmax(6rem, 1fr);
+  }
+}
+
 .oracle-scripts__table-head,
 .oracle-scripts__table-row {
   grid:
@@ -195,16 +235,23 @@
     minmax(8rem, 2fr);
 }
 @include respond-to(tablet) {
+  .validators__table--unauthenticated,
+  .validators__table--inactive,
+  .validators__table--unauthenticated-inactive {
+    .validators__table-head,
+    .validators-table-row {
+      grid: none;
+    }
+  }
   .data-sources__table-row,
   .requests__table-row,
-  .validators__table-row,
+  .validators-table-row,
   .oracle-scripts__table-row,
   .oracle-validators__table-row,
   .governance__table-row,
   .requests-oracle-script__row,
   .requests-data-source__row,
-  .delegators-table__table-row,
-  .validators-table-row {
+  .delegators-table__table-row {
     grid: none;
   }
 }

@@ -56,11 +56,10 @@
   </notifications>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import '@invisiburu/vue-picker/dist/vue-picker.min.css'
-import { computed, defineComponent, onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { dialogs } from '@/helpers/dialogs'
-import { useAuthorization } from '@/composables/useAuthorization'
 import Nav from '@/components/Nav.vue'
 import UserWidget from '@/components/UserWidget.vue'
 import BurgerMenu from '@/components/BurgerMenu.vue'
@@ -76,69 +75,46 @@ type NotificationInfo = {
   error: Error
   typeNotification?: string
 }
-export default defineComponent({
-  components: {
-    Nav,
-    UserWidget,
-    BurgerMenu,
-    InfoNotificationIcon,
-    FailedNotificationIcon,
-    SuccessNotificationIcon,
-    CancelIcon,
-  },
-  setup() {
-    const notification = ref<NotificationInfo>()
-    const _readyStates = ref({
-      dialogs: false,
-    })
-    const isAppReady = computed(() => {
-      return Object.values(_readyStates.value).every((v) => v === true)
-    })
 
-    // Dialogs
-    const dialogsContainerRef = ref<HTMLElement>()
-    onMounted(() => {
-      if (dialogsContainerRef.value instanceof HTMLElement) {
-        dialogs.init(dialogsContainerRef.value)
-        _readyStates.value.dialogs = true
-      }
-    })
+const notification = ref<NotificationInfo>()
+const _readyStates = ref({
+  dialogs: false,
+})
+const isAppReady = computed(() => {
+  return Object.values(_readyStates.value).every((v) => v === true)
+})
 
-    // Burger Menu
-    const isOpen = ref(false)
-    const burgerMenuHandler = (event: Event | MouseEvent) => {
-      event.preventDefault()
-      isOpen.value = isOpen.value !== true
-    }
+// Dialogs
+const dialogsContainerRef = ref<HTMLElement>()
+onMounted(() => {
+  if (dialogsContainerRef.value instanceof HTMLElement) {
+    dialogs.init(dialogsContainerRef.value)
+    _readyStates.value.dialogs = true
+  }
+})
 
-    const closeBurger = () => {
-      if (isOpen.value === true) isOpen.value = false
-    }
+// Burger Menu
+const isOpen = ref(false)
+const burgerMenuHandler = (event: Event | MouseEvent) => {
+  event.preventDefault()
+  isOpen.value = !isOpen.value
+}
 
-    const route = useRoute()
-    const isAuthPage = computed(() => route?.name?.toString().includes('Auth'))
+const closeBurger = () => {
+  isOpen.value = false
+}
 
-    // Notification
-    const DURATION = 7000
-    emitter.on('handleNotification', (e) => {
-      notification.value = e as NotificationInfo
-      notify({
-        ignoreDuplicates: true,
-        duration: DURATION,
-      })
-    })
+const route = useRoute()
+const isAuthPage = computed(() => route?.name?.toString().includes('Auth'))
 
-    return {
-      isAppReady,
-      dialogsContainerRef,
-      isLoggedIn: useAuthorization().isLoggedIn,
-      isOpen,
-      burgerMenuHandler,
-      closeBurger,
-      notification,
-      isAuthPage,
-    }
-  },
+// Notification
+const DURATION = 7000
+emitter.on('handleNotification', (e) => {
+  notification.value = e as NotificationInfo
+  notify({
+    ignoreDuplicates: true,
+    duration: DURATION,
+  })
 })
 </script>
 

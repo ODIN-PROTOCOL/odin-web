@@ -7,8 +7,8 @@
         }}</span>
         <TitledLink
           class="app-table__cell-txt app-table__link"
-          :text="validator.description.moniker"
-          :to="`/validators/${validator.operatorAddress}`"
+          :text="validator?.descriptions[0]?.moniker"
+          :to="`/validators/${validator?.info.operatorAddress}`"
         />
       </div>
       <div class="validators-table-row-mobile__show">
@@ -32,16 +32,19 @@
       <span class="app-table__title">Delegated</span>
       <span
         :title="
-          $convertLokiToOdin(validator.delegatorShares, {
-            withPrecise: true,
-          })
+          $convertLokiToOdin(
+            Number(validator.info.delegatorShares).toFixed(6),
+            {
+              onlyNumber: true,
+            },
+          )
         "
       >
         {{
-          $convertLokiToOdin(validator.delegatorShares, {
-            withDenom: true,
-            withPrecise: true,
-          })
+          $convertLokiToOdin(
+            Number(validator.info.delegatorShares).toFixed(6),
+            { withDenom: true },
+          )
         }}
       </span>
     </div>
@@ -49,7 +52,7 @@
       <div class="app-table__cell">
         <span class="app-table__title">Commission</span>
         <span>
-          {{ $getPrecisePercents(validator.commission.commissionRates.rate) }}
+          {{ $trimZeros(validator?.commissions[0]?.commission * 100, 2) }}%
         </span>
       </div>
       <div v-if="tabStatus !== inactiveValidatorsTitle" class="app-table__cell">
@@ -57,7 +60,7 @@
         <Progressbar
           :min="0"
           :max="100"
-          :current="Number(validator.uptimeInfo?.uptime) || 0"
+          :current="$trimZeros(validator?.uptime, 2) || 0"
           is-for-validators
         />
       </div>
@@ -66,7 +69,7 @@
         <ValidatorStatus
           :width="14"
           :height="14"
-          :status="validatorStatus(validator)"
+          :status="validatorStatus()"
           class="validators-item__validator-status"
         />
       </div>
@@ -75,11 +78,11 @@
           class="app-table__activities validators-table-row-mobile__activities"
         >
           <div
-            v-if="validator.status === 3"
+            v-if="validator?.statuses[0]?.status === VALIDATOR_STATUS.active"
             class="app-table__activities-item validators-table-row-mobile__activities-item"
           >
             <button
-              v-if="delegations[validator.operatorAddress]"
+              v-if="delegations[validator.info.operatorAddress]"
               class="app-btn app-btn--outlined app-btn--very-small w-min108"
               type="button"
               @click="selectedBtn('Regelate')"
@@ -95,7 +98,7 @@
             </button>
           </div>
           <div
-            v-if="delegations[validator.operatorAddress]"
+            v-if="delegations[validator.info.operatorAddress]"
             class="app-table__activities-item validators-table-row-mobile__activities-item"
           >
             <button
@@ -120,14 +123,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType } from 'vue'
+import { defineComponent, ref, PropType, watch, toRef } from 'vue'
 import TitledLink from '@/components/TitledLink.vue'
 import Progressbar from '@/components/Progressbar.vue'
 import ValidatorStatus from '@/components/ValidatorStatus.vue'
 import ArrowIcon from '@/components/icons/ArrowIcon.vue'
-import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
-import { VALIDATOR_STATUS } from '@/helpers/validatorHelpers'
+import {
+  ValidatorInfoModify,
+  VALIDATOR_STATUS,
+} from '@/helpers/validatorHelpers'
 
 export default defineComponent({
   components: {
@@ -137,27 +142,27 @@ export default defineComponent({
     ArrowIcon,
   },
   props: {
-    validator: { type: Object as PropType<ValidatorDecoded>, required: true },
+    validator: {
+      type: Object as PropType<ValidatorInfoModify>,
+      required: true,
+    },
     delegations: {
       type: Object as PropType<DelegationResponse>,
       required: true,
     },
     tabStatus: { type: String, required: true },
+    currentPage: { type: Number, required: true },
     inactiveValidatorsTitle: { type: String, required: true },
     hasActionButtons: { type: Boolean, required: true },
   },
   setup(props, { emit }) {
-    const ITEMS_PER_PAGE = 50
-    const currentPage = ref(1)
-    const totalPages = ref(0)
+    const tabStatus = toRef(props, 'tabStatus')
+    const currentPage = toRef(props, 'currentPage')
     const isShowValidatorDetails = ref(false)
 
-    const validatorStatus = (validator: {
-      status: number
-      isActive: boolean
-    }) => {
-      if (validator.status === VALIDATOR_STATUS.active) {
-        return validator.isActive ? 'success' : 'error'
+    const validatorStatus = () => {
+      if (props.validator?.statuses[0]?.status === VALIDATOR_STATUS.active) {
+        return props.validator.isActive ? 'success' : 'error'
       } else {
         return 'inactive'
       }
@@ -165,14 +170,15 @@ export default defineComponent({
     const selectedBtn = (typeBtn: string) => {
       emit('selectedBtn', { typeBtn, validator: props.validator })
     }
-
+    watch(
+      [tabStatus, currentPage],
+      () => (isShowValidatorDetails.value = false),
+    )
     return {
-      ITEMS_PER_PAGE,
-      totalPages,
-      currentPage,
       validatorStatus,
       isShowValidatorDetails,
       selectedBtn,
+      VALIDATOR_STATUS,
     }
   },
 })
