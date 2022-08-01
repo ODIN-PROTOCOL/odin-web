@@ -6,23 +6,16 @@
   </router-link>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  props: {
-    text: {
-      type: [String, Number],
-      required: true,
-    },
-    title: {
-      type: [String, Number],
-      required: false,
-    },
-    to: {
-      type: String,
-      default: () => '#',
-    },
+<script setup lang="ts">
+withDefaults(
+  defineProps<{
+    text: number | string
+    title?: number | string
+    to?: string
+  }>(),
+  {
+    title: '',
+    to: '#',
   },
-})
+)
 </script>

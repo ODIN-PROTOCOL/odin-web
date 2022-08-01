@@ -1,24 +1,24 @@
 export function readFile(
   file: File,
-  readAs: 'arrayBuffer'
+  readAs: 'arrayBuffer',
 ): Promise<ArrayBuffer | null>
 export function readFile(
   file: File,
-  readAs: 'uint8Array'
+  readAs: 'uint8Array',
 ): Promise<Uint8Array | null>
 export function readFile(
   file: File,
-  readAs: 'dataUrl' | 'binaryString' | 'text'
+  readAs: 'dataUrl' | 'binaryString' | 'text',
 ): Promise<string | null>
 export function readFile(
   file: File,
-  readAs: 'arrayBuffer' | 'uint8Array' | 'dataUrl' | 'binaryString' | 'text'
+  readAs: 'arrayBuffer' | 'uint8Array' | 'dataUrl' | 'binaryString' | 'text',
 ): Promise<ArrayBuffer | Uint8Array | string | null> {
   return new Promise<ArrayBuffer | Uint8Array | string | null>(
     (resolve, reject) => {
       const reader = new FileReader()
 
-      reader.onload = (event) => {
+      reader.onload = event => {
         const fr: FileReader | null = event.target
         if (!fr || !fr.result) {
           resolve(null)
@@ -31,7 +31,7 @@ export function readFile(
         }
       }
 
-      reader.onerror = (error) => {
+      reader.onerror = error => {
         reject(error)
       }
 
@@ -46,7 +46,7 @@ export function readFile(
         case 'text':
           return reader.readAsText(file)
       }
-    }
+    },
   )
 }
 
@@ -114,7 +114,7 @@ function _makeFakeImgInput(attributes?: Record<string, string>) {
 }
 
 function _promisifyImgInputClick(input: HTMLInputElement) {
-  return new Promise<File | null>((resolve) => {
+  return new Promise<File | null>(resolve => {
     const resolveNull = () => setTimeout(() => resolveFile(null), 100)
 
     const resolveFile = (event: Event | null) => {

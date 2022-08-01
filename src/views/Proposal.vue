@@ -41,9 +41,10 @@
           <span class="info-table__row-title proposal__table-row-title"
             >Description</span
           >
-          <span class="info-table__row-value">
-            {{ proposal.content?.description }}
-          </span>
+          <Markdown
+            class="info-table__row-value"
+            :source="proposal.content?.description"
+          />
         </div>
         <div class="info-table__row">
           <span class="info-table__row-title proposal__table-row-title"
@@ -145,8 +146,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
 import {
@@ -167,64 +168,48 @@ import StatusBlock from '@/components/StatusBlock.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import { capitalizeFirstLetter } from '@/helpers/formatters'
 import { wallet } from '@/api/wallet'
+import Markdown from 'vue3-markdown-it'
 
-export default defineComponent({
-  components: { Tally, BackButton, StatusBlock, CopyButton },
-  setup: function () {
-    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const router: Router = useRouter()
-    const route: RouteLocationNormalizedLoaded = useRoute()
-    const proposal = ref()
-    const tally = ref()
+const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+const router: Router = useRouter()
+const route: RouteLocationNormalizedLoaded = useRoute()
+const proposal = ref()
+const tally = ref()
 
-    const accountAddress = wallet.isEmpty ? '' : wallet.account.address
+const accountAddress = wallet.isEmpty ? '' : wallet.account.address
 
-    const getProposal = async () => {
-      lockLoading()
-      try {
-        const response = await callers.getProposal(String(route.params.id))
-        const transformedProposals = await getTransformedProposals([
-          response.proposal,
-        ])
+const getProposal = async () => {
+  lockLoading()
+  try {
+    const response = await callers.getProposal(String(route.params.id))
+    const transformedProposals = await getTransformedProposals([
+      response.proposal,
+    ])
 
-        proposal.value = transformedProposals[0]
-        await getTally(proposal.value)
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
-    }
+    proposal.value = transformedProposals[0]
+    await getTally(proposal.value)
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
 
-    const getTally = async (proposal: ProposalDecoded) => {
-      let _tally = null
-      if (proposal.status === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD) {
-        _tally = await callers
-          .getProposalTally(proposal.proposalId)
-          .then((r) => r.tally)
-          .catch(() => proposal.finalTallyResult)
-      } else {
-        _tally = proposal.finalTallyResult
-      }
+const getTally = async (proposal: ProposalDecoded) => {
+  let _tally = null
+  if (proposal.status === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD) {
+    _tally = await callers
+      .getProposalTally(proposal.proposalId)
+      .then(r => r.tally)
+      .catch(() => proposal.finalTallyResult)
+  } else {
+    _tally = proposal.finalTallyResult
+  }
 
-      tally.value = _tally
-    }
+  tally.value = _tally
+}
 
-    onMounted(async () => {
-      await getProposal()
-    })
-
-    return {
-      API_CONFIG,
-      router,
-      ProposalStatus,
-      isLoading,
-      proposalStatusType,
-      proposal,
-      tally,
-      capitalizeFirstLetter,
-      accountAddress,
-    }
-  },
+onMounted(async () => {
+  await getProposal()
 })
 </script>
 

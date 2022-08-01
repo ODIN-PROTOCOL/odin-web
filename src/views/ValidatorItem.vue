@@ -193,7 +193,7 @@ const delegate = async (validator: ValidatorInfoModify) => {
   await showDialogHandler(
     DelegateFormModal,
     {
-      onSubmit: async (d) => {
+      onSubmit: async d => {
         d.kill()
         await loadData()
       },
@@ -209,7 +209,7 @@ const redelegate = async (validator: ValidatorInfoModify) => {
   await showDialogHandler(
     RedelegateFormModal,
     {
-      onSubmit: async (d) => {
+      onSubmit: async d => {
         d.kill()
         await loadData()
       },
@@ -226,7 +226,7 @@ const undelegate = async (validator: ValidatorInfoModify) => {
   await showDialogHandler(
     UndelegateFormModal,
     {
-      onSubmit: async (d) => {
+      onSubmit: async d => {
         d.kill()
         await loadData()
       },
@@ -243,7 +243,7 @@ const withdrawRewards = async (validator: ValidatorInfoModify) => {
   await showDialogHandler(
     WithdrawRewardsFormModal,
     {
-      onSubmit: async (d) => {
+      onSubmit: async d => {
         d.kill()
         await loadData()
       },

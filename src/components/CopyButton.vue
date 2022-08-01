@@ -15,6 +15,7 @@ import CopyIcon from '@/components/icons/CopyIcon.vue'
 export enum SCHEMES {
   black = 'black',
 }
+
 export default defineComponent({
   props: {
     text: { type: String, required: true },

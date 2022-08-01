@@ -83,8 +83,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue'
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
@@ -96,81 +96,59 @@ import ArrowIcon from '@/components/icons/ArrowIcon.vue'
 import { ClientState } from 'cosmjs-types/ibc/lightclients/tendermint/v1/tendermint'
 import { QueryClientStateResponse } from 'cosmjs-types/ibc/core/client/v1/query'
 
-export default defineComponent({
-  components: {
-    AppPagination,
-    ArrowIcon,
-    ChannelDetail,
-  },
-  setup: function () {
-    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 4
-    const currentPage = ref(1)
-    const totalPages = ref()
-    const chainIdData = ref()
-    const connectionsData = ref<IdentifiedConnection[] | undefined>()
-    const channelData = ref<IdentifiedChannel[] | undefined>()
-    const filteredConnections = ref()
-    const isShow = ref([])
+const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+const ITEMS_PER_PAGE = 4
+const currentPage = ref(1)
+const totalPages = ref()
+const chainIdData = ref()
+const connectionsData = ref<IdentifiedConnection[] | undefined>()
+const channelData = ref<IdentifiedChannel[] | undefined>()
+const filteredConnections = ref()
+const isShow = ref([])
 
-    const loadIbc = async () => {
-      lockLoading()
-      try {
-        const { connections } = await callers.getConnections()
-        const clientState: QueryClientStateResponse[] = await Promise.all(
-          connections?.map((item: IdentifiedConnection) =>
-            callers.getClientState(item.clientId)
-          )
-        )
-        chainIdData.value = clientState?.map((item: QueryClientStateResponse) =>
-          ClientState.decode(item.clientState?.value as Uint8Array)
-        )
-        const { channels } = await callers.getChannel()
-        channelData.value = channels
-        connectionsData.value = connections
-        totalPages.value = Math.ceil(connections.length / ITEMS_PER_PAGE)
-        filterConnections(currentPage.value)
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
-    }
+const loadIbc = async () => {
+  lockLoading()
+  try {
+    const { connections } = await callers.getConnections()
+    const clientState: QueryClientStateResponse[] = await Promise.all(
+      connections?.map((item: IdentifiedConnection) =>
+        callers.getClientState(item.clientId),
+      ),
+    )
+    chainIdData.value = clientState?.map((item: QueryClientStateResponse) =>
+      ClientState.decode(item.clientState?.value as Uint8Array),
+    )
+    const { channels } = await callers.getChannel()
+    channelData.value = channels
+    connectionsData.value = connections
+    totalPages.value = Math.ceil(connections.length / ITEMS_PER_PAGE)
+    filterConnections(currentPage.value)
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
 
-    const filterConnections = (newPage: number) => {
-      let tempArr = connectionsData.value
-      if (newPage === 1) {
-        filteredConnections.value = tempArr?.slice(0, newPage * ITEMS_PER_PAGE)
-      } else {
-        filteredConnections.value = tempArr?.slice(
-          (newPage - 1) * ITEMS_PER_PAGE,
-          (newPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE
-        )
-      }
-      currentPage.value = newPage
-      isShow.value = []
-    }
+const filterConnections = (newPage: number) => {
+  let tempArr = connectionsData.value
+  if (newPage === 1) {
+    filteredConnections.value = tempArr?.slice(0, newPage * ITEMS_PER_PAGE)
+  } else {
+    filteredConnections.value = tempArr?.slice(
+      (newPage - 1) * ITEMS_PER_PAGE,
+      (newPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE,
+    )
+  }
+  currentPage.value = newPage
+  isShow.value = []
+}
 
-    const paginationHandler = (num: number) => {
-      filterConnections(num)
-    }
+const paginationHandler = (num: number) => {
+  filterConnections(num)
+}
 
-    onMounted(async () => {
-      await loadIbc()
-    })
-
-    return {
-      isLoading,
-      ITEMS_PER_PAGE,
-      currentPage,
-      totalPages,
-      paginationHandler,
-      connectionsData,
-      channelData,
-      chainIdData,
-      filteredConnections,
-      isShow,
-    }
-  },
+onMounted(async () => {
+  await loadIbc()
 })
 </script>
 

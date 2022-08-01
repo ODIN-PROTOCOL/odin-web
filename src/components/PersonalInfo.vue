@@ -62,8 +62,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, onMounted, onUnmounted } from 'vue'
+<script setup lang="ts">
+import { computed, onMounted, onUnmounted } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
 
 import { COINS_LIST } from '@/api/api-config'
@@ -80,62 +80,46 @@ import CopyButtonWithText, {
 } from '@/components/CopyButtonWithText.vue'
 import ShareIcon from '@/components/icons/ShareIcon.vue'
 
-export default defineComponent({
-  components: { ShareIcon, CopyButtonWithText },
-  setup: function () {
-    const accountAddress = wallet.account.address
-    const validatorPrefix = 'odinvaloper'
-    const accountLink = computed(() => {
-      if (accountAddress.includes(validatorPrefix)) {
-        return `${API_CONFIG.odinScan}/validators/${accountAddress}`
-      } else {
-        return `${API_CONFIG.odinScan}/account/${accountAddress}`
-      }
-    })
+const accountAddress = wallet.account.address
+const validatorPrefix = 'odinvaloper'
+const accountLink = computed(() => {
+  if (accountAddress.includes(validatorPrefix)) {
+    return `${API_CONFIG.odinScan}/validators/${accountAddress}`
+  } else {
+    return `${API_CONFIG.odinScan}/account/${accountAddress}`
+  }
+})
 
-    const {
-      coins: [lokiCoins],
-      load: loadBalances,
-    } = useBalances([COINS_LIST.LOKI])
-    const lokiPoll = usePoll(loadBalances, 5000)
+const {
+  coins: [lokiCoins],
+  load: loadBalances,
+} = useBalances([COINS_LIST.LOKI])
+const lokiPoll = usePoll(loadBalances, 5000)
 
-    const isEmptyBalance = computed(() => {
-      return lokiCoins.value && !Number(lokiCoins.value.amount)
-    })
+const isEmptyBalance = computed(() => {
+  return lokiCoins.value && !Number(lokiCoins.value.amount)
+})
 
-    const receive = async () => {
-      await showDialogHandler(ShareFormModal)
-    }
+const receive = async () => {
+  await showDialogHandler(ShareFormModal)
+}
 
-    const send = async () => {
-      await showDialogHandler(
-        SendFormModal,
-        {},
-        {
-          balance: [lokiCoins.value],
-        }
-      )
-    }
+const send = async () => {
+  await showDialogHandler(
+    SendFormModal,
+    {},
+    {
+      balance: [lokiCoins.value],
+    },
+  )
+}
 
-    onMounted(async () => {
-      lokiPoll.start()
-    })
+onMounted(async () => {
+  lokiPoll.start()
+})
 
-    onUnmounted(() => {
-      lokiPoll.stop()
-    })
-
-    return {
-      API_CONFIG,
-      lokiCoins,
-      receive,
-      send,
-      isEmptyBalance,
-      accountAddress,
-      accountLink,
-      SCHEMES,
-    }
-  },
+onUnmounted(() => {
+  lokiPoll.stop()
 })
 </script>
 

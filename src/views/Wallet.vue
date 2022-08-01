@@ -79,93 +79,68 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, ref, watch } from 'vue'
-import { API_CONFIG } from '@/api/api-config'
+<script setup lang="ts">
+import { onMounted, ref, watch } from 'vue'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
+import { sortingTypeTx, TYPE_TX_SORT } from '@/helpers/sortingHelpers'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import TxLine from '@/components/TxLine.vue'
 import PersonalInfo from '@/components/PersonalInfo.vue'
-import { sortingTypeTx, TYPE_TX_SORT } from '@/helpers/sortingHelpers'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 
-export default defineComponent({
-  components: {
-    AppPagination,
-    TxLine,
-    PersonalInfo,
-    SkeletonTable,
-  },
-  setup: function () {
-    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 50
-    const currentPage = ref(1)
-    const totalPages = ref()
-    const transactionsCount = ref(0)
-    const transactions = ref()
-    const sortingValue = ref(TYPE_TX_SORT.all)
-    const headerTitles = [
-      { title: 'Transaction hash' },
-      { title: 'Type' },
-      { title: 'Block' },
-      { title: 'Date and time' },
-      { title: 'Sender' },
-      { title: 'Receiver' },
-      { title: 'Amount' },
-      { title: 'Transaction Fee' },
-    ]
-    const getTransactions = async () => {
-      lockLoading()
-      try {
-        const tx = await callers
-          .getAccountTx(
-            currentPage.value - 1,
-            50,
-            wallet.account.address,
-            'desc',
-            sortingValue.value
-          )
-          .then((resp) => resp.json())
-        transactions.value = tx.data
-        transactionsCount.value = tx.total_count
-        totalPages.value = Math.ceil(transactionsCount.value / ITEMS_PER_PAGE)
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
-    }
+const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+const ITEMS_PER_PAGE = 50
+const currentPage = ref(1)
+const totalPages = ref()
+const transactionsCount = ref(0)
+const transactions = ref()
+const sortingValue = ref(TYPE_TX_SORT.all)
+const headerTitles = [
+  { title: 'Transaction hash' },
+  { title: 'Type' },
+  { title: 'Block' },
+  { title: 'Date and time' },
+  { title: 'Sender' },
+  { title: 'Receiver' },
+  { title: 'Amount' },
+  { title: 'Transaction Fee' },
+]
+const getTransactions = async () => {
+  lockLoading()
+  try {
+    const tx = await callers
+      .getAccountTx(
+        currentPage.value - 1,
+        50,
+        wallet.account.address,
+        'desc',
+        sortingValue.value,
+      )
+      .then(resp => resp.json())
+    transactions.value = tx.data
+    transactionsCount.value = tx.total_count
+    totalPages.value = Math.ceil(transactionsCount.value / ITEMS_PER_PAGE)
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
 
-    const paginationHandler = async (num: number) => {
-      currentPage.value = num
-      await getTransactions()
-    }
+const paginationHandler = async (num: number) => {
+  currentPage.value = num
+  await getTransactions()
+}
 
-    onMounted(async () => {
-      await getTransactions()
-    })
+onMounted(async () => {
+  await getTransactions()
+})
 
-    watch([sortingValue], async () => {
-      currentPage.value = 1
-      await getTransactions()
-    })
-
-    return {
-      API_CONFIG,
-      ITEMS_PER_PAGE,
-      totalPages,
-      currentPage,
-      transactionsCount,
-      transactions,
-      isLoading,
-      paginationHandler,
-      sortingTypeTx,
-      sortingValue,
-      headerTitles,
-    }
-  },
+watch([sortingValue], async () => {
+  currentPage.value = 1
+  await getTransactions()
 })
 </script>
 

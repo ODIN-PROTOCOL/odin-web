@@ -9,7 +9,7 @@ import { computed, defineComponent } from 'vue'
 import VPagination from '@/components/AppPagination/VPagination.vue'
 
 export default defineComponent({
-  name: 'AppPagination',
+  name: 'app-pagination',
   components: { VPagination },
   emits: ['update:modelValue'],
   props: {
@@ -19,7 +19,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const page = computed({
       get: () => props['modelValue'],
-      set: (value) => emit(`update:modelValue`, value),
+      set: value => emit(`update:modelValue`, value),
     })
 
     return { page }

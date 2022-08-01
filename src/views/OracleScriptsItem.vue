@@ -81,92 +81,70 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, onMounted, computed } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted, computed } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
+import { OracleScript } from '@provider/codec/oracle/v1/oracle'
+import { wallet } from '@/api/wallet'
 import BackButton from '@/components/BackButton.vue'
 import AppTabs from '@/components/tabs/AppTabs.vue'
 import AppTab from '@/components/tabs/AppTab.vue'
 import CodeTable from '@/components/tables/CodeTable.vue'
 import RequestsOracleScriptTable from '@/components/tables/RequestsOracleScriptTable.vue'
-import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import OracleScriptFormModal from '@/components/modals/OracleScriptFormModal.vue'
-import { OracleScript } from '@provider/codec/oracle/v1/oracle'
-import { wallet } from '@/api/wallet'
 
-export default defineComponent({
-  components: {
-    BackButton,
-    AppTabs,
-    AppTab,
-    CodeTable,
-    RequestsOracleScriptTable,
-  },
-  setup: function () {
-    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const route: RouteLocationNormalizedLoaded = useRoute()
-    const oracleScriptData = ref()
-    const oracleScriptCode = ref('')
-    const isOracleScriptOwner = computed(() => {
-      return (
-        !wallet.isEmpty &&
-        wallet.account.address === oracleScriptData.value?.owner
-      )
-    })
-    const getOracleScript = async () => {
-      lockLoading()
-      try {
-        const response = await callers.getOracleScript(String(route.params.id))
-        oracleScriptData.value = response.oracleScript
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
+const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+const route: RouteLocationNormalizedLoaded = useRoute()
+const oracleScriptData = ref()
+const oracleScriptCode = ref('')
+const isOracleScriptOwner = computed(() => {
+  return (
+    !wallet.isEmpty && wallet.account.address === oracleScriptData.value?.owner
+  )
+})
+const getOracleScript = async () => {
+  lockLoading()
+  try {
+    const response = await callers.getOracleScript(String(route.params.id))
+    oracleScriptData.value = response.oracleScript
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
+const getOracleScriptCode = async () => {
+  try {
+    if (oracleScriptData.value.sourceCodeUrl) {
+      await fetch(oracleScriptData.value.sourceCodeUrl).then(response => {
+        response.text().then(text => {
+          oracleScriptCode.value = text
+        })
+      })
     }
-    const getOracleScriptCode = async () => {
-      try {
-        if (oracleScriptData.value.sourceCodeUrl) {
-          await fetch(oracleScriptData.value.sourceCodeUrl).then((response) => {
-            response.text().then((text) => {
-              oracleScriptCode.value = text
-            })
-          })
-        }
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-    }
-    const editOracleScript = async (oracleScript: OracleScript) => {
-      await showDialogHandler(
-        OracleScriptFormModal,
-        {
-          onSubmit: async (d) => {
-            d.kill()
-            await getOracleScript()
-          },
-        },
-        { oracleScript }
-      )
-    }
-    onMounted(async () => {
-      await getOracleScript()
-      await getOracleScriptCode()
-    })
-
-    return {
-      API_CONFIG,
-      isLoading,
-      oracleScriptData,
-      getOracleScriptCode,
-      oracleScriptCode,
-      editOracleScript,
-      isOracleScriptOwner,
-    }
-  },
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+}
+const editOracleScript = async (oracleScript: OracleScript) => {
+  await showDialogHandler(
+    OracleScriptFormModal,
+    {
+      onSubmit: async d => {
+        d.kill()
+        await getOracleScript()
+      },
+    },
+    { oracleScript },
+  )
+}
+onMounted(async () => {
+  await getOracleScript()
+  await getOracleScriptCode()
 })
 </script>
 

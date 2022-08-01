@@ -96,6 +96,7 @@ import AuthBase from '@/components/Auth/AuthBase.vue'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { useForm, validators } from '@/composables/useForm'
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing'
+import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 
 const MNEMONIC_SIZE = 24
 
@@ -105,25 +106,25 @@ export default defineComponent({
     loginType: { type: Number as PropType<LOGIN_TYPE>, required: true },
   },
   setup(props) {
-    const isLoading = ref(false)
+    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+    const { logInWithKeplrWallet, logInWithOdinWallet } = useAuthorization()
     const form = useForm({
       mnemonic: ['', validators.required],
     })
     const copyWarning = ref(false)
-    const auth = useAuthorization()
 
     const submit = async () => {
-      isLoading.value = true
+      lockLoading()
       try {
         if (props.loginType === LOGIN_TYPE.KEPLR118) {
-          await auth.logInWithKeplrWallet(CHAIN_CONFIG.chainId, COINS_TYPE.MAIN)
+          await logInWithKeplrWallet(CHAIN_CONFIG.chainId, COINS_TYPE.MAIN)
         } else if (props.loginType === LOGIN_TYPE.KEPLR494) {
-          await auth.logInWithKeplrWallet(
+          await logInWithKeplrWallet(
             CHAIN_CONFIG.chainId,
-            COINS_TYPE.ADDITIONAL
+            COINS_TYPE.ADDITIONAL,
           )
         } else if (props.loginType === LOGIN_TYPE.MNEMONIC494) {
-          await auth.logInWithOdinWallet(form.mnemonic.val())
+          await logInWithOdinWallet(form.mnemonic.val())
         }
 
         await router.push({ name: 'Wallet' })
@@ -134,16 +135,25 @@ export default defineComponent({
           showInfo('Ooops!', (error as Error).message)
         }
       }
-      isLoading.value = false
+      releaseLoading()
     }
 
     const generateKey = async () => {
-      const newWallet = await DirectSecp256k1HdWallet.generate(MNEMONIC_SIZE, {
-        hdPaths: [API_CONFIG.hdDeviation],
-        prefix: 'odin',
-      })
-      form.mnemonic.val(newWallet.mnemonic)
-      copyWarning.value = true
+      lockLoading()
+      try {
+        const newWallet = await DirectSecp256k1HdWallet.generate(
+          MNEMONIC_SIZE,
+          {
+            hdPaths: [API_CONFIG.hdDeviation],
+            prefix: 'odin',
+          },
+        )
+        form.mnemonic.val(newWallet.mnemonic)
+        copyWarning.value = true
+      } catch (error) {
+        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+      }
+      releaseLoading()
     }
 
     const showInfo = async (title: string, text: string) => {

@@ -6,7 +6,7 @@ export const TYPE_NOTIFICATION = {
 }
 export function handleNotificationInfo(
   error: Error | string,
-  typeNotification: string
+  typeNotification: string,
 ): void {
   emitter.emit('handleNotification', { error, typeNotification })
   if (typeNotification !== TYPE_NOTIFICATION.success) console.error(error)

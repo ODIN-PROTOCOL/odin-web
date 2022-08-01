@@ -114,8 +114,8 @@ const getDataSourceCode = async () => {
   try {
     dataSourceCode.value = await callers
       .getDataSourceCode(String(route.params.id))
-      .then((response) => response.json())
-      .then((data) => data?.executable)
+      .then(response => response.json())
+      .then(data => data?.executable)
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
@@ -125,7 +125,7 @@ const editDataSource = async (dataSource: unknown) => {
   await showDialogHandler(
     DataSourceFormModal,
     {
-      onSubmit: async (d) => {
+      onSubmit: async d => {
         await getDataSource()
         d.kill()
       },

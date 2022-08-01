@@ -146,13 +146,13 @@ export default defineComponent({
     const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
     const sendAsset = ref(COINS_LIST.ODIN)
     const selectedBalance = computed(() => {
-      const balance = props.balance.find((item) => {
+      const balance = props.balance.find(item => {
         return item.denom === COINS_LIST.LOKI
       })
       return balance || coin(0, sendAsset.value)
     })
     const OdinBalance = computed(() => {
-      const balance = props.balance.find((item) => {
+      const balance = props.balance.find(item => {
         return item.denom === COINS_LIST.LOKI
       })
       return balance
@@ -160,7 +160,7 @@ export default defineComponent({
         : 0
     })
     const geoBalance = computed(() => {
-      const balance = props.balance.find((item) => {
+      const balance = props.balance.find(item => {
         return item.denom === COINS_LIST.GEO
       })
       return balance || 0

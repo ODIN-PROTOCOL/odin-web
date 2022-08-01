@@ -177,7 +177,7 @@ const loadDataSources = async () => {
         sortingOwnersValue.value,
         dataSourceName.value,
       )
-      .then((response) => response.json())
+      .then(response => response.json())
     dataSources.value = await Promise.all(
       data.map(async (item: { attributes: { id: number } }) => {
         const resp = await callers.getDataSourceRequestCount(item.attributes.id)
@@ -194,7 +194,7 @@ const loadDataSources = async () => {
 
 const createDataSource = async () => {
   await showDialogHandler(DataSourceFormModal, {
-    onSubmit: async (d) => {
+    onSubmit: async d => {
       await loadDataSources()
       d.kill()
     },
@@ -205,7 +205,7 @@ const editDataSource = async (dataSource: unknown) => {
   await showDialogHandler(
     DataSourceFormModal,
     {
-      onSubmit: async (d) => {
+      onSubmit: async d => {
         await loadDataSources()
         d.kill()
       },

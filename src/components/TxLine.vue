@@ -64,49 +64,33 @@
     </div>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
+<script setup lang="ts">
 import { humanizeMessageType } from '@/helpers/decodeMessage'
 import { convertLokiToOdin } from '@/helpers/converters'
 import { API_CONFIG } from '@/api/api-config'
 import { txFromTelemetry } from '@/helpers/Types'
 
-export default defineComponent({
-  name: 'TxLine',
-  props: {
-    tx: {
-      type: Object as PropType<txFromTelemetry>,
-      required: true,
-    },
-  },
-  setup(props) {
-    const odinAmount = convertLokiToOdin(
-      props.tx.amount[0]?.amount,
-      {},
-      props.tx.amount[0]?.denom
-    )
-    const odinFee = convertLokiToOdin(
-      props.tx.fee[0]?.amount,
-      {},
-      props.tx.fee[0]?.denom
-    )
-    const type = humanizeMessageType('/' + props.tx.type)
-    const getRequestItemTxHash = props.tx?.tx_hash.split('0x')[1]
-    const generateAddrLink = (addr: string) => {
-      if (addr.includes('odinvaloper')) {
-        return `validators/${addr}`
-      } else {
-        return `account/${addr}`
-      }
-    }
-    return {
-      generateAddrLink,
-      odinFee,
-      odinAmount,
-      type,
-      API_CONFIG,
-      getRequestItemTxHash,
-    }
-  },
-})
+const props = defineProps<{
+  tx: txFromTelemetry
+}>()
+
+const odinAmount = convertLokiToOdin(
+  props.tx.amount[0]?.amount,
+  {},
+  props.tx.amount[0]?.denom,
+)
+const odinFee = convertLokiToOdin(
+  props.tx.fee[0]?.amount,
+  {},
+  props.tx.fee[0]?.denom,
+)
+const type = humanizeMessageType('/' + props.tx.type)
+const getRequestItemTxHash = props.tx?.tx_hash.split('0x')[1]
+const generateAddrLink = (addr: string) => {
+  if (addr.includes('odinvaloper')) {
+    return `validators/${addr}`
+  } else {
+    return `account/${addr}`
+  }
+}
 </script>

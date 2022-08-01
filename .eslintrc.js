@@ -9,9 +9,11 @@ module.exports = {
     '@vue/typescript/recommended',
     '@vue/prettier',
     '@vue/prettier/@typescript-eslint',
+    'prettier',
   ],
   parserOptions: {
-    ecmaVersion: 2020,
+    xecmaVersion: 'latest',
+    parser: '@typescript-eslint/parser',
   },
   globals: {
     defineProps: 'readonly',
@@ -19,8 +21,7 @@ module.exports = {
     defineExpose: 'readonly',
     withDefaults: 'readonly',
   },
-
-   rules: {
+  rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'prettier/prettier': [
@@ -34,18 +35,11 @@ module.exports = {
     ],
     'vue/name-property-casing': [2, 'kebab-case'],
     'arrow-parens': 0,
-    'no-debugger': 1,
     'no-warning-comments': [
       1,
       {
         terms: ['hardcoded'],
         location: 'anywhere',
-      },
-    ],
-    'no-console': [
-      1,
-      {
-        allow: ['warn', 'error'],
       },
     ],
     'no-return-await': 0,

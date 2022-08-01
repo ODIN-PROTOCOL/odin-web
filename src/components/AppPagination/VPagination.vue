@@ -45,7 +45,7 @@ import { defineComponent, computed } from 'vue'
 import ArrowIcon from '@/components/icons/ArrowIcon.vue'
 
 export default defineComponent({
-  name: 'VPagination',
+  name: 'v-pagination',
   components: {
     ArrowIcon,
   },

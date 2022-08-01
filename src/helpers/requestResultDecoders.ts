@@ -15,15 +15,15 @@ export type RequestResultDecoded = Modify<
   }
 >
 export function decodeRequestResults(
-  requests: RequestResult[]
+  requests: RequestResult[],
 ): RequestResultDecoded[] {
-  return requests.map((request) => {
+  return requests.map(request => {
     return {
       requestPacketData: decodeOracleRequestPacketData(
-        request.requestPacketData
+        request.requestPacketData,
       ),
       responsePacketData: decodeOracleResponsePacketData(
-        request.responsePacketData
+        request.responsePacketData,
       ),
     }
   })
@@ -33,7 +33,7 @@ export type OracleRequestPacketDataDecoded =
   | Modify<OracleRequestPacketData, { calldata: ObiCoin }>
   | undefined
 export function decodeOracleRequestPacketData(
-  packet?: OracleRequestPacketData
+  packet?: OracleRequestPacketData,
 ): OracleRequestPacketDataDecoded {
   if (!packet) return
   return {
@@ -46,7 +46,7 @@ export type OracleResponsePacketDataDecoded =
   | Modify<OracleResponsePacketData, { result: string }>
   | undefined
 export function decodeOracleResponsePacketData(
-  packet?: OracleResponsePacketData
+  packet?: OracleResponsePacketData,
 ): OracleResponsePacketDataDecoded {
   if (!packet) return
   return {

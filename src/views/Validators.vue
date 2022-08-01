@@ -359,7 +359,7 @@ const getValidators = async () => {
               signedBlocks.value) *
             100,
           isActive: await isActiveValidator(item.info?.operatorAddress).then(
-            (req) => req,
+            req => req,
           ),
         }
       }),
@@ -374,7 +374,7 @@ const getValidators = async () => {
               signedBlocks.value) *
             100,
           isActive: await isActiveValidator(item.info?.operatorAddress).then(
-            (req) => req,
+            req => req,
           ),
         }
       }),
@@ -421,7 +421,7 @@ const paginationHandler = (num: number) => {
   filterValidators(num)
 }
 
-const selectTab = async (title: string) => {
+const selectTab = (title: string) => {
   if (title !== tabStatus.value) {
     tabStatus.value = title
     if (tabStatus.value === activeValidatorsTitle.value) {
@@ -448,7 +448,7 @@ const loadData = async () => {
 
 const claimAllRewards = async () => {
   await showDialogHandler(ClaimAllRewardsFormModal, {
-    onSubmit: async (d) => {
+    onSubmit: async d => {
       d.kill()
       await loadData()
     },
@@ -460,7 +460,7 @@ const withdrawRewards = async (validator: ValidatorInfoModify) => {
   await showDialogHandler(
     WithdrawRewardsFormModal,
     {
-      onSubmit: async (d) => {
+      onSubmit: async d => {
         d.kill()
         await loadData()
       },
@@ -473,7 +473,7 @@ const delegate = async (validator: ValidatorInfoModify) => {
   await showDialogHandler(
     DelegateFormModal,
     {
-      onSubmit: async (d) => {
+      onSubmit: async d => {
         d.kill()
         await loadData()
       },
@@ -489,7 +489,7 @@ const redelegate = async (validator: ValidatorInfoModify) => {
   await showDialogHandler(
     RedelegateFormModal,
     {
-      onSubmit: async (d) => {
+      onSubmit: async d => {
         d.kill()
         await loadData()
       },
@@ -506,7 +506,7 @@ const undelegate = async (validator: ValidatorInfoModify) => {
   await showDialogHandler(
     UndelegateFormModal,
     {
-      onSubmit: async (d) => {
+      onSubmit: async d => {
         d.kill()
         await loadData()
       },
@@ -523,14 +523,15 @@ const stakeTransfer = async () => {
   await showDialogHandler(
     StakeTransferFormModal,
     {
-      onSubmit: async (d) => {
+      onSubmit: async d => {
         d.kill()
         await loadData()
       },
     },
     {
-      validators: allValitors.value,
+      activeValidators: activeValidators.value,
       delegation: delegations.value,
+      allValidators: allValitors.value,
     },
   )
 }
@@ -628,6 +629,7 @@ onUnmounted(async () => {
 }
 .validators__filter-search-input {
   border: none;
+  padding-right: 2rem;
   &:focus::-webkit-input-placeholder {
     color: transparent;
   }

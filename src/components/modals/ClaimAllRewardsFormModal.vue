@@ -87,7 +87,7 @@ export default defineComponent({
       isLoading.value = true
       try {
         await callers.withdrawMultiDelegatorRewards(
-          rewards.value.map((item) => ({
+          rewards.value.map(item => ({
             delegatorAddress: wallet.account.address,
             validatorAddress: item.validatorAddress,
           })),

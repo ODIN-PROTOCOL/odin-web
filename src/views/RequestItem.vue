@@ -109,8 +109,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, onMounted, computed } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted, computed } from 'vue'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import { callers } from '@/api/callers'
 import { API_CONFIG } from '@/api/api-config'
@@ -128,123 +128,97 @@ import isObjectLodash from 'lodash/isObject'
 import { fromBase64 } from '@cosmjs/encoding'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 
-export default defineComponent({
-  components: { TitledLink, CopyButton, BackButton, Progressbar, StatusBlock },
-  setup: function () {
-    const route: RouteLocationNormalizedLoaded = useRoute()
-    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const requestData = ref()
-    const resultData = ref()
-    const requestStatus = ref()
-    const requestTime = ref()
-    const resolveTime = ref()
-    const requestTimeRange = ref()
-    const resolveTimeRange = ref()
-    const requestCalldata = ref()
-    const requestResult = ref()
-    const requestResultName = ref()
-    const requestResultType = ref()
-    const senderLink = computed(() => {
-      return `${API_CONFIG.odinScan}/account/${requestData.value?.client_id}`
-    })
-    const isObject = computed(() => {
-      return isObjectLodash(requestCalldata.value)
-    })
-    const isRequestSuccess = computed(
-      () => requestStatus.value === ResolveStatus.RESOLVE_STATUS_SUCCESS
+const route: RouteLocationNormalizedLoaded = useRoute()
+const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+const requestData = ref()
+const resultData = ref()
+const requestStatus = ref()
+const requestTime = ref()
+const resolveTime = ref()
+const requestTimeRange = ref()
+const resolveTimeRange = ref()
+const requestCalldata = ref()
+const requestResult = ref()
+const requestResultName = ref()
+const requestResultType = ref()
+const senderLink = computed(() => {
+  return `${API_CONFIG.odinScan}/account/${requestData.value?.client_id}`
+})
+const isObject = computed(() => {
+  return isObjectLodash(requestCalldata.value)
+})
+const isRequestSuccess = computed(
+  () => requestStatus.value === ResolveStatus.RESOLVE_STATUS_SUCCESS,
+)
+
+const getRequest = async () => {
+  lockLoading()
+  try {
+    const request = await callers.getRequest(Number(route.params.id))
+    requestData.value = request?.data.result.result.request
+    resultData.value = request?.data.result.result.result
+    requestStatus.value = resultData.value.resolve_status
+    requestTime.value = formatDate(
+      new Date(requestData.value.request_time * 1000),
     )
+    resolveTime.value = formatDate(
+      new Date(resultData.value.resolve_time * 1000),
+    )
+    requestTimeRange.value = formatDateDifference(
+      new Date(requestData.value.request_time * 1000),
+    )
+    resolveTimeRange.value = formatDateDifference(
+      new Date(resultData.value.resolve_time * 1000),
+    )
+    requestCalldata.value = await _decodeCallData(
+      fromBase64(requestData.value.calldata),
+    )
+    if (isRequestSuccess.value) {
+      const res = await _decodeResult(fromBase64(resultData.value.result))
+      requestResultName.value = Object.keys(res).toString() || 'Data'
+      requestResult.value =
+        typeof res[Object.keys(res)[0]] !== 'string'
+          ? res[Object.keys(res)[0]].reduce(
+              (accumulator: unknown, currentValue: unknown) =>
+                accumulator + ' ' + currentValue,
+            )
+          : res[Object.keys(res)[0]]
+      requestResultType.value = typeof requestResult.value
+    }
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
 
-    const getRequest = async () => {
-      lockLoading()
-      try {
-        const request = await callers.getRequest(Number(route.params.id))
-        requestData.value = request?.data.result.result.request
-        resultData.value = request?.data.result.result.result
-        requestStatus.value = resultData.value.resolve_status
-        requestTime.value = formatDate(
-          new Date(requestData.value.request_time * 1000)
-        )
-        resolveTime.value = formatDate(
-          new Date(resultData.value.resolve_time * 1000)
-        )
-        requestTimeRange.value = formatDateDifference(
-          new Date(requestData.value.request_time * 1000)
-        )
-        resolveTimeRange.value = formatDateDifference(
-          new Date(resultData.value.resolve_time * 1000)
-        )
-        requestCalldata.value = await _decodeCallData(
-          fromBase64(requestData.value.calldata)
-        )
-        if (isRequestSuccess.value) {
-          const res = await _decodeResult(fromBase64(resultData.value.result))
-          requestResultName.value = Object.keys(res).toString() || 'Data'
-          requestResult.value =
-            typeof res[Object.keys(res)[0]] !== 'string'
-              ? res[Object.keys(res)[0]].reduce(
-                  (accumulator: unknown, currentValue: unknown) =>
-                    accumulator + ' ' + currentValue
-                )
-              : res[Object.keys(res)[0]]
-          requestResultType.value = typeof requestResult.value
-        }
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
+const _decodeCallData = async (calldata: Uint8Array) => {
+  try {
+    const { oracleScript } = await callers.getOracleScript(
+      Number(requestData.value.oracle_script_id),
+    )
+    if (oracleScript) {
+      const obi = new Obi(oracleScript.schema)
+      return obi.decodeInput(Buffer.from(calldata))
     }
-
-    const _decodeCallData = async (calldata: Uint8Array) => {
-      try {
-        const { oracleScript } = await callers.getOracleScript(
-          Number(requestData.value.oracle_script_id)
-        )
-        if (oracleScript) {
-          const obi = new Obi(oracleScript.schema)
-          return obi.decodeInput(Buffer.from(calldata))
-        }
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+}
+const _decodeResult = async (result: Uint8Array) => {
+  try {
+    const { oracleScript } = await callers.getOracleScript(
+      Number(resultData.value.oracle_script_id),
+    )
+    if (oracleScript) {
+      const obi = new Obi(oracleScript.schema)
+      return obi.decodeOutput(Buffer.from(result))
     }
-    const _decodeResult = async (result: Uint8Array) => {
-      try {
-        const { oracleScript } = await callers.getOracleScript(
-          Number(resultData.value.oracle_script_id)
-        )
-        if (oracleScript) {
-          const obi = new Obi(oracleScript.schema)
-          return obi.decodeOutput(Buffer.from(result))
-        }
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-    }
-    onMounted(async () => {
-      await getRequest()
-    })
-
-    return {
-      API_CONFIG,
-      ResolveStatus,
-      requestStatusType,
-      requestData,
-      requestStatus,
-      requestTime,
-      resolveTime,
-      requestTimeRange,
-      resolveTimeRange,
-      requestCalldata,
-      requestResult,
-      senderLink,
-      isObject,
-      isRequestSuccess,
-      requestResultName,
-      requestResultType,
-      resultData,
-      isLoading,
-    }
-  },
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+}
+onMounted(async () => {
+  await getRequest()
 })
 </script>
 

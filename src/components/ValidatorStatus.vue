@@ -15,39 +15,38 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, computed } from 'vue'
+<script setup lang="ts">
+import { computed } from 'vue'
 import SuccessIcon from '@/components/icons/SuccessIcon.vue'
 import ErrorIcon from '@/components/icons/ErrorIcon.vue'
 import InactiveIcon from '@/components/icons/InactiveIcon.vue'
-import { VALIDATOR_STATUS_TYPE } from '@/helpers/helpers'
+import { VALIDATOR_STATUS_TYPE } from '@/helpers/validatorHelpers'
 
-export default defineComponent({
-  name: 'status-icon',
-  props: {
-    status: { type: String, required: true },
-    width: { type: Number, default: 24 },
-    height: { type: Number, default: 24 },
+const props = withDefaults(
+  defineProps<{
+    status: string
+    width?: number | string
+    height?: number | string
+  }>(),
+  {
+    width: 24,
+    height: 24,
   },
-  components: { SuccessIcon, ErrorIcon, InactiveIcon },
-  setup(props) {
-    const component = computed(() => {
-      if (props.status === VALIDATOR_STATUS_TYPE.inactive) {
-        return 'InactiveIcon'
-      } else {
-        return props.status === VALIDATOR_STATUS_TYPE.success
-          ? 'SuccessIcon'
-          : 'ErrorIcon'
-      }
-    })
+)
 
-    const validatorStatusText = computed(() =>
-      props.status === VALIDATOR_STATUS_TYPE.inactive ? 'Inactive' : 'Oracle',
-    )
-
-    return { component, validatorStatusText }
-  },
+const component = computed(() => {
+  if (props.status === VALIDATOR_STATUS_TYPE.inactive) {
+    return InactiveIcon
+  } else {
+    return props.status === VALIDATOR_STATUS_TYPE.success
+      ? SuccessIcon
+      : ErrorIcon
+  }
 })
+
+const validatorStatusText = computed(() =>
+  props.status === VALIDATOR_STATUS_TYPE.inactive ? 'Inactive' : 'Oracle',
+)
 </script>
 <style lang="scss" scoped>
 .validator-status {

@@ -32,7 +32,9 @@ import hljs from 'highlight.js/lib/core'
 import python from 'highlight.js/lib/languages/python'
 import rust from 'highlight.js/lib/languages/rust'
 import hljsVuePlugin from '@highlightjs/vue-plugin'
-import SkeletonLoaderVueSample from 'skeleton-loader-vue/src/components/Loader.vue'
+// import SkeletonLoaderVueSample from 'skeleton-loader-vue/src/components/Loader.vue'
+import { Skeletor } from 'vue-skeletor'
+
 hljs.registerLanguage('python', python)
 hljs.registerLanguage('rust', rust)
 import { DefaultApolloClient } from '@vue/apollo-composable'
@@ -88,13 +90,14 @@ async function _main() {
   app.use(hljsVuePlugin)
   app.component('VuePicker', VuePicker)
   app.component('VuePickerOption', VuePickerOption)
-  app.component('skeleton-loader', SkeletonLoaderVueSample)
+  // app.component('skeleton-loader', SkeletonLoaderVueSample)
+  app.component('skeleton-loader', Skeletor)
   app.mount('#app')
   return app
 }
 
 let app: App<Element>
-_main().then((_app) => {
+_main().then(_app => {
   if (_app) app = _app
 })
 

@@ -17,12 +17,12 @@ export interface ObiRates {
 
 export const obiRates = _makeEncoder<ObiRates>(
   '{rates:[string]}',
-  (input) => ({
+  input => ({
     rates: [...input.rates],
   }),
-  (output) => ({
+  output => ({
     rates: output.rates as Array<string>,
-  })
+  }),
 )
 
 export interface ObiCoin {
@@ -32,20 +32,20 @@ export interface ObiCoin {
 
 export const obiCoin = _makeEncoder<ObiCoin>(
   '{symbol:string,multiplier:u64}',
-  (input) => ({
+  input => ({
     symbol: input.symbol,
     multiplier: BigInt(input.multiplier),
   }),
-  (output) => ({
+  output => ({
     symbol: output.symbol as string,
-    multiplier: (output.multiplier as BigInt).toString(),
-  })
+    multiplier: (output.multiplier as bigint).toString(),
+  }),
 )
 
 function _makeEncoder<T extends AnyObj>(
   type: string,
   encodeInputMapper: (input: T) => AnyObj,
-  decodeOutputMapper: (output: AnyObj) => T
+  decodeOutputMapper: (output: AnyObj) => T,
 ) {
   const struct = new ObiStruct(type)
   const encode = (input: T): Uint8Array =>

@@ -5,7 +5,7 @@
     </div>
     <div v-if="isLoading" class="custom-doughnut-chart__legend">
       <div
-        v-for="item of 6"
+        v-for="item of 5"
         :key="item"
         class="custom-doughnut-chart__legend-item"
       >
@@ -42,16 +42,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import {
-  computed,
-  defineComponent,
-  onMounted,
-  PropType,
-  ref,
-  toRef,
-  watch,
-} from 'vue'
+<script setup lang="ts">
+import { computed, onMounted, ref, toRef, watch } from 'vue'
 import { Chart, registerables } from 'chart.js'
 import { DoughnutChart, useDoughnutChart } from 'vue-chart-3'
 import { ChartDataItem } from '@/helpers/Types'
@@ -61,98 +53,88 @@ import {
 } from '@/helpers/chartHelpers'
 
 Chart.register(...registerables)
+const props = defineProps<{
+  data: ChartDataItem[]
+  isLoading: boolean
+}>()
 
-export default defineComponent({
-  components: { DoughnutChart },
-  props: {
-    data: { type: Array as PropType<Array<ChartDataItem>> },
-    isLoading: { type: Boolean, required: true },
-  },
-  setup: function (props) {
-    const _data = toRef(props, 'data')
-    const labels = ref<string[]>([])
-    const dataValues = ref<number[]>([])
-    const colors = ref<string[]>([])
-    const percentage = ref<number[]>([])
-    const isTooltipeEnabled = ref<boolean>()
+const _data = toRef(props, 'data')
+const labels = ref<string[]>([])
+const dataValues = ref<number[]>([])
+const colors = ref<string[]>([])
+const percentage = ref<number[]>([])
+const isTooltipeEnabled = ref<boolean>()
 
-    const prepareData = () => {
-      const l: string[] = []
-      const v: number[] = []
-      const c: string[] = []
-      let totalCount = 0
+const prepareData = () => {
+  const l: string[] = []
+  const v: number[] = []
+  const c: string[] = []
+  let totalCount = 0
 
-      resetChartData()
+  resetChartData()
 
-      if (_data.value) {
-        _data.value.forEach((item) => {
-          l.push((item as ChartDataItem).name)
-          v.push((item as ChartDataItem).count)
-          c.push((item as ChartDataItem).color)
-          totalCount += (item as ChartDataItem).count
-        })
-      }
-
-      if (totalCount) {
-        labels.value = [...l]
-        dataValues.value = [...v]
-        colors.value = [...c]
-        isTooltipeEnabled.value = true
-      }
-
-      percentage.value = getPercentageForChartValues(v, totalCount)
-    }
-
-    const resetChartData = () => {
-      labels.value = defaultChartData.labels
-      dataValues.value = defaultChartData.dataValues
-      colors.value = defaultChartData.colors
-      isTooltipeEnabled.value = false
-    }
-
-    watch(
-      () => _data.value,
-      () => {
-        prepareData()
-      }
-    )
-
-    const chartData = computed(() => ({
-      labels: labels.value,
-      datasets: [
-        {
-          data: dataValues.value,
-          backgroundColor: colors.value,
-        },
-      ],
-    }))
-
-    const options = computed(() => ({
-      cutout: 45,
-      plugins: {
-        legend: {
-          display: false,
-        },
-        tooltip: {
-          enabled: isTooltipeEnabled.value,
-        },
-      },
-    }))
-
-    const { doughnutChartProps } = useDoughnutChart({
-      chartData,
-      options,
+  if (_data.value) {
+    _data.value.forEach(item => {
+      l.push((item as ChartDataItem).name)
+      v.push((item as ChartDataItem).count)
+      c.push((item as ChartDataItem).color)
+      totalCount += (item as ChartDataItem).count
     })
+  }
 
-    onMounted(() => {
-      resetChartData()
-    })
+  if (totalCount) {
+    labels.value = [...l]
+    dataValues.value = [...v]
+    colors.value = [...c]
+    isTooltipeEnabled.value = true
+  }
 
-    return {
-      percentage,
-      doughnutChartProps,
-    }
+  percentage.value = getPercentageForChartValues(v, totalCount)
+}
+
+const resetChartData = () => {
+  labels.value = defaultChartData.labels
+  dataValues.value = defaultChartData.dataValues
+  colors.value = defaultChartData.colors
+  isTooltipeEnabled.value = false
+}
+
+watch(
+  () => _data.value,
+  () => {
+    prepareData()
   },
+)
+
+const chartData = computed(() => ({
+  labels: labels.value,
+  datasets: [
+    {
+      data: dataValues.value,
+      backgroundColor: colors.value,
+    },
+  ],
+}))
+
+const options = computed(() => ({
+  cutout: 45,
+  plugins: {
+    legend: {
+      display: false,
+    },
+    tooltip: {
+      enabled: isTooltipeEnabled.value,
+    },
+  },
+}))
+
+const { doughnutChartProps } = useDoughnutChart({
+  chartData,
+  options,
+})
+
+onMounted(() => {
+  resetChartData()
 })
 </script>
 

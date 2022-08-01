@@ -23,13 +23,13 @@
       <span class="app-table__title">Delegated</span>
       <span
         :title="
-          $convertLokiToOdin($trimZeros(validator.info.delegatorShares), {
+          $convertLokiToOdin($trimZeros(validator.info.delegatedAmount), {
             onlyNumber: true,
           })
         "
       >
         {{
-          $convertLokiToOdin($trimZeros(validator.info.delegatorShares), {
+          $convertLokiToOdin($trimZeros(validator.info.delegatedAmount), {
             withDenom: true,
           })
         }}

@@ -20,11 +20,17 @@ export enum VALIDATOR_STATUS {
   active = 3,
 }
 
+export enum VALIDATOR_STATUS_TYPE {
+  inactive = 'inactive',
+  success = 'success',
+  error = 'error',
+}
+
 export const isActiveValidator = async (
   validatorAddress: string,
 ): Promise<boolean> => {
   const response = await callers
     .getValidatorStatus(validatorAddress)
-    .then((req) => req.status?.isActive)
+    .then(req => req.status?.isActive)
   return Boolean(response)
 }

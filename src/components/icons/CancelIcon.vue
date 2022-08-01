@@ -13,15 +13,17 @@
   </svg>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'cancel-icon',
-  props: {
-    className: { type: String },
-    width: { type: Number, default: 14 },
-    height: { type: Number, default: 14 },
+<script setup lang="ts">
+withDefaults(
+  defineProps<{
+    className?: string
+    width?: number | string
+    height?: number | string
+  }>(),
+  {
+    className: '',
+    width: 14,
+    height: 14,
   },
-})
+)
 </script>

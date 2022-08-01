@@ -5,7 +5,7 @@ import mapValues from 'lodash-es/mapValues'
 
 export type FormFieldDefinition = [
   value: unknown,
-  ...validators: FormFieldValidator[]
+  ...validators: FormFieldValidator[],
 ]
 
 type FormDecorated<T extends Record<string, FormFieldDefinition>> = {
@@ -24,9 +24,9 @@ type FormFlattened<T extends Record<string, FormFieldDefinition>> =
   { isValid: ComputedRef<boolean> }
 
 export function useForm<T extends Record<string, FormFieldDefinition>>(
-  fieldDefinitions: T
+  fieldDefinitions: T,
 ): FormDecorated<T> {
-  const fields = mapValues(fieldDefinitions, (fdDef) => {
+  const fields = mapValues(fieldDefinitions, fdDef => {
     return useField(fdDef[0], <FormFieldValidator[]>fdDef.slice(1))
   })
 
@@ -35,7 +35,7 @@ export function useForm<T extends Record<string, FormFieldDefinition>>(
   const isValid = computed(() => {
     return _fieldsArr.reduce(
       (valid, field) => valid && field.error.value === null,
-      true
+      true,
     )
   })
 
@@ -43,7 +43,7 @@ export function useForm<T extends Record<string, FormFieldDefinition>>(
     return (
       _fieldsArr.reduce(
         (error, field) => error || field.validate(),
-        null as string | null
+        null as string | null,
       ) === null
     )
   }
@@ -59,7 +59,7 @@ export function useForm<T extends Record<string, FormFieldDefinition>>(
   }
 
   const reset = (): void => {
-    _fieldsArr.forEach((f) => f.reset())
+    _fieldsArr.forEach(f => f.reset())
   }
 
   return { ...fields, isValid, validateAll, flatten, reset }

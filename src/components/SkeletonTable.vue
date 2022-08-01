@@ -36,24 +36,27 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, computed } from 'vue'
+<script setup lang="ts">
+import { computed } from 'vue'
+const props = withDefaults(
+  defineProps<{
+    headerTitles: string[]
+    classString?: string
+    tableSize?: number | string
+    skeletonHeight?: number | string
+    skeletonRadius?: number | string
+  }>(),
+  {
+    classString: '',
+    tableSize: '5',
+    skeletonHeight: 24,
+    skeletonRadius: 32,
+  },
+)
 
-export default defineComponent({
-  props: {
-    headerTitles: { type: Array, required: true },
-    classString: { type: String },
-    tableSize: { type: String, default: '5' },
-    skeletonHeight: { type: Number, default: 24 },
-    skeletonRadius: { type: Number, default: 32 },
-  },
-  setup(props) {
-    const skeletonLoaderArray = computed(() =>
-      Array(Number(props.tableSize)).fill(props.headerTitles),
-    )
-    return { skeletonLoaderArray }
-  },
-})
+const skeletonLoaderArray = computed(() =>
+  Array(Number(props.tableSize)).fill(props.headerTitles),
+)
 </script>
 <style scoped>
 .skeleton-table__loader {

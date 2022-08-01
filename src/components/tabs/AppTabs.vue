@@ -19,14 +19,14 @@
 import { defineComponent, ref, provide, computed, watch } from 'vue'
 
 export default defineComponent({
-  name: 'AppTabs',
+  name: 'app-tabs',
   emits: ['changeTab'],
   setup: function (props, { slots, emit }) {
     const tabTitles = computed(() =>
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (slots as any)
         .default()
-        .map((tab: { props: { title: never } }) => tab.props.title)
+        .map((tab: { props: { title: never } }) => tab.props.title),
     )
     const selectedTitle = ref(tabTitles.value[0])
 

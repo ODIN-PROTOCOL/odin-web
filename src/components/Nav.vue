@@ -69,45 +69,47 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, onUnmounted } from 'vue'
+<script setup lang="ts">
+import { onMounted, onUnmounted } from 'vue'
 import { useAuthorization } from '@/composables/useAuthorization'
+import { WalletTypes, wallet } from '@/api/wallet'
 import router from '@/router'
 import ExitIcon from '@/components/icons/ExitIcon.vue'
-import { WalletTypes, wallet } from '@/api/wallet'
 
-export default defineComponent({
-  components: { ExitIcon },
-  emits: ['closeBurger'],
-  props: {
-    isOpen: { type: Boolean, default: false },
+enum EVENTS {
+  closeBurger = 'close-burger',
+}
+
+withDefaults(
+  defineProps<{
+    isOpen?: boolean
+  }>(),
+  {
+    isOpen: false,
   },
-  setup(_, { emit }) {
-    const auth = useAuthorization()
-    const logOutAndLeave = () => {
-      auth.logOut()
-      router.push({ name: 'Auth' })
-    }
-    const closeBurger = () => {
-      emit('closeBurger')
-    }
+)
 
-    onMounted(() => {
-      if (!wallet.isEmpty && wallet.type === WalletTypes.KEPLR_WALLET) {
-        window.addEventListener('keplr_keystorechange', logOutAndLeave)
-      }
-    })
+const emit = defineEmits<{
+  (e: EVENTS.closeBurger): void
+}>()
 
-    onUnmounted(() => {
-      window.removeEventListener('keplr_keystorechange', logOutAndLeave)
-    })
+const { logOut, isLoggedIn } = useAuthorization()
+const logOutAndLeave = () => {
+  logOut()
+  router.push({ name: 'Auth' })
+}
+const closeBurger = () => {
+  emit(EVENTS.closeBurger)
+}
 
-    return {
-      logOutAndLeave,
-      closeBurger,
-      isLoggedIn: auth.isLoggedIn,
-    }
-  },
+onMounted(() => {
+  if (!wallet.isEmpty && wallet.type === WalletTypes.KEPLR_WALLET) {
+    window.addEventListener('keplr_keystorechange', logOutAndLeave)
+  }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keplr_keystorechange', logOutAndLeave)
 })
 </script>
 

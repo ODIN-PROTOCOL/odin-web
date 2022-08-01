@@ -21,27 +21,36 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import { useAuthorization } from '@/composables/useAuthorization'
 import BalanceButton from '@/components/BalanceButton.vue'
 import router from '@/router'
 
-export default defineComponent({
-  components: { BalanceButton },
-  emits: ['closeBurger'],
-  setup(_, { emit }) {
-    const auth = useAuthorization()
-    const logOutAndLeave = () => {
-      auth.logOut()
-      router.push({ name: 'Auth' })
-    }
-    const closeBurger = () => {
-      emit('closeBurger')
-    }
-    return { logOutAndLeave, closeBurger, isLoggedIn: auth.isLoggedIn }
+enum EVENTS {
+  closeBurger = 'close-burger',
+}
+
+withDefaults(
+  defineProps<{
+    isOpen?: boolean
+  }>(),
+  {
+    isOpen: false,
   },
-})
+)
+
+const emit = defineEmits<{
+  (e: EVENTS.closeBurger): void
+}>()
+
+const { logOut, isLoggedIn } = useAuthorization()
+const logOutAndLeave = () => {
+  logOut()
+  router.push({ name: 'Auth' })
+}
+const closeBurger = () => {
+  emit(EVENTS.closeBurger)
+}
 </script>
 
 <style scoped lang="scss">

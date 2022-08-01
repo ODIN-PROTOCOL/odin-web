@@ -103,119 +103,94 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, onMounted, computed } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import { callers } from '@/api/callers'
-import { API_CONFIG } from '@/api/api-config'
+import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
+import { wallet } from '@/api/wallet'
 import TitledLink from '@/components/TitledLink.vue'
 import Progressbar from '@/components/Progressbar.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
-import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
-import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import RequestFormModal from '@/components/modals/RequestFormModal.vue'
-import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
-import { wallet } from '@/api/wallet'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 
-export default defineComponent({
-  components: { TitledLink, Progressbar, AppPagination, SkeletonTable },
-  setup() {
-    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 25
-    const currentPage = ref(1)
-    const totalPages = ref(0)
-    const requests = ref()
-    const requestsCount = ref()
-    const maxAskCount = ref()
-    const accountAddress = wallet.isEmpty ? '' : wallet.account.address
-    const senderLink = computed(
-      () => (item: { request: { client_id: string } }) => {
-        return `${API_CONFIG.odinScan}/account/${item.request.client_id}`
-      },
-    )
-    const headerTitles = [
-      { title: 'Request ID' },
-      { title: 'Oracle Script ID' },
-      { title: 'Report Status' },
-      { title: 'Timestamp' },
-    ]
-    const getRequests = async () => {
-      lockLoading()
-      try {
-        requests.value = []
-        const req = await callers.getRequests(
-          ITEMS_PER_PAGE,
-          (currentPage.value - 1) * ITEMS_PER_PAGE,
-        )
-        requests.value = req.data.result.result.requests
-        await getRequestsCount()
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
-    }
+const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+const ITEMS_PER_PAGE = 25
+const currentPage = ref(1)
+const totalPages = ref(0)
+const requests = ref()
+const requestsCount = ref()
+const maxAskCount = ref()
+const accountAddress = wallet.isEmpty ? '' : wallet.account.address
 
-    const getRequestsCount = async () => {
-      lockLoading()
-      try {
-        const res = await callers.getCounts()
-        requestsCount.value = Number(res.requestCount)
-        totalPages.value = Math.ceil(requestsCount.value / ITEMS_PER_PAGE)
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
-    }
-
-    const getParams = async () => {
-      lockLoading()
-      try {
-        const response = await callers.getOracleParams()
-        maxAskCount.value = response.params?.maxAskCount.toNumber()
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
-    }
-
-    const createRequest = async () => {
-      await showDialogHandler(
-        RequestFormModal,
-        {
-          onSubmit: async (d) => {
-            d.kill()
-            await getRequests()
-          },
-        },
-        { maxAskCount: maxAskCount.value },
-      )
-    }
-
-    const paginationHandler = (num: number) => {
-      currentPage.value = num
-      getRequests()
-    }
-
-    onMounted(async () => {
-      await getParams()
-      await getRequests()
-    })
-
-    return {
-      API_CONFIG,
+const headerTitles = [
+  { title: 'Request ID' },
+  { title: 'Oracle Script ID' },
+  { title: 'Report Status' },
+  { title: 'Timestamp' },
+]
+const getRequests = async () => {
+  lockLoading()
+  try {
+    requests.value = []
+    const req = await callers.getRequests(
       ITEMS_PER_PAGE,
-      currentPage,
-      totalPages,
-      requests,
-      requestsCount,
-      createRequest,
-      paginationHandler,
-      senderLink,
-      isLoading,
-      accountAddress,
-      headerTitles,
-    }
-  },
+      (currentPage.value - 1) * ITEMS_PER_PAGE,
+    )
+    requests.value = req.data.result.result.requests
+    await getRequestsCount()
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
+
+const getRequestsCount = async () => {
+  lockLoading()
+  try {
+    const res = await callers.getCounts()
+    requestsCount.value = Number(res.requestCount)
+    totalPages.value = Math.ceil(requestsCount.value / ITEMS_PER_PAGE)
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
+
+const getParams = async () => {
+  lockLoading()
+  try {
+    const response = await callers.getOracleParams()
+    maxAskCount.value = response.params?.maxAskCount.toNumber()
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
+
+const createRequest = async () => {
+  await showDialogHandler(
+    RequestFormModal,
+    {
+      onSubmit: async d => {
+        d.kill()
+        await getRequests()
+      },
+    },
+    { maxAskCount: maxAskCount.value },
+  )
+}
+
+const paginationHandler = (num: number) => {
+  currentPage.value = num
+  getRequests()
+}
+
+onMounted(async () => {
+  await getParams()
+  await getRequests()
 })
 </script>
 

@@ -5,7 +5,7 @@ interface IShowDialogHandler {
   (
     component: Component,
     callbacks?: { onSubmit?: DialogHandler; onClose?: DialogHandler },
-    props?: DialogProps
+    props?: DialogProps,
   ): Promise<unknown | null>
 }
 
@@ -15,7 +15,7 @@ export const showDialogHandler: IShowDialogHandler = function (
     onSubmit?: DialogHandler
     onClose?: DialogHandler
   },
-  props?: DialogProps
+  props?: DialogProps,
 ): Promise<unknown | null> {
   return dialogs.show(component, callbacks, { ...(props ? { props } : {}) })
 }

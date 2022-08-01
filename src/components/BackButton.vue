@@ -10,24 +10,21 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import { Router, useRouter } from 'vue-router'
 
-export default defineComponent({
-  props: {
-    text: { type: String, required: true },
-  },
-  setup: function () {
-    const router: Router = useRouter()
+withDefaults(
+  defineProps<{
+    text?: string
+  }>(),
+  { text: '' },
+)
 
-    const routerBack = (): void => {
-      router.back()
-    }
+const router: Router = useRouter()
 
-    return { routerBack }
-  },
-})
+const routerBack = (): void => {
+  router.back()
+}
 </script>
 
 <style lang="scss" scoped>

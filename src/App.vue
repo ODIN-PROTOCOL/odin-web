@@ -57,20 +57,21 @@
 </template>
 
 <script setup lang="ts">
+import 'vue-skeletor/dist/vue-skeletor.css'
 import '@invisiburu/vue-picker/dist/vue-picker.min.css'
 import { computed, onMounted, ref } from 'vue'
 import { dialogs } from '@/helpers/dialogs'
+import { notify } from '@kyvg/vue3-notification'
+import { useRoute } from 'vue-router'
 import Nav from '@/components/Nav.vue'
 import UserWidget from '@/components/UserWidget.vue'
 import BurgerMenu from '@/components/BurgerMenu.vue'
-
 import InfoNotificationIcon from '@/components/icons/InfoNotificationIcon.vue'
 import SuccessNotificationIcon from '@/components/icons/SuccessNotificationIcon.vue'
 import FailedNotificationIcon from '@/components/icons/FailedNotificationIcon.vue'
 import CancelIcon from '@/components/icons/CancelIcon.vue'
-import { notify } from '@kyvg/vue3-notification'
 import emitter from '@/helpers/emmiter'
-import { useRoute } from 'vue-router'
+
 type NotificationInfo = {
   error: Error
   typeNotification?: string
@@ -81,7 +82,7 @@ const _readyStates = ref({
   dialogs: false,
 })
 const isAppReady = computed(() => {
-  return Object.values(_readyStates.value).every((v) => v === true)
+  return Object.values(_readyStates.value).every(v => v === true)
 })
 
 // Dialogs
@@ -109,7 +110,7 @@ const isAuthPage = computed(() => route?.name?.toString().includes('Auth'))
 
 // Notification
 const DURATION = 7000
-emitter.on('handleNotification', (e) => {
+emitter.on('handleNotification', e => {
   notification.value = e as NotificationInfo
   notify({
     ignoreDuplicates: true,
@@ -131,6 +132,7 @@ emitter.on('handleNotification', (e) => {
 @import '~@/styles/vue-notification.scss';
 @import '~@/styles/shortcuts.scss';
 @import '~@/styles/atom-one-dark.scss';
+
 #app {
   width: 100%;
   @include flex-container;

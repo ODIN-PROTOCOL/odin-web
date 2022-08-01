@@ -87,7 +87,7 @@ export default defineComponent({
     const fee = ref(API_CONFIG.fee)
 
     const availableCoinForRedelegate = computed(() => {
-      const reward = rewards.value.find((item) => {
+      const reward = rewards.value.find(item => {
         return item.denom === COINS_LIST.LOKI
       })
       return reward || defaultBalanceBlank
@@ -109,7 +109,7 @@ export default defineComponent({
     }
 
     const deductFee = (rewards: DecCoin[]): DecCoin[] => {
-      return rewards.map((item) => {
+      return rewards.map(item => {
         if (item.denom === COINS_LIST.LOKI) {
           return {
             ...item,

@@ -7,7 +7,12 @@
     </div>
 
     <div class="voting__main">
-      <div class="voting__choice">
+      <div
+        v-if="
+          currentProposalStatus === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
+        "
+        class="voting__choice"
+      >
         <div class="voting__choice-item">
           <input
             class="voting__choice-item-input"
@@ -51,6 +56,10 @@
         </div>
 
         <button
+          :disabled="
+            currentProposalStatus !==
+            ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
+          "
           class="voting__btn app-btn app-btn--medium"
           @click="confirmation()"
         >
@@ -68,13 +77,16 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue'
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 import Long from 'long'
-import { VoteOption } from '@provider/codec/cosmos/gov/v1beta1/gov'
+import {
+  VoteOption,
+  ProposalStatus,
+} from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { voteStatusType } from '@/helpers/statusTypes'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import BackButton from '@/components/BackButton.vue'
@@ -86,85 +98,86 @@ import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import ConfirmationModal from '@/components/modals/ConfirmationModal.vue'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 
-export default defineComponent({
-  components: { BackButton, CustomDoughnutChart, Loader },
-  setup() {
-    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const route: RouteLocationNormalizedLoaded = useRoute()
-    const votesDataForChart = ref<ChartDataItem[] | never[]>([])
-    const pickedOption = ref(VoteOption.VOTE_OPTION_YES)
-    const proposalName = ref('')
+const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+const route: RouteLocationNormalizedLoaded = useRoute()
+const votesDataForChart = ref<ChartDataItem[] | never[]>([])
+const pickedOption = ref(VoteOption.VOTE_OPTION_YES)
+const proposalName = ref('')
+const currentProposalStatus = ref(0)
+const getProposal = async () => {
+  lockLoading()
+  try {
+    const res = await callers.getProposal(Number(route.params.id))
+    currentProposalStatus.value = res.proposal.status
+    console.log(res)
 
-    const getProposal = async () => {
-      const res = await callers.getProposal(Number(route.params.id))
+    proposalName.value = res.proposal.content?.title as string
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
 
-      proposalName.value = res.proposal.content?.title as string
-    }
+const getVotes = async () => {
+  lockLoading()
+  try {
+    const res = await callers.getProposalVotes(Number(route.params.id))
+    const ress = await callers.getProposalVote(
+      Number(route.params.id),
+      wallet.account.address,
+    )
 
-    const getVotes = async () => {
-      lockLoading()
-      try {
-        const res = await callers.getProposalVotes(Number(route.params.id))
-        votesDataForChart.value = getVotesCountByStatus(res.votes)
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
-    }
+    votesDataForChart.value = getVotesCountByStatus(res.votes)
+    console.log(ress)
 
-    const vote = async () => {
-      lockLoading()
-      try {
-        await callers.proposalVote({
-          proposalId: new Long(Number(route.params.id)),
-          voter: wallet.account.address,
-          option: pickedOption.value,
-        })
+    console.log(res)
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
 
-        await getProposal()
-        await getVotes()
-        handleNotificationInfo(
-          `Successfully voted for ${voteStatusType[pickedOption.value].name}`,
-          TYPE_NOTIFICATION.success
-        )
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
-    }
-
-    const confirmation = async () => {
-      await showDialogHandler(
-        ConfirmationModal,
-        {
-          onSubmit: (d) => {
-            d.kill()
-            vote()
-          },
-        },
-        {
-          text: `You have chosen to vote for "${
-            voteStatusType[pickedOption.value].name
-          }"`,
-        }
-      )
-    }
-
-    onMounted(async () => {
-      await getProposal()
-      await getVotes()
+const vote = async () => {
+  lockLoading()
+  try {
+    await callers.proposalVote({
+      proposalId: new Long(Number(route.params.id)),
+      voter: wallet.account.address,
+      option: pickedOption.value,
     })
 
-    return {
-      isLoading,
-      pickedOption,
-      proposalName,
-      VoteOption,
-      votesDataForChart,
-      confirmation,
-      vote,
-    }
-  },
+    await getProposal()
+    await getVotes()
+    handleNotificationInfo(
+      `Successfully voted for ${voteStatusType[pickedOption.value].name}`,
+      TYPE_NOTIFICATION.success,
+    )
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
+
+const confirmation = async () => {
+  await showDialogHandler(
+    ConfirmationModal,
+    {
+      onSubmit: d => {
+        d.kill()
+        vote()
+      },
+    },
+    {
+      text: `You have chosen to vote for "${
+        voteStatusType[pickedOption.value].name
+      }"`,
+    },
+  )
+}
+
+onMounted(async () => {
+  await getProposal()
+  await getVotes()
 })
 </script>
 

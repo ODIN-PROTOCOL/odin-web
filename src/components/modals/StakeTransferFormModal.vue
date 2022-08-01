@@ -246,7 +246,11 @@ import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 
 const StakeTransferFormModal = defineComponent({
   props: {
-    validators: {
+    allValidators: {
+      type: Array as PropType<ValidatorInfoModify[]>,
+      required: true,
+    },
+    activeValidators: {
       type: Array as PropType<ValidatorInfoModify[]>,
       required: true,
     },
@@ -261,7 +265,7 @@ const StakeTransferFormModal = defineComponent({
     const delegatedAdress = Object.keys(props.delegation)
     const isShowToAdressOption = ref(true)
     const delegatedValidators = ref()
-    const allValidators = ref<Array<ValidatorInfoModify>>(props.validators)
+    const allValidators = ref<Array<ValidatorInfoModify>>(props.allValidators)
     const maxAmount: ComputedRef<number> = computed(
       () =>
         Number(
@@ -311,7 +315,7 @@ const StakeTransferFormModal = defineComponent({
     )
     form.sender.val(delegatedValidators.value[0].info.operatorAddress)
     const filtredValidators = computed(() =>
-      allValidators.value.map((validator: ValidatorInfoModify) => {
+      props.activeValidators.map((validator: ValidatorInfoModify) => {
         return {
           ...validator,
           delegation: props.delegation[validator?.info.operatorAddress] || {},
@@ -319,7 +323,7 @@ const StakeTransferFormModal = defineComponent({
       }),
     )
 
-    if (allValidators.value[0]?.info.operatorAddress === form.sender.val()) {
+    if (props.activeValidators[0]?.info.operatorAddress === form.sender.val()) {
       form.receiver.val(filtredValidators.value[1]?.info.operatorAddress)
     } else {
       form.receiver.val(filtredValidators.value[0]?.info.operatorAddress)
@@ -360,6 +364,7 @@ const StakeTransferFormModal = defineComponent({
         }
       },
     )
+
     watch(
       () => form.receiver.val(),
       () => {
@@ -368,21 +373,25 @@ const StakeTransferFormModal = defineComponent({
         }
       },
     )
+
     const isHaveSameValueInReceiver = (validator: ValidatorInfoModify) => {
       return validator.info.operatorAddress === form.receiver.val()
     }
     const isHaveSameValueInSender = (validator: ValidatorInfoModify) => {
       return validator.info.operatorAddress === form.sender.val()
     }
+
     const changeField = async () => {
-      allValidators.value = props.validators
       isShowToAdressOption.value = !isShowToAdressOption.value
-      if (allValidators.value[0]?.info.operatorAddress === form.sender.val()) {
-        form.receiver.val(allValidators.value[1]?.info.operatorAddress)
+      if (
+        props.activeValidators[0]?.info.operatorAddress === form.sender.val()
+      ) {
+        form.receiver.val(props.activeValidators[1]?.info.operatorAddress)
       } else {
-        form.receiver.val(allValidators.value[0]?.info.operatorAddress)
+        form.receiver.val(props.activeValidators[0]?.info.operatorAddress)
       }
     }
+
     const onSubmit = dialogs.getHandler('onSubmit')
     const submit = async () => {
       if (!form.isValid.value) return
@@ -425,7 +434,11 @@ export function showUndelegateFormDialog(
     onSubmit?: DialogHandler
     onClose?: DialogHandler
   },
-  props: { validators: ValidatorInfoModify; delegation: DelegationResponse },
+  props: {
+    allValidators: ValidatorInfoModify
+    delegation: DelegationResponse
+    activeValidators: ValidatorInfoModify
+  },
 ): Promise<unknown | null> {
   return dialogs.show(StakeTransferFormModal, callbacks, { props })
 }

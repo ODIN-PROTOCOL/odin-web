@@ -197,7 +197,9 @@ export default defineComponent({
   right: 0;
   top: 1.3rem;
 }
-
+.sort-line__search-input {
+  padding-right: 2rem;
+}
 @include respond-to(tablet) {
   .sort-line {
     margin-bottom: 0;

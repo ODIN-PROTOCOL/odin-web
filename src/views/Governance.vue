@@ -100,8 +100,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import { callers } from '@/api/callers'
 import { API_CONFIG } from '@/api/api-config'
 import { getProposalsCountByStatus } from '@/helpers/proposalHelpers'
@@ -118,141 +118,114 @@ import { proposalStatusFromJSON } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 import { ChartDataItem } from '@/helpers/Types'
 import { wallet } from '@/api/wallet'
-export default defineComponent({
-  components: {
-    CustomDoughnutChart,
-    TitledLink,
-    StatusBlock,
-    AppPagination,
-    SkeletonTable,
-  },
-  setup: function () {
-    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 30
-    const currentPage = ref(1)
-    const totalPages = ref()
-    const proposalsCount = ref(0)
-    const proposals = ref()
-    const filteredProposals = ref()
-    const proposalChanges = ref()
-    const proposalsDataForChart = ref<ChartDataItem[] | never[]>([])
-    const headerTitles = [
-      { title: 'ID' },
-      { title: 'Proposal' },
-      { title: `Proposer's account ID` },
-      { title: 'Proposal status' },
-    ]
 
-    const accountAddress = wallet.isEmpty ? '' : wallet.account.address
+const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+const ITEMS_PER_PAGE = 30
+const currentPage = ref(1)
+const totalPages = ref()
+const proposalsCount = ref(0)
+const proposals = ref()
+const filteredProposals = ref()
+const proposalChanges = ref()
+const proposalsDataForChart = ref<ChartDataItem[] | never[]>([])
+const headerTitles = [
+  { title: 'ID' },
+  { title: 'Proposal' },
+  { title: `Proposer's account ID` },
+  { title: 'Proposal status' },
+]
 
-    const getProposals = async () => {
-      lockLoading()
-      try {
-        const response = await callers.getProposals(0, 100, true)
-        const transformedProposals = await Promise.all(
-          response.data?.proposals?.map(
-            async (item: { proposal_id: string; status: string }) => {
-              const response = await callers.getProposer(item.proposal_id)
-              const proposer = await response.json()
-              return {
-                ...item,
-                proposerAddress: proposer.result.proposer,
-                status: proposalStatusFromJSON(item.status),
-                humanizeStatus:
-                  proposalStatusType[proposalStatusFromJSON(item.status)].name,
-              }
-            }
-          )
-        )
-        proposalsCount.value = response.data?.proposals.length
-        proposals.value = transformedProposals
-        totalPages.value = Math.ceil(proposalsCount.value / ITEMS_PER_PAGE)
-        filterProposals(currentPage.value)
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
-    }
+const accountAddress = wallet.isEmpty ? '' : wallet.account.address
 
-    const getProposalStatistic = async () => {
-      lockLoading()
-      try {
-        proposalsDataForChart.value = await callers
-          .getProposalsStatistic()
-          .then((request) => request.json())
-          .then((data) => getProposalsCountByStatus(data))
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
-    }
-
-    const filterProposals = (newPage: number) => {
-      let tempArr = proposals.value
-
-      if (newPage === 1) {
-        filteredProposals.value = tempArr.slice(0, newPage * ITEMS_PER_PAGE)
-      } else {
-        filteredProposals.value = tempArr.slice(
-          (newPage - 1) * ITEMS_PER_PAGE,
-          (newPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE
-        )
-      }
-      currentPage.value = newPage
-    }
-
-    const getChangesParams = async () => {
-      lockLoading()
-      try {
-        proposalChanges.value = await callers
-          .getProposalChanges()
-          .then((request) => request.json())
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
-    }
-
-    const createProposal = async () => {
-      await showDialogHandler(
-        ProposalFormModal,
-        {
-          onSubmit: (d) => {
-            d.kill()
-            getProposals()
-          },
+const getProposals = async () => {
+  lockLoading()
+  try {
+    const response = await callers.getProposals(0, 100, true)
+    const transformedProposals = await Promise.all(
+      response.data?.proposals?.map(
+        async (item: { proposal_id: string; status: string }) => {
+          const response = await callers.getProposer(item.proposal_id)
+          const proposer = await response.json()
+          return {
+            ...item,
+            proposerAddress: proposer.result.proposer,
+            status: proposalStatusFromJSON(item.status),
+            humanizeStatus:
+              proposalStatusType[proposalStatusFromJSON(item.status)].name,
+          }
         },
-        { proposalChanges: proposalChanges.value }
-      )
-    }
+      ),
+    )
+    proposalsCount.value = response.data?.proposals.length
+    proposals.value = transformedProposals
+    totalPages.value = Math.ceil(proposalsCount.value / ITEMS_PER_PAGE)
+    filterProposals(currentPage.value)
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
 
-    const paginationHandler = (num: number) => {
-      filterProposals(num)
-    }
+const getProposalStatistic = async () => {
+  lockLoading()
+  try {
+    proposalsDataForChart.value = await callers
+      .getProposalsStatistic()
+      .then(request => request.json())
+      .then(data => getProposalsCountByStatus(data))
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
 
-    onMounted(async () => {
-      await getChangesParams()
-      await getProposalStatistic()
-      await getProposals()
-    })
+const filterProposals = (newPage: number) => {
+  let tempArr = proposals.value
 
-    return {
-      API_CONFIG,
-      currentPage,
-      totalPages,
-      isLoading,
-      proposalStatusType,
-      proposalsDataForChart,
-      ITEMS_PER_PAGE,
-      proposalsCount,
-      proposals,
-      filteredProposals,
-      createProposal,
-      paginationHandler,
-      headerTitles,
-      accountAddress,
-    }
-  },
+  if (newPage === 1) {
+    filteredProposals.value = tempArr.slice(0, newPage * ITEMS_PER_PAGE)
+  } else {
+    filteredProposals.value = tempArr.slice(
+      (newPage - 1) * ITEMS_PER_PAGE,
+      (newPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE,
+    )
+  }
+  currentPage.value = newPage
+}
+
+const getChangesParams = async () => {
+  lockLoading()
+  try {
+    proposalChanges.value = await callers
+      .getProposalChanges()
+      .then(request => request.json())
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
+
+const createProposal = async () => {
+  await showDialogHandler(
+    ProposalFormModal,
+    {
+      onSubmit: d => {
+        d.kill()
+        getProposals()
+      },
+    },
+    { proposalChanges: proposalChanges.value },
+  )
+}
+
+const paginationHandler = (num: number) => {
+  filterProposals(num)
+}
+
+onMounted(async () => {
+  await getChangesParams()
+  await getProposalStatistic()
+  await getProposals()
 })
 </script>
 

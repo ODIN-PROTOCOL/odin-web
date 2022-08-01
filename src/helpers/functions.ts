@@ -6,7 +6,7 @@ export type ConditionArg = Ref<boolean> | AnyFn<boolean>
 
 export function preventIf<F extends AnyFn>(
   fn: F,
-  condition: ConditionArg
+  condition: ConditionArg,
 ): DecoratedFn<F> {
   return ((...args: Parameters<F>) => {
     if (_check(condition)) return null
@@ -16,7 +16,7 @@ export function preventIf<F extends AnyFn>(
 
 export function preventUnless<F extends AnyFn>(
   fn: F,
-  condition: ConditionArg
+  condition: ConditionArg,
 ): DecoratedFn<F> {
   return ((...args: Parameters<F>) => {
     if (!_check(condition)) return null
