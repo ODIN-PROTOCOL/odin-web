@@ -1,24 +1,24 @@
 <template>
-  <div class="wallet view-main">
-    <div class="wallet__title-wrapper view-main__title-wrapper">
-      <h1 class="wallet__title view-main__title">Wallet</h1>
+  <div class="wallet-view-view view-main">
+    <div class="wallet-view__title-wrapper view-main__title-wrapper">
+      <h1 class="wallet-view__title view-main__title">Wallet</h1>
     </div>
     <PersonalInfo />
-    <div class="wallet__subtitle-wrapper">
-      <div class="wallet__subtitle view-main__subtitle mg-b32">
-        <div class="wallet__tx-info">
+    <div class="wallet-view__subtitle-wrapper">
+      <div class="wallet-view__subtitle view-main__subtitle mg-b32">
+        <div class="wallet-view__tx-info">
           <img src="~@/assets/icons/info.svg" alt="info" />
-          <span class="wallet__tooltip">
+          <span class="wallet-view__tooltip">
             Based on last transactions in system
           </span>
         </div>
         <span class="view-main__subtitle-item">Transaction list</span>
       </div>
-      <div class="wallet__selection">
-        <div class="wallet__selection-item">
-          <span class="wallet__selection-item-title">Filter</span>
+      <div class="wallet-view__selection">
+        <div class="wallet-view__selection-item">
+          <span class="wallet-view__selection-item-title">Filter</span>
           <VuePicker
-            class="wallet__vue-picker _vue-picker"
+            class="wallet-view__vue-picker _vue-picker"
             name="filter"
             v-model="sortingValue"
             :isDisabled="isLoading"
@@ -145,11 +145,11 @@ watch([sortingValue], async () => {
 </script>
 
 <style lang="scss" scoped>
-.wallet__subtitle {
+.wallet-view__subtitle {
   display: flex;
   align-items: center;
 }
-.wallet__tx-info {
+.wallet-view__tx-info {
   display: flex;
   align-items: center;
   height: 2.3rem;
@@ -157,12 +157,12 @@ watch([sortingValue], async () => {
   cursor: pointer;
   margin-right: 0.9rem;
   &:hover {
-    .wallet__tooltip {
+    .wallet-view__tooltip {
       display: block;
     }
   }
 }
-.wallet__tooltip {
+.wallet-view__tooltip {
   display: none;
   position: absolute;
   bottom: 130%;
@@ -187,37 +187,37 @@ watch([sortingValue], async () => {
     background: var(--clr__tooltip-bg);
   }
 }
-.wallet__subtitle-wrapper {
+.wallet-view__subtitle-wrapper {
   display: flex;
   justify-content: space-between;
 }
-.wallet__selection {
+.wallet-view__selection {
   display: flex;
   justify-content: flex-end;
 }
-.wallet__selection-item-title {
+.wallet-view__selection-item-title {
   font-size: 1.4rem;
   font-weight: 300;
   margin-right: 0.4rem;
 }
 @include respond-to(tablet) {
-  .wallet__selection {
+  .wallet-view__selection {
     width: 100%;
     flex-direction: column;
     margin-bottom: 0rem;
   }
-  .wallet__subtitle-wrapper {
+  .wallet-view__subtitle-wrapper {
     flex-direction: column;
   }
-  .wallet__selection-item {
+  .wallet-view__selection-item {
     display: flex;
     flex-direction: column;
   }
 
-  .wallet__selection-item-title {
+  .wallet-view__selection-item-title {
     margin: 0 0 0.4rem;
   }
-  .wallet__vue-picker {
+  .wallet-view__vue-picker {
     width: 100%;
   }
 }

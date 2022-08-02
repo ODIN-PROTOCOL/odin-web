@@ -8,7 +8,8 @@
   --clr__action-disabled: #{$clr-action-disabled};
   --clr__danger: #{$clr-danger};
   --clr__action-extra-muted: #{$clr-action-extra-muted};
-  --clr__grey-bg : #{$clr-grey-bg};
+  --clr__grey-bg: #{$clr-grey-bg};
+  --clr__light-blue: #{$clr-light-blue};
 
   // Buttons
   --clr__btn-normal: #{$clr-btn-normal};
@@ -85,4 +86,6 @@
   --clr__vue-notifications-info-border: #{$clr-vue-notifications-info-border};
   // Auth 
   --clr__auth-base-bg: #{$clr-auth-base-bg};
+  // Vue Skeleton Loader
+  --clr__vue-skeleton-loader-bg: #{$clr-vue-skeleton-loader-bg};
 }

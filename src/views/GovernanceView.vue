@@ -1,10 +1,10 @@
 <template>
-  <div class="governance view-main">
+  <div class="governance-view view-main">
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Governance</h2>
       <button
         v-if="accountAddress"
-        class="governance__title-btn app-btn app-btn--medium"
+        class="governance-view__title-btn app-btn app-btn--medium"
         type="button"
         @click="createProposal()"
       >
@@ -12,8 +12,8 @@
       </button>
     </div>
 
-    <div class="info-card card-frame governance__info mg-b40">
-      <h3 class="info-card__title governance__info-title mg-b40">
+    <div class="info-card card-frame governance-view__info mg-b40">
+      <h3 class="info-card__title governance-view__info-title mg-b40">
         Total number of proposals in ODIN
       </h3>
       <CustomDoughnutChart
@@ -23,7 +23,7 @@
     </div>
 
     <div class="app-table">
-      <div class="app-table__head governance__table-head">
+      <div class="app-table__head governance-view__table-head">
         <span>ID</span>
         <span>Proposal</span>
         <span>Proposer's account ID</span>
@@ -34,7 +34,7 @@
           <div
             v-for="item in filteredProposals"
             :key="item.proposal_id"
-            class="app-table__row governance__table-row"
+            class="app-table__row governance-view__table-row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">ID</span>
@@ -70,7 +70,7 @@
           <SkeletonTable
             v-if="isLoading"
             :header-titles="headerTitles"
-            class-string="governance__table-row"
+            class-string="governance-view__table-row"
           />
           <div v-else class="app-table__empty-stub">
             <p class="empty mg-t32">No items yet</p>
@@ -230,26 +230,26 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-.governance__info {
+.governance-view__info {
   width: 60rem;
 }
-.governance__info-title {
+.governance-view__info-title {
   font-weight: 400;
   font-size: 2.4rem;
   line-height: 2.9rem;
 }
 
 @include respond-to(tablet) {
-  .governance__title-btn {
+  .governance-view__title-btn {
     display: none;
   }
-  .governance {
+  .governance-view {
     padding-bottom: 10rem;
   }
-  .governance__title-btn {
+  .governance-view__title-btn {
     display: none;
   }
-  .governance__info {
+  .governance-view__info {
     width: 100%;
   }
 }

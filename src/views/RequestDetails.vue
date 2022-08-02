@@ -1,8 +1,8 @@
 <template>
-  <div class="view-main request-item">
-    <div class="view-main__title-wrapper request-item__title-wrapper">
+  <div class="view-main request-details">
+    <div class="view-main__title-wrapper request-details__title-wrapper">
       <BackButton :text="'Requests'" />
-      <h2 class="view-main__title request-item__title">Request</h2>
+      <h2 class="view-main__title request-details__title">Request</h2>
       <span class="view-main__subtitle"> #{{ requestData?.id }} </span>
     </div>
 
@@ -122,10 +122,13 @@ import CopyButton from '@/components/CopyButton.vue'
 import BackButton from '@/components/BackButton.vue'
 import Progressbar from '@/components/Progressbar.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
-import { Obi } from '@bandprotocol/bandchain.js'
+import { Obi } from '@/helpers/obi'
+
+// import { Obi } from '@bandprotocol/bandchain.js'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import isObjectLodash from 'lodash/isObject'
 import { fromBase64 } from '@cosmjs/encoding'
+import { Buffer } from 'buffer'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 
 const route: RouteLocationNormalizedLoaded = useRoute()
@@ -223,17 +226,17 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-.request-item__title {
+.request-details__title {
   margin: 0 1.6rem 0 2rem;
 }
-.request-item__empty-msg {
+.request-details__empty-msg {
   text-align: center;
 }
-.request-item__title-wrapper {
+.request-details__title-wrapper {
   justify-content: flex-start;
 }
 @include respond-to(tablet) {
-  .request-item__title {
+  .request-details__title {
     margin: 0.8rem 0 0.4rem 0;
   }
 }

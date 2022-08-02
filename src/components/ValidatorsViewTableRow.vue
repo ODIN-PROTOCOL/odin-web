@@ -1,8 +1,8 @@
 <template>
   <div
-    class="validators-table-row app-table__row"
+    class="validators-view-table-row app-table__row"
     :class="{
-      'validators-table-row--top':
+      'validators-view-table-row--top':
         validator?.statuses[0]?.status === VALIDATOR_STATUS.active &&
         delegations[validator.info.operatorAddress],
     }"
@@ -35,7 +35,7 @@
         }}
       </span>
     </div>
-    <div class="app-table__cell validators-table-row__cell--margin-left">
+    <div class="app-table__cell validators-view-table-row__cell--margin-left">
       <span class="app-table__title">Commission</span>
       <span>
         {{ $trimZeros(validator?.commissions[0]?.commission * 100, 2) }}%
@@ -50,7 +50,7 @@
         is-for-validators
       />
     </div>
-    <div class="app-table__cell validators-table-row__cell--center">
+    <div class="app-table__cell validators-view-table-row__cell--center">
       <span class="app-table__title">Status</span>
       <ValidatorStatus
         :width="14"
@@ -60,10 +60,10 @@
       />
     </div>
     <div v-if="hasActionButtons" class="app-table__cell">
-      <div class="app-table__activities validators-table-row__activities">
+      <div class="app-table__activities validators-view-table-row__activities">
         <div
           v-if="validator?.statuses[0]?.status === VALIDATOR_STATUS.active"
-          class="app-table__activities-item validators-table-row__activities-item"
+          class="app-table__activities-item validators-view-table-row__activities-item"
         >
           <button
             v-if="delegations[validator.info.operatorAddress]"
@@ -83,7 +83,7 @@
         </div>
         <div
           v-if="delegations[validator.info.operatorAddress]"
-          class="app-table__activities-item validators-table-row__activities-item"
+          class="app-table__activities-item validators-view-table-row__activities-item"
         >
           <button
             class="app-btn app-btn--outlined app-btn--very-small w-min108"
@@ -158,32 +158,32 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.validators-table-row {
+.validators-view-table-row {
   padding: 3.2rem 0 2rem;
   align-items: center;
 }
 
-.validators-table-row--top {
+.validators-view-table-row--top {
   align-items: flex-start;
 }
 
-.validators-table-row__activities {
+.validators-view-table-row__activities {
   width: 100%;
   & > *:not(:last-child) {
     margin-bottom: 1.6rem;
   }
 }
 
-.validators-table-row__activities-item {
+.validators-view-table-row__activities-item {
   display: flex;
   justify-content: flex-end;
   gap: 1.6rem;
 }
 
-.validators-table-row__cell--center {
+.validators-view-table-row__cell--center {
   justify-content: center;
 }
-.validators-table-row__cell--margin-left {
+.validators-view-table-row__cell--margin-left {
   margin-left: 2rem;
 }
 </style>

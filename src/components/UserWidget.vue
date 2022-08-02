@@ -13,7 +13,7 @@
     <template v-if="!isLoggedIn">
       <router-link
         class="app-btn app-btn--small user-widget__connect-wallet-btn"
-        :to="{ name: 'Auth' }"
+        :to="{ name: $routes.auth }"
       >
         Connect Wallet
       </router-link>
@@ -23,6 +23,7 @@
 
 <script setup lang="ts">
 import { useAuthorization } from '@/composables/useAuthorization'
+import { ROUTE_NAMES } from '@/enums'
 import BalanceButton from '@/components/BalanceButton.vue'
 import router from '@/router'
 
@@ -46,7 +47,7 @@ const emit = defineEmits<{
 const { logOut, isLoggedIn } = useAuthorization()
 const logOutAndLeave = () => {
   logOut()
-  router.push({ name: 'Auth' })
+  router.push({ name: ROUTE_NAMES.auth })
 }
 const closeBurger = () => {
   emit(EVENTS.closeBurger)

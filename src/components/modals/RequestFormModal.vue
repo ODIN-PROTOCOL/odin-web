@@ -155,7 +155,7 @@ import { useForm, validators } from '@/composables/useForm'
 import ModalBase from './ModalBase.vue'
 import { coins } from '@cosmjs/launchpad'
 import debounce from 'lodash/debounce'
-import { Obi } from '@bandprotocol/bandchain.js'
+import { Obi } from '@/helpers/obi'
 import TextareaField from '@/components/fields/TextareaField.vue'
 import { convertOdinToLoki, getDenom } from '@/helpers/converters'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

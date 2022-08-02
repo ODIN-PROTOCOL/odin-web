@@ -1,9 +1,9 @@
 <template>
-  <div class="oracle-scripts-item view-main">
+  <div class="oracle-scripts-details view-main">
     <div class="view-main__title-wrapper">
-      <div class="oracle-scripts-item__title-wrapper">
+      <div class="oracle-scripts-details__title-wrapper">
         <BackButton text="Oracle Scripts" />
-        <h2 class="view-main__title oracle-scripts-item__title">
+        <h2 class="view-main__title oracle-scripts-details__title">
           Oracle Script
         </h2>
         <span class="view-main__subtitle">
@@ -13,7 +13,7 @@
 
       <button
         v-if="isOracleScriptOwner"
-        class="oracle-scripts-item__title-btn app-btn app-btn--medium"
+        class="oracle-scripts-details__title-btn app-btn app-btn--medium"
         type="button"
         @click="editOracleScript(oracleScriptData)"
       >
@@ -22,7 +22,7 @@
     </div>
 
     <template v-if="oracleScriptData">
-      <div class="oracle-scripts-item__card info-card card-frame">
+      <div class="oracle-scripts-details__card info-card card-frame">
         <div class="info-card__content">
           <div class="info-card__row">
             <span class="info-card__row-title">Owner</span>
@@ -46,7 +46,7 @@
         <AppTab
           title="Requests"
           :class="{
-            'oracle-scripts-item__tab-content': isOracleScriptOwner,
+            'oracle-scripts-details__tab-content': isOracleScriptOwner,
           }"
         >
           <RequestsOracleScriptTable
@@ -56,7 +56,7 @@
         <AppTab
           title="Code"
           :class="{
-            'oracle-scripts-item__tab-content': isOracleScriptOwner,
+            'oracle-scripts-details__tab-content': isOracleScriptOwner,
           }"
         >
           <CodeTable :code="oracleScriptCode" />
@@ -149,35 +149,35 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-.oracle-scripts-item__title {
+.oracle-scripts-details__title {
   margin: 0 1.6rem 0 2rem;
 }
-.oracle-scripts-item__empty-msg {
+.oracle-scripts-details__empty-msg {
   text-align: center;
 }
-.oracle-scripts-item__card {
+.oracle-scripts-details__card {
   margin-bottom: 3.4rem;
 }
-.oracle-scripts-item__title-wrapper {
+.oracle-scripts-details__title-wrapper {
   display: flex;
   align-items: center;
 }
 @include respond-to(tablet) {
-  .oracle-scripts-item__title {
+  .oracle-scripts-details__title {
     margin: 0.8rem 0 0.4rem 0;
   }
-  .oracle-scripts-item__title-wrapper {
+  .oracle-scripts-details__title-wrapper {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
   }
-  .oracle-scripts-item__tab-content {
+  .oracle-scripts-details__tab-content {
     margin-bottom: 12rem;
   }
-  .oracle-scripts-item {
+  .oracle-scripts-details {
     padding-bottom: 10rem;
   }
-  .oracle-scripts-item__title-btn {
+  .oracle-scripts-details__title-btn {
     display: none;
   }
 }

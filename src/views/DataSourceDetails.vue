@@ -1,16 +1,16 @@
 <template>
-  <div class="data-source-item view-main">
+  <div class="data-source-details view-main">
     <div class="view-main__title-wrapper">
-      <div class="data-source-item__title-wrapper">
+      <div class="data-source-details__title-wrapper">
         <BackButton text="Data Sources" />
-        <h2 class="view-main__title data-source-item__title">Data Source</h2>
+        <h2 class="view-main__title data-source-details__title">Data Source</h2>
         <span class="view-main__subtitle">
           {{ dataSourceData?.name }}
         </span>
       </div>
       <button
         v-if="isDataSourceOwner"
-        class="data-source-item__title-btn app-btn app-btn--medium"
+        class="data-source-details__title-btn app-btn app-btn--medium"
         type="button"
         @click="editDataSource(dataSourceData)"
       >
@@ -19,7 +19,7 @@
     </div>
 
     <template v-if="dataSourceData">
-      <div class="data-source-item__card info-card card-frame">
+      <div class="data-source-details__card info-card card-frame">
         <div class="info-card__content">
           <div class="info-card__row">
             <span class="info-card__row-title">Owner</span>
@@ -42,13 +42,13 @@
       <AppTabs>
         <AppTab
           title="Requests"
-          :class="{ 'data-source-item__tab-content': isDataSourceOwner }"
+          :class="{ 'data-source-details__tab-content': isDataSourceOwner }"
         >
           <RequestsDataSourceTable :data-source-id="String($route.params.id)" />
         </AppTab>
         <AppTab
           title="Code"
-          :class="{ 'data-source-item__tab-content': isDataSourceOwner }"
+          :class="{ 'data-source-details__tab-content': isDataSourceOwner }"
         >
           <CodeTable :code="dataSourceCode" />
         </AppTab>
@@ -141,37 +141,37 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-.data-source-item__title {
+.data-source-details__title {
   margin: 0 1.6rem 0 2rem;
 }
-.data-source-item__card {
+.data-source-details__card {
   margin-bottom: 3.4rem;
 }
-.data-source-item__title-info {
+.data-source-details__title-info {
   display: flex;
   justify-content: space-between;
 }
-.data-source-item__title-wrapper {
+.data-source-details__title-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 @include respond-to(tablet) {
-  .data-source-item__title-wrapper {
+  .data-source-details__title-wrapper {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
   }
-  .data-source-item__title {
+  .data-source-details__title {
     margin: 0.8rem 0 0.4rem 0;
   }
-  .data-source-item__tab-content {
+  .data-source-details__tab-content {
     margin-bottom: 12rem;
   }
-  .data-source-item {
+  .data-source-details {
     padding-bottom: 10rem;
   }
-  .data-source-item__title-btn {
+  .data-source-details__title-btn {
     display: none;
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <router-link class="balance-button" :to="{ name: 'Wallet' }">
+  <router-link class="balance-button" :to="{ name: $routes.wallet }">
     <WalletIcon />
   </router-link>
 </template>

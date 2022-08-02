@@ -1,30 +1,30 @@
 <template>
-  <div class="view-main proposal">
+  <div class="view-main proposal-view">
     <div class="view-main__title-wrapper">
-      <div class="view-main__title proposal__title-info">
+      <div class="view-main__title proposal-view__title-info">
         <BackButton :text="'Governance'" />
-        <h2 class="view-main__title proposal__title">Proposal</h2>
+        <h2 class="view-main__title proposal-view__title">Proposal</h2>
         <span class="view-main__subtitle" v-if="proposal">
           {{ proposal.content.title }}
         </span>
       </div>
       <button
         v-if="accountAddress"
-        class="proposal__title-btn app-btn app-btn--medium"
+        class="proposal-view__title-btn app-btn app-btn--medium"
         :disabled="
           !proposal ||
           proposal?.status !== ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
         "
-        @click="router.push({ name: 'Voting' })"
+        @click="router.push({ name: $routes.voting })"
       >
         Vote
       </button>
     </div>
 
     <template v-if="proposal">
-      <div class="info-table proposal__table mg-b32">
+      <div class="info-table proposal-view__table mg-b32">
         <div v-if="proposal.proposerAddress" class="info-table__row">
-          <span class="info-table__row-title proposal__table-row-title"
+          <span class="info-table__row-title proposal-view__table-row-title"
             >Proposer's account ID</span
           >
           <div class="info-table__row-value info-table__row-value_flex">
@@ -38,7 +38,7 @@
           </div>
         </div>
         <div class="info-table__row">
-          <span class="info-table__row-title proposal__table-row-title"
+          <span class="info-table__row-title proposal-view__table-row-title"
             >Description</span
           >
           <Markdown
@@ -47,7 +47,7 @@
           />
         </div>
         <div class="info-table__row">
-          <span class="info-table__row-title proposal__table-row-title"
+          <span class="info-table__row-title proposal-view__table-row-title"
             >Status</span
           >
           <StatusBlock
@@ -56,7 +56,7 @@
           />
         </div>
         <div class="info-table__row">
-          <span class="info-table__row-title proposal__table-row-title"
+          <span class="info-table__row-title proposal-view__table-row-title"
             >"Support" tally</span
           >
           <Tally
@@ -73,7 +73,7 @@
       <h3 class="view-main__subtitle mg-b24">Details</h3>
       <div class="info-table mg-b32">
         <div class="info-table__row">
-          <span class="info-table__row-title proposal__table-row-title"
+          <span class="info-table__row-title proposal-view__table-row-title"
             >Proposal created</span
           >
           <span class="info-table__row-value">
@@ -81,7 +81,7 @@
           </span>
         </div>
         <div class="info-table__row">
-          <span class="info-table__row-title proposal__table-row-title"
+          <span class="info-table__row-title proposal-view__table-row-title"
             >Voting start</span
           >
           <span class="info-table__row-value">
@@ -89,7 +89,7 @@
           </span>
         </div>
         <div class="info-table__row">
-          <span class="info-table__row-title proposal__table-row-title"
+          <span class="info-table__row-title proposal-view__table-row-title"
             >Voting end</span
           >
           <span class="info-table__row-value">
@@ -97,7 +97,7 @@
           </span>
         </div>
         <div class="info-table__row">
-          <span class="info-table__row-title proposal__table-row-title"
+          <span class="info-table__row-title proposal-view__table-row-title"
             >Deposited</span
           >
           <span class="info-table__row-value">
@@ -113,9 +113,10 @@
             :key="change"
             class="info-table__row"
           >
-            <span class="info-table__row-title proposal__table-row-title">{{
-              capitalizeFirstLetter(title)
-            }}</span>
+            <span
+              class="info-table__row-title proposal-view__table-row-title"
+              >{{ capitalizeFirstLetter(title) }}</span
+            >
             <span class="info-table__row-value">
               {{ change }}
             </span>
@@ -138,7 +139,7 @@
           !proposal ||
           proposal?.status !== ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
         "
-        @click="router.push({ name: 'Voting' })"
+        @click="router.push({ name: $routes.voting })"
       >
         Vote
       </button>
@@ -162,6 +163,7 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { getTransformedProposals } from '@/helpers/proposalHelpers'
 import { proposalStatusType } from '@/helpers/statusTypes'
+
 import Tally from '@/components/Tally.vue'
 import BackButton from '@/components/BackButton.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
@@ -214,28 +216,28 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-.proposal__title {
+.proposal-view__title {
   margin: 0 1.6rem 0 2rem;
 }
-.proposal__title-info {
+.proposal-view__title-info {
   display: flex;
   align-items: center;
 }
 @include respond-to(tablet) {
-  .proposal {
+  .proposal-view {
     padding-bottom: 10rem;
   }
-  .proposal__title {
+  .proposal-view__title {
     margin: 0.8rem 0 0.4rem 0;
   }
-  .proposal__title-btn {
+  .proposal-view__title-btn {
     display: none;
   }
-  .proposal__table-row-title {
+  .proposal-view__table-row-title {
     display: inline-block;
     min-width: 15.4rem;
   }
-  .proposal__title-info {
+  .proposal-view__title-info {
     display: flex;
     flex-direction: column;
     align-items: flex-start;

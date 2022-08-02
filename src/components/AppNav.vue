@@ -1,62 +1,62 @@
 <template>
   <div
-    class="nav"
+    class="app-nav"
     :class="{
-      'nav--mobile': isOpen,
-      'nav--mobile-not-authenticated': isOpen && !isLoggedIn,
+      'app-nav--mobile': isOpen,
+      'app-nav--mobile-not-authenticated': isOpen && !isLoggedIn,
     }"
   >
-    <div class="nav__wrap-cont">
+    <div class="app-nav__wrap-cont">
       <router-link
         @click="closeBurger"
-        :to="{ name: 'DataSources' }"
+        :to="{ name: $routes.dataSources }"
         data-text="Data Sources"
-        class="nav__link"
+        class="app-nav__link"
       >
         <span>Data Sources</span>
       </router-link>
       <router-link
         @click="closeBurger"
-        :to="{ name: 'OracleScripts' }"
+        :to="{ name: $routes.oracleScripts }"
         data-text="Oracle Scripts"
-        class="nav__link"
+        class="app-nav__link"
       >
         <span>Oracle Scripts</span>
       </router-link>
       <router-link
         @click="closeBurger"
-        :to="{ name: 'Requests' }"
+        :to="{ name: $routes.requests }"
         data-text="Requests"
-        class="nav__link"
+        class="app-nav__link"
       >
         <span>Requests</span>
       </router-link>
       <router-link
         @click="closeBurger"
-        class="nav__link"
+        class="app-nav__link"
         data-text="Validators"
-        :to="{ name: 'Validators' }"
+        :to="{ name: $routes.validators }"
       >
         <span>Validators</span>
       </router-link>
       <router-link
         @click="closeBurger"
-        :to="{ name: 'Governance' }"
+        :to="{ name: $routes.governance }"
         data-text="Governance"
-        class="nav__link"
+        class="app-nav__link"
       >
         <span>Governance</span>
       </router-link>
       <router-link
         @click="closeBurger"
-        :to="{ name: 'IBC' }"
+        :to="{ name: $routes.ibc }"
         data-text="IBCs"
-        class="nav__link"
+        class="app-nav__link"
       >
         <span>IBCs</span>
       </router-link>
     </div>
-    <div class="nav__activities" v-if="isLoggedIn">
+    <div class="app-nav__activities" v-if="isLoggedIn">
       <button
         class="app-btn log-out-btn app-btn--medium"
         type="button"
@@ -73,6 +73,7 @@
 import { onMounted, onUnmounted } from 'vue'
 import { useAuthorization } from '@/composables/useAuthorization'
 import { WalletTypes, wallet } from '@/api/wallet'
+import { ROUTE_NAMES } from '@/enums'
 import router from '@/router'
 import ExitIcon from '@/components/icons/ExitIcon.vue'
 
@@ -96,7 +97,7 @@ const emit = defineEmits<{
 const { logOut, isLoggedIn } = useAuthorization()
 const logOutAndLeave = () => {
   logOut()
-  router.push({ name: 'Auth' })
+  router.push({ name: ROUTE_NAMES.auth })
 }
 const closeBurger = () => {
   emit(EVENTS.closeBurger)
@@ -114,7 +115,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang="scss">
-.nav__wrap-cont {
+.app-nav__wrap-cont {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
@@ -122,7 +123,7 @@ onUnmounted(() => {
   gap: 2.4rem;
 }
 
-.nav__link {
+.app-nav__link {
   display: grid;
   grid-template-columns: 100%;
   text-decoration: none;
@@ -163,7 +164,7 @@ onUnmounted(() => {
 }
 
 @media (max-width: 768px) {
-  .nav {
+  .app-nav {
     display: none;
     background: #fff;
     position: absolute;
@@ -173,12 +174,12 @@ onUnmounted(() => {
     z-index: 9999;
     height: calc(100vh - 9.6rem);
   }
-  .nav__wrap-cont {
+  .app-nav__wrap-cont {
     flex-direction: column;
     gap: 0;
   }
 
-  .nav__link {
+  .app-nav__link {
     width: 100%;
     padding: 2.4rem 1.2rem;
     border-bottom: 0.1rem solid #ced4da;
@@ -201,7 +202,7 @@ onUnmounted(() => {
     gap: 1.1rem;
   }
 
-  .nav--mobile {
+  .app-nav--mobile {
     display: flex;
     overflow: auto;
     flex-direction: column;
@@ -211,7 +212,7 @@ onUnmounted(() => {
     left: 0;
   }
 
-  .nav--mobile-not-authenticated {
+  .app-nav--mobile-not-authenticated {
     top: 8.5rem;
   }
 }

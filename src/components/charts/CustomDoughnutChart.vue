@@ -9,13 +9,7 @@
         :key="item"
         class="custom-doughnut-chart__legend-item"
       >
-        <skeleton-loader
-          :height="16"
-          :width="150"
-          rounded
-          animation="wave"
-          color="rgb(225, 229, 233)"
-        />
+        <skeleton-loader height="16" width="150" pill shimmer />
       </div>
     </div>
     <div v-else-if="data.length" class="custom-doughnut-chart__legend">

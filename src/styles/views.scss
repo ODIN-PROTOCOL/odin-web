@@ -59,28 +59,3 @@
     padding: 0 1.6rem;
   }
 }
-
-.header-wrapper {
-  padding: 2.5rem 3.2rem;
-  width: 100%;
-  max-width: 140rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap:5.4rem;
-  margin: 0 auto;
-}
-
-.view-header {
-  border-bottom: 0.1rem solid #CCE4FF;
-  margin-bottom: 3rem;
-}
-
-@include respond-to(tablet) {
-  .header-wrapper {
-    position: relative;
-    max-width: 100%;
-    margin: 0;
-    padding: 2.4rem 1.6rem;
-  }
-}

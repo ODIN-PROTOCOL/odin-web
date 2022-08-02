@@ -1,83 +1,21 @@
 <template>
   <template v-if="isAppReady">
-    <template v-if="!isAuthPage">
-      <header
-        class="view-header fx-row"
-        :class="{ 'view-header_mobile': isOpen }"
-      >
-        <div class="header-wrapper">
-          <img
-            class="header-wrapper__logo"
-            src="~@/assets/brand/odin-logo-black.png"
-            alt="Logo"
-          />
-          <Nav :isOpen="isOpen" @closeBurger="closeBurger" />
-          <UserWidget @closeBurger="closeBurger" class="fx-sae" />
-          <BurgerMenu
-            @click="burgerMenuHandler($event)"
-            :isOpen="isOpen"
-            class="burger-menu"
-          />
-        </div>
-      </header>
-    </template>
+    <app-header v-if="!isAuthPage" />
     <router-view />
   </template>
   <div class="dialogs-container" ref="dialogsContainerRef"></div>
-  <notifications width="100%" position="" animation-name="v-fade-left" :max="3">
-    <template v-slot:body="props">
-      <div
-        class="app__notification"
-        @click="props.close"
-        :class="notification?.typeNotification.toLowerCase()"
-      >
-        <div>
-          <InfoNotificationIcon
-            class="app__notification-icon"
-            v-if="notification?.typeNotification === 'Info'"
-          />
-          <SuccessNotificationIcon
-            class="app__notification-icon"
-            v-else-if="notification?.typeNotification === 'Success'"
-          />
-          <FailedNotificationIcon class="app__notification-icon" v-else />
-        </div>
-        <div class="app__notification-content-wrapper">
-          <p class="app__notification-title">
-            {{ notification?.typeNotification }}
-          </p>
-          <p class="app__notification-content">{{ notification?.error }}</p>
-        </div>
-        <div class="app__cancel-icon-wrapper">
-          <CancelIcon @click="props.close" class="app__cancel-icon" />
-        </div>
-      </div>
-    </template>
-  </notifications>
+  <notifications-group />
 </template>
 
 <script setup lang="ts">
-import 'vue-skeletor/dist/vue-skeletor.css'
 import '@invisiburu/vue-picker/dist/vue-picker.min.css'
 import { computed, onMounted, ref } from 'vue'
 import { dialogs } from '@/helpers/dialogs'
-import { notify } from '@kyvg/vue3-notification'
 import { useRoute } from 'vue-router'
-import Nav from '@/components/Nav.vue'
-import UserWidget from '@/components/UserWidget.vue'
-import BurgerMenu from '@/components/BurgerMenu.vue'
-import InfoNotificationIcon from '@/components/icons/InfoNotificationIcon.vue'
-import SuccessNotificationIcon from '@/components/icons/SuccessNotificationIcon.vue'
-import FailedNotificationIcon from '@/components/icons/FailedNotificationIcon.vue'
-import CancelIcon from '@/components/icons/CancelIcon.vue'
-import emitter from '@/helpers/emmiter'
+import { ROUTE_NAMES } from '@/enums'
+import AppHeader from '@/components/AppHeader.vue'
+import NotificationsGroup from '@/components/NotificationsGroup.vue'
 
-type NotificationInfo = {
-  error: Error
-  typeNotification?: string
-}
-
-const notification = ref<NotificationInfo>()
 const _readyStates = ref({
   dialogs: false,
 })
@@ -94,29 +32,10 @@ onMounted(() => {
   }
 })
 
-// Burger Menu
-const isOpen = ref(false)
-const burgerMenuHandler = (event: Event | MouseEvent) => {
-  event.preventDefault()
-  isOpen.value = !isOpen.value
-}
-
-const closeBurger = () => {
-  isOpen.value = false
-}
-
 const route = useRoute()
-const isAuthPage = computed(() => route?.name?.toString().includes('Auth'))
-
-// Notification
-const DURATION = 7000
-emitter.on('handleNotification', e => {
-  notification.value = e as NotificationInfo
-  notify({
-    ignoreDuplicates: true,
-    duration: DURATION,
-  })
-})
+const isAuthPage = computed(() =>
+  route?.name?.toString().includes(ROUTE_NAMES.auth),
+)
 </script>
 
 <style lang="scss">
@@ -132,34 +51,10 @@ emitter.on('handleNotification', e => {
 @import '~@/styles/vue-notification.scss';
 @import '~@/styles/shortcuts.scss';
 @import '~@/styles/atom-one-dark.scss';
+@import '~@/styles/vue-skeletor.scss';
 
 #app {
   width: 100%;
   @include flex-container;
-}
-.animation--wave::before {
-  animation: wave 0.5s linear 0.5s infinite;
-}
-.burger-menu {
-  display: none;
-}
-.header-wrapper__logo {
-  width: 9rem;
-  height: 3.4rem;
-}
-@media (max-width: 768px) {
-  .view-header_mobile {
-    position: fixed;
-    width: 100%;
-    z-index: 1;
-    background: var(--clr__main-bg);
-  }
-  .header-wrapper {
-    gap: 0.4rem;
-  }
-  .burger-menu {
-    display: flex;
-    flex-shrink: 0;
-  }
 }
 </style>

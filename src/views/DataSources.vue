@@ -13,13 +13,7 @@
     </div>
 
     <div class="data-sources__count-info">
-      <skeleton-loader
-        v-if="isLoading"
-        :height="24"
-        rounded
-        animation="wave"
-        color="rgb(225, 229, 233)"
-      />
+      <skeleton-loader v-if="isLoading" height="24" width="150" shimmer pill />
       <p v-else>{{ dataSourcesCount }} Data Sources found</p>
     </div>
 
@@ -157,7 +151,6 @@ const sortingActivitiesValue = ref(ACTIVITIES_SORT.latest)
 const sortingOwnersValue = ref(OWNERS_SORT.all)
 const dataSourceName = ref('')
 const headerTitles = [
-  { title: 'ID' },
   { title: 'Data Source' },
   { title: 'Description' },
   { title: 'Price' },

@@ -15,21 +15,17 @@
       </span>
       <skeleton-loader
         v-else
+        pill
+        shimmer
         :height="skeletonHeight"
-        rounded
-        :width="-1"
-        :radius="skeletonRadius"
-        animation="wave"
-        color="rgb(225, 229, 233)"
+        width="100%"
         class="skeleton-table__loader"
       />
       <skeleton-loader
+        pill
+        shimmer
         :height="skeletonHeight"
-        rounded
-        :width="-1"
-        :radius="skeletonRadius"
-        animation="wave"
-        color="rgb(225, 229, 233)"
+        width="100%"
         class="skeleton-table__loader"
       />
     </div>
@@ -44,13 +40,11 @@ const props = withDefaults(
     classString?: string
     tableSize?: number | string
     skeletonHeight?: number | string
-    skeletonRadius?: number | string
   }>(),
   {
     classString: '',
     tableSize: '5',
     skeletonHeight: 24,
-    skeletonRadius: 32,
   },
 )
 

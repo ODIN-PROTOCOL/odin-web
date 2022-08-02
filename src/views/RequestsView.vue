@@ -1,10 +1,10 @@
 <template>
-  <div class="requests view-main">
+  <div class="requests-view view-main">
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">Requests</h2>
       <button
         v-if="accountAddress"
-        class="requests__title-btn app-btn app-btn--medium"
+        class="requests-view__title-btn app-btn app-btn--medium"
         type="button"
         @click="createRequest()"
       >
@@ -12,19 +12,13 @@
       </button>
     </div>
 
-    <div class="view-main__count-info requests__count-info">
-      <skeleton-loader
-        v-if="isLoading"
-        :height="24"
-        rounded
-        animation="wave"
-        color="rgb(225, 229, 233)"
-      />
+    <div class="view-main__count-info requests-view__count-info">
+      <skeleton-loader v-if="isLoading" height="24" width="150" shimmer pill />
       <p v-else>{{ requestsCount }} requests found</p>
     </div>
 
-    <div class="app-table requests__table">
-      <div class="app-table__head requests__table-head">
+    <div class="app-table requests-view__table">
+      <div class="app-table__head requests-view__table-head">
         <span>Request ID</span>
         <span>Oracle Script ID</span>
         <span>Report Status</span>
@@ -35,7 +29,7 @@
           <div
             v-for="item in requests"
             :key="item.request.id.toString()"
-            class="app-table__row requests__table-row"
+            class="app-table__row requests-view__table-row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">Request ID</span>
@@ -73,7 +67,7 @@
           <SkeletonTable
             v-if="isLoading"
             :header-titles="headerTitles"
-            class-string="requests__table-row"
+            class-string="requests-view__table-row"
           />
           <div v-else class="app-table__empty-stub">
             <p class="empty mg-t32">No items yet</p>
@@ -195,17 +189,17 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-.requests__count-info {
+.requests-view__count-info {
   margin-bottom: 3.2rem;
 }
 @include respond-to(tablet) {
-  .requests {
+  .requests-view {
     padding-bottom: 10rem;
   }
-  .requests__count-info {
+  .requests-view__count-info {
     margin-bottom: 0;
   }
-  .requests__title-btn {
+  .requests-view__title-btn {
     display: none;
   }
 }

@@ -22,13 +22,7 @@
 
     <div class="view-main__count-info requests__count-info">
       <h3 class="view-main__subtitle mg-b24">All oracle scripts</h3>
-      <skeleton-loader
-        v-if="isLoading"
-        :height="24"
-        rounded
-        animation="wave"
-        color="rgb(225, 229, 233)"
-      />
+      <skeleton-loader v-if="isLoading" height="24" width="150" shimmer pill />
       <div v-else class="view-main__count-info oracle-scripts__count-info">
         <p>{{ oracleScriptsCount }} Oracle Scripts found</p>
       </div>

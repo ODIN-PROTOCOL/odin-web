@@ -1,5 +1,5 @@
 <template>
-  <AuthBase @submit="submit" class="auth">
+  <AuthBase @submit="submit" class="auth-view">
     <template v-if="loginType === LOGIN_TYPE.KEPLR118" #content>
       <div class="app-form__field auth__field">
         <button class="app-btn w-full" type="submit" :disabled="isLoading">
@@ -9,19 +9,19 @@
     </template>
 
     <template v-else-if="loginType === LOGIN_TYPE.KEPLR494" #content>
-      <div class="app-form__field auth__field">
+      <div class="app-form__field auth-view__field">
         <label
-          class="app-form__field-lbl auth__field-lbl auth__field-lbl--bold"
+          class="app-form__field-lbl auth-view__field-lbl auth-view__field-lbl--bold"
         >
           Coin type 494
         </label>
         <button class="app-btn w-full" type="submit" :disabled="isLoading">
           Connect with Keplr
         </button>
-        <div class="auth__field-additional">
+        <div class="auth-view__field-additional">
           <router-link
-            class="auth__field-additional-btn"
-            :to="{ name: 'Auth' }"
+            class="auth-view__field-additional-btn"
+            :to="{ name: $routes.auth }"
           >
             Use keplr login with coin type 118
           </router-link>
@@ -30,7 +30,7 @@
     </template>
 
     <template v-else-if="loginType === LOGIN_TYPE.MNEMONIC494" #content>
-      <div class="app-form__field auth__field">
+      <div class="app-form__field auth-view__field">
         <label class="app-form__field-lbl"> Mnemonic </label>
         <input
           class="app-form__field-input"
@@ -40,8 +40,8 @@
           :disabled="isLoading"
           @keydown.enter="submit()"
         />
-        <p class="auth__copy-warning" v-if="copyWarning">
-          <span class="auth__copy-important">Important! </span>
+        <p class="auth-view__copy-warning" v-if="copyWarning">
+          <span class="auth-view__copy-important">Important! </span>
           Copy this code, you cannot recover it!
         </p>
         <p v-if="form.mnemonicErr" class="app-form__field-err">
@@ -61,10 +61,10 @@
         >
           Generate mnemonic key
         </button>
-        <div class="auth__field-additional">
+        <div class="auth-view__field-additional">
           <router-link
-            class="auth__field-additional-btn"
-            :to="{ name: 'Auth' }"
+            class="auth-view__field-additional-btn"
+            :to="{ name: $routes.auth }"
           >
             Use keplr login
           </router-link>
@@ -97,6 +97,7 @@ import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { useForm, validators } from '@/composables/useForm'
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
+import { ROUTE_NAMES } from '@/enums'
 
 const MNEMONIC_SIZE = 24
 
@@ -127,7 +128,7 @@ export default defineComponent({
           await logInWithOdinWallet(form.mnemonic.val())
         }
 
-        await router.push({ name: 'Wallet' })
+        await router.push({ name: ROUTE_NAMES.wallet })
       } catch (error) {
         if (props.loginType === LOGIN_TYPE.MNEMONIC494) {
           handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
@@ -173,17 +174,17 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.auth__field-lbl--bold {
+.auth-view__field-lbl--bold {
   font-weight: 600;
 }
 
-.auth__field-additional {
+.auth-view__field-additional {
   display: flex;
   justify-content: center;
   margin-top: 1.2rem;
 }
 
-.auth__field-additional-btn {
+.auth-view__field-additional-btn {
   text-decoration: none;
   font-weight: 600;
   color: var(--clr__action);
@@ -193,11 +194,11 @@ export default defineComponent({
   }
 }
 
-.auth__copy-warning {
+.auth-view__copy-warning {
   padding: 3.2rem 0;
 }
 
-.auth__copy-important {
+.auth-view__copy-important {
   font-weight: 700;
 }
 </style>

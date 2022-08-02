@@ -13,8 +13,11 @@ import {
   SigningStargateClient,
   StakingExtension,
   DistributionExtension,
+  GovExtension,
+  setupGovExtension,
 } from '@cosmjs/stargate'
-import { EncodeObject, GeneratedType, Registry } from '@cosmjs/proto-signing'
+import { EncodeObject, GeneratedType } from '@cosmjs/proto-signing'
+import { Registry } from '@cosmjs/proto-signing/build/registry'
 import { CoinswapExt, setupCoinswapExt } from './query-ext/coinswapExtension'
 import { GovExt, setupGovExt } from './query-ext/govExtension'
 import { MintExt, setupMintExt } from './query-ext/mintExtension'
@@ -44,7 +47,8 @@ type OdinQueryClient = QueryClient &
   BankExtension &
   StakingExtension &
   DistributionExtension &
-  IbcExtension
+  IbcExtension &
+  GovExtension
 
 class Api {
   private _query: OdinQueryClient = stub('Query not initialized!')
@@ -129,6 +133,7 @@ class Api {
       setupDistributionExtension,
       setupBankExtension,
       setupIbcExtension,
+      setupGovExtension,
     )
   }
 

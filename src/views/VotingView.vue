@@ -1,58 +1,64 @@
 <template>
-  <div class="voting view-main">
-    <div class="view-main__title-wrapper voting__title-wrapper">
+  <div class="voting-view view-main">
+    <div class="view-main__title-wrapper voting-view__title-wrapper">
       <BackButton :text="'Proposal'" />
-      <h2 class="voting__title view-main__title">Vote for proposal</h2>
+      <h2 class="voting-view__title view-main__title">Vote for proposal</h2>
       <span class="view-main__subtitle">{{ proposalName }}</span>
     </div>
 
-    <div class="voting__main">
+    <div class="voting-view__main">
       <div
         v-if="
           currentProposalStatus === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
         "
-        class="voting__choice"
+        class="voting-view__choice"
       >
-        <div class="voting__choice-item">
+        <div class="voting-view__choice-item">
           <input
-            class="voting__choice-item-input"
+            class="voting-view__choice-item-input"
             type="radio"
             id="support"
             :value="VoteOption.VOTE_OPTION_YES"
             checked
             v-model="pickedOption"
           />
-          <label class="voting__choice-item-lbl" for="support"> Support </label>
+          <label class="voting-view__choice-item-lbl" for="support">
+            Support
+          </label>
         </div>
-        <div class="voting__choice-item">
+        <div class="voting-view__choice-item">
           <input
-            class="voting__choice-item-input"
+            class="voting-view__choice-item-input"
             type="radio"
             id="reject"
             :value="VoteOption.VOTE_OPTION_NO"
             v-model="pickedOption"
           />
-          <label class="voting__choice-item-lbl" for="reject"> Reject </label>
+          <label class="voting-view__choice-item-lbl" for="reject">
+            Reject
+          </label>
         </div>
-        <div class="voting__choice-item">
+        <div class="voting-view__choice-item">
           <input
-            class="voting__choice-item-input"
+            class="voting-view__choice-item-input"
             type="radio"
             id="veto"
             :value="VoteOption.VOTE_OPTION_NO_WITH_VETO"
             v-model="pickedOption"
           />
-          <label class="voting__choice-item-lbl" for="veto"> Veto </label>
+          <label class="voting-view__choice-item-lbl" for="veto"> Veto </label>
         </div>
-        <div class="voting__choice-item">
+        <div class="voting-view__choice-item">
           <input
-            class="voting__choice-item-input"
+            class="voting-view__choice-item-input"
             type="radio"
             id="abstain"
             :value="VoteOption.VOTE_OPTION_ABSTAIN"
             v-model="pickedOption"
           />
-          <label class="voting__choice-item-lbl" for="abstain"> Abstain </label>
+          <label class="voting-view__choice-item-lbl" for="abstain">
+            Abstain
+          </label>
         </div>
 
         <button
@@ -60,14 +66,14 @@
             currentProposalStatus !==
             ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
           "
-          class="voting__btn app-btn app-btn--medium"
+          class="voting-view__btn app-btn app-btn--medium"
           @click="confirmation()"
         >
           Vote
         </button>
       </div>
-      <div class="voting__chart card-frame">
-        <h3 class="voting__chart-title mg-b40">Results of voting</h3>
+      <div class="voting-view__chart card-frame">
+        <h3 class="voting-view__chart-title mg-b40">Results of voting</h3>
         <CustomDoughnutChart :isLoading="isLoading" :data="votesDataForChart" />
       </div>
     </div>
@@ -109,8 +115,6 @@ const getProposal = async () => {
   try {
     const res = await callers.getProposal(Number(route.params.id))
     currentProposalStatus.value = res.proposal.status
-    console.log(res)
-
     proposalName.value = res.proposal.content?.title as string
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
@@ -122,15 +126,13 @@ const getVotes = async () => {
   lockLoading()
   try {
     const res = await callers.getProposalVotes(Number(route.params.id))
-    const ress = await callers.getProposalVote(
-      Number(route.params.id),
-      wallet.account.address,
-    )
 
     votesDataForChart.value = getVotesCountByStatus(res.votes)
-    console.log(ress)
-
-    console.log(res)
+    // if (res.votes.length) {
+    //   const isVote = res.votes.find(
+    //     item => item.voter === wallet.account.address,
+    //   )
+    // }
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
@@ -182,56 +184,56 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-.voting__title {
+.voting-view__title {
   margin: 0 1.6rem 0 2rem;
 }
-.voting__title-wrapper {
+.voting-view__title-wrapper {
   justify-content: flex-start;
 }
-.voting__main {
+.voting-view__main {
   display: flex;
   gap: 12.8rem;
   align-items: flex-start;
   flex-direction: row;
 }
-.voting__choice,
-.voting__chart {
+.voting-view__choice,
+.voting-view__chart {
   width: 100%;
   padding: 3.2rem 2.4rem;
   border-radius: 0.8rem;
 }
 
-.voting__choice {
+.voting-view__choice {
   background: var(--clr__grey-bg);
 }
 
-.voting__choice-item {
+.voting-view__choice-item {
   display: flex;
   gap: 1rem;
   margin-bottom: 3.2rem;
 }
-.voting__choice-item-input {
+.voting-view__choice-item-input {
   height: 2rem;
   width: 2rem;
 }
-.voting__choice-item-lbl {
+.voting-view__choice-item-lbl {
   line-height: 2.4rem;
 }
 
-.voting__chart-title {
+.voting-view__chart-title {
   font-size: 2.4rem;
   font-weight: 400;
 }
 
 @include respond-to(tablet) {
-  .voting__title {
+  .voting-view__title {
     margin: 0.8rem 0 0.4rem 0;
   }
-  .voting__main {
+  .voting-view__main {
     flex-direction: column-reverse;
     gap: 4rem;
   }
-  .voting__btn {
+  .voting-view__btn {
     width: 100%;
   }
 }

@@ -22,8 +22,6 @@ module.exports = {
     withDefaults: 'readonly',
   },
   rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'prettier/prettier': [
       'warn',
       {
@@ -35,6 +33,13 @@ module.exports = {
     ],
     'vue/name-property-casing': [2, 'kebab-case'],
     'arrow-parens': 0,
+    'no-debugger': 1,
+    'no-console': [
+      1,
+      {
+        allow: ['warn', 'error'],
+      },
+    ],
     'no-warning-comments': [
       1,
       {

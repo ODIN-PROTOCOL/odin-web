@@ -130,9 +130,9 @@ const makeCallers = () => {
       }),
     ),
     getReports: querier(qc => qc.oracle.unverified.reporters),
-    getProposalVote: querier(qc => qc.gov.unverified.vote),
-    getProposalVotes: querier(qc => qc.gov.unverified.votes),
-    getProposalTally: querier(qc => qc.gov.unverified.tallyResult),
+    getProposalVote: querier(qc => qc.gov.vote),
+    getProposalVotes: querier(qc => qc.gov.votes),
+    getProposalTally: querier(qc => qc.gov.tally),
     getProposer: (proposalId: NumLike) => {
       return sendGet(`${API_CONFIG.api}/gov/proposals/${proposalId}/proposer`)
     },
