@@ -1,82 +1,45 @@
 <template>
   <div class="voting-view view-main">
     <div class="view-main__title-wrapper voting-view__title-wrapper">
-      <BackButton :text="'Proposal'" />
+      <BackButton text="Proposal" />
       <h2 class="voting-view__title view-main__title">Vote for proposal</h2>
       <span class="view-main__subtitle">{{ proposalName }}</span>
     </div>
 
     <div class="voting-view__main">
       <div
-        v-if="
-          currentProposalStatus === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
-        "
+        v-if="currentProposalStatus === PROPOSAL_STATUS.votingPeriod"
         class="voting-view__choice"
       >
-        <div class="voting-view__choice-item">
-          <input
-            class="voting-view__choice-item-input"
-            type="radio"
-            id="support"
-            :value="VoteOption.VOTE_OPTION_YES"
-            checked
-            v-model="pickedOption"
-          />
-          <label class="voting-view__choice-item-lbl" for="support">
-            Support
-          </label>
-        </div>
-        <div class="voting-view__choice-item">
-          <input
-            class="voting-view__choice-item-input"
-            type="radio"
-            id="reject"
-            :value="VoteOption.VOTE_OPTION_NO"
-            v-model="pickedOption"
-          />
-          <label class="voting-view__choice-item-lbl" for="reject">
-            Reject
-          </label>
-        </div>
-        <div class="voting-view__choice-item">
-          <input
-            class="voting-view__choice-item-input"
-            type="radio"
-            id="veto"
-            :value="VoteOption.VOTE_OPTION_NO_WITH_VETO"
-            v-model="pickedOption"
-          />
-          <label class="voting-view__choice-item-lbl" for="veto"> Veto </label>
-        </div>
-        <div class="voting-view__choice-item">
-          <input
-            class="voting-view__choice-item-input"
-            type="radio"
-            id="abstain"
-            :value="VoteOption.VOTE_OPTION_ABSTAIN"
-            v-model="pickedOption"
-          />
-          <label class="voting-view__choice-item-lbl" for="abstain">
-            Abstain
-          </label>
-        </div>
-
-        <button
-          :disabled="
-            currentProposalStatus !==
-            ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
-          "
-          class="voting-view__btn app-btn app-btn--medium"
-          @click="confirmation()"
+        <div
+          v-for="item in VOTE_OPTIONS"
+          :key="item.value"
+          class="voting-view__choice-item"
         >
-          Vote
+          <input
+            class="voting-view__choice-item-input"
+            type="radio"
+            :value="item.value"
+            v-model="pickedOption"
+          />
+          <label class="voting-view__choice-item-lbl">
+            {{ item.title }}
+          </label>
+        </div>
+        <button
+          class="voting-view__btn app-btn app-btn--medium"
+          @click="confirmation"
+        >
+          {{ voteBtnText }}
         </button>
       </div>
+
       <div class="voting-view__chart card-frame">
         <h3 class="voting-view__chart-title mg-b40">Results of voting</h3>
         <CustomDoughnutChart :isLoading="isLoading" :data="votesDataForChart" />
       </div>
     </div>
+
     <template v-if="isLoading">
       <Loader />
     </template>
@@ -84,15 +47,11 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 import Long from 'long'
-import {
-  VoteOption,
-  ProposalStatus,
-} from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { voteStatusType } from '@/helpers/statusTypes'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import BackButton from '@/components/BackButton.vue'
@@ -103,13 +62,18 @@ import { ChartDataItem } from '@/helpers/Types'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import ConfirmationModal from '@/components/modals/ConfirmationModal.vue'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
+import { Vote } from 'cosmjs-types/cosmos/gov/v1beta1/gov'
+import { VOTE_OPTIONS } from '@/const'
+import { PROPOSAL_STATUS } from '@/enums'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const route: RouteLocationNormalizedLoaded = useRoute()
-const votesDataForChart = ref<ChartDataItem[] | never[]>([])
-const pickedOption = ref(VoteOption.VOTE_OPTION_YES)
+const votesDataForChart = ref<ChartDataItem[]>([])
+const selfVote = ref<Vote>()
+const pickedOption = ref(VOTE_OPTIONS[0].value)
 const proposalName = ref('')
 const currentProposalStatus = ref(0)
+const voteBtnText = computed(() => (selfVote.value?.voter ? 'Revote' : 'Vote'))
 const getProposal = async () => {
   lockLoading()
   try {
@@ -126,13 +90,15 @@ const getVotes = async () => {
   lockLoading()
   try {
     const res = await callers.getProposalVotes(Number(route.params.id))
-
     votesDataForChart.value = getVotesCountByStatus(res.votes)
-    // if (res.votes.length) {
-    //   const isVote = res.votes.find(
-    //     item => item.voter === wallet.account.address,
-    //   )
-    // }
+    if (res.votes.length) {
+      selfVote.value = res.votes.find(
+        item => item.voter === wallet.account.address,
+      )
+      if (selfVote.value?.options.length) {
+        pickedOption.value = Number(selfVote.value.options[0].option)
+      }
+    }
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
@@ -170,7 +136,7 @@ const confirmation = async () => {
       },
     },
     {
-      text: `You have chosen to vote for "${
+      text: `You have chosen to ${voteBtnText.value.toLowerCase()} for "${
         voteStatusType[pickedOption.value].name
       }"`,
     },

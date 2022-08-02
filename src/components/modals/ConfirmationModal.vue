@@ -19,23 +19,21 @@
   </ModalBase>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import { dialogs } from '@/helpers/dialogs'
 import ModalBase from './ModalBase.vue'
 
-export default defineComponent({
-  props: {
-    text: { type: String, default: 'Choose some' },
+withDefaults(
+  defineProps<{
+    text?: string
+  }>(),
+  {
+    text: 'Choose some',
   },
-  components: { ModalBase },
-  setup: function () {
-    return {
-      onSubmit: dialogs.getHandler('onSubmit'),
-      onClose: dialogs.getHandler('onClose'),
-    }
-  },
-})
+)
+
+const onSubmit = dialogs.getHandler('onSubmit')
+const onClose = dialogs.getHandler('onClose')
 </script>
 
 <style lang="scss" scoped></style>

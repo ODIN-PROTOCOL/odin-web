@@ -122,13 +122,10 @@ import CopyButton from '@/components/CopyButton.vue'
 import BackButton from '@/components/BackButton.vue'
 import Progressbar from '@/components/Progressbar.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
-import { Obi } from '@/helpers/obi'
-
-// import { Obi } from '@bandprotocol/bandchain.js'
+import { Obi } from '@bandprotocol/bandchain.js'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import isObjectLodash from 'lodash/isObject'
 import { fromBase64 } from '@cosmjs/encoding'
-import { Buffer } from 'buffer'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 
 const route: RouteLocationNormalizedLoaded = useRoute()

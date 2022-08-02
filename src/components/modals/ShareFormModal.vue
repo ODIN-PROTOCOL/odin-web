@@ -81,8 +81,7 @@
   </ModalBase>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import { dialogs } from '@/helpers/dialogs'
 import { wallet } from '@/api/wallet'
 import QrcodeVue from 'qrcode.vue'
@@ -94,43 +93,19 @@ import TelegramIcon from '@/components/icons/TelegramIcon.vue'
 import TwitterIcon from '@/components/icons/TwitterIcon.vue'
 import WhatsAppIcon from '@/components/icons/WhatsAppIcon.vue'
 
-export default defineComponent({
-  components: {
-    ModalBase,
-    QrcodeVue,
-    CopyButton,
-    MailIcon,
-    TelegramIcon,
-    TwitterIcon,
-    WhatsAppIcon,
-  },
-  setup: function () {
-    const addressLink = `${API_CONFIG.odinScan}/account/${wallet.account.address}`
-    const textMessage = 'MY ODIN ACCOUNT:'
-    const mailLink = encodeURI(
-      `mailto:?subject=${textMessage}&body=${addressLink}`,
-    )
-    const telegramLink = encodeURI(
-      `https://telegram.me/share/url?text=${textMessage}&url=${addressLink}`,
-    )
-    const whatsAppLink = encodeURI(
-      `https://api.whatsapp.com/send/?text=${textMessage}\n${addressLink}`,
-    )
-    const twitterLink = encodeURI(
-      `https://twitter.com/intent/tweet/?text=${textMessage}\n${addressLink}`,
-    )
-    return {
-      addressLink,
-      onClose: dialogs.getHandler('onClose'),
-      SCHEMES,
-      textMessage,
-      mailLink,
-      telegramLink,
-      whatsAppLink,
-      twitterLink,
-    }
-  },
-})
+const addressLink = `${API_CONFIG.odinScan}/account/${wallet.account.address}`
+const textMessage = 'MY ODIN ACCOUNT:'
+const mailLink = encodeURI(`mailto:?subject=${textMessage}&body=${addressLink}`)
+const telegramLink = encodeURI(
+  `https://telegram.me/share/url?text=${textMessage}&url=${addressLink}`,
+)
+const whatsAppLink = encodeURI(
+  `https://api.whatsapp.com/send/?text=${textMessage}\n${addressLink}`,
+)
+const twitterLink = encodeURI(
+  `https://twitter.com/intent/tweet/?text=${textMessage}\n${addressLink}`,
+)
+const onClose = dialogs.getHandler('onClose')
 </script>
 
 <style lang="scss" scoped>

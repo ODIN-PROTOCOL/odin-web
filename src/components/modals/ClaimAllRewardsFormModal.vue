@@ -41,8 +41,8 @@
   </ModalBase>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, onUnmounted, ref } from 'vue'
+<script setup lang="ts">
+import { onMounted, onUnmounted, ref } from 'vue'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 import { dialogs } from '@/helpers/dialogs'
@@ -55,68 +55,54 @@ import ModalBase from '@/components/modals/ModalBase.vue'
 import { convertLokiToOdin } from '@/helpers/converters'
 import { trimLeadingZeros } from '@/helpers/formatters'
 
-export default defineComponent({
-  components: { ModalBase },
-  setup() {
-    const isLoading = ref(false)
-    const onSubmit = dialogs.getHandler('onSubmit')
-    const totalRewards = ref<DecCoin[]>([])
-    const rewards = ref<DelegationDelegatorReward[]>([])
-    const odinRewardsValue = ref()
+const isLoading = ref(false)
+const onSubmit = dialogs.getHandler('onSubmit')
+const totalRewards = ref<DecCoin[]>([])
+const rewards = ref<DelegationDelegatorReward[]>([])
+const odinRewardsValue = ref()
 
-    const getRewards = async () => {
-      try {
-        const response = await callers.getDelegationRewards(
-          wallet.account.address,
-        )
-        totalRewards.value = response.total
-        rewards.value = response.rewards
-        odinRewardsValue.value = convertLokiToOdin(response.total[0].amount, {
-          withPrecise: true,
-          onlyNumber: true,
-        })
-        odinRewardsValue.value = trimLeadingZeros(odinRewardsValue.value)
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-    }
-
-    const rewardsPoll = usePoll(getRewards, 5000)
-
-    const submit = async () => {
-      isLoading.value = true
-      try {
-        await callers.withdrawMultiDelegatorRewards(
-          rewards.value.map(item => ({
-            delegatorAddress: wallet.account.address,
-            validatorAddress: item.validatorAddress,
-          })),
-        )
-        onSubmit()
-        handleNotificationInfo('Successfully claimed', TYPE_NOTIFICATION.info)
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      isLoading.value = false
-    }
-
-    onMounted(async () => {
-      await getRewards()
-      rewardsPoll.start()
+const getRewards = async () => {
+  try {
+    const response = await callers.getDelegationRewards(wallet.account.address)
+    totalRewards.value = response.total
+    rewards.value = response.rewards
+    odinRewardsValue.value = convertLokiToOdin(response.total[0].amount, {
+      withPrecise: true,
+      onlyNumber: true,
     })
+    odinRewardsValue.value = trimLeadingZeros(odinRewardsValue.value)
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+}
 
-    onUnmounted(() => {
-      rewardsPoll.stop()
-    })
+const rewardsPoll = usePoll(getRewards, 5000)
 
-    return {
-      totalRewards,
-      rewards,
-      isLoading,
-      submit,
-      onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
-      odinRewardsValue,
-    }
-  },
+const submit = async () => {
+  isLoading.value = true
+  try {
+    await callers.withdrawMultiDelegatorRewards(
+      rewards.value.map(item => ({
+        delegatorAddress: wallet.account.address,
+        validatorAddress: item.validatorAddress,
+      })),
+    )
+    onSubmit()
+    handleNotificationInfo('Successfully claimed', TYPE_NOTIFICATION.info)
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  isLoading.value = false
+}
+
+onMounted(async () => {
+  await getRewards()
+  rewardsPoll.start()
 })
+
+onUnmounted(() => {
+  rewardsPoll.stop()
+})
+
+const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
 </script>

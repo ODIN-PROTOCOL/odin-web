@@ -8,17 +8,20 @@
           {{ proposal.content.title }}
         </span>
       </div>
-      <button
-        v-if="accountAddress"
-        class="proposal-view__title-btn app-btn app-btn--medium"
-        :disabled="
-          !proposal ||
-          proposal?.status !== ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
-        "
-        @click="router.push({ name: $routes.voting })"
+      <router-link
+        v-if="!wallet.isEmpty"
+        :to="{ name: $routes.voting }"
+        custom
+        v-slot="{ navigate }"
       >
-        Vote
-      </button>
+        <button
+          @click="navigate"
+          @keypress.enter="navigate"
+          class="proposal-view__title-btn app-btn app-btn--medium"
+        >
+          {{ voteBtnText }}
+        </button>
+      </router-link>
     </div>
 
     <template v-if="proposal">
@@ -132,17 +135,20 @@
     </template>
 
     <div class="view-main__mobile-activities">
-      <button
-        v-if="accountAddress"
-        class="app-btn w-full app-btn--medium"
-        :disabled="
-          !proposal ||
-          proposal?.status !== ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD
-        "
-        @click="router.push({ name: $routes.voting })"
+      <router-link
+        v-if="!wallet.isEmpty"
+        :to="{ name: $routes.voting }"
+        custom
+        v-slot="{ navigate }"
       >
-        Vote
-      </button>
+        <button
+          @click="navigate"
+          @keypress.enter="navigate"
+          class="app-btn w-full app-btn--medium"
+        >
+          {{ voteBtnText }}
+        </button>
+      </router-link>
     </div>
   </div>
 </template>
@@ -151,34 +157,26 @@
 import { ref, onMounted } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
-import {
-  RouteLocationNormalizedLoaded,
-  Router,
-  useRoute,
-  useRouter,
-} from 'vue-router'
+import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import { ProposalDecoded } from '@/helpers/proposalDecoders'
-import { ProposalStatus } from '@provider/codec/cosmos/gov/v1beta1/gov'
+import { PROPOSAL_STATUS } from '@/enums'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { getTransformedProposals } from '@/helpers/proposalHelpers'
 import { proposalStatusType } from '@/helpers/statusTypes'
-
+import { capitalizeFirstLetter } from '@/helpers/formatters'
+import { wallet } from '@/api/wallet'
 import Tally from '@/components/Tally.vue'
 import BackButton from '@/components/BackButton.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
 import CopyButton from '@/components/CopyButton.vue'
-import { capitalizeFirstLetter } from '@/helpers/formatters'
-import { wallet } from '@/api/wallet'
 import Markdown from 'vue3-markdown-it'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-const router: Router = useRouter()
 const route: RouteLocationNormalizedLoaded = useRoute()
 const proposal = ref()
 const tally = ref()
-
-const accountAddress = wallet.isEmpty ? '' : wallet.account.address
+const voteBtnText = ref('Show result')
 
 const getProposal = async () => {
   lockLoading()
@@ -187,8 +185,11 @@ const getProposal = async () => {
     const transformedProposals = await getTransformedProposals([
       response.proposal,
     ])
-
     proposal.value = transformedProposals[0]
+    if (proposal.value?.status === PROPOSAL_STATUS.votingPeriod) {
+      voteBtnText.value = 'Vote'
+    }
+
     await getTally(proposal.value)
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
@@ -198,7 +199,7 @@ const getProposal = async () => {
 
 const getTally = async (proposal: ProposalDecoded) => {
   let _tally = null
-  if (proposal.status === ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD) {
+  if (Number(proposal.status) === PROPOSAL_STATUS.votingPeriod) {
     _tally = await callers
       .getProposalTally(proposal.proposalId)
       .then(r => r.tally)
