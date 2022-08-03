@@ -35,13 +35,6 @@ export type DecodedTxData = {
   gasUsed?: string | number
 }
 
-
-export type AmountDetails = {
-  amount: string
-  denom: string
-}
-
-
 export type txFromTelemetry = {
   amount: AmountDetails[]
   block: number

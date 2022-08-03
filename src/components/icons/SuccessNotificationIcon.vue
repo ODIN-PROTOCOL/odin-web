@@ -14,15 +14,17 @@
   </svg>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'SuccessNotificationIcon',
-  props: {
-    className: { type: String },
-    width: { type: [Number, String], default: 40 },
-    height: { type: [Number, String], default: 40 },
+<script setup lang="ts">
+withDefaults(
+  defineProps<{
+    className?: string
+    width?: number | string
+    height?: number | string
+  }>(),
+  {
+    className: '',
+    width: 40,
+    height: 40,
   },
-})
+)
 </script>

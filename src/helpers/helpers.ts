@@ -83,8 +83,3 @@ export const parseLogsToGetRewardsAmount = (
     return null
   }
 }
-export enum VALIDATOR_STATUS_TYPE {
-  inactive = 'inactive',
-  success = 'success',
-  error = 'error',
-}

@@ -18,7 +18,7 @@ export interface FormField<T> {
 // TODO: split code to functions
 export function useField<T>(
   initialValue: T,
-  validators: FormFieldValidator[] = []
+  validators: FormFieldValidator[] = [],
 ): FormField<T> {
   validators = [...validators] // shallow clone
 
@@ -65,7 +65,7 @@ export function useField<T>(
   }
 
   const removeValidator = (validator: FormFieldValidator) => {
-    validators = validators.filter((el) => el !== validator)
+    validators = validators.filter(el => el !== validator)
     validate()
 
     const watcher = validatorWatchers.get(validator)
@@ -106,6 +106,6 @@ export function useField<T>(
 function _runValidators(value: unknown, validators: FormFieldValidator[]) {
   return validators.reduce(
     (error, validator) => error || validator(value),
-    null as FormFieldValidatorResult
+    null as FormFieldValidatorResult,
   )
 }

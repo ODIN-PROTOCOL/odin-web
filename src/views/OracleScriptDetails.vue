@@ -1,9 +1,9 @@
 <template>
-  <div class="oracle-scripts-item view-main">
+  <div class="oracle-scripts-details view-main">
     <div class="view-main__title-wrapper">
-      <div class="oracle-scripts-item__title-wrapper">
+      <div class="oracle-scripts-details__title-wrapper">
         <BackButton text="Oracle Scripts" />
-        <h2 class="view-main__title oracle-scripts-item__title">
+        <h2 class="view-main__title oracle-scripts-details__title">
           Oracle Script
         </h2>
         <span class="view-main__subtitle">
@@ -13,7 +13,7 @@
 
       <button
         v-if="isOracleScriptOwner"
-        class="oracle-scripts-item__title-btn app-btn app-btn--medium"
+        class="oracle-scripts-details__title-btn app-btn app-btn--medium"
         type="button"
         @click="editOracleScript(oracleScriptData)"
       >
@@ -22,7 +22,7 @@
     </div>
 
     <template v-if="oracleScriptData">
-      <div class="oracle-scripts-item__card info-card card-frame">
+      <div class="oracle-scripts-details__card info-card card-frame">
         <div class="info-card__content">
           <div class="info-card__row">
             <span class="info-card__row-title">Owner</span>
@@ -46,7 +46,7 @@
         <AppTab
           title="Requests"
           :class="{
-            'oracle-scripts-item__tab-content': isOracleScriptOwner,
+            'oracle-scripts-details__tab-content': isOracleScriptOwner,
           }"
         >
           <RequestsOracleScriptTable
@@ -56,7 +56,7 @@
         <AppTab
           title="Code"
           :class="{
-            'oracle-scripts-item__tab-content': isOracleScriptOwner,
+            'oracle-scripts-details__tab-content': isOracleScriptOwner,
           }"
         >
           <CodeTable :code="oracleScriptCode" />
@@ -81,125 +81,103 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, onMounted, computed } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted, computed } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
+import { OracleScript } from '@provider/codec/oracle/v1/oracle'
+import { wallet } from '@/api/wallet'
+import { OracleScriptFormModal } from '@/components/modals'
 import BackButton from '@/components/BackButton.vue'
 import AppTabs from '@/components/tabs/AppTabs.vue'
 import AppTab from '@/components/tabs/AppTab.vue'
 import CodeTable from '@/components/tables/CodeTable.vue'
 import RequestsOracleScriptTable from '@/components/tables/RequestsOracleScriptTable.vue'
-import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
-import OracleScriptFormModal from '@/components/modals/OracleScriptFormModal.vue'
-import { OracleScript } from '@provider/codec/oracle/v1/oracle'
-import { wallet } from '@/api/wallet'
 
-export default defineComponent({
-  components: {
-    BackButton,
-    AppTabs,
-    AppTab,
-    CodeTable,
-    RequestsOracleScriptTable,
-  },
-  setup: function () {
-    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const route: RouteLocationNormalizedLoaded = useRoute()
-    const oracleScriptData = ref()
-    const oracleScriptCode = ref('')
-    const isOracleScriptOwner = computed(() => {
-      return (
-        !wallet.isEmpty &&
-        wallet.account.address === oracleScriptData.value?.owner
-      )
-    })
-    const getOracleScript = async () => {
-      lockLoading()
-      try {
-        const response = await callers.getOracleScript(String(route.params.id))
-        oracleScriptData.value = response.oracleScript
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
+const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+const route: RouteLocationNormalizedLoaded = useRoute()
+const oracleScriptData = ref()
+const oracleScriptCode = ref('')
+const isOracleScriptOwner = computed(() => {
+  return (
+    !wallet.isEmpty && wallet.account.address === oracleScriptData.value?.owner
+  )
+})
+const getOracleScript = async () => {
+  lockLoading()
+  try {
+    const response = await callers.getOracleScript(String(route.params.id))
+    oracleScriptData.value = response.oracleScript
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
+const getOracleScriptCode = async () => {
+  try {
+    if (oracleScriptData.value.sourceCodeUrl) {
+      await fetch(oracleScriptData.value.sourceCodeUrl).then(response => {
+        response.text().then(text => {
+          oracleScriptCode.value = text
+        })
+      })
     }
-    const getOracleScriptCode = async () => {
-      try {
-        if (oracleScriptData.value.sourceCodeUrl) {
-          await fetch(oracleScriptData.value.sourceCodeUrl).then((response) => {
-            response.text().then((text) => {
-              oracleScriptCode.value = text
-            })
-          })
-        }
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-    }
-    const editOracleScript = async (oracleScript: OracleScript) => {
-      await showDialogHandler(
-        OracleScriptFormModal,
-        {
-          onSubmit: async (d) => {
-            d.kill()
-            await getOracleScript()
-          },
-        },
-        { oracleScript }
-      )
-    }
-    onMounted(async () => {
-      await getOracleScript()
-      await getOracleScriptCode()
-    })
-
-    return {
-      API_CONFIG,
-      isLoading,
-      oracleScriptData,
-      getOracleScriptCode,
-      oracleScriptCode,
-      editOracleScript,
-      isOracleScriptOwner,
-    }
-  },
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+}
+const editOracleScript = async (oracleScript: OracleScript) => {
+  await showDialogHandler(
+    OracleScriptFormModal,
+    {
+      onSubmit: async d => {
+        d.kill()
+        await getOracleScript()
+      },
+    },
+    { oracleScript },
+  )
+}
+onMounted(async () => {
+  await getOracleScript()
+  await getOracleScriptCode()
 })
 </script>
 
 <style lang="scss" scoped>
-.oracle-scripts-item__title {
+.oracle-scripts-details__title {
   margin: 0 1.6rem 0 2rem;
 }
-.oracle-scripts-item__empty-msg {
+.oracle-scripts-details__empty-msg {
   text-align: center;
 }
-.oracle-scripts-item__card {
+.oracle-scripts-details__card {
   margin-bottom: 3.4rem;
 }
-.oracle-scripts-item__title-wrapper {
+.oracle-scripts-details__title-wrapper {
   display: flex;
   align-items: center;
 }
 @include respond-to(tablet) {
-  .oracle-scripts-item__title {
+  .oracle-scripts-details__title {
     margin: 0.8rem 0 0.4rem 0;
   }
-  .oracle-scripts-item__title-wrapper {
+  .oracle-scripts-details__title-wrapper {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
   }
-  .oracle-scripts-item__tab-content {
+  .oracle-scripts-details__tab-content {
     margin-bottom: 12rem;
   }
-  .oracle-scripts-item {
+  .oracle-scripts-details {
     padding-bottom: 10rem;
   }
-  .oracle-scripts-item__title-btn {
+  .oracle-scripts-details__title-btn {
     display: none;
   }
 }

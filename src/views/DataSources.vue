@@ -13,13 +13,7 @@
     </div>
 
     <div class="data-sources__count-info">
-      <skeleton-loader
-        v-if="isLoading"
-        :height="24"
-        rounded
-        animation="wave"
-        color="rgb(225, 229, 233)"
-      />
+      <skeleton-loader v-if="isLoading" height="24" width="150" shimmer pill />
       <p v-else>{{ dataSourcesCount }} Data Sources found</p>
     </div>
 
@@ -139,9 +133,9 @@ import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
 import { convertLokiToOdin } from '@/helpers/converters'
 import { wallet } from '@/api/wallet'
+import { DataSourceFormModal } from '@/components/modals'
 import TitledLink from '@/components/TitledLink.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
-import DataSourceFormModal from '@/components/modals/DataSourceFormModal.vue'
 import SortLine from '@/components/SortLine.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 
@@ -157,7 +151,6 @@ const sortingActivitiesValue = ref(ACTIVITIES_SORT.latest)
 const sortingOwnersValue = ref(OWNERS_SORT.all)
 const dataSourceName = ref('')
 const headerTitles = [
-  { title: 'ID' },
   { title: 'Data Source' },
   { title: 'Description' },
   { title: 'Price' },
@@ -177,7 +170,7 @@ const loadDataSources = async () => {
         sortingOwnersValue.value,
         dataSourceName.value,
       )
-      .then((response) => response.json())
+      .then(response => response.json())
     dataSources.value = await Promise.all(
       data.map(async (item: { attributes: { id: number } }) => {
         const resp = await callers.getDataSourceRequestCount(item.attributes.id)
@@ -194,7 +187,7 @@ const loadDataSources = async () => {
 
 const createDataSource = async () => {
   await showDialogHandler(DataSourceFormModal, {
-    onSubmit: async (d) => {
+    onSubmit: async d => {
       await loadDataSources()
       d.kill()
     },
@@ -205,7 +198,7 @@ const editDataSource = async (dataSource: unknown) => {
   await showDialogHandler(
     DataSourceFormModal,
     {
-      onSubmit: async (d) => {
+      onSubmit: async d => {
         await loadDataSources()
         d.kill()
       },

@@ -31,24 +31,12 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import BoltElement from '@/components/MaintenanceScreen/AnimationElement/BoltElement.vue'
 import ScrewElement from '@/components/MaintenanceScreen/AnimationElement/ScrewElement.vue'
 import WrenchElement from '@/components/MaintenanceScreen/AnimationElement/WrenchElement.vue'
 import ScrewdriverElement from '@/components/MaintenanceScreen/AnimationElement/ScrewdriverElement.vue'
 import GearElement from '@/components/MaintenanceScreen/AnimationElement/GearElement.vue'
-
-export default defineComponent({
-  name: 'MaintenanceScreenView',
-  components: {
-    GearElement,
-    ScrewdriverElement,
-    WrenchElement,
-    ScrewElement,
-    BoltElement,
-  },
-})
 </script>
 
 <style lang="scss">

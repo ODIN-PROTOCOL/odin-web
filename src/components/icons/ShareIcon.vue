@@ -14,15 +14,17 @@
   </svg>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'ShareIcon',
-  props: {
-    className: { type: String },
-    width: { type: [Number, String], default: 13 },
-    height: { type: [Number, String], default: 14 },
+<script setup lang="ts">
+withDefaults(
+  defineProps<{
+    className?: string
+    width?: number | string
+    height?: number | string
+  }>(),
+  {
+    className: '',
+    width: 13,
+    height: 14,
   },
-})
+)
 </script>

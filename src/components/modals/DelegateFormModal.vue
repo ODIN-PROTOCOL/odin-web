@@ -66,18 +66,20 @@
                 name="delegate-amount"
                 type="text"
                 placeholder="1"
-                v-model="form.amount"
+                v-model="flattenForm.amount"
                 :disabled="isLoading || isEmptyBalance || isBalanceLowerThanFee"
               />
             </div>
             <p
-              v-if="form.amountErr || isEmptyBalance || isBalanceLowerThanFee"
+              v-if="
+                flattenForm.amountErr || isEmptyBalance || isBalanceLowerThanFee
+              "
               class="app-form__field-err"
             >
               {{
                 isBalanceLowerThanFee
                   ? 'Not enough tokens! Please make deposit'
-                  : form.amountErr
+                  : flattenForm.amountErr
               }}
             </p>
           </div>
@@ -88,7 +90,7 @@
             class="app-btn w-full app-btn--medium"
             type="button"
             @click="submit()"
-            :disabled="!form.isValid || isLoading"
+            :disabled="!flattenForm.isValid || isLoading"
           >
             Delegate
           </button>
@@ -98,17 +100,17 @@
   </ModalBase>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, PropType, ref } from 'vue'
+<script setup lang="ts">
+import { computed, ref } from 'vue'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
 import { COINS_LIST, API_CONFIG } from '@/api/api-config'
-import { DialogHandler, dialogs } from '@/helpers/dialogs'
+import { dialogs } from '@/helpers/dialogs'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { convertLokiToOdin, convertOdinToLoki } from '@/helpers/converters'
 import { useForm, validators } from '@/composables/useForm'
-import ModalBase from './ModalBase.vue'
+import { ModalBase } from '@/components/modals'
 import { useBalances } from '@/composables/useBalances'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { coin, Coin } from '@cosmjs/amino'
@@ -117,89 +119,56 @@ import { ValidatorInfoModify } from '@/helpers/validatorHelpers'
 
 const defaultBalanceBlank: Coin = { amount: '0', denom: COINS_LIST.LOKI }
 
-const DelegateFormDialog = defineComponent({
-  props: {
-    validator: {
-      type: Object as PropType<ValidatorInfoModify>,
-      required: true,
-    },
-    delegation: { type: Object as PropType<DelegationResponse> },
-  },
-  components: { ModalBase },
-  setup(props) {
-    const { get: getBalance, load: loadBalances } = useBalances()
-    const lokiBalance: Coin = getBalance(COINS_LIST.LOKI) || defaultBalanceBlank
-    const fee = ref(API_CONFIG.fee)
-    const ODIN_MULTIPLIER = 0.000001
+const props = defineProps<{
+  validator: ValidatorInfoModify
+  delegation: DelegationResponse
+}>()
 
-    const isEmptyBalance = computed(() => {
-      return !Number(lokiBalance.amount)
-    })
-    const isBalanceLowerThanFee = computed(() => {
-      return Number(lokiBalance.amount) < Number(fee.value)
-    })
+const { get: getBalance, load: loadBalances } = useBalances()
+const lokiBalance: Coin = getBalance(COINS_LIST.LOKI) || defaultBalanceBlank
+const fee = ref(API_CONFIG.fee)
+const ODIN_MULTIPLIER = 0.000001
 
-    const form = useForm({
-      amount: [
-        '',
-        validators.required,
-        validators.number,
-        validators.sixDecimalNumber,
-        ...validators.num(
-          0.000001,
-          Number(convertLokiToOdin(lokiBalance.amount)),
-        ),
-        validators.maxCharacters(32),
-      ],
-    })
-    const isLoading = ref(false)
-    const onSubmit = dialogs.getHandler('onSubmit')
-
-    const maxAmount = () => {
-      const amount = bigMath.multiply(lokiBalance.amount, ODIN_MULTIPLIER)
-      form.amount.val(amount.toString())
-    }
-    const submit = async () => {
-      isLoading.value = true
-      try {
-        await callers.validatorDelegate({
-          delegatorAddress: wallet.account.address,
-          validatorAddress: props.validator.info.operatorAddress,
-          amount: coin(convertOdinToLoki(form.amount.val()), COINS_LIST.LOKI),
-        })
-        await loadBalances()
-        onSubmit()
-        handleNotificationInfo(
-          'Successfully delegated',
-          TYPE_NOTIFICATION.success,
-        )
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      isLoading.value = false
-    }
-
-    return {
-      form: form.flatten(),
-      lokiBalance,
-      isLoading,
-      isEmptyBalance,
-      submit,
-      onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
-      maxAmount,
-      isBalanceLowerThanFee,
-    }
-  },
+const isEmptyBalance = computed(() => {
+  return !Number(lokiBalance.amount)
 })
-export default DelegateFormDialog
-export function showDelegateFormDialog(
-  callbacks: {
-    onSubmit?: DialogHandler
-    onClose?: DialogHandler
-  },
-  props: { validator: ValidatorInfoModify; delegation?: DelegationResponse },
-): Promise<unknown | null> {
-  return dialogs.show(DelegateFormDialog, callbacks, { props })
+const isBalanceLowerThanFee = computed(() => {
+  return Number(lokiBalance.amount) < Number(fee.value)
+})
+
+const form = useForm({
+  amount: [
+    '',
+    validators.required,
+    validators.number,
+    validators.sixDecimalNumber,
+    ...validators.num(0.000001, Number(convertLokiToOdin(lokiBalance.amount))),
+    validators.maxCharacters(32),
+  ],
+})
+const flattenForm = form.flatten()
+const isLoading = ref(false)
+const onSubmit = dialogs.getHandler('onSubmit')
+const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
+const maxAmount = () => {
+  const amount = bigMath.multiply(lokiBalance.amount, ODIN_MULTIPLIER)
+  form.amount.val(amount.toString())
+}
+const submit = async () => {
+  isLoading.value = true
+  try {
+    await callers.validatorDelegate({
+      delegatorAddress: wallet.account.address,
+      validatorAddress: props.validator.info.operatorAddress,
+      amount: coin(convertOdinToLoki(form.amount.val()), COINS_LIST.LOKI),
+    })
+    await loadBalances()
+    onSubmit()
+    handleNotificationInfo('Successfully delegated', TYPE_NOTIFICATION.success)
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  isLoading.value = false
 }
 </script>
 

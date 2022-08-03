@@ -1,16 +1,16 @@
 <template>
-  <div class="data-source-item view-main">
+  <div class="data-source-details view-main">
     <div class="view-main__title-wrapper">
-      <div class="data-source-item__title-wrapper">
+      <div class="data-source-details__title-wrapper">
         <BackButton text="Data Sources" />
-        <h2 class="view-main__title data-source-item__title">Data Source</h2>
+        <h2 class="view-main__title data-source-details__title">Data Source</h2>
         <span class="view-main__subtitle">
           {{ dataSourceData?.name }}
         </span>
       </div>
       <button
         v-if="isDataSourceOwner"
-        class="data-source-item__title-btn app-btn app-btn--medium"
+        class="data-source-details__title-btn app-btn app-btn--medium"
         type="button"
         @click="editDataSource(dataSourceData)"
       >
@@ -19,7 +19,7 @@
     </div>
 
     <template v-if="dataSourceData">
-      <div class="data-source-item__card info-card card-frame">
+      <div class="data-source-details__card info-card card-frame">
         <div class="info-card__content">
           <div class="info-card__row">
             <span class="info-card__row-title">Owner</span>
@@ -42,13 +42,13 @@
       <AppTabs>
         <AppTab
           title="Requests"
-          :class="{ 'data-source-item__tab-content': isDataSourceOwner }"
+          :class="{ 'data-source-details__tab-content': isDataSourceOwner }"
         >
           <RequestsDataSourceTable :data-source-id="String($route.params.id)" />
         </AppTab>
         <AppTab
           title="Code"
-          :class="{ 'data-source-item__tab-content': isDataSourceOwner }"
+          :class="{ 'data-source-details__tab-content': isDataSourceOwner }"
         >
           <CodeTable :code="dataSourceCode" />
         </AppTab>
@@ -79,15 +79,14 @@ import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
+import { DataSourceFormModal } from '@/components/modals'
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
+import { wallet } from '@/api/wallet'
 import BackButton from '@/components/BackButton.vue'
 import AppTabs from '@/components/tabs/AppTabs.vue'
 import AppTab from '@/components/tabs/AppTab.vue'
 import CodeTable from '@/components/tables/CodeTable.vue'
 import RequestsDataSourceTable from '@/components/tables/RequestsDataSourceTable.vue'
-
-import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
-import DataSourceFormModal from '@/components/modals/DataSourceFormModal.vue'
-import { wallet } from '@/api/wallet'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const route: RouteLocationNormalizedLoaded = useRoute()
@@ -114,8 +113,8 @@ const getDataSourceCode = async () => {
   try {
     dataSourceCode.value = await callers
       .getDataSourceCode(String(route.params.id))
-      .then((response) => response.json())
-      .then((data) => data?.executable)
+      .then(response => response.json())
+      .then(data => data?.executable)
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
@@ -125,7 +124,7 @@ const editDataSource = async (dataSource: unknown) => {
   await showDialogHandler(
     DataSourceFormModal,
     {
-      onSubmit: async (d) => {
+      onSubmit: async d => {
         await getDataSource()
         d.kill()
       },
@@ -141,37 +140,37 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-.data-source-item__title {
+.data-source-details__title {
   margin: 0 1.6rem 0 2rem;
 }
-.data-source-item__card {
+.data-source-details__card {
   margin-bottom: 3.4rem;
 }
-.data-source-item__title-info {
+.data-source-details__title-info {
   display: flex;
   justify-content: space-between;
 }
-.data-source-item__title-wrapper {
+.data-source-details__title-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 @include respond-to(tablet) {
-  .data-source-item__title-wrapper {
+  .data-source-details__title-wrapper {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
   }
-  .data-source-item__title {
+  .data-source-details__title {
     margin: 0.8rem 0 0.4rem 0;
   }
-  .data-source-item__tab-content {
+  .data-source-details__tab-content {
     margin-bottom: 12rem;
   }
-  .data-source-item {
+  .data-source-details {
     padding-bottom: 10rem;
   }
-  .data-source-item__title-btn {
+  .data-source-details__title-btn {
     display: none;
   }
 }

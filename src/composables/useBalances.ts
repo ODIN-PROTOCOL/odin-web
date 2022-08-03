@@ -10,9 +10,9 @@ function getBalance(denom: string, as: 'number'): number | undefined
 function getBalance(denom: string, as: 'string'): string | undefined
 function getBalance(
   denom: string,
-  as?: 'number' | 'string'
+  as?: 'number' | 'string',
 ): Coin | number | string | undefined {
-  const coinVal = _balances.value.find((el) => el.denom === denom)
+  const coinVal = _balances.value.find(el => el.denom === denom)
   if (coinVal && as) {
     if (as === 'number') return Number(coinVal.amount)
     if (as === 'string') return coinVal.amount
@@ -25,6 +25,7 @@ function getBalance(
 
 async function loadBalances(): Promise<void> {
   const balances = await callers.getBalances()
+  // eslint-disable-next-line no-console
   console.debug('Balances:', balances)
   _balances.value = balances
 }
@@ -37,7 +38,7 @@ async function clearBalances() {
 export function useBalances(coinNames?: string[]) {
   let coins: Array<ComputedRef<Coin | undefined>> = []
   if (Array.isArray(coinNames) && coinNames.length) {
-    coins = coinNames.map((n) => computed(() => getBalance(n)))
+    coins = coinNames.map(n => computed(() => getBalance(n)))
   }
 
   return {

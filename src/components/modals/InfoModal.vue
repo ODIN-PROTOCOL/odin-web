@@ -12,28 +12,19 @@
   </ModalBase>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue'
+<script setup lang="ts">
+import { ref } from 'vue'
 import { dialogs } from '@/helpers/dialogs'
 import { preventIf } from '@/helpers/functions'
-import ModalBase from './ModalBase.vue'
+import { ModalBase } from '@/components/modals'
 
-const InfoModal = defineComponent({
-  props: {
-    title: { type: String, required: true },
-    text: { type: String, required: true },
-  },
-  components: { ModalBase },
-  setup: function () {
-    const isLoading = ref(false)
+defineProps<{
+  title: string
+  text: string
+}>()
 
-    return {
-      onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
-    }
-  },
-})
-
-export default InfoModal
+const isLoading = ref(false)
+const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
 </script>
 
 <style lang="scss" scoped>

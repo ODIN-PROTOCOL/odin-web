@@ -6,9 +6,9 @@ export const defaultChartData = {
 
 export const getPercentageForChartValues = (
   counts: number[],
-  totalNumber: number
+  totalNumber: number,
 ): number[] => {
-  return counts.map((item) => {
+  return counts.map(item => {
     if (item === 0) return 0
     if (item === totalNumber) return 100
 

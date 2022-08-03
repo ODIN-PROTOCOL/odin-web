@@ -17,7 +17,7 @@ export function decodeProposal(proposal: Proposal): ProposalDecoded {
 }
 
 export function decodeProposals(proposals: Proposal[]): ProposalDecoded[] {
-  return proposals.map((proposal) => {
+  return proposals.map(proposal => {
     return {
       ...proposal,
       content: decodeProposalContent(proposal.content),

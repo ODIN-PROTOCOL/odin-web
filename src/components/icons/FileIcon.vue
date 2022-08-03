@@ -14,15 +14,17 @@
   </svg>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'ArrowIcon',
-  props: {
-    className: { type: String },
-    width: { type: Number, default: 48 },
-    height: { type: Number, default: 60 },
+<script setup lang="ts">
+withDefaults(
+  defineProps<{
+    className?: string
+    width?: number | string
+    height?: number | string
+  }>(),
+  {
+    className: '',
+    width: 48,
+    height: 60,
   },
-})
+)
 </script>

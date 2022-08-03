@@ -40,7 +40,7 @@ export function toLong(value: NumLike): Long {
 
 export function toStr(
   value: NumLike | undefined | null,
-  fallback = ''
+  fallback = '',
 ): string {
   if (!value) return fallback
 

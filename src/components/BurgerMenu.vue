@@ -33,21 +33,24 @@
   </button>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'BurgerMenu',
-  props: {
-    isOpen: { type: Boolean, default: false },
-    width: { type: Number, default: 24 },
-    height: { type: Number, default: 24 },
-    fill: { type: String, default: '#212529' },
-    className: { type: String },
+<script setup lang="ts">
+withDefaults(
+  defineProps<{
+    isOpen?: boolean
+    className?: string
+    width?: number | string
+    height?: number | string
+    fill?: string
+  }>(),
+  {
+    isOpen: false,
+    className: '',
+    fill: '#212529',
+    width: 24,
+    height: 24,
   },
-})
+)
 </script>
-
 <style lang="scss" scoped>
 svg {
   cursor: pointer;

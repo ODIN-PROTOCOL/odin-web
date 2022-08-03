@@ -20,13 +20,13 @@ class Dialogs {
   show(
     component: Component,
     handlers: DialogHandlers = {},
-    { props }: { props?: DialogProps } = {}
+    { props }: { props?: DialogProps } = {},
   ): Promise<unknown | null> {
     if (!this._dialogContainer) {
       throw new ReferenceError('Dialogs not initialized!')
     }
 
-    return new Promise<unknown | null>((resolve) => {
+    return new Promise<unknown | null>(resolve => {
       const dialog = createApp(component, props)
       dialog.config.globalProperties = {
         ...dialog.config.globalProperties,
@@ -35,7 +35,7 @@ class Dialogs {
       this._provideHandlers(
         dialog,
         this._addDefaultHandlers(handlers),
-        this._makeKiller(resolve, dialog)
+        this._makeKiller(resolve, dialog),
       )
       dialog.mount(this._dialogContainer as HTMLElement)
     })
@@ -46,15 +46,15 @@ class Dialogs {
       name,
       () =>
         inject('onClose', () =>
-          console.warn(`Missing ${name} and no onClose handler`)
+          console.warn(`Missing ${name} and no onClose handler`),
         ),
-      true
+      true,
     )
   }
 
   private _makeKiller(
     resolve: (value: unknown) => void,
-    dialog: App<Element>
+    dialog: App<Element>,
   ): DialogKiller {
     return (result?: unknown | null) => {
       resolve(result ?? null)
@@ -65,7 +65,7 @@ class Dialogs {
   private _addDefaultHandlers(callbacks: DialogHandlers) {
     const newCbs = { ...callbacks }
     if (!newCbs.onClose) {
-      newCbs.onClose = (d) => d.kill(null)
+      newCbs.onClose = d => d.kill(null)
     }
     return newCbs
   }
@@ -73,11 +73,11 @@ class Dialogs {
   private _provideHandlers(
     dialog: App<Element>,
     handlers: DialogHandlers,
-    kill: DialogKiller
+    kill: DialogKiller,
   ) {
     for (const [cbName, cb] of Object.entries(handlers)) {
       if (!cbName || !cb) continue
-      const handler: DialogPayloadHandler = (payload) => cb({ payload, kill })
+      const handler: DialogPayloadHandler = payload => cb({ payload, kill })
       dialog.provide(cbName, handler)
     }
   }

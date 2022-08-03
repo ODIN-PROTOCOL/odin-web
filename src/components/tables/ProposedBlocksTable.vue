@@ -27,7 +27,7 @@
               <span>{{
                 $fDate(
                   new Date(item.attributes.block_time * 1000),
-                  'HH:mm dd.MM.yy'
+                  'HH:mm dd.MM.yy',
                 )
               }}</span>
             </div>
@@ -57,68 +57,50 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue'
-import { toHex } from '@cosmjs/encoding'
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
-import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { callers } from '@/api/callers'
-import SkeletonTable from '@/components/SkeletonTable.vue'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
+import SkeletonTable from '@/components/SkeletonTable.vue'
 
-export default defineComponent({
-  components: { AppPagination, SkeletonTable },
-  props: {
-    proposerAddress: { type: String, required: true },
-  },
-  setup: function (props) {
-    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 5
-    const currentPage = ref(1)
-    const totalPages = ref(0)
-    const blocks = ref([])
-    const blocksCount = ref()
-    const headerTitles = [
-      { title: 'Block' },
-      { title: 'Date and time' },
-      { title: 'Transactions' },
-    ]
-    const getProposedBlocks = async () => {
-      lockLoading()
-      try {
-        const response = await callers.getProposedBlocks(
-          props.proposerAddress,
-          currentPage.value,
-          ITEMS_PER_PAGE
-        )
-        const _blocks = await response.json()
-        blocks.value = _blocks.data ? _blocks.data : []
-        blocksCount.value = _blocks?.total_count
-        totalPages.value = Math.ceil(blocksCount.value / ITEMS_PER_PAGE) - 1
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
-    }
+const props = defineProps<{
+  proposerAddress: string
+}>()
 
-    onMounted(async () => {
-      await getProposedBlocks()
-    })
-
-    return {
-      API_CONFIG,
+const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+const ITEMS_PER_PAGE = 5
+const currentPage = ref(1)
+const totalPages = ref(0)
+const blocks = ref([])
+const blocksCount = ref()
+const headerTitles = [
+  { title: 'Block' },
+  { title: 'Date and time' },
+  { title: 'Transactions' },
+]
+const getProposedBlocks = async () => {
+  lockLoading()
+  try {
+    const response = await callers.getProposedBlocks(
+      props.proposerAddress,
+      currentPage.value,
       ITEMS_PER_PAGE,
-      currentPage,
-      totalPages,
-      blocks,
-      blocksCount,
-      toHex,
-      getProposedBlocks,
-      headerTitles,
-      isLoading,
-    }
-  },
+    )
+    const _blocks = await response.json()
+    blocks.value = _blocks.data ? _blocks.data : []
+    blocksCount.value = _blocks?.total_count
+    totalPages.value = Math.ceil(blocksCount.value / ITEMS_PER_PAGE) - 1
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
+
+onMounted(async () => {
+  await getProposedBlocks()
 })
 </script>
 

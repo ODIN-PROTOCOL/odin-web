@@ -18,15 +18,17 @@
   </svg>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'WalletIcon',
-  props: {
-    className: { type: String },
-    width: { type: Number, default: 26 },
-    height: { type: Number, default: 26 },
+<script setup lang="ts">
+withDefaults(
+  defineProps<{
+    className?: string
+    width?: number | string
+    height?: number | string
+  }>(),
+  {
+    className: '',
+    width: 26,
+    height: 26,
   },
-})
+)
 </script>

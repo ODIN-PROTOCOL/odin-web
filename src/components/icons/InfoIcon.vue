@@ -18,15 +18,17 @@
   </svg>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'InfoIcon',
-  props: {
-    className: { type: String },
-    width: { type: [Number, String], default: 16 },
-    height: { type: [Number, String], default: 16 },
+<script setup lang="ts">
+withDefaults(
+  defineProps<{
+    className?: string
+    width?: number | string
+    height?: number | string
+  }>(),
+  {
+    className: '',
+    width: 16,
+    height: 16,
   },
-})
+)
 </script>

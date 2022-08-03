@@ -34,7 +34,7 @@
               <span>{{
                 $fDate(
                   new Date(item.attributes.timestamp * 1000),
-                  'HH:mm dd.MM.yy'
+                  'HH:mm dd.MM.yy',
                 )
               }}</span>
             </div>
@@ -63,78 +63,58 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue'
-import { toHex } from '@cosmjs/encoding'
-import { API_CONFIG } from '@/api/api-config'
-import AppPagination from '@/components/AppPagination/AppPagination.vue'
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import TitledLink from '@/components/TitledLink.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 
-export default defineComponent({
-  components: { AppPagination, TitledLink, SkeletonTable },
-  props: {
-    dataSourceId: { type: String, required: true },
-  },
-  setup: function (props) {
-    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 5
-    const currentPage = ref(1)
-    const totalPages = ref(0)
-    const requests = ref()
-    const requestsCount = ref()
-    const headerTitles = [
-      { title: 'Request ID' },
-      { title: 'Oracle Script' },
-      { title: 'Timestamp' },
-    ]
-    const getDataSourceRequests = async () => {
-      lockLoading()
-      try {
-        requests.value = []
-        const response = await callers
-          .getDataSourceRequests(
-            props.dataSourceId,
-            currentPage.value - 1,
-            ITEMS_PER_PAGE
-          )
-          .then((response) => response.json())
-          .then((data) => data)
-        requests.value = response.data
-        requestsCount.value = response.total_count || 0
-        totalPages.value = Math.ceil(requestsCount.value / ITEMS_PER_PAGE)
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
-    }
-    const getRequestItemName = (index: number) => {
-      const item = requests.value[index]
-      if (!item?.attributes.oracle_script_name) return '-'
-      else
-        return `#${item?.attributes?.oracle_script_id}${item?.attributes?.oracle_script_name}`
-    }
-    onMounted(async () => {
-      await getDataSourceRequests()
-    })
+const props = defineProps<{
+  dataSourceId: string
+}>()
 
-    return {
-      isLoading,
-      API_CONFIG,
-      ITEMS_PER_PAGE,
-      currentPage,
-      totalPages,
-      requestsCount,
-      requests,
-      toHex,
-      getDataSourceRequests,
-      getRequestItemName,
-      headerTitles,
-    }
-  },
+const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+const ITEMS_PER_PAGE = 5
+const currentPage = ref(1)
+const totalPages = ref(0)
+const requests = ref()
+const requestsCount = ref()
+const headerTitles = [
+  { title: 'Request ID' },
+  { title: 'Oracle Script' },
+  { title: 'Timestamp' },
+]
+const getDataSourceRequests = async () => {
+  lockLoading()
+  try {
+    requests.value = []
+    const response = await callers
+      .getDataSourceRequests(
+        props.dataSourceId,
+        currentPage.value - 1,
+        ITEMS_PER_PAGE,
+      )
+      .then(response => response.json())
+      .then(data => data)
+    requests.value = response.data
+    requestsCount.value = response.total_count || 0
+    totalPages.value = Math.ceil(requestsCount.value / ITEMS_PER_PAGE)
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
+const getRequestItemName = (index: number) => {
+  const item = requests.value[index]
+  if (!item?.attributes.oracle_script_name) return '-'
+  else
+    return `#${item?.attributes?.oracle_script_id}${item?.attributes?.oracle_script_name}`
+}
+onMounted(async () => {
+  await getDataSourceRequests()
 })
 </script>
 

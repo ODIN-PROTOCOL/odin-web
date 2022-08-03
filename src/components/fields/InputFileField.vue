@@ -52,7 +52,7 @@
 <script lang="ts">
 import { getEventFile } from '@/helpers/files'
 import { defineComponent, ref } from 'vue'
-import FileIcon from '@/components/icons/FileIcon.vue'
+import { FileIcon } from '@/components/icons'
 
 export default defineComponent({
   components: { FileIcon },

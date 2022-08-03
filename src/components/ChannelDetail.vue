@@ -56,45 +56,34 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType, computed } from 'vue'
-import StatusIcon from '@/components/StatusIcon.vue'
+<script setup lang="ts">
+import { computed } from 'vue'
 import { IdentifiedChannel } from 'cosmjs-types/ibc/core/channel/v1/channel'
 import { IdentifiedConnection } from 'cosmjs-types/ibc/core/connection/v1/connection'
+import StatusIcon from '@/components/StatusIcon.vue'
 
-export default defineComponent({
-  components: { StatusIcon },
-  props: {
-    connection: {
-      type: Object as PropType<IdentifiedConnection>,
-      required: true,
-    },
-    channelData: {
-      type: Array as PropType<Array<IdentifiedChannel>>,
-      required: true,
-    },
-  },
-  setup(props) {
-    const channels = computed(() => {
-      return props.channelData?.filter(
-        (channel: IdentifiedChannel) =>
-          channel?.connectionHops[0] === props.connection?.id
-      )
-    })
-    const getOrder = (item: number) => {
-      if (item === -1) {
-        return 'Unrecognized'
-      } else if (item === 0) {
-        return 'None Unspecified'
-      } else if (item === 1) {
-        return 'Unordered'
-      } else if (item === 2) {
-        return 'Ordered'
-      }
-    }
-    return { channels, getOrder }
-  },
+const props = defineProps<{
+  connection: IdentifiedConnection
+  channelData: IdentifiedChannel[]
+}>()
+
+const channels = computed(() => {
+  return props.channelData?.filter(
+    (channel: IdentifiedChannel) =>
+      channel?.connectionHops[0] === props.connection?.id,
+  )
 })
+const getOrder = (item: number) => {
+  if (item === -1) {
+    return 'Unrecognized'
+  } else if (item === 0) {
+    return 'None Unspecified'
+  } else if (item === 1) {
+    return 'Unordered'
+  } else if (item === 2) {
+    return 'Ordered'
+  }
+}
 </script>
 
 <style scoped lang="scss">

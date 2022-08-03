@@ -10,16 +10,12 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import CopyButtonWithText from '@/components/CopyButtonWithText.vue'
 
-export default defineComponent({
-  components: { CopyButtonWithText },
-  props: {
-    code: { type: String, required: true },
-  },
-})
+defineProps<{
+  code: string
+}>()
 </script>
 
 <style lang="scss" scoped>

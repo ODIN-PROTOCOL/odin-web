@@ -1,8 +1,8 @@
 <template>
-  <div class="view-main request-item">
-    <div class="view-main__title-wrapper request-item__title-wrapper">
+  <div class="view-main request-details">
+    <div class="view-main__title-wrapper request-details__title-wrapper">
       <BackButton :text="'Requests'" />
-      <h2 class="view-main__title request-item__title">Request</h2>
+      <h2 class="view-main__title request-details__title">Request</h2>
       <span class="view-main__subtitle"> #{{ requestData?.id }} </span>
     </div>
 
@@ -109,8 +109,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, onMounted, computed } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted, computed } from 'vue'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import { callers } from '@/api/callers'
 import { API_CONFIG } from '@/api/api-config'
@@ -120,7 +120,7 @@ import { formatDate, formatDateDifference } from '@/helpers/formatters'
 import TitledLink from '@/components/TitledLink.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import BackButton from '@/components/BackButton.vue'
-import Progressbar from '@/components/Progressbar.vue'
+import Progressbar from '@/components/ProgressbarTool.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
 import { Obi } from '@bandprotocol/bandchain.js'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
@@ -128,138 +128,112 @@ import isObjectLodash from 'lodash/isObject'
 import { fromBase64 } from '@cosmjs/encoding'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 
-export default defineComponent({
-  components: { TitledLink, CopyButton, BackButton, Progressbar, StatusBlock },
-  setup: function () {
-    const route: RouteLocationNormalizedLoaded = useRoute()
-    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const requestData = ref()
-    const resultData = ref()
-    const requestStatus = ref()
-    const requestTime = ref()
-    const resolveTime = ref()
-    const requestTimeRange = ref()
-    const resolveTimeRange = ref()
-    const requestCalldata = ref()
-    const requestResult = ref()
-    const requestResultName = ref()
-    const requestResultType = ref()
-    const senderLink = computed(() => {
-      return `${API_CONFIG.odinScan}/account/${requestData.value?.client_id}`
-    })
-    const isObject = computed(() => {
-      return isObjectLodash(requestCalldata.value)
-    })
-    const isRequestSuccess = computed(
-      () => requestStatus.value === ResolveStatus.RESOLVE_STATUS_SUCCESS
+const route: RouteLocationNormalizedLoaded = useRoute()
+const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+const requestData = ref()
+const resultData = ref()
+const requestStatus = ref()
+const requestTime = ref()
+const resolveTime = ref()
+const requestTimeRange = ref()
+const resolveTimeRange = ref()
+const requestCalldata = ref()
+const requestResult = ref()
+const requestResultName = ref()
+const requestResultType = ref()
+const senderLink = computed(() => {
+  return `${API_CONFIG.odinScan}/account/${requestData.value?.client_id}`
+})
+const isObject = computed(() => {
+  return isObjectLodash(requestCalldata.value)
+})
+const isRequestSuccess = computed(
+  () => requestStatus.value === ResolveStatus.RESOLVE_STATUS_SUCCESS,
+)
+
+const getRequest = async () => {
+  lockLoading()
+  try {
+    const request = await callers.getRequest(Number(route.params.id))
+    requestData.value = request?.data.result.result.request
+    resultData.value = request?.data.result.result.result
+    requestStatus.value = resultData.value.resolve_status
+    requestTime.value = formatDate(
+      new Date(requestData.value.request_time * 1000),
     )
+    resolveTime.value = formatDate(
+      new Date(resultData.value.resolve_time * 1000),
+    )
+    requestTimeRange.value = formatDateDifference(
+      new Date(requestData.value.request_time * 1000),
+    )
+    resolveTimeRange.value = formatDateDifference(
+      new Date(resultData.value.resolve_time * 1000),
+    )
+    requestCalldata.value = await _decodeCallData(
+      fromBase64(requestData.value.calldata),
+    )
+    if (isRequestSuccess.value) {
+      const res = await _decodeResult(fromBase64(resultData.value.result))
+      requestResultName.value = Object.keys(res).toString() || 'Data'
+      requestResult.value =
+        typeof res[Object.keys(res)[0]] !== 'string'
+          ? res[Object.keys(res)[0]].reduce(
+              (accumulator: unknown, currentValue: unknown) =>
+                accumulator + ' ' + currentValue,
+            )
+          : res[Object.keys(res)[0]]
+      requestResultType.value = typeof requestResult.value
+    }
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
 
-    const getRequest = async () => {
-      lockLoading()
-      try {
-        const request = await callers.getRequest(Number(route.params.id))
-        requestData.value = request?.data.result.result.request
-        resultData.value = request?.data.result.result.result
-        requestStatus.value = resultData.value.resolve_status
-        requestTime.value = formatDate(
-          new Date(requestData.value.request_time * 1000)
-        )
-        resolveTime.value = formatDate(
-          new Date(resultData.value.resolve_time * 1000)
-        )
-        requestTimeRange.value = formatDateDifference(
-          new Date(requestData.value.request_time * 1000)
-        )
-        resolveTimeRange.value = formatDateDifference(
-          new Date(resultData.value.resolve_time * 1000)
-        )
-        requestCalldata.value = await _decodeCallData(
-          fromBase64(requestData.value.calldata)
-        )
-        if (isRequestSuccess.value) {
-          const res = await _decodeResult(fromBase64(resultData.value.result))
-          requestResultName.value = Object.keys(res).toString() || 'Data'
-          requestResult.value =
-            typeof res[Object.keys(res)[0]] !== 'string'
-              ? res[Object.keys(res)[0]].reduce(
-                  (accumulator: unknown, currentValue: unknown) =>
-                    accumulator + ' ' + currentValue
-                )
-              : res[Object.keys(res)[0]]
-          requestResultType.value = typeof requestResult.value
-        }
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
+const _decodeCallData = async (calldata: Uint8Array) => {
+  try {
+    const { oracleScript } = await callers.getOracleScript(
+      Number(requestData.value.oracle_script_id),
+    )
+    if (oracleScript) {
+      const obi = new Obi(oracleScript.schema)
+      return obi.decodeInput(Buffer.from(calldata))
     }
-
-    const _decodeCallData = async (calldata: Uint8Array) => {
-      try {
-        const { oracleScript } = await callers.getOracleScript(
-          Number(requestData.value.oracle_script_id)
-        )
-        if (oracleScript) {
-          const obi = new Obi(oracleScript.schema)
-          return obi.decodeInput(Buffer.from(calldata))
-        }
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+}
+const _decodeResult = async (result: Uint8Array) => {
+  try {
+    const { oracleScript } = await callers.getOracleScript(
+      Number(resultData.value.oracle_script_id),
+    )
+    if (oracleScript) {
+      const obi = new Obi(oracleScript.schema)
+      return obi.decodeOutput(Buffer.from(result))
     }
-    const _decodeResult = async (result: Uint8Array) => {
-      try {
-        const { oracleScript } = await callers.getOracleScript(
-          Number(resultData.value.oracle_script_id)
-        )
-        if (oracleScript) {
-          const obi = new Obi(oracleScript.schema)
-          return obi.decodeOutput(Buffer.from(result))
-        }
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-    }
-    onMounted(async () => {
-      await getRequest()
-    })
-
-    return {
-      API_CONFIG,
-      ResolveStatus,
-      requestStatusType,
-      requestData,
-      requestStatus,
-      requestTime,
-      resolveTime,
-      requestTimeRange,
-      resolveTimeRange,
-      requestCalldata,
-      requestResult,
-      senderLink,
-      isObject,
-      isRequestSuccess,
-      requestResultName,
-      requestResultType,
-      resultData,
-      isLoading,
-    }
-  },
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+}
+onMounted(async () => {
+  await getRequest()
 })
 </script>
 
 <style lang="scss" scoped>
-.request-item__title {
+.request-details__title {
   margin: 0 1.6rem 0 2rem;
 }
-.request-item__empty-msg {
+.request-details__empty-msg {
   text-align: center;
 }
-.request-item__title-wrapper {
+.request-details__title-wrapper {
   justify-content: flex-start;
 }
 @include respond-to(tablet) {
-  .request-item__title {
+  .request-details__title {
     margin: 0.8rem 0 0.4rem 0;
   }
 }

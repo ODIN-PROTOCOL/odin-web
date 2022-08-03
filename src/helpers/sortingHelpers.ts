@@ -31,7 +31,7 @@ type sortingOptions = {
 
 export const getSortingOwners = (
   isWalletActive: boolean,
-  walletAddress: string
+  walletAddress: string,
 ): sortingOptions => {
   const allOwners = {
     text: 'All',

@@ -28,24 +28,24 @@ export interface OracleExt {
       dataSource: (dataSourceId: NumLike) => Promise<QueryDataSourceResponse>
       dataSources: (
         limit: NumLike,
-        offset?: NumLike
+        offset?: NumLike,
       ) => Promise<QueryDataSourcesResponse>
       oracleScript: (
-        oracleScriptId: NumLike
+        oracleScriptId: NumLike,
       ) => Promise<QueryOracleScriptResponse>
       oracleScripts: (
         limit: NumLike,
-        offset?: NumLike
+        offset?: NumLike,
       ) => Promise<QueryOracleScriptsResponse>
       request: (requestId: NumLike) => Promise<QueryRequestResponse>
       requests: (
         limit: NumLike,
-        offset?: NumLike
+        offset?: NumLike,
       ) => Promise<QueryRequestsResponse>
       reports: (
         requestId: NumLike,
         limit: NumLike,
-        offset?: NumLike
+        offset?: NumLike,
       ) => Promise<QueryRequestReportsResponse>
       validator: (validatorAddress: string) => Promise<QueryValidatorResponse>
       reporters: (validatorAddress: string) => Promise<QueryReportersResponse>
@@ -54,7 +54,7 @@ export interface OracleExt {
         oracleScriptId: NumLike,
         calldata: Uint8Array,
         askCount: NumLike,
-        minCount: NumLike
+        minCount: NumLike,
       ) => Promise<QueryRequestSearchResponse>
       dataProvidersPool: () => Promise<QueryDataProvidersPoolResponse>
     }
@@ -151,7 +151,7 @@ export function setupOracleExt(base: QueryClient): OracleExt {
           oracleScriptId: NumLike,
           calldata: Uint8Array,
           askCount: NumLike,
-          minCount: NumLike
+          minCount: NumLike,
         ) => {
           return queryService.RequestSearch({
             oracleScriptId: toLong(oracleScriptId),

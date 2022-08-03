@@ -51,25 +51,14 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import TopOracleScriptsSkeleton from '@/components/TopOracleScriptsSkeleton.vue'
+import { OracleScriptFromTelemetry } from '@/types'
 
-export default defineComponent({
-  components: { TopOracleScriptsSkeleton },
-  props: {
-    topOracleScripts: {
-      required: true,
-    },
-    isLoading: {
-      type: Boolean,
-      required: true,
-    },
-  },
-  setup() {
-    return {}
-  },
-})
+defineProps<{
+  topOracleScripts: OracleScriptFromTelemetry
+  isLoading: boolean
+}>()
 </script>
 
 <style scoped lang="scss">

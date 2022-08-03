@@ -6,84 +6,39 @@
   >
     <div class="top-oracle-scripts-skeleton__description">
       <div class="top-oracle-scripts-skeleton__title">
-        <skeleton-loader
-          :height="20"
-          rounded
-          :width="-1"
-          animation="wave"
-          color="rgb(225, 229, 233)"
-          class="w-full"
-        />
+        <skeleton-loader :height="20" pill shimmer width="100%" />
       </div>
       <span class="top-oracle-scripts-skeleton__text">
         <skeleton-loader
           v-for="text of 3"
           :key="text"
           :height="16"
-          rounded
-          :width="-1"
-          animation="wave"
-          color="rgb(225, 229, 233)"
-          class="mg-b8 w-full"
+          pill
+          width="100%"
+          class="mg-b8"
         />
       </span>
     </div>
     <div class="top-oracle-scripts-skeleton__info">
       <div class="top-oracle-scripts-skeleton__info-value">
         <div class="top-oracle-scripts-skeleton__info-title">
-          <skeleton-loader
-            :height="16"
-            :width="-1"
-            rounded
-            animation="wave"
-            color="rgb(225, 229, 233)"
-            class="w-full"
-          />
+          <skeleton-loader :height="16" width="100%" shimmer pill />
         </div>
         <div class="top-oracle-scripts-skeleton__info-text w-full">
-          <skeleton-loader
-            :height="16"
-            :width="-1"
-            rounded
-            animation="wave"
-            color="rgb(225, 229, 233)"
-            class="w-full"
-          />
+          <skeleton-loader :height="16" width="100%" shimmer pill />
         </div>
       </div>
       <div class="top-oracle-scripts-skeleton__info-value">
         <div class="top-oracle-scripts-skeleton__info-title">
-          <skeleton-loader
-            :height="16"
-            :width="-1"
-            rounded
-            animation="wave"
-            color="rgb(225, 229, 233)"
-            class="w-full"
-          />
+          <skeleton-loader :height="16" width="100%" shimmer pill />
         </div>
         <div class="top-oracle-scripts-skeleton__info-text">
-          <skeleton-loader
-            :height="16"
-            :width="-1"
-            rounded
-            animation="wave"
-            color="rgb(225, 229, 233)"
-            class="w-full"
-          />
+          <skeleton-loader :height="16" width="100%" shimmer pill />
         </div>
       </div>
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'TopOracleScriptsSkeleton',
-})
-</script>
 
 <style scoped lang="scss">
 .top-oracle-scripts-skeleton {

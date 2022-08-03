@@ -23,15 +23,16 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+enum EVENTS {
+  submit = 'submit',
+}
 
-export default defineComponent({
-  emits: ['submit'],
-  setup(_, { emit }) {
-    return { emitSubmit: () => emit('submit') }
-  },
-})
+const emit = defineEmits<{
+  (e: EVENTS.submit): void
+}>()
+
+const emitSubmit = () => emit(EVENTS.submit)
 </script>
 
 <style lang="scss" scoped>

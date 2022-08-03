@@ -13,8 +13,11 @@ import {
   SigningStargateClient,
   StakingExtension,
   DistributionExtension,
+  GovExtension,
+  setupGovExtension,
 } from '@cosmjs/stargate'
-import { EncodeObject, GeneratedType, Registry } from '@cosmjs/proto-signing'
+import { EncodeObject, GeneratedType } from '@cosmjs/proto-signing'
+import { Registry } from '@cosmjs/proto-signing/build/registry'
 import { CoinswapExt, setupCoinswapExt } from './query-ext/coinswapExtension'
 import { GovExt, setupGovExt } from './query-ext/govExtension'
 import { MintExt, setupMintExt } from './query-ext/mintExtension'
@@ -44,7 +47,8 @@ type OdinQueryClient = QueryClient &
   BankExtension &
   StakingExtension &
   DistributionExtension &
-  IbcExtension
+  IbcExtension &
+  GovExtension
 
 class Api {
   private _query: OdinQueryClient = stub('Query not initialized!')
@@ -62,7 +66,7 @@ class Api {
     this._stargate = await SigningStargateClient.connectWithSigner(
       API_CONFIG.rpc,
       wallet.signer,
-      { registry: this._stargateRegistry }
+      { registry: this._stargateRegistry },
     )
     if (this._stargate) {
       this._wallet = wallet
@@ -77,7 +81,7 @@ class Api {
 
   makeBroadcastCaller<T>(
     typeUrl: string,
-    type: GeneratedType
+    type: GeneratedType,
   ): (msg: T) => Promise<DeliverTxResponse> {
     this._stargateRegistry.register(typeUrl, type)
     return (msg: T): Promise<DeliverTxResponse> => {
@@ -87,28 +91,28 @@ class Api {
 
   makeMultiBroadcastCaller<T>(
     typeUrl: string,
-    type: GeneratedType
+    type: GeneratedType,
   ): (msgs: T[]) => Promise<DeliverTxResponse> {
     this._stargateRegistry.register(typeUrl, type)
     return (msgs: T[]): Promise<DeliverTxResponse> => {
       return this._signAndBroadcast(
-        msgs.map((item) => {
+        msgs.map(item => {
           return { typeUrl, value: item }
-        })
+        }),
       )
     }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   makeQueryCaller<T extends (...args: any) => any>(
-    make: (qc: OdinQueryClient) => T
+    make: (qc: OdinQueryClient) => T,
   ): T {
     return make(this._query)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   makeTendermintCaller<T extends (...args: any) => any>(
-    make: (tc: Tendermint34Client) => T
+    make: (tc: Tendermint34Client) => T,
   ): T {
     return make(this._tendermint)
   }
@@ -128,17 +132,21 @@ class Api {
       setupStakingExtension,
       setupDistributionExtension,
       setupBankExtension,
-      setupIbcExtension
+      setupIbcExtension,
+      setupGovExtension,
     )
   }
 
   private async _signAndBroadcast(
-    messages: EncodeObject[]
+    messages: EncodeObject[],
   ): Promise<DeliverTxResponse> {
     const res = await this._stargate.signAndBroadcast(
       this._wallet.account.address,
       messages,
-      { amount: coins(Number(API_CONFIG.fee), COINS_LIST.LOKI), gas: '2000000' }
+      {
+        amount: coins(Number(API_CONFIG.fee), COINS_LIST.LOKI),
+        gas: '2000000',
+      },
     )
     if (!res || ('code' in res && res.code !== 0)) {
       throw new OdinApiBroadcastError(res as BroadcastTxFailure)

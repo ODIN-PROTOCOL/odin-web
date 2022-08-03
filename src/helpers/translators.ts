@@ -48,7 +48,7 @@ export function translateProposalStatus(status: ProposalStatus): string {
 }
 
 export function translateProposalStatusDated(
-  proposal: Proposal | ProposalDecoded
+  proposal: Proposal | ProposalDecoded,
 ): string {
   switch (proposal.status) {
     case ProposalStatus.PROPOSAL_STATUS_DEPOSIT_PERIOD:

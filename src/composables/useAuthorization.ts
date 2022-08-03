@@ -9,7 +9,7 @@ const _isLoggedIn = ref<boolean>(false)
 const isLoggedInReadonly = readonly(_isLoggedIn)
 
 async function createSessionWithOdinWallet(
-  mnemonic: string
+  mnemonic: string,
 ): Promise<OdinWallet> {
   await wallet.init({
     type: WalletTypes.ODIN_WALLET,
@@ -26,11 +26,11 @@ async function createSessionWithOdinWallet(
 
 async function createSessionWithKeplrWallet(
   chainId: string,
-  coinType: COINS_TYPE
+  coinType: COINS_TYPE,
 ): Promise<OdinWallet> {
   if (window.keplr == null) {
     throw new ReferenceError(
-      'Please install the Keplr extension in your browser.'
+      'Please install the Keplr extension in your browser.',
     )
   } else {
     if (window.keplr.experimentalSuggestChain) {
@@ -42,12 +42,12 @@ async function createSessionWithKeplrWallet(
         })
       } catch {
         throw new ReferenceError(
-          'Something went wrong. Failed to suggest chain.'
+          'Something went wrong. Failed to suggest chain.',
         )
       }
     } else {
       throw new ReferenceError(
-        'Something went wrong. Please use the recent version of Keplr extension.'
+        'Something went wrong. Please use the recent version of Keplr extension.',
       )
     }
 

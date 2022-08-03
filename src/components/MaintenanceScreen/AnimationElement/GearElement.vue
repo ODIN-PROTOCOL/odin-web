@@ -24,15 +24,17 @@
   </svg>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'GearElement',
-  props: {
-    className: { type: String },
-    width: { type: [Number, String], default: 220 },
-    height: { type: [Number, String], default: 220 },
+<script setup lang="ts">
+withDefaults(
+  defineProps<{
+    className?: string
+    width?: number | string
+    height?: number | string
+  }>(),
+  {
+    className: '',
+    width: 220,
+    height: 220,
   },
-})
+)
 </script>

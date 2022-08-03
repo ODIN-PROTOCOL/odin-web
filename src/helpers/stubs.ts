@@ -6,6 +6,6 @@ export function stub(msg: string): any {
       get() {
         throw new ReferenceError(msg)
       },
-    }
+    },
   )
 }

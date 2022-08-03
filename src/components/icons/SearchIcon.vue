@@ -13,14 +13,15 @@
   </svg>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'SearchIcon',
-  props: {
-    width: { type: Number, default: 24 },
-    height: { type: Number, default: 24 },
+<script setup lang="ts">
+withDefaults(
+  defineProps<{
+    width?: number | string
+    height?: number | string
+  }>(),
+  {
+    width: 24,
+    height: 24,
   },
-})
+)
 </script>

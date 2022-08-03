@@ -3,7 +3,7 @@ import axios from 'axios'
 
 export function cacheAnswers<T extends AnyFn>(
   func: T,
-  cacheTime: number = 1000 * 60 * 5
+  cacheTime: number = 1000 * 60 * 5,
 ): DecoratedFn<T> {
   const memoCache = new Map<string, { time: Date; result: ReturnType<T> }>()
   return (...args: Parameters<T>): ReturnType<T> => {
@@ -28,4 +28,4 @@ export function cacheAnswers<T extends AnyFn>(
   }
 }
 
-export const getAPIDate = cacheAnswers((url) => axios.get(url))
+export const getAPIDate = cacheAnswers(url => axios.get(url))

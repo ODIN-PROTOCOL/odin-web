@@ -50,71 +50,55 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue'
-import AppPagination from '@/components/AppPagination/AppPagination.vue'
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
 import { callers } from '@/api/callers'
-import { API_CONFIG } from '@/api/api-config'
-import SkeletonTable from '@/components/SkeletonTable.vue'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
-export default defineComponent({
-  components: { AppPagination, SkeletonTable },
-  props: {
-    proposerAddress: { type: String, required: true },
-  },
-  setup(props) {
-    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+import { API_CONFIG } from '@/api/api-config'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
+import SkeletonTable from '@/components/SkeletonTable.vue'
 
-    const ITEMS_PER_PAGE = 5
-    const currentPage = ref(1)
-    const totalPages = ref(0)
-    const reportsCount = ref(0)
-    const reports = ref([])
-    const headerTitles = [
-      { title: 'Oracle reports' },
-      { title: 'Oracle script' },
-      { title: 'Tx hash' },
-    ]
+const props = defineProps<{
+  proposerAddress: string
+}>()
 
-    const getReports = async () => {
-      lockLoading()
-      try {
-        const response = await callers.getOracleReports(
-          props.proposerAddress,
-          currentPage.value - 1,
-          ITEMS_PER_PAGE
-        )
-        if (response.data.data) {
-          reportsCount.value = response.data.tx_count
-          totalPages.value = Math.ceil(reportsCount.value / ITEMS_PER_PAGE)
-          reports.value = response.data.data
-        }
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
-    }
-    const paginationHandler = async (num: number) => {
-      currentPage.value = num
-      await getReports()
-    }
-    onMounted(async () => {
-      await getReports()
-    })
-    return {
+const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+
+const ITEMS_PER_PAGE = 5
+const currentPage = ref(1)
+const totalPages = ref(0)
+const reportsCount = ref(0)
+const reports = ref([])
+const headerTitles = [
+  { title: 'Oracle reports' },
+  { title: 'Oracle script' },
+  { title: 'Tx hash' },
+]
+
+const getReports = async () => {
+  lockLoading()
+  try {
+    const response = await callers.getOracleReports(
+      props.proposerAddress,
+      currentPage.value - 1,
       ITEMS_PER_PAGE,
-      currentPage,
-      totalPages,
-      reportsCount,
-      reports,
-      paginationHandler,
-      API_CONFIG,
-      isLoading,
-      headerTitles,
+    )
+    if (response.data.data) {
+      reportsCount.value = response.data.tx_count
+      totalPages.value = Math.ceil(reportsCount.value / ITEMS_PER_PAGE)
+      reports.value = response.data.data
     }
-  },
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
+const paginationHandler = async (num: number) => {
+  currentPage.value = num
+  await getReports()
+}
+onMounted(async () => {
+  await getReports()
 })
 </script>
-
-<style lang="scss" scoped></style>

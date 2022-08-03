@@ -14,15 +14,17 @@
   </svg>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'SuccessIcon',
-  props: {
-    className: { type: String },
-    width: { type: Number, default: 24 },
-    height: { type: Number, default: 24 },
+<script setup lang="ts">
+withDefaults(
+  defineProps<{
+    className?: string
+    width?: number | string
+    height?: number | string
+  }>(),
+  {
+    className: '',
+    width: 24,
+    height: 24,
   },
-})
+)
 </script>

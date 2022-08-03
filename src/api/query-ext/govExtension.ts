@@ -20,14 +20,14 @@ export interface GovExt {
       proposals: (
         proposalStatus: ProposalStatus,
         voter: string,
-        depositor: string
+        depositor: string,
       ) => Promise<QueryProposalsResponse>
       proposal: (proposalId: NumLike) => Promise<QueryProposalResponse>
       vote: (proposalId: NumLike, voter: string) => Promise<QueryVoteResponse>
       votes: (proposalId: NumLike) => Promise<QueryVotesResponse>
       deposit: (
         proposalId: NumLike,
-        depositor: string
+        depositor: string,
       ) => Promise<QueryDepositResponse>
       deposits: (proposalId: NumLike) => Promise<QueryDepositsResponse>
       tallyResult: (proposalId: NumLike) => Promise<QueryTallyResultResponse>
@@ -49,7 +49,7 @@ export function setupGovExt(base: QueryClient): GovExt {
         proposals: (
           proposalStatus: ProposalStatus,
           voter: string,
-          depositor: string
+          depositor: string,
         ) => {
           return queryService.Proposals({
             proposalStatus: proposalStatus,

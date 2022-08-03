@@ -10,7 +10,7 @@ type RouteRedirector = (to: RouteLocation) => RouteLocationRaw
 
 export function makeRootRedirector(
   authorizedRoute: RouteLocationRaw,
-  unauthorizedRoute: RouteLocationRaw
+  unauthorizedRoute: RouteLocationRaw,
 ): RouteRedirector {
   return () => {
     if (!wallet.isEmpty) {
@@ -22,7 +22,7 @@ export function makeRootRedirector(
 }
 
 export function makeAuthorizedOnlyGuard(
-  fallback: RouteLocationRaw
+  fallback: RouteLocationRaw,
 ): RouteGuard {
   return () => {
     if (wallet.isEmpty) {
@@ -33,7 +33,7 @@ export function makeAuthorizedOnlyGuard(
 }
 
 export function makeUnauthorizedOnlyGuard(
-  fallback: RouteLocationRaw
+  fallback: RouteLocationRaw,
 ): RouteGuard {
   return () => {
     if (!wallet.isEmpty) {

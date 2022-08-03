@@ -16,26 +16,26 @@
               class="app-form__field-input"
               name="proposal-name"
               type="text"
-              v-model="form.name"
+              v-model="flattenForm.name"
               :disabled="isLoading"
               placeholder="Proposal name"
             />
-            <p v-if="form.nameErr" class="app-form__field-err">
-              {{ form.nameErr }}
+            <p v-if="flattenForm.nameErr" class="app-form__field-err">
+              {{ flattenForm.nameErr }}
             </p>
           </div>
 
           <div class="app-form__field">
             <label class="app-form__field-lbl"> Description </label>
             <TextareaField
-              v-model="form.description"
+              v-model="flattenForm.description"
               name="proposal-description"
               :rows="5"
               :disabled="isLoading"
               placeholder="Proposal Description"
             />
-            <p v-if="form.descriptionErr" class="app-form__field-err">
-              {{ form.descriptionErr }}
+            <p v-if="flattenForm.descriptionErr" class="app-form__field-err">
+              {{ flattenForm.descriptionErr }}
             </p>
           </div>
 
@@ -46,14 +46,14 @@
               <input
                 class="app-form__field-input"
                 name="proposal-deposit"
-                v-model="form.deposit"
+                v-model="flattenForm.deposit"
                 type="text"
                 :disabled="isLoading"
                 placeholder="1"
               />
             </div>
-            <p v-if="form.depositErr" class="app-form__field-err">
-              {{ form.depositErr }}
+            <p v-if="flattenForm.depositErr" class="app-form__field-err">
+              {{ flattenForm.depositErr }}
             </p>
           </div>
 
@@ -62,7 +62,7 @@
             <VuePicker
               class="_vue-picker"
               placeholder="Subspace"
-              v-model="form.changesSubspace"
+              v-model="flattenForm.changesSubspace"
             >
               <template #dropdownInner>
                 <div class="_vue-picker__dropdown-custom">
@@ -79,17 +79,19 @@
             </VuePicker>
           </div>
 
-          <div class="app-form__field" v-if="form.changesSubspace">
+          <div class="app-form__field" v-if="flattenForm.changesSubspace">
             <label class="app-form__field-lbl">Key</label>
             <VuePicker
               class="_vue-picker"
               placeholder="Key"
-              v-model="form.changesKey"
+              v-model="flattenForm.changesKey"
             >
               <template #dropdownInner>
                 <div class="_vue-picker__dropdown-custom">
                   <VuePickerOption
-                    v-for="(item, idx) in proposalChanges[form.changesSubspace]"
+                    v-for="(item, idx) in proposalChanges[
+                      flattenForm.changesSubspace
+                    ]"
                     :key="item.Key + idx"
                     :value="item.Key"
                     :text="item.Key"
@@ -101,20 +103,20 @@
             </VuePicker>
           </div>
 
-          <div class="app-form__field" v-if="form.changesKey">
+          <div class="app-form__field" v-if="flattenForm.changesKey">
             <div class="app-form__field-lbl app-form__field-lbl_ext">
               <label>Value</label>
             </div>
             <input
               class="app-form__field-input"
               name="changes-value"
-              v-model="form.changesValue"
+              v-model="flattenForm.changesValue"
               type="text"
               :disabled="isLoading"
               placeholder="Value"
             />
-            <p v-if="form.changesValueErr" class="app-form__field-err">
-              {{ form.changesValueErr }}
+            <p v-if="flattenForm.changesValueErr" class="app-form__field-err">
+              {{ flattenForm.changesValueErr }}
             </p>
             <div
               v-if="changesValueType"
@@ -143,7 +145,7 @@
             class="app-btn app-btn--medium"
             type="button"
             @click="submit()"
-            :disabled="!form.isValid || isLoading"
+            :disabled="!flattenForm.isValid || isLoading"
           >
             Create
           </button>
@@ -153,8 +155,8 @@
   </ModalBase>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, PropType, ref, toRef, watch } from 'vue'
+<script setup lang="ts">
+import { computed, ref, toRef, watch } from 'vue'
 import { coins } from '@cosmjs/launchpad'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
@@ -169,94 +171,81 @@ import { ParameterChangeProposal } from '@provider/codec/cosmos/params/v1beta1/p
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
-import ModalBase from './ModalBase.vue'
+import { ModalBase } from '@/components/modals'
 import TextareaField from '@/components/fields/TextareaField.vue'
 
-export default defineComponent({
-  props: {
-    proposalChanges: {
-      type: Object as PropType<ProposalChanges>,
-      required: true,
-    },
-  },
-  components: { ModalBase, VuePicker, VuePickerOption, TextareaField },
-  setup(props) {
-    const _proposalChanges = toRef(props, 'proposalChanges')
-    const form = useForm({
-      name: ['', validators.required, validators.maxCharacters(128)],
-      description: ['', validators.required, validators.maxCharacters(256)],
-      deposit: [
-        '',
-        validators.required,
-        validators.number,
-        validators.sixDecimalNumber,
-        ...validators.num(0.000001),
-        validators.maxCharacters(32),
-      ],
-      changesSubspace: ['', validators.required],
-      changesKey: ['', validators.required],
-      changesValue: ['', validators.required, validators.maxCharacters(128)],
-    })
+const props = defineProps<{
+  proposalChanges: ProposalChanges
+}>()
 
-    const changesValueType = computed(() => {
-      return _proposalChanges.value[
-        form.changesSubspace.val() as keyof ProposalChanges
-      ].find((item: ProposalChangesItem) => item.Key === form.changesKey.val())
-        ?.ValueType
-    })
-
-    const isLoading = ref(false)
-    const onSubmit = dialogs.getHandler('onSubmit')
-
-    const submit = async () => {
-      isLoading.value = true
-      try {
-        await callers.createProposal({
-          content: {
-            typeUrl: '/cosmos.params.v1beta1.ParameterChangeProposal',
-            value: ParameterChangeProposal.encode({
-              title: form.name.val(),
-              description: form.description.val(),
-              changes: [
-                {
-                  subspace: form.changesSubspace.val(),
-                  key: form.changesKey.val(),
-                  value: form.changesValue.val(),
-                },
-              ],
-            }).finish(),
-          },
-          initialDeposit: coins(
-            convertOdinToLoki(form.deposit.val()),
-            COINS_LIST.LOKI,
-          ),
-          proposer: wallet.account.address,
-        })
-        onSubmit()
-        handleNotificationInfo('Proposal created!', TYPE_NOTIFICATION.success)
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      isLoading.value = false
-    }
-
-    watch(
-      () => form.changesSubspace.val(),
-      () => {
-        form.changesKey.current.value = ''
-        form.changesValue.current.value = ''
-      },
-    )
-
-    return {
-      form: form.flatten(),
-      isLoading,
-      submit,
-      changesValueType,
-      onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
-    }
-  },
+const _proposalChanges = toRef(props, 'proposalChanges')
+const form = useForm({
+  name: ['', validators.required, validators.maxCharacters(128)],
+  description: ['', validators.required, validators.maxCharacters(256)],
+  deposit: [
+    '',
+    validators.required,
+    validators.number,
+    validators.sixDecimalNumber,
+    ...validators.num(0.000001),
+    validators.maxCharacters(32),
+  ],
+  changesSubspace: ['', validators.required],
+  changesKey: ['', validators.required],
+  changesValue: ['', validators.required, validators.maxCharacters(128)],
 })
+
+const changesValueType = computed(() => {
+  return _proposalChanges.value[
+    form.changesSubspace.val() as keyof ProposalChanges
+  ].find((item: ProposalChangesItem) => item.Key === form.changesKey.val())
+    ?.ValueType
+})
+
+const isLoading = ref(false)
+const flattenForm = form.flatten()
+const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
+const onSubmit = dialogs.getHandler('onSubmit')
+
+const submit = async () => {
+  isLoading.value = true
+  try {
+    await callers.createProposal({
+      content: {
+        typeUrl: '/cosmos.params.v1beta1.ParameterChangeProposal',
+        value: ParameterChangeProposal.encode({
+          title: form.name.val(),
+          description: form.description.val(),
+          changes: [
+            {
+              subspace: form.changesSubspace.val(),
+              key: form.changesKey.val(),
+              value: form.changesValue.val(),
+            },
+          ],
+        }).finish(),
+      },
+      initialDeposit: coins(
+        convertOdinToLoki(form.deposit.val()),
+        COINS_LIST.LOKI,
+      ),
+      proposer: wallet.account.address,
+    })
+    onSubmit()
+    handleNotificationInfo('Proposal created!', TYPE_NOTIFICATION.success)
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  isLoading.value = false
+}
+
+watch(
+  () => form.changesSubspace.val(),
+  () => {
+    form.changesKey.current.value = ''
+    form.changesValue.current.value = ''
+  },
+)
 </script>
 
 <style lang="scss" scoped>
