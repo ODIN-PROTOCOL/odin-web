@@ -55,7 +55,9 @@
       <ValidatorStatus
         :width="14"
         :height="14"
-        :status="validatorStatus()"
+        :status="
+          getValidatorStatus(validator.statuses[0].status, validator.isActive)
+        "
         class="validators-item__validator-status"
       />
     </div>
@@ -105,56 +107,39 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import TitledLink from '@/components/TitledLink.vue'
-import Progressbar from '@/components/Progressbar.vue'
-import ValidatorStatus from '@/components/ValidatorStatus.vue'
+<script setup lang="ts">
 import {
+  getValidatorStatus,
   ValidatorInfoModify,
   VALIDATOR_STATUS,
 } from '@/helpers/validatorHelpers'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
+import TitledLink from '@/components/TitledLink.vue'
+import Progressbar from '@/components/ProgressbarTool.vue'
+import ValidatorStatus from '@/components/ValidatorStatus.vue'
 
-export default defineComponent({
-  components: {
-    TitledLink,
-    Progressbar,
-    ValidatorStatus,
-  },
-  props: {
-    validator: {
-      type: Object as PropType<ValidatorInfoModify>,
-      required: true,
-    },
+enum EVENTS {
+  selectedBtn = 'selected-btn',
+}
 
-    delegations: {
-      type: Object as PropType<DelegationResponse>,
-      required: true,
-    },
-    tabStatus: { type: String, required: true },
-    inactiveValidatorsTitle: { type: String, required: true },
-    hasActionButtons: { type: Boolean, required: true },
-  },
-  setup(props, { emit }) {
-    const validatorStatus = () => {
-      if (props.validator?.statuses[0]?.status === VALIDATOR_STATUS.active) {
-        return props.validator?.isActive ? 'success' : 'error'
-      } else {
-        return 'inactive'
-      }
-    }
-    const selectedBtn = (typeBtn: string) => {
-      emit('selectedBtn', { typeBtn, validator: props.validator })
-    }
+const props = defineProps<{
+  validator: ValidatorInfoModify
+  delegations: DelegationResponse
+  tabStatus: string
+  inactiveValidatorsTitle: string
+  hasActionButtons: boolean
+}>()
 
-    return {
-      validatorStatus,
-      selectedBtn,
-      VALIDATOR_STATUS,
-    }
-  },
-})
+const emit = defineEmits<{
+  (
+    e: EVENTS.selectedBtn,
+    payload: { typeBtn: string; validator: ValidatorInfoModify },
+  ): void
+}>()
+
+const selectedBtn = (typeBtn: string) => {
+  emit(EVENTS.selectedBtn, { typeBtn, validator: props.validator })
+}
 </script>
 
 <style lang="scss" scoped>

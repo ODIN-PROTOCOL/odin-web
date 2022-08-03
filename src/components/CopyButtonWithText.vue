@@ -14,38 +14,37 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, computed } from 'vue'
+<script setup lang="ts">
+import { ref, computed } from 'vue'
 import { copyValue } from '@/helpers/helpers'
 import CopyIcon from '@/components/icons/CopyIcon.vue'
 
-export enum SCHEMES {
+enum SCHEMES {
   noBorder = 'no-border',
 }
-export default defineComponent({
-  props: {
-    value: { type: String, required: true },
-    text: { type: String, required: true },
-    scheme: { type: String, default: '' },
-  },
-  components: { CopyIcon },
-  setup: function (props) {
-    const isCopiedShown = ref(false)
+const props = withDefaults(
+  defineProps<{
+    scheme?: string
+    text: string
+    value: string
+  }>(),
+  { scheme: '' },
+)
 
-    const copy = () => {
-      copyValue(props.value)
-      isCopiedShown.value = true
-      setTimeout(() => {
-        isCopiedShown.value = false
-      }, 1300)
-    }
-    const modalBaseScheme = computed(() => {
-      const scheme = props.scheme as SCHEMES
-      if (!Object.values(SCHEMES).includes(scheme)) return ''
-      return scheme ? `copy-button-with-text__wrapper--${scheme}` : ''
-    })
-    return { copy, isCopiedShown, modalBaseScheme }
-  },
+const isCopiedShown = ref(false)
+
+const copy = () => {
+  copyValue(props.value)
+  isCopiedShown.value = true
+  setTimeout(() => {
+    isCopiedShown.value = false
+  }, 1300)
+}
+
+const modalBaseScheme = computed(() => {
+  const scheme = props.scheme as SCHEMES
+  if (!Object.values(SCHEMES).includes(scheme)) return ''
+  return scheme ? `copy-button-with-text__wrapper--${scheme}` : ''
 })
 </script>
 

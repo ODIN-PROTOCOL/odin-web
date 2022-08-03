@@ -26,6 +26,16 @@ export enum VALIDATOR_STATUS_TYPE {
   error = 'error',
 }
 
+export const getValidatorStatus = (status: number, isActive: boolean) => {
+  if (status === VALIDATOR_STATUS.active) {
+    return isActive
+      ? VALIDATOR_STATUS_TYPE.success
+      : VALIDATOR_STATUS_TYPE.error
+  } else {
+    return VALIDATOR_STATUS_TYPE.inactive
+  }
+}
+
 export const isActiveValidator = async (
   validatorAddress: string,
 ): Promise<boolean> => {

@@ -103,10 +103,12 @@ import { isActiveValidator } from '@/helpers/validatorHelpers'
 import ValidatorStatus from '@/components/ValidatorStatus.vue'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
-import WithdrawRewardsFormModal from '@/components/modals/WithdrawRewardsFormModal.vue'
-import DelegateFormModal from '@/components/modals/DelegateFormModal.vue'
-import UndelegateFormModal from '@/components/modals/UndelegateFormModal.vue'
-import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
+import {
+  WithdrawRewardsFormModal,
+  RedelegateFormModal,
+  UndelegateFormModal,
+  DelegateFormModal,
+} from '@/components/modals'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 

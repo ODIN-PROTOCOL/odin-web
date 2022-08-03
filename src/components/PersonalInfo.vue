@@ -19,7 +19,7 @@
         <CopyButtonWithText
           class="personal-info__copy-button-with-text"
           text="Copy address"
-          :scheme="SCHEMES.noBorder"
+          scheme="no-border"
           :value="accountAddress"
         />
       </div>
@@ -65,19 +65,14 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
-
 import { COINS_LIST } from '@/api/api-config'
 import { wallet } from '@/api/wallet'
 import { usePoll } from '@/composables/usePoll'
 import { useBalances } from '@/composables/useBalances'
-
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
-import SendFormModal from '@/components/modals/SendFormModal.vue'
-import ShareFormModal from '@/components/modals/ShareFormModal.vue'
+import { ShareFormModal, SendFormModal } from '@/components/modals'
 
-import CopyButtonWithText, {
-  SCHEMES,
-} from '@/components/CopyButtonWithText.vue'
+import CopyButtonWithText from '@/components/CopyButtonWithText.vue'
 import ShareIcon from '@/components/icons/ShareIcon.vue'
 
 const accountAddress = wallet.account.address

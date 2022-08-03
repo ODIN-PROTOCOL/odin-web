@@ -18,29 +18,43 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, computed } from 'vue'
-export enum SCHEMES {
+<script setup lang="ts">
+import { computed } from 'vue'
+
+enum SCHEMES {
   noMarginTitle = 'no-margin-title',
   paddingContent31px = 'padding-content-31px',
 }
 
-export default defineComponent({
-  emits: ['close'],
-  props: { scheme: { type: String, default: '' } },
-  setup(props, { emit }) {
-    if (document.activeElement) {
-      const activeEl = document.activeElement as HTMLElement
-      activeEl.blur()
-    }
-    const modalBaseScheme = computed(() => {
-      const scheme = props.scheme as SCHEMES
-      if (!Object.values(SCHEMES).includes(scheme)) return ''
-      return scheme ? `modal-base--${scheme}` : ''
-    })
-    return { emitClose: () => emit('close'), modalBaseScheme }
+enum EVENTS {
+  close = 'close',
+}
+
+const emit = defineEmits<{
+  (e: EVENTS.close): void
+}>()
+
+const props = withDefaults(
+  defineProps<{
+    scheme?: string
+  }>(),
+  {
+    scheme: '',
   },
+)
+
+if (document.activeElement) {
+  const activeEl = document.activeElement as HTMLElement
+  activeEl.blur()
+}
+
+const modalBaseScheme = computed(() => {
+  const scheme = props.scheme as SCHEMES
+  if (!Object.values(SCHEMES).includes(scheme)) return ''
+  return scheme ? `modal-base--${scheme}` : ''
 })
+
+const emitClose = () => emit(EVENTS.close)
 </script>
 
 <style lang="scss">

@@ -79,15 +79,14 @@ import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
+import { DataSourceFormModal } from '@/components/modals'
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
+import { wallet } from '@/api/wallet'
 import BackButton from '@/components/BackButton.vue'
 import AppTabs from '@/components/tabs/AppTabs.vue'
 import AppTab from '@/components/tabs/AppTab.vue'
 import CodeTable from '@/components/tables/CodeTable.vue'
 import RequestsDataSourceTable from '@/components/tables/RequestsDataSourceTable.vue'
-
-import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
-import DataSourceFormModal from '@/components/modals/DataSourceFormModal.vue'
-import { wallet } from '@/api/wallet'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const route: RouteLocationNormalizedLoaded = useRoute()

@@ -33,8 +33,9 @@ onMounted(() => {
 })
 
 const route = useRoute()
+
 const isAuthPage = computed(() =>
-  route?.name?.toString().includes(ROUTE_NAMES.auth),
+  route?.name ? route?.name?.toString().includes(ROUTE_NAMES.auth) : true,
 )
 </script>
 

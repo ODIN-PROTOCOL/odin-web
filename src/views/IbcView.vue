@@ -90,11 +90,11 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { IdentifiedChannel } from 'cosmjs-types/ibc/core/channel/v1/channel'
 import { IdentifiedConnection } from 'cosmjs-types/ibc/core/connection/v1/connection'
+import { ClientState } from 'cosmjs-types/ibc/lightclients/tendermint/v1/tendermint'
+import { QueryClientStateResponse } from 'cosmjs-types/ibc/core/client/v1/query'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import ChannelDetail from '@/components/ChannelDetail.vue'
 import ArrowIcon from '@/components/icons/ArrowIcon.vue'
-import { ClientState } from 'cosmjs-types/ibc/lightclients/tendermint/v1/tendermint'
-import { QueryClientStateResponse } from 'cosmjs-types/ibc/core/client/v1/query'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const ITEMS_PER_PAGE = 4

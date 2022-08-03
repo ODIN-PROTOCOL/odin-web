@@ -8,7 +8,6 @@ import { translateTally, translateTallyShort } from '@/helpers/translators'
 import { TallyResult } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { computed, toRef } from 'vue'
 
-// TODO: translate
 const props = withDefaults(
   defineProps<{
     tally: TallyResult

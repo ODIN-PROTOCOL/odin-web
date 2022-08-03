@@ -41,101 +41,72 @@
   </ModalBase>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, onUnmounted, PropType, ref } from 'vue'
+<script setup lang="ts">
+import { onMounted, onUnmounted, ref } from 'vue'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
-import { DialogHandler, dialogs } from '@/helpers/dialogs'
+import { dialogs } from '@/helpers/dialogs'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
-import ModalBase from './ModalBase.vue'
 import { usePoll } from '@/composables/usePoll'
 import { convertLokiToOdin } from '@/helpers/converters'
 import { ValidatorInfoModify } from '@/helpers/validatorHelpers'
 import { trimLeadingZeros } from '@/helpers/formatters'
+import { ModalBase } from '@/components/modals'
 
-const WithdrawFormDialog = defineComponent({
-  props: {
-    validator: {
-      type: Object as PropType<ValidatorInfoModify>,
-      required: true,
-    },
-  },
-  components: { ModalBase },
-  setup(props) {
-    const isLoading = ref(false)
-    const onSubmit = dialogs.getHandler('onSubmit')
-    const rewards = ref()
-    const odinRewardsValue = ref()
-    const getRewards = async () => {
-      try {
-        const response = await callers.getDelegationDelegatorReward(
-          wallet.account.address,
-          props.validator.info.operatorAddress,
-        )
-        rewards.value = response.rewards
-        if (response.rewards.length) {
-          odinRewardsValue.value = convertLokiToOdin(
-            response.rewards[0].amount,
-            {
-              withPrecise: true,
-              onlyNumber: true,
-            },
-          )
-          odinRewardsValue.value = trimLeadingZeros(odinRewardsValue.value)
-        } else {
-          odinRewardsValue.value = 0
-        }
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
+const props = defineProps<{
+  validator: ValidatorInfoModify
+}>()
+
+const isLoading = ref(false)
+const onSubmit = dialogs.getHandler('onSubmit')
+const rewards = ref()
+const odinRewardsValue = ref()
+const getRewards = async () => {
+  try {
+    const response = await callers.getDelegationDelegatorReward(
+      wallet.account.address,
+      props.validator.info.operatorAddress,
+    )
+    rewards.value = response.rewards
+    if (response.rewards.length) {
+      odinRewardsValue.value = convertLokiToOdin(response.rewards[0].amount, {
+        withPrecise: true,
+        onlyNumber: true,
+      })
+      odinRewardsValue.value = trimLeadingZeros(odinRewardsValue.value)
+    } else {
+      odinRewardsValue.value = 0
     }
-
-    const rewardsPoll = usePoll(getRewards, 5000)
-
-    const submit = async () => {
-      isLoading.value = true
-      try {
-        await callers.withdrawDelegatorRewards({
-          delegatorAddress: wallet.account.address,
-          validatorAddress: props.validator.info.operatorAddress,
-        })
-        onSubmit()
-        handleNotificationInfo(
-          'Successfully claimed',
-          TYPE_NOTIFICATION.success,
-        )
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      isLoading.value = false
-    }
-
-    onMounted(async () => {
-      await getRewards()
-      rewardsPoll.start()
-    })
-
-    onUnmounted(() => {
-      rewardsPoll.stop()
-    })
-
-    return {
-      rewards,
-      isLoading,
-      submit,
-      onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
-      odinRewardsValue,
-    }
-  },
-})
-export default WithdrawFormDialog
-export function showWithdrawFormDialog(callbacks: {
-  onSubmit?: DialogHandler
-  onClose?: DialogHandler
-}): Promise<unknown | null> {
-  return dialogs.show(WithdrawFormDialog, callbacks)
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
 }
-</script>
 
-<style lang="scss" scoped></style>
+const rewardsPoll = usePoll(getRewards, 5000)
+
+const submit = async () => {
+  isLoading.value = true
+  try {
+    await callers.withdrawDelegatorRewards({
+      delegatorAddress: wallet.account.address,
+      validatorAddress: props.validator.info.operatorAddress,
+    })
+    onSubmit()
+    handleNotificationInfo('Successfully claimed', TYPE_NOTIFICATION.success)
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  isLoading.value = false
+}
+
+onMounted(async () => {
+  await getRewards()
+  rewardsPoll.start()
+})
+
+onUnmounted(() => {
+  rewardsPoll.stop()
+})
+const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
+</script>

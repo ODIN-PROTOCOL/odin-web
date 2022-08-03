@@ -15,38 +15,33 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, provide, computed, watch } from 'vue'
+<script setup lang="ts">
+import { ref, provide, computed, watch, useSlots } from 'vue'
+const slots = useSlots()
+enum EVENTS {
+  changeTab = 'change-tab',
+}
+const emit = defineEmits<{
+  (e: EVENTS.changeTab, payload: string): void
+}>()
+const tabTitles = computed(() =>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (slots as any)
+    .default()
+    .map((tab: { props: { title: never } }) => tab.props.title),
+)
+const selectedTitle = ref(tabTitles.value[0])
 
-export default defineComponent({
-  name: 'app-tabs',
-  emits: ['changeTab'],
-  setup: function (props, { slots, emit }) {
-    const tabTitles = computed(() =>
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (slots as any)
-        .default()
-        .map((tab: { props: { title: never } }) => tab.props.title),
-    )
-    const selectedTitle = ref(tabTitles.value[0])
-
-    watch([tabTitles], () => {
-      selectedTitle.value = tabTitles.value[0]
-    })
-    const clickHandler = (title: string) => {
-      selectedTitle.value = title
-      emit('changeTab', title)
-    }
-
-    provide('selectedTitle', selectedTitle)
-
-    return {
-      selectedTitle,
-      tabTitles,
-      clickHandler,
-    }
-  },
+watch([tabTitles], () => {
+  selectedTitle.value = tabTitles.value[0]
 })
+
+const clickHandler = (title: string) => {
+  selectedTitle.value = title
+  emit(EVENTS.changeTab, title)
+}
+
+provide('selectedTitle', selectedTitle)
 </script>
 
 <style lang="scss" scoped>

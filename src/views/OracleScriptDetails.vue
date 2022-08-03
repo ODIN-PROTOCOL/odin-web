@@ -91,12 +91,12 @@ import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import { OracleScript } from '@provider/codec/oracle/v1/oracle'
 import { wallet } from '@/api/wallet'
+import { OracleScriptFormModal } from '@/components/modals'
 import BackButton from '@/components/BackButton.vue'
 import AppTabs from '@/components/tabs/AppTabs.vue'
 import AppTab from '@/components/tabs/AppTab.vue'
 import CodeTable from '@/components/tables/CodeTable.vue'
 import RequestsOracleScriptTable from '@/components/tables/RequestsOracleScriptTable.vue'
-import OracleScriptFormModal from '@/components/modals/OracleScriptFormModal.vue'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const route: RouteLocationNormalizedLoaded = useRoute()

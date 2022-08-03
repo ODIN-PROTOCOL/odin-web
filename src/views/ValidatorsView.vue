@@ -183,27 +183,29 @@ import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
-import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
-
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
-import WithdrawRewardsFormModal from '@/components/modals/WithdrawRewardsFormModal.vue'
-import DelegateFormModal from '@/components/modals/DelegateFormModal.vue'
-import UndelegateFormModal from '@/components/modals/UndelegateFormModal.vue'
-import StakeTransferFormModal from '@/components/modals/StakeTransferFormModal.vue'
-import ClaimAllRewardsFormModal from '@/components/modals/ClaimAllRewardsFormModal.vue'
-import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
+import {
+  WithdrawRewardsFormModal,
+  RedelegateFormModal,
+  StakeTransferFormModal,
+  UndelegateFormModal,
+  ClaimAllRewardsFormModal,
+  DelegateFormModal,
+} from '@/components/modals'
+import { useQuery } from '@vue/apollo-composable'
+import { ValidatorsQuery } from '@/graphql/queries'
+import { ValidatorsResponse, ValidatorsInfo } from '@/graphql/types'
+import { ValidatorInfoModify } from '@/helpers/validatorHelpers'
 import { isActiveValidator } from '@/helpers/validatorHelpers'
+
 import InputField from '@/components/fields/InputField.vue'
 import SearchIcon from '@/components/icons/SearchIcon.vue'
 import CancelIcon from '@/components/icons/CancelIcon.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 import ValidatorsViewTableRowMobile from '@/components/ValidatorsViewTableRowMobile.vue'
 import ValidatorsViewTableRow from '@/components/ValidatorsViewTableRow.vue'
-import { useQuery } from '@vue/apollo-composable'
-import { ValidatorsQuery } from '@/graphql/queries'
-import { ValidatorsResponse, ValidatorsInfo } from '@/graphql/types'
-import { ValidatorInfoModify } from '@/helpers/validatorHelpers'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const ITEMS_PER_PAGE = 50

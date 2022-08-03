@@ -36,7 +36,7 @@
           class="app-form__field-input"
           name="request-min-count"
           type="text"
-          v-model="form.mnemonic"
+          v-model="flattenForm.mnemonic"
           :disabled="isLoading"
           @keydown.enter="submit()"
         />
@@ -44,13 +44,13 @@
           <span class="auth-view__copy-important">Important! </span>
           Copy this code, you cannot recover it!
         </p>
-        <p v-if="form.mnemonicErr" class="app-form__field-err">
-          {{ form.mnemonicErr }}
+        <p v-if="flattenForm.mnemonicErr" class="app-form__field-err">
+          {{ flattenForm.mnemonicErr }}
         </p>
         <button
           class="app-btn w-full mg-t16"
           type="submit"
-          :disabled="!form.isValid || isLoading"
+          :disabled="!flattenForm.isValid || isLoading"
         >
           Log in
         </button>
@@ -80,97 +80,78 @@
   </AuthBase>
 </template>
 
-<script lang="ts">
-import router from '@/router'
+<script setup lang="ts">
+import { ref } from 'vue'
 import {
   API_CONFIG,
   CHAIN_CONFIG,
   COINS_TYPE,
   LOGIN_TYPE,
 } from '@/api/api-config'
-import { defineComponent, PropType, ref } from 'vue'
 import { useAuthorization } from '@/composables/useAuthorization'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
-import InfoModal from '@/components/modals/InfoModal.vue'
-import AuthBase from '@/components/Auth/AuthBase.vue'
+import { InfoModal } from '@/components/modals'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { useForm, validators } from '@/composables/useForm'
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { ROUTE_NAMES } from '@/enums'
+import router from '@/router'
+import AuthBase from '@/components/Auth/AuthBase.vue'
 
 const MNEMONIC_SIZE = 24
+const props = defineProps<{
+  loginType: LOGIN_TYPE
+}>()
 
-export default defineComponent({
-  components: { AuthBase },
-  props: {
-    loginType: { type: Number as PropType<LOGIN_TYPE>, required: true },
-  },
-  setup(props) {
-    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const { logInWithKeplrWallet, logInWithOdinWallet } = useAuthorization()
-    const form = useForm({
-      mnemonic: ['', validators.required],
-    })
-    const copyWarning = ref(false)
-
-    const submit = async () => {
-      lockLoading()
-      try {
-        if (props.loginType === LOGIN_TYPE.KEPLR118) {
-          await logInWithKeplrWallet(CHAIN_CONFIG.chainId, COINS_TYPE.MAIN)
-        } else if (props.loginType === LOGIN_TYPE.KEPLR494) {
-          await logInWithKeplrWallet(
-            CHAIN_CONFIG.chainId,
-            COINS_TYPE.ADDITIONAL,
-          )
-        } else if (props.loginType === LOGIN_TYPE.MNEMONIC494) {
-          await logInWithOdinWallet(form.mnemonic.val())
-        }
-
-        await router.push({ name: ROUTE_NAMES.wallet })
-      } catch (error) {
-        if (props.loginType === LOGIN_TYPE.MNEMONIC494) {
-          handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-        } else {
-          showInfo('Ooops!', (error as Error).message)
-        }
-      }
-      releaseLoading()
-    }
-
-    const generateKey = async () => {
-      lockLoading()
-      try {
-        const newWallet = await DirectSecp256k1HdWallet.generate(
-          MNEMONIC_SIZE,
-          {
-            hdPaths: [API_CONFIG.hdDeviation],
-            prefix: 'odin',
-          },
-        )
-        form.mnemonic.val(newWallet.mnemonic)
-        copyWarning.value = true
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
-    }
-
-    const showInfo = async (title: string, text: string) => {
-      await showDialogHandler(InfoModal, {}, { title, text })
-    }
-
-    return {
-      LOGIN_TYPE,
-      isLoading,
-      submit,
-      form: form.flatten(),
-      generateKey,
-      copyWarning,
-    }
-  },
+const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+const { logInWithKeplrWallet, logInWithOdinWallet } = useAuthorization()
+const form = useForm({
+  mnemonic: ['', validators.required],
 })
+const flattenForm = form.flatten()
+const copyWarning = ref(false)
+
+const submit = async () => {
+  lockLoading()
+  try {
+    if (props.loginType === LOGIN_TYPE.KEPLR118) {
+      await logInWithKeplrWallet(CHAIN_CONFIG.chainId, COINS_TYPE.MAIN)
+    } else if (props.loginType === LOGIN_TYPE.KEPLR494) {
+      await logInWithKeplrWallet(CHAIN_CONFIG.chainId, COINS_TYPE.ADDITIONAL)
+    } else if (props.loginType === LOGIN_TYPE.MNEMONIC494) {
+      await logInWithOdinWallet(form.mnemonic.val())
+    }
+
+    await router.push({ name: ROUTE_NAMES.wallet })
+  } catch (error) {
+    if (props.loginType === LOGIN_TYPE.MNEMONIC494) {
+      handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+    } else {
+      showInfo('Ooops!', (error as Error).message)
+    }
+  }
+  releaseLoading()
+}
+
+const generateKey = async () => {
+  lockLoading()
+  try {
+    const newWallet = await DirectSecp256k1HdWallet.generate(MNEMONIC_SIZE, {
+      hdPaths: [API_CONFIG.hdDeviation],
+      prefix: 'odin',
+    })
+    form.mnemonic.val(newWallet.mnemonic)
+    copyWarning.value = true
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
+
+const showInfo = async (title: string, text: string) => {
+  await showDialogHandler(InfoModal, {}, { title, text })
+}
 </script>
 
 <style scoped lang="scss">

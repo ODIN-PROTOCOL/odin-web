@@ -70,10 +70,10 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
-import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import TitledLink from '@/components/TitledLink.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 

@@ -104,10 +104,10 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { wallet } from '@/api/wallet'
+import { RequestFormModal } from '@/components/modals'
 import TitledLink from '@/components/TitledLink.vue'
-import Progressbar from '@/components/Progressbar.vue'
+import Progressbar from '@/components/ProgressbarTool.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
-import RequestFormModal from '@/components/modals/RequestFormModal.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()

@@ -67,70 +67,67 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, watch } from 'vue'
-import InputField from '@/components/fields/InputField.vue'
-import SearchIcon from '@/components/icons/SearchIcon.vue'
-import CancelIcon from '@/components/icons/CancelIcon.vue'
+<script setup lang="ts">
+import { ref, watch } from 'vue'
 import {
   sortingActivities,
   getSortingOwners,
   ACTIVITIES_SORT,
   OWNERS_SORT,
 } from '@/helpers/sortingHelpers'
-
 import { wallet } from '@/api/wallet'
+import InputField from '@/components/fields/InputField.vue'
+import SearchIcon from '@/components/icons/SearchIcon.vue'
+import CancelIcon from '@/components/icons/CancelIcon.vue'
 
-export default defineComponent({
-  components: { InputField, SearchIcon, CancelIcon },
-  props: {
-    oracleScriptsName: { type: String, required: true },
-    sortingOwnersValue: { type: String, required: true },
-    sortingActivitiesValue: { type: String, required: true },
-    isLoading: { type: Boolean, required: true },
-    title: { type: String, required: true },
-  },
-  setup(props, { emit }) {
-    const sortByActivites = ref(ACTIVITIES_SORT.latest)
-    const sortByOwners = ref(OWNERS_SORT.all)
-    const searchValue = ref('')
-    const walletAddress = wallet.isEmpty ? '' : wallet.account.address
-    const sortingOwners = ref(getSortingOwners(wallet.isEmpty, walletAddress))
+enum EVENTS {
+  updateSortingOwnersValue = 'update:sortingOwnersValue',
+  updateSortingActivitiesValue = 'update:sortingActivitiesValue',
+  updateOracleScriptsName = 'update:oracleScriptsName',
+}
 
-    const inputChange = () => {
-      emit('update:oracleScriptsName', searchValue.value)
-    }
-    const updateSortingActivitiesValue = () => {
-      emit('update:sortingActivitiesValue', sortByActivites.value)
-    }
-    const updateSortingOwnersValue = () => {
-      emit('update:sortingOwnersValue', sortByOwners.value)
-    }
+defineProps<{
+  oracleScriptsName: string
+  sortingOwnersValue: string
+  sortingActivitiesValue: string
+  title: string
+  isLoading: boolean
+}>()
 
-    const clearText = (): void => {
-      searchValue.value = ''
-    }
+const emit = defineEmits<{
+  (e: EVENTS.updateSortingOwnersValue, payload: string | undefined): void
+  (e: EVENTS.updateSortingActivitiesValue, payload: string | undefined): void
+  (e: EVENTS.updateOracleScriptsName, payload: string | undefined): void
+}>()
 
-    watch([sortByActivites], () => {
-      updateSortingActivitiesValue()
-    })
-    watch([sortByOwners], () => {
-      updateSortingOwnersValue()
-    })
+const sortByActivites = ref(ACTIVITIES_SORT.latest)
+const sortByOwners = ref(OWNERS_SORT.all)
+const searchValue = ref('')
+const walletAddress = wallet.isEmpty ? '' : wallet.account.address
+const sortingOwners = ref(getSortingOwners(wallet.isEmpty, walletAddress))
 
-    return {
-      inputChange,
-      updateSortingOwnersValue,
-      updateSortingActivitiesValue,
-      sortingActivities,
-      sortingOwners,
-      sortByActivites,
-      sortByOwners,
-      searchValue,
-      clearText,
-      wallet,
-    }
-  },
+const inputChange = () => {
+  emit(EVENTS.updateOracleScriptsName, searchValue.value)
+}
+
+const updateSortingActivitiesValue = () => {
+  emit(EVENTS.updateSortingActivitiesValue, sortByActivites.value)
+}
+
+const updateSortingOwnersValue = () => {
+  emit(EVENTS.updateSortingOwnersValue, sortByOwners.value)
+}
+
+const clearText = (): void => {
+  searchValue.value = ''
+}
+
+watch([sortByActivites], () => {
+  updateSortingActivitiesValue()
+})
+
+watch([sortByOwners], () => {
+  updateSortingOwnersValue()
 })
 </script>
 
