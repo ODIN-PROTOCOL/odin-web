@@ -2,6 +2,9 @@
 node_modules
 /dist
 .eslintcache
+package-lock.json
+deprecated
+stats.html
 
 # local env files
 .env.local
