@@ -1,5 +1,5 @@
 <template>
-  <ModalBase class="withdraw-form-modal" @close="onClose()">
+  <ModalBase class="claim-rewards-form-modal" @close="onClose()">
     <template #title>
       <h3 class="app-form__title">Claim delegation rewards</h3>
     </template>
@@ -11,17 +11,36 @@
         @submit.prevent
       >
         <div class="app-form__main">
-          <template v-if="rewards?.length">
-            <div class="app-form__field">
-              <label class="app-form__field-lbl">Your rewards:</label>
-              <p :title="odinRewardsValue">{{ odinRewardsValue }} ODIN</p>
+          <template v-if="rewards?.length && validator.descriptions?.length">
+            <div class="app-form__field claim-rewards-form-modal__field">
+              <div class="claim-rewards-form-modal__field-descriptions">
+                <label
+                  class="app-form__field-lbl claim-rewards-form-modal__field-lbl"
+                >
+                  {{ validator.descriptions[0]?.moniker }}
+                </label>
+                <p
+                  :title="validator.info.operatorAddress"
+                  class="claim-rewards-form-modal__field-value"
+                >
+                  {{ validator.info.operatorAddress }}
+                </p>
+              </div>
+              <div class="claim-rewards-form-modal__field-info">
+                <p
+                  :title="odinRewardsValue"
+                  class="claim-rewards-form-modal__field-value"
+                >
+                  {{ odinRewardsValue }} ODIN
+                </p>
+              </div>
             </div>
           </template>
           <template v-else>
-            <div class="app-form__field">
-              <label class="app-form__field-lbl">
+            <div class="app-form__field claim-rewards-form-modal__field">
+              <p class="claim-rewards-form-modal__field-value--empty">
                 You have no rewards yet!
-              </label>
+              </p>
             </div>
           </template>
         </div>
@@ -110,3 +129,43 @@ onUnmounted(() => {
 })
 const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
 </script>
+
+<style scoped lang="scss">
+.claim-rewards-form-modal__field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--clr__modal-field-bg);
+  border-radius: 0.8rem;
+  padding: 1.2rem 1.6rem;
+  width: 100%;
+  overflow: hidden;
+}
+.claim-rewards-form-modal__field-descriptions {
+  max-width: 8rem;
+}
+.claim-rewards-form-modal__field-info {
+  max-width: 17rem;
+}
+.claim-rewards-form-modal__field-value {
+  font-weight: 600;
+  margin: 0;
+  font-size: 1.6rem;
+  line-height: 2.4rem;
+  &--empty {
+    font-weight: 600;
+    margin: 1rem;
+    font-size: 1.8rem;
+    text-align: center;
+    width: 100%;
+  }
+  @include ellipsis();
+}
+.claim-rewards-form-modal__field-lbl {
+  font-weight: 400;
+  line-height: 2rem;
+  color: var(--clr__modal-backdrop-bg);
+  margin: 0;
+  @include ellipsis();
+}
+</style>

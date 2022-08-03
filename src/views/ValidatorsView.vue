@@ -186,7 +186,7 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import {
-  WithdrawRewardsFormModal,
+  ClaimRewardsFormModal,
   RedelegateFormModal,
   StakeTransferFormModal,
   UndelegateFormModal,
@@ -455,7 +455,7 @@ const claimAllRewards = async () => {
 const withdrawRewards = async (validator: ValidatorInfoModify) => {
   if (!delegations.value[validator.info.operatorAddress]) return
   await showDialogHandler(
-    WithdrawRewardsFormModal,
+    ClaimRewardsFormModal,
     {
       onSubmit: async d => {
         d.kill()

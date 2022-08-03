@@ -104,7 +104,7 @@ import ValidatorStatus from '@/components/ValidatorStatus.vue'
 
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import {
-  WithdrawRewardsFormModal,
+  ClaimRewardsFormModal,
   RedelegateFormModal,
   UndelegateFormModal,
   DelegateFormModal,
@@ -243,7 +243,7 @@ const undelegate = async (validator: ValidatorInfoModify) => {
 const withdrawRewards = async (validator: ValidatorInfoModify) => {
   if (!delegation.value.balance) return
   await showDialogHandler(
-    WithdrawRewardsFormModal,
+    ClaimRewardsFormModal,
     {
       onSubmit: async d => {
         d.kill()

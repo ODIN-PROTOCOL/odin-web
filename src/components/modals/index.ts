@@ -1,7 +1,7 @@
 export { default as ConfirmationModal } from './ConfirmationModal.vue'
 export { default as InfoModal } from './InfoModal.vue'
 export { default as ShareFormModal } from './ShareFormModal.vue'
-export { default as WithdrawRewardsFormModal } from './WithdrawRewardsFormModal.vue'
+export { default as ClaimRewardsFormModal } from './ClaimRewardsFormModal.vue'
 export { default as StakeTransferFormModal } from './StakeTransferFormModal.vue'
 export { default as UndelegateFormModal } from './UndelegateFormModal.vue'
 export { default as RedelegateFormModal } from './RedelegateFormModal.vue'

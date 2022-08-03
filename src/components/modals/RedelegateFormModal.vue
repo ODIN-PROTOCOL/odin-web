@@ -12,20 +12,39 @@
       >
         <div class="app-form__main">
           <template v-if="isAvailableCoin">
-            <div class="app-form__field">
-              <label class="app-form__field-lbl">Available:</label>
-              <p :title="$convertLokiToOdin(availableCoinForRedelegate.amount)">
-                {{
-                  $convertLokiToOdin(availableCoinForRedelegate.amount, {
-                    withDenom: true,
-                  })
-                }}
-              </p>
+            <div class="app-form__field redelegate-form-modal__field">
+              <div class="redelegate-form-modal__field-descriptions">
+                <label
+                  class="app-form__field-lbl redelegate-form-modal__field-lbl"
+                >
+                  {{ validator.descriptions[0]?.moniker }}
+                </label>
+                <p
+                  :title="validator.info.operatorAddress"
+                  class="redelegate-form-modal__field-value"
+                >
+                  {{ validator.info.operatorAddress }}
+                </p>
+              </div>
+              <div class="redelegate-form-modal__field-info">
+                <p
+                  :title="$convertLokiToOdin(availableCoinForRedelegate.amount)"
+                  class="redelegate-form-modal__field-value"
+                >
+                  {{
+                    $convertLokiToOdin(availableCoinForRedelegate.amount, {
+                      withDenom: true,
+                    })
+                  }}
+                </p>
+              </div>
             </div>
           </template>
           <template v-else>
-            <div class="app-form__field">
-              <label class="app-form__field-lbl">Not enough coins!</label>
+            <div class="app-form__field redelegate-form-modal__field">
+              <p class="redelegate-form-modal__field-value--empty">
+                Not enough coins!
+              </p>
             </div>
           </template>
         </div>
@@ -154,3 +173,43 @@ onUnmounted(() => {
   rewardsPoll.stop()
 })
 </script>
+
+<style scoped lang="scss">
+.redelegate-form-modal__field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--clr__modal-field-bg);
+  border-radius: 0.8rem;
+  padding: 1.2rem 1.6rem;
+  width: 100%;
+  overflow: hidden;
+}
+.redelegate-form-modal__field-descriptions {
+  max-width: 8rem;
+}
+.redelegate-form-modal__field-info {
+  max-width: 17rem;
+}
+.redelegate-form-modal__field-value {
+  font-weight: 600;
+  margin: 0;
+  font-size: 1.6rem;
+  line-height: 2.4rem;
+  &--empty {
+    font-weight: 600;
+    margin: 1rem;
+    font-size: 1.8rem;
+    text-align: center;
+    width: 100%;
+  }
+  @include ellipsis();
+}
+.redelegate-form-modal__field-lbl {
+  font-weight: 400;
+  line-height: 2rem;
+  color: var(--clr__modal-backdrop-bg);
+  margin: 0;
+  @include ellipsis();
+}
+</style>
