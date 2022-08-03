@@ -130,7 +130,7 @@ import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 import { ModalBase } from '@/components/modals'
 import { Coin } from '@cosmjs/amino'
 import { coin } from '@cosmjs/launchpad'
-import InfoIcon from '@/components/icons/InfoIcon.vue'
+import { InfoIcon } from '@/components/icons'
 
 const props = defineProps<{
   balance: Coin[]

@@ -75,7 +75,7 @@ import { useAuthorization } from '@/composables/useAuthorization'
 import { WalletTypes, wallet } from '@/api/wallet'
 import { ROUTE_NAMES } from '@/enums'
 import router from '@/router'
-import ExitIcon from '@/components/icons/ExitIcon.vue'
+import { ExitIcon } from '@/components/icons'
 
 enum EVENTS {
   closeBurger = 'close-burger',

@@ -129,6 +129,7 @@ const { doughnutChartProps } = useDoughnutChart({
 
 onMounted(() => {
   resetChartData()
+  prepareData()
 })
 </script>
 

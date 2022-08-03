@@ -86,12 +86,14 @@ import { dialogs } from '@/helpers/dialogs'
 import { wallet } from '@/api/wallet'
 import { ModalBase } from '@/components/modals'
 import { API_CONFIG } from '@/api/api-config'
+import {
+  MailIcon,
+  TelegramIcon,
+  TwitterIcon,
+  WhatsAppIcon,
+} from '@/components/icons'
 import QrcodeVue from 'qrcode.vue'
 import CopyButton from '@/components/CopyButton.vue'
-import MailIcon from '@/components/icons/MailIcon.vue'
-import TelegramIcon from '@/components/icons/TelegramIcon.vue'
-import TwitterIcon from '@/components/icons/TwitterIcon.vue'
-import WhatsAppIcon from '@/components/icons/WhatsAppIcon.vue'
 
 const addressLink = `${API_CONFIG.odinScan}/account/${wallet.account.address}`
 const textMessage = 'MY ODIN ACCOUNT:'

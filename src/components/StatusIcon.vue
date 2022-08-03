@@ -4,8 +4,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import SuccessIcon from '@/components/icons/SuccessIcon.vue'
-import ErrorIcon from '@/components/icons/ErrorIcon.vue'
+import { SuccessIcon, ErrorIcon } from '@/components/icons'
 
 const props = withDefaults(
   defineProps<{

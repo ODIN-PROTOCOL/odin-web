@@ -128,10 +128,10 @@ import {
   VALIDATOR_STATUS,
   getValidatorStatus,
 } from '@/helpers/validatorHelpers'
+import { ArrowIcon } from '@/components/icons'
 import TitledLink from '@/components/TitledLink.vue'
 import Progressbar from '@/components/ProgressbarTool.vue'
 import ValidatorStatus from '@/components/ValidatorStatus.vue'
-import ArrowIcon from '@/components/icons/ArrowIcon.vue'
 
 enum EVENTS {
   selectedBtn = 'selected-btn',

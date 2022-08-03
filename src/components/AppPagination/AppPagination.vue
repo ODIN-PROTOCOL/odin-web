@@ -44,7 +44,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import ArrowIcon from '@/components/icons/ArrowIcon.vue'
+import { ArrowIcon } from '@/components/icons'
 
 enum EVENTS {
   updateModelValue = 'update:model-value',

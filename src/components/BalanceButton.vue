@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import WalletIcon from '@/components/icons/WalletIcon.vue'
+import { WalletIcon } from '@/components/icons'
 </script>
 
 <style lang="scss" scoped>

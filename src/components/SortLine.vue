@@ -77,8 +77,7 @@ import {
 } from '@/helpers/sortingHelpers'
 import { wallet } from '@/api/wallet'
 import InputField from '@/components/fields/InputField.vue'
-import SearchIcon from '@/components/icons/SearchIcon.vue'
-import CancelIcon from '@/components/icons/CancelIcon.vue'
+import { SearchIcon, CancelIcon } from '@/components/icons'
 
 enum EVENTS {
   updateSortingOwnersValue = 'update:sortingOwnersValue',

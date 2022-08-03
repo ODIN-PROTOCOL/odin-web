@@ -128,8 +128,8 @@ import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { useBalances } from '@/composables/useBalances'
 import { ValidatorInfoModify } from '@/helpers/validatorHelpers'
 import { ModalBase } from '@/components/modals'
+import { InfoIcon } from '@/components/icons'
 import CopyText from '@/components/CopyText.vue'
-import InfoIcon from '@/components/icons/InfoIcon.vue'
 
 const props = defineProps<{
   validator: ValidatorInfoModify

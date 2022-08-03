@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { copyValue } from '@/helpers/helpers'
-import CopyIcon from '@/components/icons/CopyIcon.vue'
+import { CopyIcon } from '@/components/icons'
 
 enum SCHEMES {
   noBorder = 'no-border',

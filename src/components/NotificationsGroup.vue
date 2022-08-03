@@ -34,10 +34,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
-import InfoNotificationIcon from '@/components/icons/InfoNotificationIcon.vue'
-import SuccessNotificationIcon from '@/components/icons/SuccessNotificationIcon.vue'
-import FailedNotificationIcon from '@/components/icons/FailedNotificationIcon.vue'
-import CancelIcon from '@/components/icons/CancelIcon.vue'
+import {
+  InfoNotificationIcon,
+  SuccessNotificationIcon,
+  FailedNotificationIcon,
+  CancelIcon,
+} from '@/components/icons'
 
 import emitter from '@/helpers/emmiter'
 type NotificationInfo = {

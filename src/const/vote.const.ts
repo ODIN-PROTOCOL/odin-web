@@ -4,15 +4,16 @@ export const VOTE_OPTIONS = [
     value: 1,
   },
   {
-    title: 'Reject',
+    title: 'Abstain',
     value: 2,
   },
+
   {
-    title: 'Veto',
+    title: 'Reject',
     value: 3,
   },
   {
-    title: 'Abstain',
+    title: 'Veto',
     value: 4,
   },
 ]

@@ -71,9 +71,9 @@ import { usePoll } from '@/composables/usePoll'
 import { useBalances } from '@/composables/useBalances'
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import { ShareFormModal, SendFormModal } from '@/components/modals'
+import { ShareIcon } from '@/components/icons'
 
 import CopyButtonWithText from '@/components/CopyButtonWithText.vue'
-import ShareIcon from '@/components/icons/ShareIcon.vue'
 
 const accountAddress = wallet.account.address
 const validatorPrefix = 'odinvaloper'

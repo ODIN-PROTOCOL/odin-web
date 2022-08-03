@@ -36,6 +36,7 @@
             </div>
             <button
               class="w-full app-btn app-btn--medium"
+              :disabled="selfVote?.option === pickedOption"
               @click="confirmation"
             >
               {{ voteBtnText }}
@@ -91,14 +92,14 @@ const votingChooseTitle = computed(() => {
   if (selfVote.value?.options.length) {
     return `Your option: "${
       voteStatusType[selfVote.value.options[0].option].name
-    }""`
+    }"`
   } else {
     return 'Choose an option:'
   }
 })
 const confirmationText = computed(() => {
   if (selfVote.value?.options.length) {
-    return `You have chosen to revote from "${
+    return `You changed your vote from "${
       voteStatusType[selfVote.value.options[0].option].name
     }" to "${voteStatusType[pickedOption.value].name}"`
   } else {
@@ -143,8 +144,8 @@ const getVotes = async () => {
 }
 
 const loadData = async () => {
-  await getProposal()
   await getVotes()
+  await getProposal()
 }
 
 const confirmation = async () => {
