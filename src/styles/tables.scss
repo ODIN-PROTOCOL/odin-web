@@ -46,7 +46,7 @@
   }
 
   &__empty-stub {
-    margin: 1.5rem 0;
+    margin: 10rem 0;
     text-align: center;
   }
 }
@@ -237,8 +237,7 @@
   .data-sources__table-row,
   .requests-view__table-row,
   .validators-view-table-row,
-  .oracle-scripts__table-row
-  .governance-view__table-row,
+  .oracle-scripts__table-row .governance-view__table-row,
   .requests-oracle-script__row,
   .requests-data-source__row,
   .delegators-table__table-row {

@@ -14,7 +14,10 @@
           <TitledLink
             class="info-table__row-link"
             :text="requestData.oracle_script_id"
-            :to="`/oracle-scripts/${requestData.oracle_script_id}`"
+            :to="{
+              name: $routes.oracleScriptDetails,
+              params: { id: requestData.oracle_script_id },
+            }"
           />
         </div>
         <div class="info-table__row">
@@ -124,7 +127,7 @@ import Progressbar from '@/components/ProgressbarTool.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
 import { Obi } from '@bandprotocol/bandchain.js'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
-import isObjectLodash from 'lodash/isObject'
+import isObjectLodash from 'lodash.isobject'
 import { fromBase64 } from '@cosmjs/encoding'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 

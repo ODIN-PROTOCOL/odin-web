@@ -45,7 +45,10 @@
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="item.content?.title || '-'"
-                :to="`/proposal/${item.proposal_id}`"
+                :to="{
+                  name: $routes.proposal,
+                  params: { id: item.proposal_id },
+                }"
               />
             </div>
             <div class="app-table__cell">

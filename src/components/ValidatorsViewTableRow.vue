@@ -16,7 +16,10 @@
       <TitledLink
         class="app-table__cell-txt app-table__link"
         :text="validator?.descriptions[0]?.moniker"
-        :to="`/validators/${validator?.info.operatorAddress}`"
+        :to="{
+          name: $routes.validatorDetails,
+          params: { address: validator?.info.operatorAddress },
+        }"
       />
     </div>
     <div class="app-table__cell app-table__cell-txt">

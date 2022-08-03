@@ -91,17 +91,7 @@ import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
-import BackButton from '@/components/BackButton.vue'
-import CopyButton from '@/components/CopyButton.vue'
-import AppTabs from '@/components/tabs/AppTabs.vue'
-import AppTab from '@/components/tabs/AppTab.vue'
-import ValidatorInfo from '@/components/ValidatorInfo.vue'
-import OracleReportsTable from '@/components/tables/OracleReportsTable.vue'
-import DelegatorsTable from '@/components/tables/DelegatorsTable.vue'
-import ProposedBlocksTable from '@/components/tables/ProposedBlocksTable.vue'
 import { isActiveValidator } from '@/helpers/validatorHelpers'
-import ValidatorStatus from '@/components/ValidatorStatus.vue'
-
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import {
   ClaimRewardsFormModal,
@@ -111,11 +101,19 @@ import {
 } from '@/components/modals'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
-
 import { useQuery } from '@vue/apollo-composable'
 import { ValidatorQuery } from '@/graphql/queries'
 import { ValidatorResponse } from '@/graphql/types'
 import { ValidatorInfoModify } from '@/helpers/validatorHelpers'
+import BackButton from '@/components/BackButton.vue'
+import CopyButton from '@/components/CopyButton.vue'
+import AppTabs from '@/components/tabs/AppTabs.vue'
+import AppTab from '@/components/tabs/AppTab.vue'
+import ValidatorInfo from '@/components/ValidatorInfo.vue'
+import OracleReportsTable from '@/components/tables/OracleReportsTable.vue'
+import DelegatorsTable from '@/components/tables/DelegatorsTable.vue'
+import ProposedBlocksTable from '@/components/tables/ProposedBlocksTable.vue'
+import ValidatorStatus from '@/components/ValidatorStatus.vue'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const route: RouteLocationNormalizedLoaded = useRoute()

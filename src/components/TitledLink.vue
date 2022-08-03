@@ -7,15 +7,16 @@
 </template>
 
 <script setup lang="ts">
+import { LocationAsRelativeRaw } from 'vue-router'
+
 withDefaults(
   defineProps<{
     text: number | string
     title?: number | string
-    to?: string
+    to: LocationAsRelativeRaw
   }>(),
   {
     title: '',
-    to: '#',
   },
 )
 </script>

@@ -3,82 +3,96 @@
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">IBCs</h2>
     </div>
-    <template v-if="connectionsData?.length">
-      <div
-        class="app-table ibc-view__table"
-        v-for="(connection, index) in filteredConnections"
-        :key="connection?.id"
-      >
-        <div class="app-table__body ibc-view__body">
-          <div class="app-table__row ibc-view__table-row">
-            <div class="app-table__cell ibc-view__table-cell">
-              <span class="app-table__title ibc-view__table-title"
-                >Connection</span
-              >
-              <span class="app-table__cell-txt">{{ connection.id }}</span>
-            </div>
-            <div class="app-table__cell ibc-view__table-cell">
-              <span class="app-table__title ibc-view__table-title"
-                >Counterparty Chain ID</span
-              >
-              <span class="app-table__cell-txt">{{
-                chainIdData[index].chainId || '-'
-              }}</span>
-            </div>
-            <div class="app-table__cell ibc-view__table-cell">
-              <span class="app-table__title ibc-view__table-title"
-                >Client ID</span
-              >
-              <span class="app-table__cell-txt">
-                {{ connection.clientId || '-' }}
-              </span>
-            </div>
-            <div class="app-table__cell ibc-view__table-cell">
-              <span class="app-table__title ibc-view__table-title"
-                >Counterparty Client ID</span
-              >
-              <span class="app-table__cell-txt">
-                {{ connection.counterparty.clientId || '-' }}
-              </span>
-            </div>
-          </div>
-          <div class="ibc-view__show">
-            <button
-              @click="isShow[index] = !isShow[index]"
-              type="button"
-              class="ibc-view__show-button"
-            >
-              {{ isShow[index] ? 'Hidden channels' : 'Show channels' }}
-              <ArrowIcon
-                class="ibc-view__arrow-icon"
-                :class="{
-                  ['ibc-view__arrow-icon--active']: isShow[index],
-                }"
-              />
-            </button>
-          </div>
-        </div>
-        <ChannelDetail
-          v-if="isShow[index]"
-          :channelData="channelData"
-          :connection="connection"
+    <template v-if="!isLoading">
+      <template v-if="isLoadingError">
+        <ui-loading-error-message
+          message="Something went wrong"
+          title="Try again!"
         />
-      </div>
+      </template>
+      <template v-else>
+        <template v-if="connectionsData?.length">
+          <div
+            class="app-table ibc-view__table"
+            v-for="(connection, index) in filteredConnections"
+            :key="connection?.id"
+          >
+            <div class="app-table__body ibc-view__body">
+              <div class="app-table__row ibc-view__table-row">
+                <div class="app-table__cell ibc-view__table-cell">
+                  <span class="app-table__title ibc-view__table-title"
+                    >Connection</span
+                  >
+                  <span class="app-table__cell-txt">{{ connection.id }}</span>
+                </div>
+                <div class="app-table__cell ibc-view__table-cell">
+                  <span class="app-table__title ibc-view__table-title"
+                    >Counterparty Chain ID</span
+                  >
+                  <span class="app-table__cell-txt">{{
+                    chainIdData[index].chainId || '-'
+                  }}</span>
+                </div>
+                <div class="app-table__cell ibc-view__table-cell">
+                  <span class="app-table__title ibc-view__table-title"
+                    >Client ID</span
+                  >
+                  <span class="app-table__cell-txt">
+                    {{ connection.clientId || '-' }}
+                  </span>
+                </div>
+                <div class="app-table__cell ibc-view__table-cell">
+                  <span class="app-table__title ibc-view__table-title"
+                    >Counterparty Client ID</span
+                  >
+                  <span class="app-table__cell-txt">
+                    {{ connection.counterparty.clientId || '-' }}
+                  </span>
+                </div>
+              </div>
+              <div class="ibc-view__show">
+                <button
+                  @click="isShow[index] = !isShow[index]"
+                  type="button"
+                  class="ibc-view__show-button"
+                >
+                  {{ isShow[index] ? 'Hidden channels' : 'Show channels' }}
+                  <ArrowIcon
+                    class="ibc-view__arrow-icon"
+                    :class="{
+                      ['ibc-view__arrow-icon--active']: isShow[index],
+                    }"
+                  />
+                </button>
+              </div>
+            </div>
+            <ChannelDetail
+              v-if="isShow[index]"
+              :channelData="channelData"
+              :connection="connection"
+            />
+          </div>
+          <template v-if="connectionsData?.length > ITEMS_PER_PAGE">
+            <AppPagination
+              class="mg-t32 mg-b32"
+              v-model="currentPage"
+              :pages="totalPages"
+              @update:modelValue="paginationHandler"
+            />
+          </template>
+        </template>
+        <template v-else>
+          <div class="app-table__empty-stub">
+            <ui-no-data-message />
+          </div>
+        </template>
+      </template>
     </template>
 
     <template v-else>
       <div class="app-table__empty-stub">
-        <p v-if="isLoading" class="empty mg-t32">Loading…</p>
-        <p v-else class="empty mg-t32">No items yet</p>
+        <ui-loader positionCenter message="Loading" />
       </div>
-    </template>
-    <template v-if="connectionsData?.length > ITEMS_PER_PAGE">
-      <AppPagination
-        class="mg-t32 mg-b32"
-        v-model="currentPage"
-        :pages="totalPages"
-        @update:modelValue="paginationHandler"
-      />
     </template>
   </div>
 </template>
@@ -93,6 +107,11 @@ import { IdentifiedConnection } from 'cosmjs-types/ibc/core/connection/v1/connec
 import { ClientState } from 'cosmjs-types/ibc/lightclients/tendermint/v1/tendermint'
 import { QueryClientStateResponse } from 'cosmjs-types/ibc/core/client/v1/query'
 import { ArrowIcon } from '@/components/icons'
+import {
+  UiLoadingErrorMessage,
+  UiLoader,
+  UiNoDataMessage,
+} from '@/components/ui'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import ChannelDetail from '@/components/ChannelDetail.vue'
 
@@ -105,6 +124,7 @@ const connectionsData = ref<IdentifiedConnection[] | undefined>()
 const channelData = ref<IdentifiedChannel[] | undefined>()
 const filteredConnections = ref()
 const isShow = ref([])
+const isLoadingError = ref(false)
 
 const loadIbc = async () => {
   lockLoading()
@@ -124,6 +144,7 @@ const loadIbc = async () => {
     totalPages.value = Math.ceil(connections.length / ITEMS_PER_PAGE)
     filterConnections(currentPage.value)
   } catch (error) {
+    isLoadingError.value = true
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
   releaseLoading()

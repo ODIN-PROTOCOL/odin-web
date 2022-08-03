@@ -45,7 +45,10 @@
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="`#${item.id} ${item.name}`"
-                :to="`/data-sources/${item.id}`"
+                :to="{
+                  name: $routes.dataSourceDetails,
+                  params: { id: item.id },
+                }"
               />
             </div>
             <div class="app-table__cell">
@@ -171,12 +174,17 @@ const loadDataSources = async () => {
         dataSourceName.value,
       )
       .then(response => response.json())
-    dataSources.value = await Promise.all(
-      data.map(async (item: { attributes: { id: number } }) => {
-        const resp = await callers.getDataSourceRequestCount(item.attributes.id)
-        return { ...item.attributes, requestCount: resp.data.total_count }
-      }),
-    )
+
+    if (data) {
+      dataSources.value = await Promise.all(
+        data?.map(async (item: { attributes: { id: number } }) => {
+          const resp = await callers.getDataSourceRequestCount(
+            item.attributes.id,
+          )
+          return { ...item.attributes, requestCount: resp.data.total_count }
+        }),
+      )
+    }
     dataSourcesCount.value = total_count
     totalPages.value = Math.ceil(dataSourcesCount.value / ITEMS_PER_PAGE)
   } catch (error) {

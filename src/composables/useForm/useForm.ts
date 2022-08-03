@@ -1,7 +1,9 @@
+/* tslint:disable */
+/* eslint-disable */
 import { computed, ComputedRef, reactive } from 'vue'
 import { FormField, useField } from './useField'
 import { FormFieldValidator } from './validators'
-import mapValues from 'lodash-es/mapValues'
+import mapValues from 'lodash.mapvalues'
 
 export type FormFieldDefinition = [
   value: unknown,
@@ -26,7 +28,7 @@ type FormFlattened<T extends Record<string, FormFieldDefinition>> =
 export function useForm<T extends Record<string, FormFieldDefinition>>(
   fieldDefinitions: T,
 ): FormDecorated<T> {
-  const fields = mapValues(fieldDefinitions, fdDef => {
+  const fields = mapValues(fieldDefinitions, (fdDef: any[]) => {
     return useField(fdDef[0], <FormFieldValidator[]>fdDef.slice(1))
   })
 
@@ -34,7 +36,7 @@ export function useForm<T extends Record<string, FormFieldDefinition>>(
 
   const isValid = computed(() => {
     return _fieldsArr.reduce(
-      (valid, field) => valid && field.error.value === null,
+      (valid, field: any) => valid && field.error.value === null,
       true,
     )
   })
@@ -42,7 +44,7 @@ export function useForm<T extends Record<string, FormFieldDefinition>>(
   const validateAll = () => {
     return (
       _fieldsArr.reduce(
-        (error, field) => error || field.validate(),
+        (error, field: any) => error || field.validate(),
         null as string | null,
       ) === null
     )
@@ -59,7 +61,7 @@ export function useForm<T extends Record<string, FormFieldDefinition>>(
   }
 
   const reset = (): void => {
-    _fieldsArr.forEach(f => f.reset())
+    _fieldsArr.forEach((f:any) => f.reset())
   }
 
   return { ...fields, isValid, validateAll, flatten, reset }

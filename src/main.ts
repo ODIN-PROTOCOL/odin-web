@@ -90,7 +90,6 @@ async function _main() {
   app.use(hljsVuePlugin)
   app.component('VuePicker', VuePicker)
   app.component('VuePickerOption', VuePickerOption)
-  // app.component('skeleton-loader', SkeletonLoaderVueSample)
   app.component('skeleton-loader', Skeletor)
   app.mount('#app')
   return app

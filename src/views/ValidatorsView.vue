@@ -67,7 +67,6 @@
             v-model="searchValue"
             placeholder="Search validator"
             class="validators-view__filter-search-input"
-            @keydown.enter="filterValidators()"
           />
           <template v-if="searchValue">
             <button @click="clearText()" class="validators-view-search__clear">
@@ -395,8 +394,8 @@ const getValidators = async () => {
 const filterValidators = (newPage = 1) => {
   let tempArr = validators.value
   if (searchValue.value.trim()) {
-    tempArr = tempArr.filter((item: { description: { moniker: string } }) =>
-      item.description.moniker
+    tempArr = tempArr.filter((item: ValidatorsInfo) =>
+      item.descriptions[0].moniker
         .toLowerCase()
         .includes(searchValue.value.toLowerCase()),
     )
@@ -428,7 +427,7 @@ const selectTab = (title: string) => {
     } else if (tabStatus.value === myValidatorsTitle.value) {
       validators.value = [...myDelegationsValitors.value]
     }
-    filterValidators(1)
+    filterValidators()
   }
 }
 
@@ -532,9 +531,15 @@ const stakeTransfer = async () => {
     },
   )
 }
+
 const clearText = (): void => {
   searchValue.value = ''
 }
+
+watch([searchValue], async () => {
+  filterValidators()
+})
+
 const openModal = (event: { typeBtn: string; validator: ValidatorsInfo }) => {
   if (event.typeBtn === 'Delegate') {
     delegate(event.validator)

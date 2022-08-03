@@ -36,7 +36,10 @@
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="`#${item.request.id}`"
-                :to="`/requests/${item.request.id}`"
+                :to="{
+                  name: $routes.requestDetails,
+                  params: { id: item.request.id },
+                }"
               />
             </div>
             <div class="app-table__cell">
@@ -44,7 +47,10 @@
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="`#${item.request.oracle_script_id}`"
-                :to="`/oracle-scripts/${item.request.oracle_script_id}`"
+                :to="{
+                  name: $routes.oracleScriptDetails,
+                  params: { id: item.request.oracle_script_id },
+                }"
               />
             </div>
             <div class="app-table__cell">

@@ -14,10 +14,18 @@
             </div>
             <div class="top-oracle-scripts__item-link">
               <router-link
-                class="nav__link"
-                :to="`/oracle-scripts/${script.attributes.id}`"
+                v-slot="{ navigate }"
+                :to="{
+                  name: $routes.oracleScriptDetails,
+                  params: { id: script.attributes.id },
+                }"
+                custom
               >
-                <button class="top-oracle-scripts__item-button">
+                <button
+                  @click="navigate"
+                  @keypress.enter="navigate"
+                  class="top-oracle-scripts__item-button"
+                >
                   <img
                     src="@/assets/icons/forward-arrow.svg"
                     alt="enter-arrow"
@@ -90,7 +98,7 @@ defineProps<{
 }
 
 .top-oracle-scripts__item-button {
-  margin-right: 2rem;
+  margin-right: 0.5rem;
 }
 
 .top-oracle-scripts__item-row {

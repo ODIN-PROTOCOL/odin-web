@@ -59,7 +59,10 @@
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="item.attributes.name"
-                :to="`/oracle-scripts/${item.attributes.id}`"
+                :to="{
+                  name: $routes.oracleScriptDetails,
+                  params: { id: item.attributes.id },
+                }"
               />
             </div>
             <div class="app-table__cell">
