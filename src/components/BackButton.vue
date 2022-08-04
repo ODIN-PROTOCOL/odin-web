@@ -12,6 +12,7 @@
 
 <script setup lang="ts">
 import { Router, useRouter } from 'vue-router'
+import { ROUTE_NAMES } from '@/enums'
 
 withDefaults(
   defineProps<{
@@ -23,7 +24,11 @@ withDefaults(
 const router: Router = useRouter()
 
 const routerBack = (): void => {
-  router.back()
+  if (router.options.history.state.back) {
+    router.back()
+  } else {
+    router.push({ name: ROUTE_NAMES.app })
+  }
 }
 </script>
 
