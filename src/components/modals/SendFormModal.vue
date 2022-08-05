@@ -8,7 +8,7 @@
       <form
         class="app-form load-fog"
         :class="{ 'load-fog_show': isLoading }"
-        @submit.prevent
+        @submit.prevent="submit"
       >
         <div class="app-form__main">
           <div class="send-form-modal__info-balance">
@@ -102,7 +102,6 @@
           <button
             class="app-btn app-btn--medium w-full"
             type="submit"
-            @click="submit()"
             :disabled="!flattenForm.isValid || isLoading"
           >
             Send

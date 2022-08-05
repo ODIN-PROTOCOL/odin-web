@@ -12,7 +12,7 @@
       <form
         class="undelegate-form-modal app-form load-fog"
         :class="{ 'load-fog_show': isLoading }"
-        @submit.prevent
+        @submit.prevent="submit"
       >
         <div class="app-form__main">
           <div class="undelegate-form-modal__field-title app-form__field-title">
@@ -102,7 +102,6 @@
           <button
             class="app-btn w-full app-btn--medium"
             type="submit"
-            @click="submit()"
             :disabled="!flattenForm.isValid || isLoading"
           >
             Undelegate

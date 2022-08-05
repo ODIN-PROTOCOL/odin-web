@@ -8,7 +8,7 @@
       <form
         class="app-form load-fog"
         :class="{ 'load-fog_show': isLoading }"
-        @submit.prevent
+        @submit.prevent="submit"
       >
         <div class="app-form__main">
           <template v-if="rewards?.length && validator.descriptions?.length">
@@ -49,7 +49,6 @@
           <button
             class="app-btn w-full app-btn--medium"
             type="submit"
-            @click="submit()"
             :disabled="!rewards?.length || isLoading"
           >
             Claim

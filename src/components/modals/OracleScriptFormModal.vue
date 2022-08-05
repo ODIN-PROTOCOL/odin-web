@@ -11,7 +11,7 @@
       <form
         class="app-form load-fog"
         :class="{ 'load-fog_show': isLoading }"
-        @submit.prevent
+        @submit.prevent="submit"
       >
         <div class="app-form__main">
           <div class="app-form__field">
@@ -100,7 +100,6 @@
           <button
             class="app-btn app-btn--medium"
             type="submit"
-            @click="submit()"
             :disabled="!flattenForm.isValid || isLoading"
           >
             {{ bntText }}

@@ -11,7 +11,7 @@
       <form
         class="stake-transfer-form-modal app-form load-fog"
         :class="{ 'load-fog_show': isLoading }"
-        @submit.prevent
+        @submit.prevent="submit"
       >
         <div class="app-form__main stake-transfer-form-modal__main">
           <div class="stake-transfer-form-modal__select-wrapper">
@@ -209,7 +209,6 @@
           <button
             class="app-btn w-full app-btn--medium"
             type="submit"
-            @click="submit()"
             :disabled="!flattenForm.isValid || isLoading"
           >
             Transfer

@@ -6,7 +6,7 @@
     <template #main>
       <form
         :class="{ 'load-fog_show': isLoading }"
-        @submit.prevent
+        @submit.prevent="submit"
         class="app-form"
       >
         <div class="app-form__main">
@@ -26,7 +26,6 @@
             class="app-btn w-full app-btn--medium"
             type="submit"
             :disabled="isLoading"
-            @click="submit()"
           >
             Yes
           </button>

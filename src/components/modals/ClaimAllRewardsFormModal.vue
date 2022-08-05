@@ -8,7 +8,7 @@
       <form
         class="app-form load-fog"
         :class="{ 'load-fog_show': isLoading }"
-        @submit.prevent
+        @submit.prevent="submit"
       >
         <div class="app-form__main">
           <div class="app-form__field claim-all-rewards-form-modal__field">
@@ -38,7 +38,6 @@
             class="app-btn app-btn--medium w-full"
             type="submit"
             :disabled="!totalRewards.length || isLoading"
-            @click="submit"
           >
             Claim
           </button>

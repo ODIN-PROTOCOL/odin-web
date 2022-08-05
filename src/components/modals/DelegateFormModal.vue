@@ -8,7 +8,7 @@
       <form
         class="app-form load-fog delegate-form-modal"
         :class="{ 'load-fog_show': isLoading }"
-        @submit.prevent
+        @submit.prevent="submit"
       >
         <div class="app-form__main">
           <div class="app-form__field delegate-form-modal__field-balance">
@@ -89,7 +89,6 @@
           <button
             class="app-btn w-full app-btn--medium"
             type="submit"
-            @click="submit()"
             :disabled="!flattenForm.isValid || isLoading"
           >
             Delegate
