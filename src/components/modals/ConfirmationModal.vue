@@ -23,11 +23,7 @@
           >
             No
           </button>
-          <button
-            class="app-btn w-full app-btn--medium"
-            type="submit"
-            :disabled="isLoading"
-          >
+          <button class="app-btn w-full app-btn--medium" :disabled="isLoading">
             Yes
           </button>
         </div>

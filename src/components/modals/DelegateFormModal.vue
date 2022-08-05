@@ -88,7 +88,6 @@
         <div class="app-form__footer">
           <button
             class="app-btn w-full app-btn--medium"
-            type="submit"
             :disabled="!flattenForm.isValid || isLoading"
           >
             Delegate

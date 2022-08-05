@@ -209,7 +209,6 @@
         <div class="app-form__footer stake-transfer-form-modal__footer">
           <button
             class="app-btn w-full app-btn--medium"
-            type="submit"
             :disabled="!flattenForm.isValid || isLoading"
           >
             Transfer
