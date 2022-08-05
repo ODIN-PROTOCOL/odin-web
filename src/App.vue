@@ -34,8 +34,8 @@ onMounted(() => {
 
 const route = useRoute()
 
-const isAuthPage = computed(() =>
-  route?.name ? route?.name?.toString().includes(ROUTE_NAMES.auth) : true,
+const isAuthPage = computed(
+  () => route?.name?.toString().includes(ROUTE_NAMES.auth) ?? true,
 )
 </script>
 
@@ -49,7 +49,6 @@ const isAuthPage = computed(() =>
 @import '~@/styles/tables.scss';
 @import '~@/styles/views.scss';
 @import '~@/styles/forms.scss';
-@import '~@/styles/vue-notification.scss';
 @import '~@/styles/shortcuts.scss';
 @import '~@/styles/atom-one-dark.scss';
 @import '~@/styles/vue-skeletor.scss';

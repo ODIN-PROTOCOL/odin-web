@@ -60,6 +60,7 @@
 import { computed } from 'vue'
 import { IdentifiedChannel } from 'cosmjs-types/ibc/core/channel/v1/channel'
 import { IdentifiedConnection } from 'cosmjs-types/ibc/core/connection/v1/connection'
+import { ORDER } from '@/enums'
 import StatusIcon from '@/components/StatusIcon.vue'
 
 const props = defineProps<{
@@ -74,13 +75,13 @@ const channels = computed(() => {
   )
 })
 const getOrder = (item: number) => {
-  if (item === -1) {
+  if (item === ORDER.unrecognized) {
     return 'Unrecognized'
-  } else if (item === 0) {
+  } else if (item === ORDER.noneUnspecified) {
     return 'None Unspecified'
-  } else if (item === 1) {
+  } else if (item === ORDER.unordered) {
     return 'Unordered'
-  } else if (item === 2) {
+  } else if (item === ORDER.ordered) {
     return 'Ordered'
   }
 }

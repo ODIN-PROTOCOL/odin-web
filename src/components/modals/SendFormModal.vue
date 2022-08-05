@@ -101,7 +101,7 @@
         <div class="app-form__footer">
           <button
             class="app-btn app-btn--medium w-full"
-            type="button"
+            type="submit"
             @click="submit()"
             :disabled="!flattenForm.isValid || isLoading"
           >

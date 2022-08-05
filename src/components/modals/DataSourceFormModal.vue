@@ -112,7 +112,7 @@
           </button>
           <button
             class="app-btn app-btn--medium"
-            type="button"
+            type="submit"
             @click="submit()"
             :disabled="!flattenForm.isValid || isLoading"
           >

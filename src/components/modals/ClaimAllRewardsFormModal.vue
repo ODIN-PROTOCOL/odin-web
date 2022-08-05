@@ -36,9 +36,9 @@
         <div class="app-form__footer">
           <button
             class="app-btn app-btn--medium w-full"
-            type="button"
-            @click="submit"
+            type="submit"
             :disabled="!totalRewards.length || isLoading"
+            @click="submit"
           >
             Claim
           </button>

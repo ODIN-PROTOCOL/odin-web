@@ -80,7 +80,7 @@
               accept=".wasm"
               v-model="flattenForm.codeFile"
               :disabled="isLoading"
-              :drag="true"
+              drag
             />
             <p v-if="flattenForm.codeFileErr" class="app-form__field-err">
               {{ flattenForm.codeFileErr }}
@@ -99,7 +99,7 @@
           </button>
           <button
             class="app-btn app-btn--medium"
-            type="button"
+            type="submit"
             @click="submit()"
             :disabled="!flattenForm.isValid || isLoading"
           >

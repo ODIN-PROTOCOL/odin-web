@@ -24,6 +24,7 @@
           </button>
           <button
             class="app-btn w-full app-btn--medium"
+            type="submit"
             :disabled="isLoading"
             @click="submit()"
           >

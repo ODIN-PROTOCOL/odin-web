@@ -1,5 +1,5 @@
 <template>
-  <router-link class="nav__link" :to="to" :title="title || text">
+  <router-link class="titled-link" :to="to" :title="title || text">
     <span>
       {{ text }}
     </span>

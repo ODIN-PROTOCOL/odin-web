@@ -13,12 +13,12 @@ const props = withDefaults(
     tally: TallyResult
     isTitled?: boolean
     isShort?: boolean
-    onlyYes?: boolean
+    isOnlyYes?: boolean
   }>(),
   {
     isTitled: false,
     isShort: false,
-    onlyYes: false,
+    isOnlyYes: false,
   },
 )
 const tally = toRef(props, 'tally')
@@ -38,7 +38,7 @@ const _getShort = () => translateTallyShort(_getTallyProgress())
 
 const translated = computed(() => {
   if (!props.tally) return 'N/A'
-  if (props.onlyYes) return _getTallyProgress().yes
+  if (props.isOnlyYes) return _getTallyProgress().yes
   return props.isShort ? _getShort() : _getLong()
 })
 

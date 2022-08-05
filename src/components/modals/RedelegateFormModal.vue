@@ -52,7 +52,7 @@
         <div class="app-form__footer">
           <button
             class="app-btn w-full app-btn--medium"
-            type="button"
+            type="submit"
             @click="submit"
             :disabled="!isAvailableCoin || isLoading"
           >
@@ -99,7 +99,7 @@ const availableCoinForRedelegate = computed(() => {
   return reward || defaultBalanceBlank
 })
 const isAvailableCoin = computed(
-  () => Number(availableCoinForRedelegate.value.amount) >= 0,
+  () => Number(availableCoinForRedelegate.value.amount) > 0,
 )
 
 const getRewards = async () => {

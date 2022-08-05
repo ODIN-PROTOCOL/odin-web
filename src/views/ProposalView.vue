@@ -74,9 +74,9 @@
                 v-if="tally"
                 class="app-table__cell-txt"
                 :tally="tally"
-                :onlyYes="true"
-                :isShort="true"
-                :isTitled="true"
+                is-only-yes
+                is-short
+                is-titled
               />
             </div>
           </div>

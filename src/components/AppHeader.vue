@@ -6,11 +6,11 @@
         src="~@/assets/brand/odin-logo-black.png"
         alt="Logo"
       />
-      <app-nav :isOpen="isOpen" @closeBurger="closeBurger" />
-      <user-widget @closeBurger="closeBurger" class="fx-sae" />
+      <app-nav :is-open="isOpen" @close-burger="closeBurger" />
+      <user-widget @close-burger="closeBurger" class="fx-sae" />
       <burger-menu
         @click="burgerMenuHandler($event)"
-        :isOpen="isOpen"
+        :is-open="isOpen"
         class="app-header__burger-menu"
       />
     </div>
