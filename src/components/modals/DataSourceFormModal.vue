@@ -105,7 +105,7 @@
           <button
             class="app-btn app-btn--outlined app-btn--medium"
             type="button"
-            @click="onClose()"
+            @click="onClose"
             :disabled="isLoading"
           >
             Cancel

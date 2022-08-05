@@ -74,8 +74,9 @@
                 >To</label
               >
               <button
-                @click="changeField()"
+                type="button"
                 class="stake-transfer-form-modal__select-header-btn"
+                @click="changeField"
               >
                 {{
                   isShowToAdressOption ? 'Enter address' : 'Select validator'

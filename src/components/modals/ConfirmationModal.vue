@@ -17,6 +17,7 @@
         <div class="app-form__footer">
           <button
             class="app-btn w-full app-btn--outlined app-btn--medium"
+            type="button"
             :disabled="isLoading"
             @click="onClose"
           >
