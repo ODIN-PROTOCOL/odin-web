@@ -3,110 +3,125 @@
     <div class="view-main__title-wrapper request-details__title-wrapper">
       <BackButton :text="'Requests'" />
       <h2 class="view-main__title request-details__title">Request</h2>
-      <span class="view-main__subtitle"> #{{ requestData?.id }} </span>
+      <span v-if="!isLoadingError && !isLoading" class="view-main__subtitle">
+        {{ '#' + requestData?.id }}
+      </span>
     </div>
-
-    <h3 class="view-main__subtitle mg-b24">Request info</h3>
-    <template v-if="requestData && resultData">
-      <div class="info-table mg-b32">
-        <div class="info-table__row">
-          <span class="info-table__row-title">Oracle Script</span>
-          <TitledLink
-            class="info-table__row-link"
-            :text="requestData.oracle_script_id"
-            :to="{
-              name: $routes.oracleScriptDetails,
-              params: { id: requestData.oracle_script_id },
-            }"
-          />
-        </div>
-        <div class="info-table__row">
-          <span class="info-table__row-title">Sender</span>
-          <a class="app-table__cell-txt app-table__link" :href="senderLink">
-            {{ requestData.client_id }}
-          </a>
-          <CopyButton class="mg-l8" :text="requestData.client_id" />
-        </div>
-        <div class="info-table__row">
-          <span class="info-table__row-title">Request Time</span>
-          <span>{{ requestTime }} ({{ requestTimeRange }})</span>
-        </div>
-        <div class="info-table__row">
-          <span class="info-table__row-title">Resolve Time</span>
-          <span>{{ resolveTime }} ({{ resolveTimeRange }})</span>
-        </div>
-        <div class="info-table__row">
-          <span class="info-table__row-title">Report Status</span>
-          <Progressbar
-            :min="Number(resultData.min_count)"
-            :max="Number(resultData.ask_count)"
-            :current="Number(resultData.ans_count)"
-          />
-        </div>
-        <div class="info-table__row">
-          <span class="info-table__row-title">Resolve Status</span>
-          <StatusBlock
-            :status="String(requestStatusType[requestStatus]?.status)"
-            :text="String(requestStatusType[requestStatus]?.name)"
-          />
-        </div>
-      </div>
-
-      <h3 class="view-main__subtitle mg-b24">Calldata</h3>
-      <div class="info-table mg-b32">
-        <template v-if="isObject">
-          <div
-            class="info-table__row"
-            v-for="(val, key) in requestCalldata"
-            :key="key"
-          >
-            <span class="info-table__row-title">{{ key }}</span>
-            <span class="info-table__row-txt">{{ val }}</span>
-          </div>
-        </template>
-        <template v-else>
-          <div class="info-table__row">
-            <span class="info-table__row-title">data</span>
-            <span class="info-table__row-txt">
-              {{ requestCalldata }}
-            </span>
-          </div>
-        </template>
-      </div>
-
-      <template v-if="isRequestSuccess">
-        <h3 class="view-main__subtitle mg-b24">Result</h3>
-        <div class="info-table">
-          <div class="info-table__row">
-            <span class="info-table__row-title">KEY</span>
-            <span class="info-table__row-txt">
-              {{ requestResultName }}
-            </span>
-          </div>
-          <div class="info-table__row">
-            <span class="info-table__row-title">Rates</span>
-            <span
-              class="info-table__row-txt"
-              v-if="requestResultType === 'object'"
-            >
-              <div v-for="(item, i) in requestResult" :key="item">
-                {{ i }}: {{ item }}
-              </div>
-            </span>
-            <span
-              class="info-table__row-txt"
-              v-if="requestResultType === 'string'"
-            >
-              {{ requestResult }}
-            </span>
-          </div>
+    <template v-if="!isLoading">
+      <template v-if="isLoadingError">
+        <div class="app-table__empty-stub">
+          <ui-loading-error-message message="Not Found" title="404" />
         </div>
       </template>
+      <template v-else>
+        <template v-if="requestData && resultData">
+          <h3 class="view-main__subtitle mg-b24">Request info</h3>
+          <div class="info-table mg-b32">
+            <div class="info-table__row">
+              <span class="info-table__row-title">Oracle Script</span>
+              <TitledLink
+                class="info-table__row-link"
+                :text="requestData.oracle_script_id"
+                :to="{
+                  name: $routes.oracleScriptDetails,
+                  params: { id: requestData.oracle_script_id },
+                }"
+              />
+            </div>
+            <div class="info-table__row">
+              <span class="info-table__row-title">Sender</span>
+              <a class="app-table__cell-txt app-table__link" :href="senderLink">
+                {{ requestData.client_id }}
+              </a>
+              <CopyButton class="mg-l8" :text="requestData.client_id" />
+            </div>
+            <div class="info-table__row">
+              <span class="info-table__row-title">Request Time</span>
+              <span>{{ requestTime }} ({{ requestTimeRange }})</span>
+            </div>
+            <div class="info-table__row">
+              <span class="info-table__row-title">Resolve Time</span>
+              <span>{{ resolveTime }} ({{ resolveTimeRange }})</span>
+            </div>
+            <div class="info-table__row">
+              <span class="info-table__row-title">Report Status</span>
+              <Progressbar
+                :min="Number(resultData.min_count)"
+                :max="Number(resultData.ask_count)"
+                :current="Number(resultData.ans_count)"
+              />
+            </div>
+            <div class="info-table__row">
+              <span class="info-table__row-title">Resolve Status</span>
+              <StatusBlock
+                :status="String(requestStatusType[requestStatus]?.status)"
+                :text="String(requestStatusType[requestStatus]?.name)"
+              />
+            </div>
+          </div>
+
+          <h3 class="view-main__subtitle mg-b24">Calldata</h3>
+          <div class="info-table mg-b32">
+            <template v-if="isObject">
+              <div
+                class="info-table__row"
+                v-for="(val, key) in requestCalldata"
+                :key="key"
+              >
+                <span class="info-table__row-title">{{ key }}</span>
+                <span class="info-table__row-txt">{{ val }}</span>
+              </div>
+            </template>
+            <template v-else>
+              <div class="info-table__row">
+                <span class="info-table__row-title">data</span>
+                <span class="info-table__row-txt">
+                  {{ requestCalldata }}
+                </span>
+              </div>
+            </template>
+          </div>
+
+          <template v-if="isRequestSuccess">
+            <h3 class="view-main__subtitle mg-b24">Result</h3>
+            <div class="info-table">
+              <div class="info-table__row">
+                <span class="info-table__row-title">KEY</span>
+                <span class="info-table__row-txt">
+                  {{ requestResultName }}
+                </span>
+              </div>
+              <div class="info-table__row">
+                <span class="info-table__row-title">Rates</span>
+                <span
+                  class="info-table__row-txt"
+                  v-if="requestResultType === 'object'"
+                >
+                  <div v-for="(item, i) in requestResult" :key="item">
+                    {{ i }}: {{ item }}
+                  </div>
+                </span>
+                <span
+                  class="info-table__row-txt"
+                  v-if="requestResultType === 'string'"
+                >
+                  {{ requestResult }}
+                </span>
+              </div>
+            </div>
+          </template>
+        </template>
+        <template v-else>
+          <div class="app-table__empty-stub">
+            <ui-no-data-message />
+          </div>
+        </template>
+      </template>
     </template>
+
     <template v-else>
       <div class="app-table__empty-stub">
-        <p v-if="isLoading" class="empty mg-t32">Loading…</p>
-        <p v-else class="empty mg-t32">There is no information about request</p>
+        <ui-loader positionCenter message="Loading" />
       </div>
     </template>
   </div>
@@ -120,19 +135,25 @@ import { API_CONFIG } from '@/api/api-config'
 import { requestStatusType } from '@/helpers/statusTypes'
 import { ResolveStatus } from '@provider/codec/oracle/v1/oracle'
 import { formatDate, formatDateDifference } from '@/helpers/formatters'
+import {
+  UiLoadingErrorMessage,
+  UiLoader,
+  UiNoDataMessage,
+} from '@/components/ui'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
+import isObjectLodash from 'lodash.isobject'
+import { fromBase64 } from '@cosmjs/encoding'
+import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
+import { Obi } from '@bandprotocol/bandchain.js'
 import TitledLink from '@/components/TitledLink.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import BackButton from '@/components/BackButton.vue'
 import Progressbar from '@/components/ProgressbarTool.vue'
 import StatusBlock from '@/components/StatusBlock.vue'
-import { Obi } from '@bandprotocol/bandchain.js'
-import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
-import isObjectLodash from 'lodash.isobject'
-import { fromBase64 } from '@cosmjs/encoding'
-import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 
 const route: RouteLocationNormalizedLoaded = useRoute()
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+const isLoadingError = ref(false)
 const requestData = ref()
 const resultData = ref()
 const requestStatus = ref()
@@ -189,6 +210,7 @@ const getRequest = async () => {
       requestResultType.value = typeof requestResult.value
     }
   } catch (error) {
+    isLoadingError.value = true
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
   releaseLoading()

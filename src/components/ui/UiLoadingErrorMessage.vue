@@ -23,14 +23,15 @@ defineProps<{ title: string; message?: string }>()
 }
 
 .ui-loading-error-message__title {
-  font-size: 3.2rem;
-  margin-bottom: 1rem;
-  font-weight: 400;
+  font-size: 12rem;
+  font-weight: 600;
+  color: var(--clr__light-gray);
+  line-height: 13rem;
 }
 
 .ui-loading-error-message__text {
-  color: var(--clr__action);
-  font-size: 2.4rem;
+  font-size: 2.2rem;
   line-height: 2.4rem;
+  opacity: 0.7;
 }
 </style>

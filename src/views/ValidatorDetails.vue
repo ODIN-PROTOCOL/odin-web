@@ -39,34 +39,44 @@
         </div>
       </template>
     </div>
-    <template v-if="!isLoading && !isValidatorResponseLoading">
-      <template v-if="validator">
-        <ValidatorInfo
-          :validator="validator"
-          :delegation="delegation"
-          @selectedBtn="openModal"
-        />
-        <AppTabs>
-          <AppTab title="Oracle Reports">
-            <OracleReportsTable :proposerAddress="operatorAddress" />
-          </AppTab>
-          <AppTab :title="delegatorsTitle">
-            <DelegatorsTable :delegators="delegators" :is-loading="isLoading" />
-          </AppTab>
-          <AppTab title="Proposed Blocks">
-            <ProposedBlocksTable :proposerAddress="operatorAddress" />
-          </AppTab>
-        </AppTabs>
+    <template v-if="isFinishLoading">
+      <template v-if="isLoadingError">
+        <div class="app-table__empty-stub">
+          <ui-loading-error-message message="Not Found" title="404" />
+        </div>
       </template>
       <template v-else>
-        <div class="app-table__empty-stub">
-          <p class="empty mg-t32">Validator not found!</p>
-        </div>
+        <template v-if="validator">
+          <ValidatorInfo
+            :validator="validator"
+            :delegation="delegation"
+            @selectedBtn="openModal"
+          />
+          <AppTabs>
+            <AppTab title="Oracle Reports">
+              <OracleReportsTable :proposer-address="operatorAddress" />
+            </AppTab>
+            <AppTab :title="delegatorsTitle">
+              <DelegatorsTable
+                :delegators="delegators"
+                :is-loading="isLoading"
+              />
+            </AppTab>
+            <AppTab title="Proposed Blocks">
+              <ProposedBlocksTable :proposer-address="operatorAddress" />
+            </AppTab>
+          </AppTabs>
+        </template>
+        <template v-else>
+          <div class="app-table__empty-stub">
+            <ui-no-data-message />
+          </div>
+        </template>
       </template>
     </template>
     <template v-else>
       <div class="app-table__empty-stub">
-        <p class="empty mg-t32">Loading…</p>
+        <ui-loader positionCenter message="Loading" />
       </div>
     </template>
     <div v-if="delegation.balance" class="view-main__mobile-activities">
@@ -105,6 +115,11 @@ import { useQuery } from '@vue/apollo-composable'
 import { ValidatorQuery } from '@/graphql/queries'
 import { ValidatorResponse } from '@/graphql/types'
 import { ValidatorInfoModify } from '@/helpers/validatorHelpers'
+import {
+  UiLoadingErrorMessage,
+  UiLoader,
+  UiNoDataMessage,
+} from '@/components/ui'
 import BackButton from '@/components/BackButton.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import AppTabs from '@/components/tabs/AppTabs.vue'
@@ -119,7 +134,7 @@ const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const route: RouteLocationNormalizedLoaded = useRoute()
 const validator = ref<ValidatorInfoModify>()
 const delegators = ref<DelegationResponse[]>([])
-
+const isLoadingError = ref(false)
 const delegation = ref<DelegationResponse>({})
 const delegatorsTitle = computed(() =>
   delegators.value?.length
@@ -132,6 +147,14 @@ const { result, loading: isValidatorResponseLoading } =
     address: String(route.params.address),
   })
 
+const isFinishLoading = computed(
+  () =>
+    !(
+      isLoading.value ||
+      isValidatorResponseLoading.value ||
+      !result.value?.validator
+    ),
+)
 const getValidator = async () => {
   lockLoading()
   try {
@@ -144,6 +167,7 @@ const getValidator = async () => {
     }
     await getDelegations()
   } catch (error) {
+    isLoadingError.value = true
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
   releaseLoading()
@@ -158,19 +182,25 @@ const validatorStatus = computed(() => {
 })
 
 const getDelegators = async () => {
-  const response = await callers.getValidatorDelegations(
-    String(route.params.address),
-  )
-  if (response.delegationResponses) {
-    delegators.value = response.delegationResponses
+  lockLoading()
+  try {
+    const response = await callers.getValidatorDelegations(
+      String(route.params.address),
+    )
+    if (response.delegationResponses) {
+      delegators.value = response.delegationResponses
+    }
+  } catch (error) {
+    isLoadingError.value = true
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
+  releaseLoading()
 }
 
 const getDelegations = async () => {
   if (wallet.isEmpty) {
     return
   }
-  lockLoading()
   try {
     const response = await callers.getDelegation(
       wallet.account.address,
@@ -181,7 +211,6 @@ const getDelegations = async () => {
   } catch (error) {
     // error is ignored, since no delegations also throws the error
   }
-  releaseLoading()
 }
 
 const loadData = async () => {

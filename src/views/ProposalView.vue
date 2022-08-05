@@ -26,10 +26,9 @@
 
     <template v-if="!isLoading">
       <template v-if="isLoadingError">
-        <ui-loading-error-message
-          message="Something went wrong"
-          title="Try again!"
-        />
+        <div class="app-table__empty-stub">
+          <ui-loading-error-message message="Not Found" title="404" />
+        </div>
       </template>
       <template v-else>
         <template v-if="proposal">

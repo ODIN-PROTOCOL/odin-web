@@ -1,38 +1,39 @@
 <template>
-  <notifications width="100%" position="" animation-name="v-fade-left" :max="3">
+  <notifications
+    :max="3"
+    width="100%"
+    position=""
+    animation-name="v-fade-left"
+    class="notifications-group"
+  >
     <template v-slot:body="props">
-      <div
-        class="app__notification"
+      <button
+        type="button"
+        class="notifications-group__inner"
         @click="props.close"
-        :class="notification?.typeNotification.toLowerCase()"
       >
-        <div>
-          <InfoNotificationIcon
-            class="app__notification-icon"
-            v-if="notification?.typeNotification === 'Info'"
-          />
-          <SuccessNotificationIcon
-            class="app__notification-icon"
-            v-else-if="notification?.typeNotification === 'Success'"
-          />
-          <FailedNotificationIcon class="app__notification-icon" v-else />
-        </div>
-        <div class="app__notification-content-wrapper">
-          <p class="app__notification-title">
+        <component :key="component" :is="component" />
+        <div class="notifications-group__inner-content-wrapper">
+          <p class="notifications-group__inner-title">
             {{ notification?.typeNotification }}
           </p>
-          <p class="app__notification-content">{{ notification?.error }}</p>
+          <p class="notifications-group__inner-content">
+            {{ notification?.error }}
+          </p>
         </div>
-        <div class="app__cancel-icon-wrapper">
-          <CancelIcon @click="props.close" class="app__cancel-icon" />
+        <div class="notifications-group__cancel-icon-wrapper">
+          <CancelIcon
+            @click="props.close"
+            class="notifications-group__cancel-icon"
+          />
         </div>
-      </div>
+      </button>
     </template>
   </notifications>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
 import {
   InfoNotificationIcon,
@@ -40,6 +41,7 @@ import {
   FailedNotificationIcon,
   CancelIcon,
 } from '@/components/icons'
+import { TYPE_NOTIFICATION } from '@/helpers/errors'
 
 import emitter from '@/helpers/emmiter'
 type NotificationInfo = {
@@ -48,7 +50,7 @@ type NotificationInfo = {
 }
 
 const notification = ref<NotificationInfo>()
-// Notification
+
 const DURATION = 7000
 emitter.on('handleNotification', e => {
   notification.value = e as NotificationInfo
@@ -56,6 +58,16 @@ emitter.on('handleNotification', e => {
     ignoreDuplicates: true,
     duration: DURATION,
   })
+})
+
+const component = computed(() => {
+  if (notification.value?.typeNotification === TYPE_NOTIFICATION.info) {
+    return InfoNotificationIcon
+  } else {
+    return notification.value?.typeNotification === TYPE_NOTIFICATION.success
+      ? SuccessNotificationIcon
+      : FailedNotificationIcon
+  }
 })
 </script>
 
@@ -66,41 +78,36 @@ emitter.on('handleNotification', e => {
   min-width: 30rem;
   bottom: 5%;
   right: 4%;
-  .app__notification {
+  .notifications-group__inner {
     display: flex;
+    align-items: center;
+    gap: 2rem;
     max-width: 49.6rem;
+    width: 93%;
     min-width: 28rem;
-    margin: 1rem;
+    margin: 2rem;
     background: var(--clr__main-bg);
     color: var(--clr__text);
     box-shadow: 0 0.4rem 1.6rem var(--clr__vue-notifications-box-shadow);
     border-radius: 1.6rem;
     padding: 2.4rem 3.2rem;
   }
-  .failed {
-    border: 0.1rem solid var(--clr__vue-notifications-failed-border);
-  }
-  .success {
-    border: 0.1rem solid var(--clr__vue-notifications-success-border);
-  }
-  .info {
-    border: 0.1rem solid var(--clr__vue-notifications-info-border);
-  }
-  .app__notification-icon {
+
+  .notifications-group__inner-icon {
     width: 4.8rem;
     margin-right: 2.7rem;
   }
-  .app__notification-title {
+  .notifications-group__inner-title {
     font-weight: 400;
     font-size: 2.4rem;
     line-height: 3.2rem;
     color: var(--clr__text);
   }
-  .app__notification-content-wrapper {
+  .notifications-group__inner-content-wrapper {
     width: 100%;
-    margin-right: 2rem;
+    text-align: start;
   }
-  .app__notification-content {
+  .notifications-group__inner-content {
     font-weight: 400;
     font-size: 1.4rem;
     line-height: 2rem;
@@ -113,15 +120,16 @@ emitter.on('handleNotification', e => {
     top: 0;
     right: 0;
     bottom: 100%;
-    .app__notification-icon {
+    .notifications-group__inner-icon {
       width: 2.8rem;
       height: 2.8rem;
       margin-right: 1.8rem;
     }
-    .app__notification {
+    .notifications-group__inner {
       padding: 1.6rem 2.4rem;
+      margin: 2rem 1rem;
     }
-    .app__notification-title {
+    .notifications-group__inner-title {
       font-size: 2rem;
       line-height: 2.4rem;
     }
