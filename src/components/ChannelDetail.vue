@@ -18,7 +18,7 @@
               >{{ channel.portId }} &#10141;</span
             >
             <span class="channel-detail__cell-txt-row">
-              {{ channel.counterparty.portId }}</span
+              {{ channel.counterparty?.portId }}</span
             >
           </div>
         </div>
@@ -36,7 +36,7 @@
               >{{ channel.channelId }} &#10141;</span
             >
             <span class="channel-detail__cell-txt-row">{{
-              channel.counterparty.channelId
+              channel.counterparty?.channelId
             }}</span>
           </div>
         </div>

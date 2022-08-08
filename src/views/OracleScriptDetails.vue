@@ -130,6 +130,7 @@ const isOracleScriptOwner = computed(() => {
 })
 
 const getOracleScript = async () => {
+  lockLoading()
   try {
     if (Number(route.params.id) > 0) {
       const response = await callers.getOracleScript(String(route.params.id))
@@ -138,11 +139,14 @@ const getOracleScript = async () => {
       throw 'Invalid Oracle Script Id'
     }
   } catch (error) {
-    throw error as Error
+    isLoadingError.value = true
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
+  releaseLoading()
 }
 
 const getOracleScriptCode = async () => {
+  lockLoading()
   try {
     if (oracleScriptData.value.sourceCodeUrl) {
       await fetch(oracleScriptData.value.sourceCodeUrl).then(response => {
@@ -152,20 +156,14 @@ const getOracleScriptCode = async () => {
       })
     }
   } catch (error) {
-    throw error as Error
-  }
-}
-
-const loadData = async () => {
-  lockLoading()
-  try {
-    await getOracleScript()
-    await getOracleScriptCode()
-  } catch (error) {
     isLoadingError.value = true
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
   releaseLoading()
+}
+
+const loadData = async () => {
+  await Promise.all([getOracleScript(), getOracleScriptCode()])
 }
 
 const editOracleScript = async (oracleScript: OracleScript) => {
@@ -174,6 +172,7 @@ const editOracleScript = async (oracleScript: OracleScript) => {
     {
       onSubmit: async d => {
         await loadData()
+
         d.kill()
       },
     },

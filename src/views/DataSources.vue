@@ -161,7 +161,7 @@ const headerTitles = [
   { title: 'Timestamp' },
 ]
 
-const loadDataSources = async () => {
+const getDataSources = async () => {
   lockLoading()
   try {
     dataSources.value = []
@@ -196,7 +196,7 @@ const loadDataSources = async () => {
 const createDataSource = async () => {
   await showDialogHandler(DataSourceFormModal, {
     onSubmit: async d => {
-      await loadDataSources()
+      await getDataSources()
       d.kill()
     },
   })
@@ -207,7 +207,7 @@ const editDataSource = async (dataSource: unknown) => {
     DataSourceFormModal,
     {
       onSubmit: async d => {
-        await loadDataSources()
+        await getDataSources()
         d.kill()
       },
     },
@@ -217,19 +217,19 @@ const editDataSource = async (dataSource: unknown) => {
 
 const paginationHandler = (num: number) => {
   currentPage.value = num
-  loadDataSources()
+  getDataSources()
 }
 
 watch(
   [sortingActivitiesValue, sortingOwnersValue, dataSourceName, accountAddress],
   async () => {
     currentPage.value = 1
-    await loadDataSources()
+    await getDataSources()
   },
 )
 
 onMounted(async () => {
-  await loadDataSources()
+  await getDataSources()
 })
 </script>
 

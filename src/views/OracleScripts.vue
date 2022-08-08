@@ -164,7 +164,8 @@ const headerTitles = [
   { title: 'Description' },
   { title: 'Timestamp' },
 ]
-const loadOracleScripts = async () => {
+
+const getOracleScripts = async () => {
   lockLoading()
   try {
     const { data, total_count } = await callers
@@ -184,6 +185,7 @@ const loadOracleScripts = async () => {
   }
   releaseLoading()
 }
+
 const getMostRequestedOracleScripts = async () => {
   lockLoading()
   try {
@@ -197,31 +199,38 @@ const getMostRequestedOracleScripts = async () => {
   releaseLoading()
 }
 
-const createOracleScript = async () => {
-  await showDialogHandler(OracleScriptFormModal, {
-    onSubmit: async d => {
-      await loadOracleScripts()
-      d.kill()
-    },
-  })
+const loadData = async () => {
+  await Promise.all([getOracleScripts(), getMostRequestedOracleScripts()])
 }
+
 watch(
   [sortingActivitiesValue, sortingOwnersValue, oracleScriptsName],
   async () => {
     currentPage.value = 1
-    await loadOracleScripts()
+    await getOracleScripts()
   },
 )
-const paginationHandler = (num: number) => {
+
+const paginationHandler = async (num: number) => {
   currentPage.value = num
-  loadOracleScripts()
+  await getOracleScripts()
 }
+
+const createOracleScript = async () => {
+  await showDialogHandler(OracleScriptFormModal, {
+    onSubmit: async d => {
+      await loadData()
+      d.kill()
+    },
+  })
+}
+
 const editOracleScript = async (oracleScript: OracleScript) => {
   await showDialogHandler(
     OracleScriptFormModal,
     {
       onSubmit: async d => {
-        await loadOracleScripts()
+        await loadData()
         d.kill()
       },
     },
@@ -229,8 +238,7 @@ const editOracleScript = async (oracleScript: OracleScript) => {
   )
 }
 onMounted(async () => {
-  await loadOracleScripts()
-  await getMostRequestedOracleScripts()
+  await loadData()
 })
 </script>
 

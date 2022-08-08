@@ -15,10 +15,10 @@
         <component :key="component" :is="component" />
         <div class="notifications-group__inner-content-wrapper">
           <p class="notifications-group__inner-title">
-            {{ notification?.typeNotification }}
+            {{ notification.typeNotification || TYPE_NOTIFICATION.error }}
           </p>
           <p class="notifications-group__inner-content">
-            {{ notification?.error }}
+            {{ notification.error || DEFAULT_TEXT }}
           </p>
         </div>
         <div class="notifications-group__cancel-icon-wrapper">
@@ -42,16 +42,19 @@ import {
   CancelIcon,
 } from '@/components/icons'
 import { TYPE_NOTIFICATION } from '@/helpers/errors'
-
 import emitter from '@/helpers/emmiter'
+
 type NotificationInfo = {
   error: Error
-  typeNotification?: string
+  typeNotification: string
 }
+
+const DEFAULT_TEXT = 'Something went wrong!!!'
 
 const notification = ref<NotificationInfo>()
 
 const DURATION = 7000
+
 emitter.on('handleNotification', e => {
   notification.value = e as NotificationInfo
   notify({
