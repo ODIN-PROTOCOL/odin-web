@@ -121,33 +121,26 @@ const isDataSourceOwner = computed(() => {
 })
 
 const getDataSource = async () => {
-  lockLoading()
-  try {
-    const response = await callers.getDataSource(String(route.params.id))
-    dataSourceData.value = response.dataSource
-  } catch (error) {
-    isLoadingError.value = true
-    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-  }
-  releaseLoading()
+  const response = await callers.getDataSource(String(route.params.id))
+  dataSourceData.value = response.dataSource
 }
 
 const getDataSourceCode = async () => {
+  dataSourceCode.value = await callers
+    .getDataSourceCode(String(route.params.id))
+    .then(response => response.json())
+    .then(data => data?.executable)
+}
+
+const loadData = async () => {
   lockLoading()
   try {
-    dataSourceCode.value = await callers
-      .getDataSourceCode(String(route.params.id))
-      .then(response => response.json())
-      .then(data => data?.executable)
+    await Promise.all([getDataSource(), getDataSourceCode()])
   } catch (error) {
     isLoadingError.value = true
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
   releaseLoading()
-}
-
-const loadData = async () => {
-  await Promise.all([getDataSource(), getDataSourceCode()])
 }
 
 const editDataSource = async (dataSource: unknown) => {

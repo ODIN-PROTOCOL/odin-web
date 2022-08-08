@@ -130,40 +130,33 @@ const isOracleScriptOwner = computed(() => {
 })
 
 const getOracleScript = async () => {
-  lockLoading()
-  try {
-    if (Number(route.params.id) > 0) {
-      const response = await callers.getOracleScript(String(route.params.id))
-      oracleScriptData.value = response.oracleScript
-    } else {
-      throw 'Invalid Oracle Script Id'
-    }
-  } catch (error) {
-    isLoadingError.value = true
-    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  if (Number(route.params.id) > 0) {
+    const response = await callers.getOracleScript(String(route.params.id))
+    oracleScriptData.value = response.oracleScript
+  } else {
+    throw 'Invalid Oracle Script Id'
   }
-  releaseLoading()
 }
 
 const getOracleScriptCode = async () => {
+  if (oracleScriptData.value.sourceCodeUrl) {
+    await fetch(oracleScriptData.value.sourceCodeUrl).then(response => {
+      response.text().then(text => {
+        oracleScriptCode.value = text
+      })
+    })
+  }
+}
+
+const loadData = async () => {
   lockLoading()
   try {
-    if (oracleScriptData.value.sourceCodeUrl) {
-      await fetch(oracleScriptData.value.sourceCodeUrl).then(response => {
-        response.text().then(text => {
-          oracleScriptCode.value = text
-        })
-      })
-    }
+    await Promise.all([getOracleScript(), getOracleScriptCode()])
   } catch (error) {
     isLoadingError.value = true
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
   releaseLoading()
-}
-
-const loadData = async () => {
-  await Promise.all([getOracleScript(), getOracleScriptCode()])
 }
 
 const editOracleScript = async (oracleScript: OracleScript) => {
@@ -172,7 +165,6 @@ const editOracleScript = async (oracleScript: OracleScript) => {
     {
       onSubmit: async d => {
         await loadData()
-
         d.kill()
       },
     },

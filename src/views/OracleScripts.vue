@@ -199,10 +199,6 @@ const getMostRequestedOracleScripts = async () => {
   releaseLoading()
 }
 
-const loadData = async () => {
-  await Promise.all([getOracleScripts(), getMostRequestedOracleScripts()])
-}
-
 watch(
   [sortingActivitiesValue, sortingOwnersValue, oracleScriptsName],
   async () => {
@@ -219,7 +215,8 @@ const paginationHandler = async (num: number) => {
 const createOracleScript = async () => {
   await showDialogHandler(OracleScriptFormModal, {
     onSubmit: async d => {
-      await loadData()
+      await getOracleScripts()
+      await getMostRequestedOracleScripts()
       d.kill()
     },
   })
@@ -230,15 +227,18 @@ const editOracleScript = async (oracleScript: OracleScript) => {
     OracleScriptFormModal,
     {
       onSubmit: async d => {
-        await loadData()
+        await getOracleScripts()
+        await getMostRequestedOracleScripts()
         d.kill()
       },
     },
     { oracleScript },
   )
 }
+
 onMounted(async () => {
-  await loadData()
+  await getOracleScripts()
+  await getMostRequestedOracleScripts()
 })
 </script>
 
