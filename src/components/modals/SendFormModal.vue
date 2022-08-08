@@ -8,7 +8,7 @@
       <form
         class="app-form load-fog"
         :class="{ 'load-fog_show': isLoading }"
-        @submit.prevent
+        @submit.prevent="submit"
       >
         <div class="app-form__main">
           <div class="send-form-modal__info-balance">
@@ -42,11 +42,11 @@
               name="send-receiver"
               type="text"
               placeholder="Receiver's address"
-              v-model="form.receiver"
+              v-model="flattenForm.receiver"
               :disabled="isLoading"
             />
-            <p v-if="form.receiverErr" class="app-form__field-err">
-              {{ form.receiverErr }}
+            <p v-if="flattenForm.receiverErr" class="app-form__field-err">
+              {{ flattenForm.receiverErr }}
             </p>
           </div>
           <div class="app-form__field">
@@ -74,18 +74,18 @@
                 name="send-amount"
                 type="text"
                 placeholder="1"
-                v-model="form.amount"
+                v-model="flattenForm.amount"
                 :disabled="isLoading || isEmptyBalance"
               />
             </div>
             <p
-              v-if="form.amountErr || isEmptyBalance"
+              v-if="flattenForm.amountErr || isEmptyBalance"
               class="app-form__field-err"
             >
               {{
                 isEmptyBalance
                   ? 'Not enough tokens! Please make deposit'
-                  : form.amountErr
+                  : flattenForm.amountErr
               }}
             </p>
           </div>
@@ -101,9 +101,7 @@
         <div class="app-form__footer">
           <button
             class="app-btn app-btn--medium w-full"
-            type="button"
-            @click="submit()"
-            :disabled="!form.isValid || isLoading"
+            :disabled="!flattenForm.isValid || isLoading"
           >
             Send
           </button>
@@ -113,8 +111,8 @@
   </ModalBase>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, PropType, computed } from 'vue'
+<script setup lang="ts">
+import { ref, computed } from 'vue'
 import { callers } from '@/api/callers'
 import { coins } from '@cosmjs/amino'
 import { wallet } from '@/api/wallet'
@@ -127,103 +125,84 @@ import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
-import ModalBase from '@/components/modals/ModalBase.vue'
+import { ModalBase } from '@/components/modals'
 import { Coin } from '@cosmjs/amino'
-
 import { coin } from '@cosmjs/launchpad'
-import InfoIcon from '@/components/icons/InfoIcon.vue'
+import { InfoIcon } from '@/components/icons'
 
-export default defineComponent({
-  name: 'send-form-modal',
-  components: { ModalBase, VuePicker, VuePickerOption, InfoIcon },
-  props: {
-    balance: { type: Array as PropType<Coin[]>, required: true },
-  },
-  setup: function (props) {
-    const fee = ref(API_CONFIG.fee)
-    const isLoading = ref(false)
-    const onSubmit = dialogs.getHandler('onSubmit')
-    const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
-    const sendAsset = ref(COINS_LIST.ODIN)
-    const selectedBalance = computed(() => {
-      const balance = props.balance.find((item) => {
-        return item.denom === COINS_LIST.LOKI
-      })
-      return balance || coin(0, sendAsset.value)
-    })
-    const OdinBalance = computed(() => {
-      const balance = props.balance.find((item) => {
-        return item.denom === COINS_LIST.LOKI
-      })
-      return balance
-        ? convertLokiToOdin(balance.amount, { onlyNumber: true })
-        : 0
-    })
-    const geoBalance = computed(() => {
-      const balance = props.balance.find((item) => {
-        return item.denom === COINS_LIST.GEO
-      })
-      return balance || 0
-    })
-    const isEmptyBalance = computed(() => {
-      return !Number(selectedBalance.value.amount)
-    })
+const props = defineProps<{
+  balance: Coin[]
+}>()
 
-    let form = useForm({
-      receiver: [
-        '',
-        validators.required,
-        validators.withOutSpaceAtStart,
-        validators.maxCharacters(128),
-        validators.odinAddress,
-        validators.exceptValue(
-          wallet.account.address,
-          'It is not possible to send tokens to yourself',
-        ),
-      ],
-      amount: [
-        '',
-        validators.required,
-        validators.number,
-        validators.sixDecimalNumber,
-        ...validators.num(
-          0.000001,
-          Number(convertLokiToOdin(selectedBalance.value.amount)),
-        ),
-        validators.maxCharacters(32),
-      ],
-    })
-
-    const submit = async () => {
-      isLoading.value = true
-      try {
-        await callers.createSend({
-          fromAddress: wallet.account.address,
-          toAddress: form.receiver.val(),
-          amount: coins(convertOdinToLoki(form.amount.val()), COINS_LIST.LOKI),
-        })
-        onSubmit()
-        handleNotificationInfo('Successfully sent', TYPE_NOTIFICATION.success)
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      isLoading.value = false
-    }
-
-    return {
-      COINS_LIST,
-      form: form.flatten(),
-      sendAsset,
-      fee,
-      isEmptyBalance,
-      isLoading,
-      submit,
-      onClose,
-      geoBalance,
-      OdinBalance,
-    }
-  },
+const fee = ref(API_CONFIG.fee)
+const isLoading = ref(false)
+const onSubmit = dialogs.getHandler('onSubmit')
+const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
+const sendAsset = ref(COINS_LIST.ODIN)
+const selectedBalance = computed(() => {
+  const balance = props.balance.find(item => {
+    return item.denom === COINS_LIST.LOKI
+  })
+  return balance || coin(0, sendAsset.value)
 })
+const OdinBalance = computed(() => {
+  const balance = props.balance.find(item => {
+    return item.denom === COINS_LIST.LOKI
+  })
+  return balance ? convertLokiToOdin(balance.amount, { onlyNumber: true }) : 0
+})
+const geoBalance = computed(() => {
+  const balance = props.balance.find(item => {
+    return item.denom === COINS_LIST.GEO
+  })
+  return balance || 0
+})
+const isEmptyBalance = computed(() => {
+  return !Number(selectedBalance.value.amount)
+})
+
+let form = useForm({
+  receiver: [
+    '',
+    validators.required,
+    validators.withOutSpaceAtStart,
+    validators.maxCharacters(128),
+    validators.odinAddress,
+    validators.exceptValue(
+      wallet.account.address,
+      'It is not possible to send tokens to yourself',
+    ),
+  ],
+  amount: [
+    '',
+    validators.required,
+    validators.number,
+    validators.sixDecimalNumber,
+    ...validators.num(
+      0.000001,
+      Number(convertLokiToOdin(selectedBalance.value.amount)),
+    ),
+    validators.maxCharacters(32),
+  ],
+})
+
+const flattenForm = form.flatten()
+
+const submit = async () => {
+  isLoading.value = true
+  try {
+    await callers.createSend({
+      fromAddress: wallet.account.address,
+      toAddress: form.receiver.val(),
+      amount: coins(convertOdinToLoki(form.amount.val()), COINS_LIST.LOKI),
+    })
+    onSubmit()
+    handleNotificationInfo('Successfully sent', TYPE_NOTIFICATION.success)
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  isLoading.value = false
+}
 </script>
 
 <style lang="scss" scoped>

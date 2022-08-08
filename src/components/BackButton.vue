@@ -10,24 +10,26 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import { Router, useRouter } from 'vue-router'
+import { ROUTE_NAMES } from '@/enums'
 
-export default defineComponent({
-  props: {
-    text: { type: String, required: true },
-  },
-  setup: function () {
-    const router: Router = useRouter()
+withDefaults(
+  defineProps<{
+    text?: string
+  }>(),
+  { text: '' },
+)
 
-    const routerBack = (): void => {
-      router.back()
-    }
+const router: Router = useRouter()
 
-    return { routerBack }
-  },
-})
+const routerBack = (): void => {
+  if (router.options.history.state.back) {
+    router.back()
+  } else {
+    router.push({ name: ROUTE_NAMES.app })
+  }
+}
 </script>
 
 <style lang="scss" scoped>

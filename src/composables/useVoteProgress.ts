@@ -17,11 +17,9 @@ const _loadPowerConst = async () => {
   ])
 
   const lokiSupply = supply
-    .filter((el) => el.denom === COINS_LIST.LOKI)
+    .filter(el => el.denom === COINS_LIST.LOKI)
     .reduce((acc, cur) => big.add(acc, cur.amount), big.zero)
-  const lokiPool = treasuryPool.find(
-    (el) => el.denom === COINS_LIST.LOKI
-  )?.amount
+  const lokiPool = treasuryPool.find(el => el.denom === COINS_LIST.LOKI)?.amount
 
   if (!lokiSupply || !lokiPool) {
     _powerConst.value = null
@@ -48,7 +46,7 @@ const _stopUpdater = () => {
 
 export function useVoteProgress(
   tally: Ref<TallyResult>,
-  field: keyof TallyResult
+  field: keyof TallyResult,
 ): ComputedRef<string> {
   const percentage = computed(() => {
     if (_powerConst.value === null) return 'N/A'

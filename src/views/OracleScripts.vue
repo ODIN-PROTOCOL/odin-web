@@ -22,13 +22,7 @@
 
     <div class="view-main__count-info requests__count-info">
       <h3 class="view-main__subtitle mg-b24">All oracle scripts</h3>
-      <skeleton-loader
-        v-if="isLoading"
-        :height="24"
-        rounded
-        animation="wave"
-        color="rgb(225, 229, 233)"
-      />
+      <skeleton-loader v-if="isLoading" height="24" width="150" shimmer pill />
       <div v-else class="view-main__count-info oracle-scripts__count-info">
         <p>{{ oracleScriptsCount }} Oracle Scripts found</p>
       </div>
@@ -65,7 +59,10 @@
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="item.attributes.name"
-                :to="`/oracle-scripts/${item.attributes.id}`"
+                :to="{
+                  name: $routes.oracleScriptDetails,
+                  params: { id: item.attributes.id },
+                }"
               />
             </div>
             <div class="app-table__cell">
@@ -134,139 +131,114 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, ref, watch } from 'vue'
+<script setup lang="ts">
+import { onMounted, ref, watch } from 'vue'
 import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
-
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
+import { OracleScript } from '@provider/codec/oracle/v1/oracle'
+import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
+import { OracleScriptFormModal } from '@/components/modals'
 import TitledLink from '@/components/TitledLink.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
-
-import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
-import OracleScriptFormModal from '@/components/modals/OracleScriptFormModal.vue'
-import { OracleScript } from '@provider/codec/oracle/v1/oracle'
-
 import TopOracleScripts from '@/components/TopOracleScripts.vue'
 import SortLine from '@/components/SortLine.vue'
-import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 
-export default defineComponent({
-  components: {
-    TitledLink,
-    AppPagination,
-    TopOracleScripts,
-    SortLine,
-    SkeletonTable,
-  },
-  setup() {
-    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 50
-    const currentPage = ref(1)
-    const totalPages = ref()
-    const oracleScriptsCount = ref(0)
-    const oracleScripts = ref()
-    const accountAddress = wallet.isEmpty ? '' : wallet.account.address
-    const mostRequestedOracleScripts = ref()
-    const oracleScriptsName = ref('')
-    const sortingActivitiesValue = ref(ACTIVITIES_SORT.latest)
-    const sortingOwnersValue = ref(OWNERS_SORT.all)
-    const headerTitles = [
-      { title: 'ID' },
-      { title: 'Oracle Script' },
-      { title: 'Description' },
-      { title: 'Timestamp' },
-    ]
-    const loadOracleScripts = async () => {
-      lockLoading()
-      try {
-        const { data, total_count } = await callers
-          .getSortedOracleScripts(
-            currentPage.value - 1,
-            ITEMS_PER_PAGE,
-            sortingActivitiesValue.value,
-            sortingOwnersValue.value,
-            oracleScriptsName.value
-          )
-          .then((response) => response.json())
-        oracleScripts.value = data
-        oracleScriptsCount.value = total_count
-        totalPages.value = Math.ceil(oracleScriptsCount.value / ITEMS_PER_PAGE)
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
-    }
-    const getMostRequestedOracleScripts = async () => {
-      lockLoading()
-      try {
-        mostRequestedOracleScripts.value = await callers
-          .getSortedOracleScripts(0, 6, 'most_requested', 'null', '')
-          .then((response) => response.json())
-          .then((data) => data.data)
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
-    }
+const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+const ITEMS_PER_PAGE = 50
+const currentPage = ref(1)
+const totalPages = ref()
+const oracleScriptsCount = ref(0)
+const oracleScripts = ref()
+const accountAddress = wallet.isEmpty ? '' : wallet.account.address
+const mostRequestedOracleScripts = ref()
+const oracleScriptsName = ref('')
+const sortingActivitiesValue = ref(ACTIVITIES_SORT.latest)
+const sortingOwnersValue = ref(OWNERS_SORT.all)
+const headerTitles = [
+  { title: 'ID' },
+  { title: 'Oracle Script' },
+  { title: 'Description' },
+  { title: 'Timestamp' },
+]
 
-    const createOracleScript = async () => {
-      await showDialogHandler(OracleScriptFormModal, {
-        onSubmit: async (d) => {
-          d.kill()
-          await loadOracleScripts()
-        },
-      })
-    }
-    watch(
-      [sortingActivitiesValue, sortingOwnersValue, oracleScriptsName],
-      async () => {
-        currentPage.value = 1
-        await loadOracleScripts()
-      }
-    )
-    const paginationHandler = (num: number) => {
-      currentPage.value = num
-      loadOracleScripts()
-    }
-    const editOracleScript = async (oracleScript: OracleScript) => {
-      await showDialogHandler(
-        OracleScriptFormModal,
-        {
-          onSubmit: async (d) => {
-            d.kill()
-            await loadOracleScripts()
-          },
-        },
-        { oracleScript }
+const getOracleScripts = async () => {
+  lockLoading()
+  try {
+    const { data, total_count } = await callers
+      .getSortedOracleScripts(
+        currentPage.value - 1,
+        ITEMS_PER_PAGE,
+        sortingActivitiesValue.value,
+        sortingOwnersValue.value,
+        oracleScriptsName.value,
       )
-    }
-    onMounted(async () => {
-      await loadOracleScripts()
-      await getMostRequestedOracleScripts()
-    })
+      .then(response => response.json())
+    oracleScripts.value = data
+    oracleScriptsCount.value = total_count
+    totalPages.value = Math.ceil(oracleScriptsCount.value / ITEMS_PER_PAGE)
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
 
-    return {
-      ITEMS_PER_PAGE,
-      currentPage,
-      isLoading,
-      oracleScriptsCount,
-      oracleScripts,
-      createOracleScript,
-      paginationHandler,
-      totalPages,
-      editOracleScript,
-      accountAddress,
+const getMostRequestedOracleScripts = async () => {
+  lockLoading()
+  try {
+    mostRequestedOracleScripts.value = await callers
+      .getSortedOracleScripts(0, 6, 'most_requested', 'null', '')
+      .then(response => response.json())
+      .then(data => data.data)
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
 
-      sortingActivitiesValue,
-      sortingOwnersValue,
-      mostRequestedOracleScripts,
-      oracleScriptsName,
-      headerTitles,
-    }
+watch(
+  [sortingActivitiesValue, sortingOwnersValue, oracleScriptsName],
+  async () => {
+    currentPage.value = 1
+    await getOracleScripts()
   },
+)
+
+const paginationHandler = async (num: number) => {
+  currentPage.value = num
+  await getOracleScripts()
+}
+
+const createOracleScript = async () => {
+  await showDialogHandler(OracleScriptFormModal, {
+    onSubmit: async d => {
+      await getOracleScripts()
+      await getMostRequestedOracleScripts()
+      d.kill()
+    },
+  })
+}
+
+const editOracleScript = async (oracleScript: OracleScript) => {
+  await showDialogHandler(
+    OracleScriptFormModal,
+    {
+      onSubmit: async d => {
+        await getOracleScripts()
+        await getMostRequestedOracleScripts()
+        d.kill()
+      },
+    },
+    { oracleScript },
+  )
+}
+
+onMounted(async () => {
+  await getOracleScripts()
+  await getMostRequestedOracleScripts()
 })
 </script>
 

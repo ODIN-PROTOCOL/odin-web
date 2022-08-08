@@ -46,7 +46,7 @@
   }
 
   &__empty-stub {
-    margin: 1.5rem 0;
+    margin: 10rem 0;
     text-align: center;
   }
 }
@@ -119,8 +119,8 @@
     minmax(10rem, 1.25fr)
     minmax(8rem, 1fr);
 }
-.requests__table-head,
-.requests__table-row {
+.requests-view__table-head,
+.requests-view__table-row {
   grid:
     auto /
     minmax(7rem, 1fr)
@@ -128,8 +128,8 @@
     minmax(8rem, 2fr)
     minmax(10rem, 2fr);
 }
-.validators__table-head,
-.validators-table-row {
+.validators-view__table-head,
+.validators-view-table-row {
   gap: 2rem;
   grid:
     auto /
@@ -141,9 +141,9 @@
     minmax(6rem, 1fr)
     minmax(24rem, 25rem);
 }
-.validators__table--unauthenticated {
-  .validators__table-head,
-  .validators-table-row {
+.validators-view__table--unauthenticated {
+  .validators-view__table-head,
+  .validators-view-table-row {
     gap: 2rem;
     grid:
       auto /
@@ -155,9 +155,9 @@
       minmax(6rem, 1fr);
   }
 }
-.validators__table--inactive {
-  .validators__table-head,
-  .validators-table-row {
+.validators-view__table--inactive {
+  .validators-view__table-head,
+  .validators-view-table-row {
     gap: 2rem;
     grid:
       auto /
@@ -169,9 +169,9 @@
       minmax(24rem, 25rem);
   }
 }
-.validators__table--unauthenticated-inactive {
-  .validators__table-head,
-  .validators-table-row {
+.validators-view__table--unauthenticated-inactive {
+  .validators-view__table-head,
+  .validators-view-table-row {
     gap: 2rem;
     grid:
       auto /
@@ -193,17 +193,8 @@
     minmax(10rem, 2fr)
     minmax(8rem, 2fr);
 }
-.oracle-validators__table-head,
-.oracle-validators__table-row {
-  grid:
-    auto /
-    minmax(10rem, 0.7fr)
-    minmax(10rem, 0.5fr)
-    minmax(10rem, 2fr)
-    minmax(10rem, 0.1fr);
-}
-.governance__table-head,
-.governance__table-row {
+.governance-view__table-head,
+.governance-view__table-row {
   grid:
     auto /
     minmax(3rem, 5rem)
@@ -235,20 +226,18 @@
     minmax(8rem, 2fr);
 }
 @include respond-to(tablet) {
-  .validators__table--unauthenticated,
-  .validators__table--inactive,
-  .validators__table--unauthenticated-inactive {
-    .validators__table-head,
-    .validators-table-row {
+  .validators-view__table--unauthenticated,
+  .validators-view__table--inactive,
+  .validators-view__table--unauthenticated-inactive {
+    .validators-view__table-head,
+    .validators-view-table-row {
       grid: none;
     }
   }
   .data-sources__table-row,
-  .requests__table-row,
-  .validators-table-row,
-  .oracle-scripts__table-row,
-  .oracle-validators__table-row,
-  .governance__table-row,
+  .requests-view__table-row,
+  .validators-view-table-row,
+  .oracle-scripts__table-row .governance-view__table-row,
   .requests-oracle-script__row,
   .requests-data-source__row,
   .delegators-table__table-row {

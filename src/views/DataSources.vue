@@ -13,13 +13,7 @@
     </div>
 
     <div class="data-sources__count-info">
-      <skeleton-loader
-        v-if="isLoading"
-        :height="24"
-        rounded
-        animation="wave"
-        color="rgb(225, 229, 233)"
-      />
+      <skeleton-loader v-if="isLoading" height="24" width="150" shimmer pill />
       <p v-else>{{ dataSourcesCount }} Data Sources found</p>
     </div>
 
@@ -51,7 +45,10 @@
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="`#${item.id} ${item.name}`"
-                :to="`/data-sources/${item.id}`"
+                :to="{
+                  name: $routes.dataSourceDetails,
+                  params: { id: item.id },
+                }"
               />
             </div>
             <div class="app-table__cell">
@@ -139,9 +136,9 @@ import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import { ACTIVITIES_SORT, OWNERS_SORT } from '@/helpers/sortingHelpers'
 import { convertLokiToOdin } from '@/helpers/converters'
 import { wallet } from '@/api/wallet'
+import { DataSourceFormModal } from '@/components/modals'
 import TitledLink from '@/components/TitledLink.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
-import DataSourceFormModal from '@/components/modals/DataSourceFormModal.vue'
 import SortLine from '@/components/SortLine.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 
@@ -157,7 +154,6 @@ const sortingActivitiesValue = ref(ACTIVITIES_SORT.latest)
 const sortingOwnersValue = ref(OWNERS_SORT.all)
 const dataSourceName = ref('')
 const headerTitles = [
-  { title: 'ID' },
   { title: 'Data Source' },
   { title: 'Description' },
   { title: 'Price' },
@@ -165,7 +161,7 @@ const headerTitles = [
   { title: 'Timestamp' },
 ]
 
-const loadDataSources = async () => {
+const getDataSources = async () => {
   lockLoading()
   try {
     dataSources.value = []
@@ -177,13 +173,18 @@ const loadDataSources = async () => {
         sortingOwnersValue.value,
         dataSourceName.value,
       )
-      .then((response) => response.json())
-    dataSources.value = await Promise.all(
-      data.map(async (item: { attributes: { id: number } }) => {
-        const resp = await callers.getDataSourceRequestCount(item.attributes.id)
-        return { ...item.attributes, requestCount: resp.data.total_count }
-      }),
-    )
+      .then(response => response.json())
+
+    if (data) {
+      dataSources.value = await Promise.all(
+        data?.map(async (item: { attributes: { id: number } }) => {
+          const resp = await callers.getDataSourceRequestCount(
+            item.attributes.id,
+          )
+          return { ...item.attributes, requestCount: resp.data.total_count }
+        }),
+      )
+    }
     dataSourcesCount.value = total_count
     totalPages.value = Math.ceil(dataSourcesCount.value / ITEMS_PER_PAGE)
   } catch (error) {
@@ -194,8 +195,8 @@ const loadDataSources = async () => {
 
 const createDataSource = async () => {
   await showDialogHandler(DataSourceFormModal, {
-    onSubmit: async (d) => {
-      await loadDataSources()
+    onSubmit: async d => {
+      await getDataSources()
       d.kill()
     },
   })
@@ -205,8 +206,8 @@ const editDataSource = async (dataSource: unknown) => {
   await showDialogHandler(
     DataSourceFormModal,
     {
-      onSubmit: async (d) => {
-        await loadDataSources()
+      onSubmit: async d => {
+        await getDataSources()
         d.kill()
       },
     },
@@ -216,19 +217,19 @@ const editDataSource = async (dataSource: unknown) => {
 
 const paginationHandler = (num: number) => {
   currentPage.value = num
-  loadDataSources()
+  getDataSources()
 }
 
 watch(
   [sortingActivitiesValue, sortingOwnersValue, dataSourceName, accountAddress],
   async () => {
     currentPage.value = 1
-    await loadDataSources()
+    await getDataSources()
   },
 )
 
 onMounted(async () => {
-  await loadDataSources()
+  await getDataSources()
 })
 </script>
 

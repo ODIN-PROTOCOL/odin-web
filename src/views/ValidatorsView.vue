@@ -1,16 +1,16 @@
 <template>
   <div
-    class="view-main validators"
+    class="view-main validators-view"
     :class="{
-      'validators--large-padding': isDelegator,
+      'validators-view--large-padding': isDelegator,
     }"
   >
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">All Validators</h2>
-      <div class="validators__title-btn-wrraper">
+      <div class="validators-view__title-btn-wrraper">
         <button
           v-if="isDelegator && delegations && validators"
-          class="validators__title-btn app-btn app-btn--medium"
+          class="validators-view__title-btn app-btn app-btn--medium"
           type="button"
           @click="stakeTransfer"
         >
@@ -18,7 +18,7 @@
         </button>
         <button
           v-if="isDelegator && delegations && validators"
-          class="validators__title-btn--white app-btn app-btn--medium"
+          class="validators-view__title-btn--white app-btn app-btn--medium"
           type="button"
           @click="claimAllRewards"
         >
@@ -26,22 +26,16 @@
         </button>
       </div>
     </div>
-    <div class="validators__count-info">
-      <skeleton-loader
-        v-if="isLoading"
-        :height="24"
-        rounded
-        animation="wave"
-        color="rgb(225, 229, 233)"
-      />
+    <div class="validators-view__count-info">
+      <skeleton-loader v-if="isLoading" height="24" width="150" shimmer pill />
       <p v-else>{{ validatorsCount }} validators found</p>
     </div>
-    <div class="validators__filter">
-      <div class="validators__tabs">
+    <div class="validators-view__filter">
+      <div class="validators-view__tabs">
         <button
           v-if="isDisabledDelegationsTab"
           @click="selectTab(myValidatorsTitle)"
-          class="validators__tab"
+          class="validators-view__tab"
           :class="{
             selected: myValidatorsTitle === tabStatus,
           }"
@@ -50,7 +44,7 @@
         </button>
         <button
           @click="selectTab(activeValidatorsTitle)"
-          class="validators__tab"
+          class="validators-view__tab"
           :class="{
             selected: activeValidatorsTitle === tabStatus,
           }"
@@ -59,7 +53,7 @@
         </button>
         <button
           @click="selectTab(inactiveValidatorsTitle)"
-          class="validators__tab"
+          class="validators-view__tab"
           :class="{
             selected: inactiveValidatorsTitle === tabStatus,
           }"
@@ -67,50 +61,51 @@
           {{ inactiveValidatorsTitle }}
         </button>
       </div>
-      <div class="validators__filter-search">
-        <div class="validators__filter-search-input-wrapper">
+      <div class="validators-view__filter-search">
+        <div class="validators-view__filter-search-input-wrapper">
           <InputField
             v-model="searchValue"
             placeholder="Search validator"
-            class="validators__filter-search-input"
-            @keydown.enter="filterValidators()"
+            class="validators-view__filter-search-input"
           />
           <template v-if="searchValue">
-            <button @click="clearText()" class="validators-search__clear">
-              <CancelIcon className="validators__filter-search-cancel-button" />
+            <button @click="clearText()" class="validators-view-search__clear">
+              <CancelIcon
+                className="validators-view__filter-search-cancel-button"
+              />
             </button>
           </template>
         </div>
         <button
-          class="validators__filter-search-button"
+          class="validators-view__filter-search-button"
           @click="filterValidators()"
         >
           <SearchIcon />
         </button>
       </div>
     </div>
-    <div class="app-table validators__table" :class="validatorTableClass">
-      <div class="app-table__head validators__table-head">
-        <span class="validators__table-head-item">Rank</span>
-        <span class="validators__table-head-item">Validator</span>
-        <span class="validators__table-head-item">Delegated</span>
-        <span class="validators__table-head-item">Commission</span>
+    <div class="app-table validators-view__table" :class="validatorTableClass">
+      <div class="app-table__head validators-view__table-head">
+        <span class="validators-view__table-head-item">Rank</span>
+        <span class="validators-view__table-head-item">Validator</span>
+        <span class="validators-view__table-head-item">Delegated</span>
+        <span class="validators-view__table-head-item">Commission</span>
         <span
           v-if="tabStatus !== inactiveValidatorsTitle"
-          class="validators__table-head-item"
+          class="validators-view__table-head-item"
         >
           Uptime
         </span>
         <span
-          class="validators__table-head-item validators__table-head-item--center"
+          class="validators-view__table-head-item validators-view__table-head-item--center"
           >Status</span
         >
-        <span class="validators__table-head-item"></span>
+        <span class="validators-view__table-head-item"></span>
       </div>
       <div class="app-table__body">
         <template v-if="filteredValidators?.length && activeValidators.length">
           <template v-if="windowInnerWidth > 768">
-            <ValidatorsTableRow
+            <ValidatorsViewTableRow
               v-for="validator in filteredValidators"
               :key="validator.operatorAddress"
               @selectedBtn="openModal"
@@ -122,7 +117,7 @@
             />
           </template>
           <template v-else>
-            <ValidatorsTableRowMobile
+            <ValidatorsViewTableRowMobile
               v-for="validator in filteredValidators"
               :key="validator.operatorAddress"
               @selectedBtn="openModal"
@@ -139,7 +134,7 @@
           <SkeletonTable
             v-if="isLoading || isValidatorsResponseLoading"
             :header-titles="headerTitles"
-            class-string="validators-table-row"
+            class-string="validators-view-table-row"
           />
           <div v-else class="app-table__empty-stub">
             <p class="empty mg-t32">No items yet</p>
@@ -159,7 +154,7 @@
 
     <div
       v-if="accountAddress"
-      class="view-main__mobile-activities validators__mobile-activities"
+      class="view-main__mobile-activities validators-view__mobile-activities"
     >
       <button
         v-if="isDelegator && delegations && validators"
@@ -171,7 +166,7 @@
       </button>
       <button
         v-if="isDelegator && delegations && validators"
-        class="validators__title-btn--white app-btn w-full app-btn--medium"
+        class="validators-view__title-btn--white app-btn w-full app-btn--medium"
         type="button"
         @click="claimAllRewards"
       >
@@ -187,27 +182,28 @@ import { callers } from '@/api/callers'
 import { wallet } from '@/api/wallet'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
-import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
-
 import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
-import WithdrawRewardsFormModal from '@/components/modals/WithdrawRewardsFormModal.vue'
-import DelegateFormModal from '@/components/modals/DelegateFormModal.vue'
-import UndelegateFormModal from '@/components/modals/UndelegateFormModal.vue'
-import StakeTransferFormModal from '@/components/modals/StakeTransferFormModal.vue'
-import ClaimAllRewardsFormModal from '@/components/modals/ClaimAllRewardsFormModal.vue'
-import RedelegateFormModal from '@/components/modals/RedelegateFormModal.vue'
-import { isActiveValidator } from '@/helpers/validatorHelpers'
-import InputField from '@/components/fields/InputField.vue'
-import SearchIcon from '@/components/icons/SearchIcon.vue'
-import CancelIcon from '@/components/icons/CancelIcon.vue'
-import SkeletonTable from '@/components/SkeletonTable.vue'
-import ValidatorsTableRowMobile from '@/components/ValidatorsTableRowMobile.vue'
-import ValidatorsTableRow from '@/components/ValidatorsTableRow.vue'
+import {
+  ClaimRewardsFormModal,
+  RedelegateFormModal,
+  StakeTransferFormModal,
+  UndelegateFormModal,
+  ClaimAllRewardsFormModal,
+  DelegateFormModal,
+} from '@/components/modals'
 import { useQuery } from '@vue/apollo-composable'
 import { ValidatorsQuery } from '@/graphql/queries'
 import { ValidatorsResponse, ValidatorsInfo } from '@/graphql/types'
 import { ValidatorInfoModify } from '@/helpers/validatorHelpers'
+import { isActiveValidator } from '@/helpers/validatorHelpers'
+import { SearchIcon, CancelIcon } from '@/components/icons'
+
+import InputField from '@/components/fields/InputField.vue'
+import SkeletonTable from '@/components/SkeletonTable.vue'
+import ValidatorsViewTableRowMobile from '@/components/ValidatorsViewTableRowMobile.vue'
+import ValidatorsViewTableRow from '@/components/ValidatorsViewTableRow.vue'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const ITEMS_PER_PAGE = 50
@@ -287,11 +283,11 @@ const validatorTableClass = computed(() => {
     tabStatus.value === inactiveValidatorsTitle.value &&
     !accountAddress.value
   ) {
-    return 'validators__table--unauthenticated-inactive'
+    return 'validators-view__table--unauthenticated-inactive'
   } else if (tabStatus.value === inactiveValidatorsTitle.value) {
-    return 'validators__table--inactive'
+    return 'validators-view__table--inactive'
   } else if (!accountAddress.value) {
-    return 'validators__table--unauthenticated'
+    return 'validators-view__table--unauthenticated'
   } else {
     return ''
   }
@@ -359,7 +355,7 @@ const getValidators = async () => {
               signedBlocks.value) *
             100,
           isActive: await isActiveValidator(item.info?.operatorAddress).then(
-            (req) => req,
+            req => req,
           ),
         }
       }),
@@ -374,7 +370,7 @@ const getValidators = async () => {
               signedBlocks.value) *
             100,
           isActive: await isActiveValidator(item.info?.operatorAddress).then(
-            (req) => req,
+            req => req,
           ),
         }
       }),
@@ -398,8 +394,8 @@ const getValidators = async () => {
 const filterValidators = (newPage = 1) => {
   let tempArr = validators.value
   if (searchValue.value.trim()) {
-    tempArr = tempArr.filter((item: { description: { moniker: string } }) =>
-      item.description.moniker
+    tempArr = tempArr.filter((item: ValidatorsInfo) =>
+      item.descriptions[0].moniker
         .toLowerCase()
         .includes(searchValue.value.toLowerCase()),
     )
@@ -421,7 +417,7 @@ const paginationHandler = (num: number) => {
   filterValidators(num)
 }
 
-const selectTab = async (title: string) => {
+const selectTab = (title: string) => {
   if (title !== tabStatus.value) {
     tabStatus.value = title
     if (tabStatus.value === activeValidatorsTitle.value) {
@@ -431,15 +427,15 @@ const selectTab = async (title: string) => {
     } else if (tabStatus.value === myValidatorsTitle.value) {
       validators.value = [...myDelegationsValitors.value]
     }
-    filterValidators(1)
+    filterValidators()
   }
 }
 
 const loadData = async () => {
   lockLoading()
   try {
-    await getValidators()
     await getDelegations()
+    await getValidators()
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
@@ -448,7 +444,7 @@ const loadData = async () => {
 
 const claimAllRewards = async () => {
   await showDialogHandler(ClaimAllRewardsFormModal, {
-    onSubmit: async (d) => {
+    onSubmit: async d => {
       d.kill()
       await loadData()
     },
@@ -458,9 +454,9 @@ const claimAllRewards = async () => {
 const withdrawRewards = async (validator: ValidatorInfoModify) => {
   if (!delegations.value[validator.info.operatorAddress]) return
   await showDialogHandler(
-    WithdrawRewardsFormModal,
+    ClaimRewardsFormModal,
     {
-      onSubmit: async (d) => {
+      onSubmit: async d => {
         d.kill()
         await loadData()
       },
@@ -473,7 +469,7 @@ const delegate = async (validator: ValidatorInfoModify) => {
   await showDialogHandler(
     DelegateFormModal,
     {
-      onSubmit: async (d) => {
+      onSubmit: async d => {
         d.kill()
         await loadData()
       },
@@ -489,7 +485,7 @@ const redelegate = async (validator: ValidatorInfoModify) => {
   await showDialogHandler(
     RedelegateFormModal,
     {
-      onSubmit: async (d) => {
+      onSubmit: async d => {
         d.kill()
         await loadData()
       },
@@ -506,7 +502,7 @@ const undelegate = async (validator: ValidatorInfoModify) => {
   await showDialogHandler(
     UndelegateFormModal,
     {
-      onSubmit: async (d) => {
+      onSubmit: async d => {
         d.kill()
         await loadData()
       },
@@ -523,20 +519,27 @@ const stakeTransfer = async () => {
   await showDialogHandler(
     StakeTransferFormModal,
     {
-      onSubmit: async (d) => {
+      onSubmit: async d => {
         d.kill()
         await loadData()
       },
     },
     {
-      validators: allValitors.value,
+      activeValidators: activeValidators.value,
       delegation: delegations.value,
+      allValidators: allValitors.value,
     },
   )
 }
+
 const clearText = (): void => {
   searchValue.value = ''
 }
+
+watch([searchValue], async () => {
+  filterValidators()
+})
+
 const openModal = (event: { typeBtn: string; validator: ValidatorsInfo }) => {
   if (event.typeBtn === 'Delegate') {
     delegate(event.validator)
@@ -558,16 +561,16 @@ onUnmounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-.validators {
+.validators-view {
   padding-bottom: 10rem;
 }
 
-.validators__title-btn-wrraper {
+.validators-view__title-btn-wrraper {
   display: flex;
   flex-direction: row-reverse;
   gap: 2.4rem;
 }
-.validators__title-activities {
+.validators-view__title-activities {
   display: flex;
   flex-direction: row-reverse;
   align-items: flex-start;
@@ -577,24 +580,24 @@ onUnmounted(async () => {
   }
 }
 
-.validators__count-info {
+.validators-view__count-info {
   margin-bottom: 3.2rem;
 }
 
-.validators__table-head-item--center {
+.validators-view__table-head-item--center {
   text-align: center;
 }
-.validators__table-head-item--end {
+.validators-view__table-head-item--end {
   text-align: end;
 }
 
-.validators__mobile-activities {
+.validators-view__mobile-activities {
   & > *:not(:last-child) {
     margin-bottom: 0.8rem;
   }
 }
 
-.validators__filter-search {
+.validators-view__filter-search {
   display: flex;
   align-items: center;
   border-bottom: 0.1rem solid var(--clr__input-border);
@@ -618,16 +621,17 @@ onUnmounted(async () => {
     border-color: var(--clr__input-border);
     color: var(--clr__input-border);
   }
-  svg.validators__filter-search-cancel-button {
+  svg.validators-view__filter-search-cancel-button {
     fill: var(--clr__text-muted);
   }
 }
-.validators__filter-search-input-wrapper {
+.validators-view__filter-search-input-wrapper {
   position: relative;
   z-index: 0;
 }
-.validators__filter-search-input {
+.validators-view__filter-search-input {
   border: none;
+  padding-right: 2rem;
   &:focus::-webkit-input-placeholder {
     color: transparent;
   }
@@ -641,7 +645,7 @@ onUnmounted(async () => {
     border: none;
   }
 }
-.validators__filter-search-button {
+.validators-view__filter-search-button {
   position: relative;
   width: 4.8rem;
   height: 4.8rem;
@@ -650,13 +654,13 @@ onUnmounted(async () => {
   align-items: center;
   cursor: pointer;
 }
-.validators__filter {
+.validators-view__filter {
   display: flex;
   justify-content: space-between;
   margin-bottom: 2.4rem;
   align-items: center;
 }
-.validators__title-btn {
+.validators-view__title-btn {
   &--white {
     background: var(--clr__main-bg);
     color: var(--clr__action);
@@ -669,14 +673,14 @@ onUnmounted(async () => {
     }
   }
 }
-.validators__tabs {
+.validators-view__tabs {
   display: flex;
   padding: 0;
   margin: 0 0 2.4rem 0;
   list-style: none;
   overflow: auto;
 }
-.validators__tab {
+.validators-view__tab {
   padding: 1.2rem;
   font-size: 2rem;
   white-space: nowrap;
@@ -687,7 +691,7 @@ onUnmounted(async () => {
     border-bottom: 0.2rem solid var(--clr__action);
   }
 }
-.validators-search__clear {
+.validators-view-search__clear {
   overflow: visible;
   position: absolute;
   right: 0;
@@ -695,36 +699,36 @@ onUnmounted(async () => {
 }
 
 @include respond-to(medium) {
-  .validators__table-head,
-  .validators__table-row {
+  .validators-view__table-head,
+  .validators-view__table-row {
     gap: 1.6rem;
   }
 }
 @include respond-to(tablet) {
-  .validators--large-padding {
+  .validators-view--large-padding {
     padding-bottom: 20rem;
   }
 
-  .validators__count-info {
+  .validators-view__count-info {
     margin-bottom: 0;
   }
 
-  .validators__title-btn-wrraper {
+  .validators-view__title-btn-wrraper {
     display: none;
   }
 
-  .validators__filter {
+  .validators-view__filter {
     margin-bottom: 0;
     flex-direction: column;
     align-items: stretch;
   }
-  .validators__filter-search {
+  .validators-view__filter-search {
     margin-bottom: 1.6rem;
   }
-  .validators__filter-search-input-wrapper {
+  .validators-view__filter-search-input-wrapper {
     width: 100%;
   }
-  .validators__filter-search-input {
+  .validators-view__filter-search-input {
     width: 100%;
   }
 }

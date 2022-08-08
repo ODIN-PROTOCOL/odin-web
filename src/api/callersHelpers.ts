@@ -3,10 +3,10 @@ import { AnyFn, AnyObj, Unpacked } from '@/shared-types'
 export function mapResponse<
   Caller extends AnyFn,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Mapper extends (response: Unpacked<ReturnType<Caller>>) => any
+  Mapper extends (response: Unpacked<ReturnType<Caller>>) => any,
 >(
   caller: Caller,
-  mapper: Mapper
+  mapper: Mapper,
 ): (...args: Parameters<Caller>) => Promise<ReturnType<Mapper>> {
   return async (...args: Parameters<Caller>) => {
     const res = (await caller(...args)) as Unpacked<ReturnType<Caller>>

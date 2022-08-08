@@ -6,3 +6,4 @@ declare module '*.vue' {
 }
 
 declare const global: unknown | undefined
+declare module 'vue3-markdown-it'

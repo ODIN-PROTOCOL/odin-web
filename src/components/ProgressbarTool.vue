@@ -21,28 +21,22 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, toRef, computed } from 'vue'
+<script setup lang="ts">
+import { computed } from 'vue'
+const props = withDefaults(
+  defineProps<{
+    min: number
+    max: number
+    current: number
+    isForValidators?: boolean
+  }>(),
+  { isForValidators: false },
+)
 
-export default defineComponent({
-  props: {
-    min: { type: Number, required: true },
-    max: { type: Number, required: true },
-    current: { type: Number, required: true },
-    isForValidators: { type: Boolean, default: false },
-  },
-  setup: function (props) {
-    const _max = toRef(props, 'max')
-    const _current = toRef(props, 'current')
-
-    const progress = computed(() => {
-      if (_current.value >= _max.value) return 100
-      if (_current.value === 0) return 5
-
-      return Math.round((_current.value / _max.value) * 100)
-    })
-    return { progress }
-  },
+const progress = computed(() => {
+  if (props.current >= props.max) return 100
+  if (props.current <= props.min) return 5
+  return Math.round((props.current / props.max) * 100)
 })
 </script>
 

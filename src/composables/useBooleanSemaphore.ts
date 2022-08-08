@@ -1,7 +1,7 @@
 import { computed, ComputedRef, ref } from 'vue'
 
 export function useBooleanSemaphore(
-  initialCounter = 0
+  initialCounter = 0,
 ): [isLocked: ComputedRef<boolean>, lock: () => void, unlock: () => void] {
   const _counter = ref(initialCounter)
   const isLocked = computed(() => _counter.value !== 0)

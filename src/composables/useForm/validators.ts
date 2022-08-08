@@ -41,7 +41,6 @@ export const sixDecimalNumber: FormFieldValidator = (val: unknown) => {
 
 const INTEGER_RE = /^[0-9]+$/
 export const integer: FormFieldValidator = (val: unknown) => {
-  console.log(val, typeof val)
   if (typeof val === 'string' && !INTEGER_RE.test(val)) {
     return 'The value should be integer'
   }
@@ -170,7 +169,7 @@ export function bigMax(maximum: NumLike, suffix?: string): FormFieldValidator {
 
 export function bigMin(
   minimum: NumLike = 1,
-  suffix?: string
+  suffix?: string,
 ): FormFieldValidator {
   return (val: unknown): FormFieldValidatorResult => {
     const res = big.compare(val as NumLike, minimum)
@@ -200,7 +199,7 @@ export function valueMapper(
 
 export function exceptValue(
   exValue: string | number,
-  additionalMessage = ''
+  additionalMessage = '',
 ): FormFieldValidator {
   return (val: unknown): FormFieldValidatorResult => {
     return exValue === val ? `Invalid value! ${additionalMessage}` : null
@@ -240,7 +239,7 @@ export const odinValidator: FormFieldValidator = (val: unknown) => {
 }
 
 export function requiredIf(
-  condition: unknown | (() => unknown)
+  condition: unknown | (() => unknown),
 ): FormFieldValidator {
   return (val: unknown): FormFieldValidatorResult => {
     const cond = typeof condition === 'function' ? condition() : condition
@@ -251,7 +250,7 @@ export function requiredIf(
 
 export function shouldMatch(
   expected: unknown | (() => unknown),
-  errMsg?: string
+  errMsg?: string,
 ): FormFieldValidator {
   return (val: unknown): FormFieldValidatorResult => {
     const exp = typeof expected === 'function' ? expected() : expected

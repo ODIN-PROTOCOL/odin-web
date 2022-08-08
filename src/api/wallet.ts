@@ -45,12 +45,13 @@ export class OdinWallet {
 
   async init(walletData: { type: WalletTypes; key: string }): Promise<void> {
     if (walletData.type === WalletTypes.ODIN_WALLET) {
+      DirectSecp256k1HdWallet.fromMnemonic
       this._wallet = await DirectSecp256k1HdWallet.fromMnemonic(
         walletData.key,
         {
           hdPaths: [API_CONFIG.hdDeviation],
           prefix: 'odin',
-        }
+        },
       )
     } else if (walletData.type === WalletTypes.KEPLR_WALLET) {
       const offlineSigner =
@@ -59,7 +60,7 @@ export class OdinWallet {
           : null
       if (offlineSigner === null)
         throw new ReferenceError(
-          'Something went wrong. Error with offline signer.'
+          'Something went wrong. Error with offline signer.',
         )
       this._wallet = offlineSigner
     }
