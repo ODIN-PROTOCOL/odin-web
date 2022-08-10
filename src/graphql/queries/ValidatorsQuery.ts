@@ -48,6 +48,8 @@ export const ValidatorsQuery = gql`
       descriptions: validator_descriptions {
         moniker
         details
+        avatarUrl: avatar_url
+        website
       }
     }
   }

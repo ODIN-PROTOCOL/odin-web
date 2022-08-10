@@ -139,7 +139,7 @@ const getOracleScript = async () => {
 }
 
 const getOracleScriptCode = async () => {
-  if (oracleScriptData.value.sourceCodeUrl) {
+  if (oracleScriptData.value?.sourceCodeUrl) {
     await fetch(oracleScriptData.value.sourceCodeUrl).then(response => {
       response.text().then(text => {
         oracleScriptCode.value = text

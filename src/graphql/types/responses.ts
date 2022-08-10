@@ -47,7 +47,9 @@ export interface ValidatorsInfo {
   descriptions: [
     {
       moniker: string
-      details: string
+      details: string | null
+      website: string | null
+      avatarUrl: string | null
     },
   ]
 }

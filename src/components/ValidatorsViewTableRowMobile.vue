@@ -5,13 +5,9 @@
         <span class="validators-view-table-row-mobile__rank">{{
           validator.rank
         }}</span>
-        <TitledLink
-          class="app-table__cell-txt app-table__link"
-          :text="validator?.descriptions[0]?.moniker"
-          :to="{
-            name: $routes.validatorDetails,
-            params: { address: validator?.info.operatorAddress },
-          }"
+        <validator-name
+          :descriptions="validator?.descriptions[0]"
+          :operatorAddress="validator.info.operatorAddress"
         />
       </div>
       <div class="validators-view-table-row-mobile__show">
@@ -132,7 +128,7 @@ import {
   getValidatorStatus,
 } from '@/helpers/validatorHelpers'
 import { ArrowIcon } from '@/components/icons'
-import TitledLink from '@/components/TitledLink.vue'
+import ValidatorName from '@/components/ValidatorName.vue'
 import Progressbar from '@/components/ProgressbarTool.vue'
 import ValidatorStatus from '@/components/ValidatorStatus.vue'
 
