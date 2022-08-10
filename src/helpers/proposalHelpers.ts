@@ -10,10 +10,10 @@ import { callers } from '@/api/callers'
 import { ProposalStatus } from '@provider/codec/cosmos/gov/v1beta1/gov'
 
 export const getTransformedProposals = async (
-  proposals: ProposalDecoded[]
+  proposals: ProposalDecoded[],
 ): Promise<TransformedProposal[]> => {
   const transformedProposals = await Promise.all(
-    proposals.map(async (item) => {
+    proposals.map(async item => {
       const response = await callers.getProposer(item.proposalId)
       const proposer = await response.json()
       return {
@@ -21,7 +21,7 @@ export const getTransformedProposals = async (
         proposerAddress: proposer.result.proposer,
         humanizeStatus: proposalStatusType[item.status].name,
       }
-    })
+    }),
   )
 
   return transformedProposals
@@ -36,17 +36,17 @@ const defaultProposalsCountBlank: defaultChartDataBlank[] = [
 ]
 
 export const getProposalsCountByStatus = (
-  proposals: ProposalsStatistic
+  proposals: ProposalsStatistic,
 ): ChartDataItem[] => {
   let counts: ChartDataItem[] = [
-    ...defaultProposalsCountBlank.map((item) => ({ ...item, count: 0 })),
+    ...defaultProposalsCountBlank.map(item => ({ ...item, count: 0 })),
   ]
 
   for (const [, value] of Object.entries(proposals)) {
     counts = counts.map((c: ChartDataItem) =>
       proposalStatusType[(<never>ProposalStatus)[value.Name]].name === c.name
         ? { ...c, count: value.Count }
-        : c
+        : c,
     )
   }
 

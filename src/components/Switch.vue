@@ -1,18 +1,24 @@
 <template>
-    <div class="theme-switch-wrapper">
-      <label class="theme-switch" for="checkbox">
-            <input v-if="data.status" type="checkbox" id="checkbox" @change="toggle($event)" checked />
-            <input v-else type="checkbox" id="checkbox" @change="toggle($event)" />
-            <div class="slider round"></div>
-      </label>
-    </div>
+  <div class="theme-switch-wrapper">
+    <label class="theme-switch" for="checkbox">
+      <input
+        v-if="data.status"
+        type="checkbox"
+        id="checkbox"
+        @change="toggle($event)"
+        checked
+      />
+      <input v-else type="checkbox" id="checkbox" @change="toggle($event)" />
+      <div class="slider round"></div>
+    </label>
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, reactive } from 'vue'
+import { defineComponent, reactive } from 'vue'
 
 interface Data {
-  status: boolean;
+  status: boolean
 }
 
 export default defineComponent({
@@ -20,23 +26,22 @@ export default defineComponent({
     action: Function,
     initialState: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   setup: function (props) {
-    const data = reactive<Data>({status: props.initialState || false});
+    const data = reactive<Data>({ status: props.initialState || false })
     const toggle = (event: Event | MouseEvent) => {
-      event.preventDefault();
-      data.status = !data.status;
-      if (props.action) props.action(data.status);
-      console.log("DEBUG: Switch Toggled.");
-      return;
+      event.preventDefault()
+      data.status = !data.status
+      if (props.action) props.action(data.status)
+
+      return
     }
     return { toggle, data }
   },
-});
+})
 </script>
-
 
 <style scoped>
 .theme-switch-wrapper {
@@ -52,7 +57,7 @@ export default defineComponent({
 }
 
 .theme-switch input {
-  display:none;
+  display: none;
 }
 
 .slider {
@@ -63,17 +68,17 @@ export default defineComponent({
   position: absolute;
   right: 0;
   top: 0;
-  transition: .4s;
+  transition: 0.4s;
 }
 
 .slider:before {
   background-color: #fff;
   bottom: 4px;
-  content: "";
+  content: '';
   height: 16px;
   left: 4px;
   position: absolute;
-  transition: .4s;
+  transition: 0.4s;
   width: 16px;
 }
 
@@ -92,5 +97,4 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
-
 </style>

@@ -1,35 +1,52 @@
 <template>
   <div class="back-btn__wrapper">
     <button class="back-btn" @click.prevent="routerBack()">
-      <img :src="settings && settings.theme === 'dark' ? require('@/assets/icons/white-arrow.svg') : require('@/assets/icons/back-arrow.svg')" alt="back" />
+      <img
+        :src="
+          settings && settings.theme === 'dark'
+            ? require('@/assets/icons/white-arrow.svg')
+            : require('@/assets/icons/back-arrow.svg')
+        "
+        alt="back"
+      />
     </button>
     <button class="back-btn__mobile" @click.prevent="routerBack()">
-      <img :src="settings && settings.theme === 'dark' ? require('@/assets/icons/white-arrow-small.svg') : require('@/assets/icons/back-arrow-small.svg')" alt="back" />
+      <img
+        :src="
+          settings && settings.theme === 'dark'
+            ? require('@/assets/icons/white-arrow-small.svg')
+            : require('@/assets/icons/back-arrow-small.svg')
+        "
+        alt="back"
+      />
       <span>{{ text }}</span>
     </button>
   </div>
 </template>
 
-<script lang="ts">
-import { Settings, SettingsStateSymbol } from '@/ThemeProvider';
-import { defineComponent, inject } from 'vue'
+<script setup lang="ts">
 import { Router, useRouter } from 'vue-router'
+import { ROUTE_NAMES } from '@/enums'
+import { inject } from 'vue'
+import { Settings, SettingsStateSymbol } from '@/ThemeProvider'
 
-export default defineComponent({
-  props: {
-    text: { type: String, required: true },
-  },
-  setup: function () {
-    const router: Router = useRouter()
-    const settings: Settings | undefined = inject(SettingsStateSymbol);
+withDefaults(
+  defineProps<{
+    text?: string
+  }>(),
+  { text: '' },
+)
 
-    const routerBack = (): void => {
-      router.back()
-    }
+const router: Router = useRouter()
+const settings: Settings | undefined = inject(SettingsStateSymbol)
 
-    return { settings, routerBack }
-  },
-})
+const routerBack = (): void => {
+  if (router.options.history.state.back) {
+    router.back()
+  } else {
+    router.push({ name: ROUTE_NAMES.app })
+  }
+}
 </script>
 
 <style lang="scss" scoped>

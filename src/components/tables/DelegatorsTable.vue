@@ -55,63 +55,42 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, PropType, computed } from 'vue'
+<script setup lang="ts">
+import { ref, computed } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
-import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 
-export default defineComponent({
-  components: { AppPagination, SkeletonTable },
-  props: {
-    delegators: {
-      type: Array as PropType<DelegationResponse[]>,
-      required: true,
-    },
-    isLoading: {
-      type: Boolean,
-      required: true,
-    },
-  },
-  setup(props) {
-    const ITEMS_PER_PAGE = 5
-    const currentPage = ref(1)
-    const delegatorsCount = computed(() => {
-      return props.delegators.length
-    })
-    const totalPages = computed(() => {
-      return Math.ceil(delegatorsCount.value / ITEMS_PER_PAGE)
-    })
-    const headerTitles = [{ title: 'Delegator' }, { title: 'Stake' }]
-    const filteredDelegators = computed(() => {
-      let tempArr = props.delegators
-      if (currentPage.value === 1) {
-        return tempArr.slice(0, currentPage.value * ITEMS_PER_PAGE)
-      } else {
-        return tempArr.slice(
-          (currentPage.value - 1) * ITEMS_PER_PAGE,
-          (currentPage.value - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE
-        )
-      }
-    })
+const props = defineProps<{
+  delegators: DelegationResponse[]
+  isLoading: boolean
+}>()
 
-    const paginationHandler = (num: number) => {
-      currentPage.value = num
-    }
-
-    return {
-      API_CONFIG,
-      ITEMS_PER_PAGE,
-      currentPage,
-      totalPages,
-      delegatorsCount,
-      filteredDelegators,
-      paginationHandler,
-      headerTitles,
-    }
-  },
+const ITEMS_PER_PAGE = 5
+const currentPage = ref(1)
+const delegatorsCount = computed(() => {
+  return props.delegators.length
 })
+const totalPages = computed(() => {
+  return Math.ceil(delegatorsCount.value / ITEMS_PER_PAGE)
+})
+const headerTitles = [{ title: 'Delegator' }, { title: 'Stake' }]
+const filteredDelegators = computed(() => {
+  let tempArr = props.delegators
+  if (currentPage.value === 1) {
+    return tempArr.slice(0, currentPage.value * ITEMS_PER_PAGE)
+  } else {
+    return tempArr.slice(
+      (currentPage.value - 1) * ITEMS_PER_PAGE,
+      (currentPage.value - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE,
+    )
+  }
+})
+
+const paginationHandler = (num: number) => {
+  currentPage.value = num
+}
 </script>
 
 <style lang="scss" scoped></style>

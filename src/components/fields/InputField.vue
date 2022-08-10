@@ -13,6 +13,7 @@
     :readonly="readonly"
     :required="required"
     :disabled="disabled"
+    :value="modelValue"
     @input="inputChange($event)"
   />
 </template>

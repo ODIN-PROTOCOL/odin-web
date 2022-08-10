@@ -4,17 +4,13 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, inject } from 'vue'
+<script setup lang="ts">
+import { inject } from 'vue'
+defineProps<{
+  title: string
+}>()
 
-export default defineComponent({
-  props: { title: { type: String, requred: true } },
-  setup: function () {
-    const selectedTitle = inject('selectedTitle')
-
-    return { selectedTitle }
-  },
-})
+const selectedTitle = inject('selectedTitle')
 </script>
 
 <style lang="scss" scoped></style>

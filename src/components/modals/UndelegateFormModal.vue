@@ -1,8 +1,8 @@
 <template>
   <ModalBase
     class="undelegate-form-modal__wrapper"
+    scheme="no-margin-title"
     @close="onClose()"
-    :scheme="SCHEMES.noMarginTitle"
   >
     <template #title>
       <h3 class="app-form__title">Undelegate</h3>
@@ -12,16 +12,16 @@
       <form
         class="undelegate-form-modal app-form load-fog"
         :class="{ 'load-fog_show': isLoading }"
-        @submit.prevent
+        @submit.prevent="submit"
       >
         <div class="app-form__main">
           <div class="undelegate-form-modal__field-title app-form__field-title">
             <label class="undelegate-form-modal__field-lbl">From</label>
             <CopyText
               class="undelegate-form-modal__copy-text"
-              :text="validator.operatorAddress"
-              :title="validator.operatorAddress"
-              :displayText="$cropAddress(validator.operatorAddress)"
+              :text="validator.info.operatorAddress"
+              :title="validator.info.operatorAddress"
+              :display-text="$cropAddress(validator.info.operatorAddress)"
             />
           </div>
           <div class="undelegate-form-modal__field-wrapper">
@@ -31,9 +31,17 @@
               </label>
               <p
                 class="undelegate-form-modal__field-balance-value"
-                :title="$convertLokiToOdin(validator.minSelfDelegation)"
+                :title="
+                  $convertLokiToOdin(
+                    validator.commissions[0]?.minSelfDelegation,
+                  )
+                "
               >
-                {{ $convertLokiToOdin(validator.minSelfDelegation) }}
+                {{
+                  $convertLokiToOdin(
+                    validator.commissions[0]?.minSelfDelegation,
+                  )
+                }}
               </p>
             </div>
 
@@ -70,15 +78,15 @@
                 name="undelegate-amount"
                 type="text"
                 placeholder="1"
-                v-model="form.amount"
+                v-model="flattenForm.amount"
                 :disabled="isLoading"
               />
             </div>
             <p
-              v-if="form.amountErr"
+              v-if="flattenForm.amountErr"
               class="undelegate-form-modal__field-err app-form__field-err"
             >
-              {{ form.amountErr }}
+              {{ flattenForm.amountErr }}
             </p>
           </div>
           <div class="undelegate-form-modal__field-info">
@@ -93,9 +101,7 @@
         <div class="app-form__footer">
           <button
             class="app-btn w-full app-btn--medium"
-            type="button"
-            @click="submit()"
-            :disabled="!form.isValid || isLoading"
+            :disabled="!flattenForm.isValid || isLoading"
           >
             Undelegate
           </button>
@@ -105,92 +111,67 @@
   </ModalBase>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType, ref } from 'vue'
+<script setup lang="ts">
+import { ref } from 'vue'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
 import { COINS_LIST, START_VALUE } from '@/api/api-config'
-import { DialogHandler, dialogs } from '@/helpers/dialogs'
+import { dialogs } from '@/helpers/dialogs'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { preventIf } from '@/helpers/functions'
 import { convertLokiToOdin, convertOdinToLoki } from '@/helpers/converters'
 import { useForm, validators } from '@/composables/useForm'
-import ModalBase, { SCHEMES } from './ModalBase.vue'
-import CopyText from '@/components/CopyText.vue'
-import { ValidatorDecoded } from '@/helpers/validatorDecoders'
 import { coin } from '@cosmjs/amino'
-import { useBalances } from '@/composables/useBalances'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
-import InfoIcon from '@/components/icons/InfoIcon.vue'
+import { useBalances } from '@/composables/useBalances'
+import { ValidatorInfoModify } from '@/helpers/validatorHelpers'
+import { ModalBase } from '@/components/modals'
+import { InfoIcon } from '@/components/icons'
+import CopyText from '@/components/CopyText.vue'
 
-const UndelegateFormDialog = defineComponent({
-  props: {
-    validator: { type: Object as PropType<ValidatorDecoded>, required: true },
-    delegation: {
-      type: Object as PropType<DelegationResponse>,
-      required: true,
-    },
-  },
-  components: { ModalBase, CopyText, InfoIcon },
-  setup(props) {
-    const delegated = Number(
-      convertLokiToOdin(props.delegation.balance?.amount, { onlyNumber: true })
-    )
+const props = defineProps<{
+  validator: ValidatorInfoModify
+  delegation: DelegationResponse
+}>()
 
-    const form = useForm({
-      amount: [
-        '',
-        validators.required,
-        validators.number,
-        validators.sixDecimalNumber,
-        ...validators.num(0.000001, delegated),
-        validators.maxCharacters(32),
-      ],
-    })
-    const isLoading = ref(false)
-    const onSubmit = dialogs.getHandler('onSubmit')
+const delegated = Number(
+  convertLokiToOdin(props.delegation.balance?.amount, { onlyNumber: true }),
+)
 
-    const submit = async () => {
-      if (!form.isValid.value) return
-
-      isLoading.value = true
-      try {
-        await callers.validatorUndelegate({
-          delegatorAddress: wallet.account.address,
-          validatorAddress: props.validator.operatorAddress,
-          amount: coin(convertOdinToLoki(form.amount.val()), COINS_LIST.LOKI),
-        })
-        await useBalances().load()
-        onSubmit()
-        handleNotificationInfo(
-          'Successfully undelegated',
-          TYPE_NOTIFICATION.success
-        )
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      isLoading.value = false
-    }
-
-    return {
-      form: form.flatten(),
-      isLoading,
-      submit,
-      onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
-      START_VALUE,
-      SCHEMES,
-    }
-  },
+const form = useForm({
+  amount: [
+    '',
+    validators.required,
+    validators.number,
+    validators.sixDecimalNumber,
+    ...validators.num(0.000001, delegated),
+    validators.maxCharacters(32),
+  ],
 })
-export default UndelegateFormDialog
-export function showUndelegateFormDialog(
-  callbacks: {
-    onSubmit?: DialogHandler
-    onClose?: DialogHandler
-  },
-  props: { validator: ValidatorDecoded; delegation: DelegationResponse }
-): Promise<unknown | null> {
-  return dialogs.show(UndelegateFormDialog, callbacks, { props })
+const isLoading = ref(false)
+const flattenForm = form.flatten()
+const onSubmit = dialogs.getHandler('onSubmit')
+const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
+const submit = async () => {
+  if (!form.isValid.value) return
+
+  isLoading.value = true
+  try {
+    await callers.validatorUndelegate({
+      delegatorAddress: wallet.account.address,
+      validatorAddress: props.validator.info.operatorAddress,
+      amount: coin(convertOdinToLoki(form.amount.val()), COINS_LIST.LOKI),
+    })
+    await useBalances().load()
+    onSubmit()
+    handleNotificationInfo(
+      'Successfully undelegated',
+      TYPE_NOTIFICATION.success,
+    )
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  isLoading.value = false
 }
 </script>
 

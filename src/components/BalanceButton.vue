@@ -1,18 +1,11 @@
 <template>
-  <router-link class="balance-button" :to="{ name: 'Wallet' }">
+  <router-link class="balance-button" :to="{ name: $routes.wallet }">
     <WalletIcon />
   </router-link>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-import WalletIcon from '@/components/icons/WalletIcon.vue'
-
-export default defineComponent({
-  components: {
-    WalletIcon,
-  },
-})
+<script setup lang="ts">
+import { WalletIcon } from '@/components/icons'
 </script>
 
 <style lang="scss" scoped>
@@ -43,7 +36,7 @@ export default defineComponent({
   }
 }
 body.dark .balance-button {
-    background: var(--d-clr__btn-normal);
+  background: var(--d-clr__btn-normal);
   &:hover {
     background: var(--d-clr__btn-hover);
   }

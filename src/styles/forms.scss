@@ -45,7 +45,7 @@
       ._vue-picker {
         padding-left: 1rem;
       }
-  }
+    }
   }
   &__field {
     &--wait {
@@ -153,10 +153,10 @@
   &__footer {
     display: flex;
     margin-block-start: 2.4rem;
-    gap: 2.4rem;  
+    gap: 2.4rem;
     padding-right: 1rem;
     @include respond-to(tablet) {
-      gap: 1.6rem;  
+      gap: 1.6rem;
     }
   }
 }

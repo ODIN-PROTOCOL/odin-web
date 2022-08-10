@@ -18,7 +18,10 @@
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="`#${item.id}`"
-                :to="`/requests/${item.id}`"
+                :to="{
+                  name: $routes.requestDetails,
+                  params: { id: item.id },
+                }"
               />
             </div>
             <div class="app-table__cell">
@@ -37,7 +40,7 @@
               <span>{{
                 $fDate(
                   new Date(item.attributes.timestamp * 1000),
-                  'HH:mm dd.MM.yy'
+                  'HH:mm dd.MM.yy',
                 )
               }}</span>
             </div>
@@ -67,76 +70,56 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue'
-import { toHex } from '@cosmjs/encoding'
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
 import { API_CONFIG } from '@/api/api-config'
-import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import TitledLink from '@/components/TitledLink.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 
-export default defineComponent({
-  components: { AppPagination, TitledLink, SkeletonTable },
-  props: {
-    oracleScriptId: { type: String, required: true },
-  },
-  setup: function (props) {
-    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+const props = defineProps<{
+  oracleScriptId: string
+}>()
 
-    const ITEMS_PER_PAGE = 5
-    const currentPage = ref(1)
-    const totalPages = ref(0)
-    const requests = ref()
-    const requestsCount = ref()
-    const headerTitles = [
-      { title: 'Request ID' },
-      { title: 'Transaction Hash' },
-      { title: 'Timestamp' },
-    ]
-    const getOracleScriptRequests = async () => {
-      lockLoading()
-      try {
-        requests.value = []
-        const response = await callers
-          .getOracleScriptRequests(
-            props.oracleScriptId,
-            currentPage.value - 1,
-            ITEMS_PER_PAGE
-          )
-          .then((response) => response.json())
-          .then((data) => data)
-        requests.value = response.data
-        requestsCount.value = response.total_count || 0
-        totalPages.value = Math.ceil(requestsCount.value / ITEMS_PER_PAGE)
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
-    }
-    const getRequestItemTxHash = (index: number) => {
-      return requests.value[index]?.attributes?.tx_hash.split('0x')[1] || ''
-    }
-    onMounted(async () => {
-      await getOracleScriptRequests()
-    })
-
-    return {
-      isLoading,
-      API_CONFIG,
-      ITEMS_PER_PAGE,
-      currentPage,
-      totalPages,
-      requestsCount,
-      requests,
-      toHex,
-      getOracleScriptRequests,
-      getRequestItemTxHash,
-      headerTitles,
-    }
-  },
+const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+const ITEMS_PER_PAGE = 5
+const currentPage = ref(1)
+const totalPages = ref(0)
+const requests = ref()
+const requestsCount = ref()
+const headerTitles = [
+  { title: 'Request ID' },
+  { title: 'Transaction hash' },
+  { title: 'Timestamp' },
+]
+const getOracleScriptRequests = async () => {
+  lockLoading()
+  try {
+    requests.value = []
+    const response = await callers
+      .getOracleScriptRequests(
+        props.oracleScriptId,
+        currentPage.value - 1,
+        ITEMS_PER_PAGE,
+      )
+      .then(response => response.json())
+      .then(data => data)
+    requests.value = response.data
+    requestsCount.value = response.total_count || 0
+    totalPages.value = Math.ceil(requestsCount.value / ITEMS_PER_PAGE)
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
+const getRequestItemTxHash = (index: number) => {
+  return requests.value[index]?.attributes?.tx_hash.split('0x')[1] || ''
+}
+onMounted(async () => {
+  await getOracleScriptRequests()
 })
 </script>
 

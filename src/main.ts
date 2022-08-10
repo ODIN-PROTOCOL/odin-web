@@ -10,6 +10,7 @@ import {
   preciseFormatOdinCoin,
   preciseFormatCoin,
   getPercentOutOfNumber,
+  trimLeadingZeros,
 } from './helpers/formatters'
 import Notifications from '@kyvg/vue3-notification'
 import { api } from './api/api'
@@ -31,9 +32,12 @@ import hljs from 'highlight.js/lib/core'
 import python from 'highlight.js/lib/languages/python'
 import rust from 'highlight.js/lib/languages/rust'
 import hljsVuePlugin from '@highlightjs/vue-plugin'
-import SkeletonLoaderVueSample from 'skeleton-loader-vue/src/components/Loader.vue'
+import { Skeletor } from 'vue-skeletor'
+import { ROUTE_NAMES } from '@/enums'
 hljs.registerLanguage('python', python)
 hljs.registerLanguage('rust', rust)
+import { DefaultApolloClient } from '@vue/apollo-composable'
+import { apolloClient } from './api/apollo-provider'
 
 async function _main() {
   try {
@@ -59,8 +63,9 @@ async function _main() {
   )
   const app = createApp(appModule.default)
   app.config.performance = true
-  app.config.unwrapInjectedRef = true           // This will be default in Vue 3.3+
+  app.config.globalProperties.$routes = ROUTE_NAMES
   app.config.globalProperties.$cropAddress = cropAddress
+  app.config.globalProperties.$trimZeros = trimLeadingZeros
   app.config.globalProperties.$fCoin = formatCoin
   app.config.globalProperties.$preciseAsPercents = preciseAsPercents
   app.config.globalProperties.$preciseAsFormatedCoin = preciseAsFormatedCoin
@@ -79,18 +84,19 @@ async function _main() {
   app.config.globalProperties.$preciseFormatCoin = preciseFormatCoin
   app.config.globalProperties.$getPercentOutOfNumber = getPercentOutOfNumber
   app.config.globalProperties.$convertLokiToOdin = convertLokiToOdin
+  app.provide(DefaultApolloClient, apolloClient)
   app.use(router)
   app.use(Notifications)
   app.use(hljsVuePlugin)
   app.component('VuePicker', VuePicker)
   app.component('VuePickerOption', VuePickerOption)
-  app.component('skeleton-loader', SkeletonLoaderVueSample)
+  app.component('skeleton-loader', Skeletor)
   app.mount('#app')
   return app
 }
 
 let app: App<Element>
-_main().then((_app) => {
+_main().then(_app => {
   if (_app) app = _app
 })
 

@@ -4,24 +4,22 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, toRef, computed } from 'vue'
+<script setup lang="ts">
+import { computed } from 'vue'
 
-export default defineComponent({
-  props: {
-    status: { type: String, required: true },
-    text: { type: String },
+const props = withDefaults(
+  defineProps<{
+    status: string
+    text?: string
+  }>(),
+  {
+    text: '',
   },
-  setup: function (props) {
-    const _text = toRef(props, 'text')
+)
 
-    const displayText = computed(() => {
-      if (!_text.value) return 'Default'
-      return _text.value
-    })
-
-    return { displayText }
-  },
+const displayText = computed(() => {
+  if (!props.text) return 'Default'
+  return props.text
 })
 </script>
 

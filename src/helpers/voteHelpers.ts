@@ -11,12 +11,12 @@ const defaultVotesCountBlank: defaultChartDataBlank[] = [
 
 export const getVotesCountByStatus = (votes: Vote[]): ChartDataItem[] => {
   const counts: ChartDataItem[] = [
-    ...defaultVotesCountBlank.map((item) => ({ ...item, count: 0 })),
+    ...defaultVotesCountBlank.map(item => ({ ...item, count: 0 })),
   ]
 
-  votes.forEach((p) => {
+  votes.forEach(p => {
     const countsItem = counts.find((c: ChartDataItem) =>
-      voteStatusType[p.option].name === c.name ? true : false
+      voteStatusType[p.option].name === c.name ? true : false,
     )
     if (countsItem) countsItem.count++
   })

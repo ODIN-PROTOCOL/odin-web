@@ -247,6 +247,11 @@ body.dark {
     background-color: rgb(20, 20, 20) !important;
   }
   .animation--wave::before {
-    background: linear-gradient(20deg, transparent, rgb(102, 102, 102), transparent) !important;
+    background: linear-gradient(
+      20deg,
+      transparent,
+      rgb(102, 102, 102),
+      transparent
+    ) !important;
   }
 }

@@ -19,7 +19,7 @@
     font-size: 3.2rem;
     line-height: 4.6rem;
     font-weight: 400;
-  
+
     @include respond-to(tablet) {
       font-size: 2.4rem;
       line-height: 3.2rem;
@@ -28,11 +28,11 @@
 
   &__title-wrapper {
     display: flex;
-    flex-direction: row !important;     // Had to use important since this is getting overriden in mobile mode by some CSS. Could not find "@media (max-width: 767px)" overiding it within this project.
+    flex-direction: row !important; // Had to use important since this is getting overriden in mobile mode by some CSS. Could not find "@media (max-width: 767px)" overiding it within this project.
     align-items: center;
     justify-content: space-between;
     margin-bottom: 3.2rem;
-    
+
     @include respond-to(tablet) {
       flex-direction: column;
       align-items: flex-start;
@@ -67,9 +67,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap:5.4rem;
+  gap: 5.4rem;
   margin: 0 auto;
-  border-bottom: 0.1rem solid #CCE4FF;
+  border-bottom: 0.1rem solid #cce4ff;
 }
 
 .view-header {

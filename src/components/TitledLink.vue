@@ -1,28 +1,22 @@
 <template>
-  <router-link class="nav__link" :to="to" :title="title || text">
+  <router-link class="titled-link" :to="to" :title="title || text">
     <span>
       {{ text }}
     </span>
   </router-link>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { LocationAsRelativeRaw } from 'vue-router'
 
-export default defineComponent({
-  props: {
-    text: {
-      type: [String, Number],
-      required: true,
-    },
-    title: {
-      type: [String, Number],
-      required: false,
-    },
-    to: {
-      type: String,
-      default: () => '#',
-    },
+withDefaults(
+  defineProps<{
+    text: number | string
+    title?: number | string
+    to: LocationAsRelativeRaw
+  }>(),
+  {
+    title: '',
   },
-})
+)
 </script>

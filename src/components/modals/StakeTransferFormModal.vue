@@ -1,7 +1,7 @@
 <template>
   <ModalBase
     class="stake-transfer-form-modal__wrapper"
-    :scheme="SCHEMES.paddingContent31px"
+    scheme="padding-content-31px"
     @close="onClose()"
   >
     <template #title>
@@ -11,7 +11,7 @@
       <form
         class="stake-transfer-form-modal app-form load-fog"
         :class="{ 'load-fog_show': isLoading }"
-        @submit.prevent
+        @submit.prevent="submit"
       >
         <div class="app-form__main stake-transfer-form-modal__main">
           <div class="stake-transfer-form-modal__select-wrapper">
@@ -20,44 +20,44 @@
                 >From</label
               >
             </div>
-            <VuePicker class="vue-pick" v-model="form.sender">
+            <VuePicker class="vue-pick" v-model="flattenForm.sender">
               <template #dropdownInner>
                 <div class="vue-pick__dropdown-custom">
                   <VuePickerOption
                     v-for="(validator, key) in delegatedValidators"
                     :key="key"
-                    :value="validator.operatorAddress"
+                    :value="validator?.info.operatorAddress"
                     :isDisabled="isHaveSameValueInReceiver(validator)"
                   >
                     <div class="stake-transfer-form-modal__option frame">
                       <div class="stake-transfer-form-modal__option-info">
                         <label
                           class="stake-transfer-form-modal__option-moniker"
-                          :title="validator.description?.moniker"
+                          :title="validator.descriptions[0]?.moniker || '-'"
                         >
-                          {{ validator.description?.moniker }}
+                          {{ validator.descriptions[0]?.moniker || '-' }}
                         </label>
                         <label class="stake-transfer-form-modal__option-adress">
-                          {{ $cropAddress(validator.operatorAddress) }}
+                          {{ $cropAddress(validator?.info.operatorAddress) }}
                         </label>
                       </div>
                       <p
                         class="stake-transfer-form-modal__option-balance"
                         :title="
                           $convertLokiToOdin(
-                            validator.delegation.balance?.amount,
+                            validator.delegation?.balance?.amount,
                             {
                               onlyNumber: true,
-                            }
+                            },
                           )
                         "
                       >
                         {{
                           $convertLokiToOdin(
-                            validator.delegation.balance?.amount,
+                            validator.delegation?.balance?.amount,
                             {
                               withDenom: true,
-                            }
+                            },
                           )
                         }}
                       </p>
@@ -74,8 +74,9 @@
                 >To</label
               >
               <button
-                @click="changeField()"
+                type="button"
                 class="stake-transfer-form-modal__select-header-btn"
+                @click="changeField"
               >
                 {{
                   isShowToAdressOption ? 'Enter address' : 'Select validator'
@@ -85,26 +86,26 @@
             <VuePicker
               v-if="isShowToAdressOption"
               class="vue-pick"
-              v-model="form.receiver"
+              v-model="flattenForm.receiver"
             >
               <template #dropdownInner>
                 <div class="vue-pick__dropdown-custom">
                   <VuePickerOption
                     v-for="(validator, key) in filtredValidators"
                     :key="key"
-                    :value="validator.operatorAddress"
+                    :value="validator?.info.operatorAddress"
                     :isDisabled="isHaveSameValueInSender(validator)"
                   >
                     <div class="stake-transfer-form-modal__option frame">
                       <div class="stake-transfer-form-modal__option-info">
                         <label
                           class="stake-transfer-form-modal__option-moniker"
-                          :title="validator.description?.moniker"
+                          :title="validator.descriptions[0]?.moniker || '-'"
                         >
-                          {{ validator.description?.moniker }}
+                          {{ validator.descriptions[0]?.moniker || '-' }}
                         </label>
                         <label class="stake-transfer-form-modal__option-adress">
-                          {{ $cropAddress(validator.operatorAddress) }}
+                          {{ $cropAddress(validator?.info.operatorAddress) }}
                         </label>
                       </div>
                       <p
@@ -112,19 +113,19 @@
                         class="stake-transfer-form-modal__option-balance"
                         :title="
                           $convertLokiToOdin(
-                            validator.delegation.balance?.amount,
+                            validator.delegation?.balance?.amount,
                             {
                               onlyNumber: true,
-                            }
+                            },
                           )
                         "
                       >
                         {{
                           $convertLokiToOdin(
-                            validator.delegation.balance?.amount,
+                            validator.delegation?.balance?.amount,
                             {
                               withDenom: true,
-                            }
+                            },
                           )
                         }}
                       </p>
@@ -142,17 +143,19 @@
                 name="undelegate-amount"
                 type="text"
                 placeholder="odinvaloper1cgfdwtrqfdrzh4z8rkcyx8g4jv22v8wgav3rjx"
-                v-model="form.receiver"
+                v-model="flattenForm.receiver"
                 :disabled="isLoading"
               />
               <p
-                v-if="form.receiverErr"
+                v-if="flattenForm.receiverErr"
                 class="stake-transfer-form-modal__field-err app-form__field-err"
               >
-                {{ form.receiverErr }}
+                {{ flattenForm.receiverErr }}
               </p>
               <div
-                v-if="delegation[form.receiver] && !form.receiverErr"
+                v-if="
+                  delegation[flattenForm.receiver] && !flattenForm.receiverErr
+                "
                 class="stake-transfer-form-modal__field-balance"
               >
                 <label class="stake-transfer-form-modal__field-balance-lbl"
@@ -162,16 +165,16 @@
                   class="stake-transfer-form-modal__field-balance-value"
                   :title="
                     $convertLokiToOdin(
-                      delegation[form.receiver].balance?.amount,
+                      delegation[flattenForm.receiver]?.balance?.amount,
                       {
                         onlyNumber: true,
-                      }
+                      },
                     )
                   "
                 >
                   {{
                     $convertLokiToOdin(
-                      delegation[form.receiver].balance?.amount
+                      delegation[flattenForm.receiver]?.balance?.amount,
                     )
                   }}
                 </p>
@@ -190,15 +193,15 @@
                 name="undelegate-amount"
                 type="text"
                 placeholder="1"
-                v-model="form.amount"
+                v-model="flattenForm.amount"
                 :disabled="isLoading"
               />
             </div>
             <p
-              v-if="form.amountErr"
+              v-if="flattenForm.amountErr"
               class="stake-transfer-form-modal__field-err app-form__field-err"
             >
-              {{ form.amountErr }}
+              {{ flattenForm.amountErr }}
             </p>
           </div>
         </div>
@@ -206,9 +209,7 @@
         <div class="app-form__footer stake-transfer-form-modal__footer">
           <button
             class="app-btn w-full app-btn--medium"
-            type="button"
-            @click="submit()"
-            :disabled="!form.isValid || isLoading"
+            :disabled="!flattenForm.isValid || isLoading"
           >
             Transfer
           </button>
@@ -218,220 +219,175 @@
   </ModalBase>
 </template>
 
-<script lang="ts">
-import {
-  defineComponent,
-  PropType,
-  ref,
-  watch,
-  computed,
-  ComputedRef,
-} from 'vue'
+<script setup lang="ts">
+import { ref, watch, computed, ComputedRef } from 'vue'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
 import { COINS_LIST } from '@/api/api-config'
-import { DialogHandler, dialogs } from '@/helpers/dialogs'
+import { dialogs } from '@/helpers/dialogs'
 import { preventIf } from '@/helpers/functions'
 import { convertLokiToOdin, convertOdinToLoki } from '@/helpers/converters'
 import { useForm, validators } from '@/composables/useForm'
-import ModalBase, { SCHEMES } from './ModalBase.vue'
-import {
-  ValidatorDecoded,
-  TransferValidator,
-} from '@/helpers/validatorDecoders'
+import { ModalBase } from '@/components/modals'
+import { ValidatorInfoModify } from '@/helpers/validatorHelpers'
 import { coin } from '@cosmjs/amino'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 
-const StakeTransferFormModal = defineComponent({
-  props: {
-    validators: {
-      type: Object as PropType<ValidatorDecoded[]>,
-      required: true,
-    },
-    delegation: {
-      type: Object,
-      required: true,
-    },
-  },
-  components: { ModalBase, VuePicker, VuePickerOption },
-  setup(props) {
-    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const delegatedAdress = Object.keys(props.delegation)
-    const isShowToAdressOption = ref(true)
-    const delegatedValidators = ref()
-    const allValidators = ref<Array<TransferValidator>>(props.validators)
-    const maxAmount: ComputedRef<number> = computed(
-      () =>
-        Number(
-          convertLokiToOdin(
-            props.delegation[form.sender.val()].balance?.amount,
-            {
-              onlyNumber: true,
-            }
-          )
-        ) || 0
-    )
-    const form = useForm({
-      amount: [
-        '',
-        validators.required,
-        validators.number,
-        validators.sixDecimalNumber,
-        validators.min(0.000001),
-        validators.maxReactive(maxAmount),
-        validators.maxCharacters(32),
-      ],
-      sender: [
-        '',
-        validators.required,
-        validators.odinValidator,
-        validators.maxCharacters(50),
-        validators.minCharacters(50),
-      ],
-      receiver: [
-        '',
-        validators.required,
-        validators.odinValidator,
-        validators.maxCharacters(50),
-        validators.minCharacters(50),
-      ],
-    })
-    delegatedValidators.value = delegatedAdress.map(
-      (validatorAddress: string) => {
-        return {
-          ...allValidators.value.find(
-            (validator: ValidatorDecoded) =>
-              validator.operatorAddress === validatorAddress
-          ),
-          delegation: props.delegation[validatorAddress],
-        }
-      }
-    )
-    form.sender.val(delegatedValidators.value[0].operatorAddress)
-    const filtredValidators = computed(() =>
-      allValidators.value.map((validator: ValidatorDecoded) => {
-        return {
-          ...validator,
-          delegation: props.delegation[validator.operatorAddress] || {},
-        }
-      })
-    )
+const props = defineProps<{
+  allValidators: ValidatorInfoModify[]
+  activeValidators: ValidatorInfoModify[]
+  delegation: { [k: string]: DelegationResponse }
+}>()
 
-    if (allValidators.value[0].operatorAddress === form.sender.val()) {
-      form.receiver.val(filtredValidators.value[1].operatorAddress)
-    } else {
-      form.receiver.val(filtredValidators.value[0].operatorAddress)
-    }
-    form.amount.val(String(maxAmount.value))
-
-    const findReceiverValidator = () => {
-      if (!isShowToAdressOption.value && !form.receiver.errorIfDirty.value) {
-        if (form.receiver.val() === form.sender.val()) {
-          form.receiver.err('Choose another validator')
-        } else {
-          const findValidator = filtredValidators.value.find(
-            (item: TransferValidator) =>
-              item.operatorAddress === form.receiver.val()
-          )
-          if (!findValidator) {
-            form.receiver.err('Validator not found')
-          }
-        }
-      }
-    }
-
-    watch(
-      () => form.sender.val(),
-      () => {
-        try {
-          if (form.receiver.val() === form.sender.val()) {
-            form.receiver.err('Choose another validator')
-            return
-          } else if (form.receiver.isDirty.value) {
-            form.receiver.err(null)
-            findReceiverValidator()
-          }
-          form.amount.reset()
-          form.amount.val(String(maxAmount.value))
-        } catch (error) {
-          form.receiver.err('Validator not found')
-        }
-      }
-    )
-    watch(
-      () => form.receiver.val(),
-      () => {
-        if (!form.receiver.errorIfDirty.value) {
-          findReceiverValidator()
-        }
-      }
-    )
-    const isHaveSameValueInReceiver = (validator: ValidatorDecoded) => {
-      return validator.operatorAddress === form.receiver.val()
-    }
-    const isHaveSameValueInSender = (validator: ValidatorDecoded) => {
-      return validator.operatorAddress === form.sender.val()
-    }
-    const changeField = async () => {
-      allValidators.value = props.validators
-      isShowToAdressOption.value = !isShowToAdressOption.value
-      if (allValidators.value[0].operatorAddress === form.sender.val()) {
-        form.receiver.val(allValidators.value[1].operatorAddress)
-      } else {
-        form.receiver.val(allValidators.value[0].operatorAddress)
-      }
-    }
-    const onSubmit = dialogs.getHandler('onSubmit')
-    const submit = async () => {
-      if (!form.isValid.value) return
-      lockLoading()
-      try {
-        await callers.validatorDelegateToAnotherValidator({
-          validatorSrcAddress: String(form.sender.val()),
-          validatorDstAddress: String(form.receiver.val()),
-          delegatorAddress: wallet.account.address,
-          amount: coin(convertOdinToLoki(form.amount.val()), COINS_LIST.LOKI),
-        })
-        onSubmit()
-        handleNotificationInfo(
-          'Successfully delegated',
-          TYPE_NOTIFICATION.success
-        )
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.info)
-      }
-      releaseLoading()
-    }
-    return {
-      form: form.flatten(),
-      submit,
-      onClose: preventIf(dialogs.getHandler('onClose'), isLoading),
-      changeField,
-      isHaveSameValueInReceiver,
-      isHaveSameValueInSender,
-      isLoading,
-      delegatedValidators,
-      isShowToAdressOption,
-      filtredValidators,
-      SCHEMES,
-    }
-  },
+const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+const delegatedAdress = Object.keys(props.delegation)
+const isShowToAdressOption = ref(true)
+const delegatedValidators = ref()
+const allValidators = ref<Array<ValidatorInfoModify>>(props.allValidators)
+const maxAmount: ComputedRef<number> = computed(
+  () =>
+    Number(
+      convertLokiToOdin(props.delegation[form.sender.val()]?.balance?.amount, {
+        onlyNumber: true,
+      }),
+    ) || 0,
+)
+const form = useForm({
+  amount: [
+    '',
+    validators.required,
+    validators.number,
+    validators.sixDecimalNumber,
+    validators.min(0.000001),
+    validators.maxReactive(maxAmount),
+    validators.maxCharacters(32),
+  ],
+  sender: [
+    '',
+    validators.required,
+    validators.odinValidator,
+    validators.maxCharacters(50),
+    validators.minCharacters(50),
+  ],
+  receiver: [
+    '',
+    validators.required,
+    validators.odinValidator,
+    validators.maxCharacters(50),
+    validators.minCharacters(50),
+  ],
 })
-export default StakeTransferFormModal
-export function showUndelegateFormDialog(
-  callbacks: {
-    onSubmit?: DialogHandler
-    onClose?: DialogHandler
-  },
-  props: { validators: ValidatorDecoded; delegation: DelegationResponse }
-): Promise<unknown | null> {
-  return dialogs.show(StakeTransferFormModal, callbacks, { props })
+
+const flattenForm = form.flatten()
+
+delegatedValidators.value = delegatedAdress.map((validatorAddress: string) => {
+  return {
+    ...allValidators.value.find(
+      (validator: ValidatorInfoModify) =>
+        validator?.info.operatorAddress === validatorAddress,
+    ),
+    delegation: props.delegation[validatorAddress],
+  }
+})
+form.sender.val(delegatedValidators.value[0].info.operatorAddress)
+const filtredValidators = computed(() =>
+  props.activeValidators.map((validator: ValidatorInfoModify) => {
+    return {
+      ...validator,
+      delegation: props.delegation[validator?.info.operatorAddress] || {},
+    }
+  }),
+)
+
+if (props.activeValidators[0]?.info.operatorAddress === form.sender.val()) {
+  form.receiver.val(filtredValidators.value[1]?.info.operatorAddress)
+} else {
+  form.receiver.val(filtredValidators.value[0]?.info.operatorAddress)
 }
+form.amount.val(String(maxAmount.value))
+
+const findReceiverValidator = () => {
+  if (!isShowToAdressOption.value && !form.receiver.errorIfDirty.value) {
+    if (form.receiver.val() === form.sender.val()) {
+      form.receiver.err('Choose another validator')
+    } else {
+      const findValidator = filtredValidators.value.find(
+        (item: ValidatorInfoModify) =>
+          item?.info.operatorAddress === form.receiver.val(),
+      )
+      if (!findValidator) {
+        form.receiver.err('Validator not found')
+      }
+    }
+  }
+}
+
+watch(
+  () => form.sender.val(),
+  () => {
+    try {
+      if (form.receiver.val() === form.sender.val()) {
+        form.receiver.err('Choose another validator')
+        return
+      } else if (form.receiver.isDirty.value) {
+        form.receiver.err(null)
+        findReceiverValidator()
+      }
+      form.amount.reset()
+      form.amount.val(String(maxAmount.value))
+    } catch (error) {
+      form.receiver.err('Validator not found')
+    }
+  },
+)
+
+watch(
+  () => form.receiver.val(),
+  () => {
+    if (!form.receiver.errorIfDirty.value) {
+      findReceiverValidator()
+    }
+  },
+)
+
+const isHaveSameValueInReceiver = (validator: ValidatorInfoModify) => {
+  return validator.info.operatorAddress === form.receiver.val()
+}
+const isHaveSameValueInSender = (validator: ValidatorInfoModify) => {
+  return validator.info.operatorAddress === form.sender.val()
+}
+
+const changeField = async () => {
+  isShowToAdressOption.value = !isShowToAdressOption.value
+  if (props.activeValidators[0]?.info.operatorAddress === form.sender.val()) {
+    form.receiver.val(props.activeValidators[1]?.info.operatorAddress)
+  } else {
+    form.receiver.val(props.activeValidators[0]?.info.operatorAddress)
+  }
+}
+
+const onSubmit = dialogs.getHandler('onSubmit')
+const submit = async () => {
+  if (!form.isValid.value) return
+  lockLoading()
+  try {
+    await callers.validatorDelegateToAnotherValidator({
+      validatorSrcAddress: String(form.sender.val()),
+      validatorDstAddress: String(form.receiver.val()),
+      delegatorAddress: wallet.account.address,
+      amount: coin(convertOdinToLoki(form.amount.val()), COINS_LIST.LOKI),
+    })
+    onSubmit()
+    handleNotificationInfo('Successfully delegated', TYPE_NOTIFICATION.success)
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.info)
+  }
+  releaseLoading()
+}
+const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
 </script>
 
 <style scoped lang="scss">

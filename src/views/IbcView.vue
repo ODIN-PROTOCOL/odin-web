@@ -3,174 +3,119 @@
     <div class="view-main__title-wrapper">
       <h2 class="view-main__title">IBCs</h2>
     </div>
-    <template v-if="connectionsData?.length">
-      <div
-        class="app-table ibc-view__table"
-        v-for="(connection, index) in filteredConnections"
-        :key="connection?.id"
-      >
-        <div class="app-table__body ibc-view__body">
-          <div class="app-table__row ibc-view__table-row">
-            <div class="app-table__cell ibc-view__table-cell">
-              <span class="app-table__title ibc-view__table-title"
-                >Connection</span
-              >
-              <span class="app-table__cell-txt">{{ connection.id }}</span>
-            </div>
-            <div class="app-table__cell ibc-view__table-cell">
-              <span class="app-table__title ibc-view__table-title"
-                >Counterparty Chain ID</span
-              >
-              <span class="app-table__cell-txt">{{
-                chainIdData[index].chainId || '-'
-              }}</span>
-            </div>
-            <div class="app-table__cell ibc-view__table-cell">
-              <span class="app-table__title ibc-view__table-title"
-                >Client ID</span
-              >
-              <span class="app-table__cell-txt">
-                {{ connection.clientId || '-' }}
-              </span>
-            </div>
-            <div class="app-table__cell ibc-view__table-cell">
-              <span class="app-table__title ibc-view__table-title"
-                >Counterparty Client ID</span
-              >
-              <span class="app-table__cell-txt">
-                {{ connection.counterparty.clientId || '-' }}
-              </span>
-            </div>
-          </div>
-          <div class="ibc-view__show">
-            <button
-              @click="isShow[index] = !isShow[index]"
-              type="button"
-              class="ibc-view__show-button"
-            >
-              {{ isShow[index] ? 'Hidden channels' : 'Show channels' }}
-              <ArrowIcon
-                class="ibc-view__arrow-icon"
-                :class="{
-                  ['ibc-view__arrow-icon--active']: isShow[index],
-                }"
-              />
-            </button>
-          </div>
+    <template v-if="!isLoading">
+      <template v-if="isLoadingError">
+        <div class="app-table__empty-stub">
+          <ui-loading-error-message message="Not Found" title="404" />
         </div>
-        <ChannelDetail
-          v-if="isShow[index]"
-          :channelData="channelData"
-          :connection="connection"
-        />
-      </div>
+      </template>
+      <template v-else>
+        <template v-if="connectionsData?.length">
+          <div
+            class="app-table ibc-view__table"
+            v-for="(connection, index) in filteredConnections"
+            :key="connection?.id"
+          >
+            <ibc-line
+              :connection="connection"
+              :channel-data="channelData"
+              :chain-id-data="chainIdData[index]"
+            />
+          </div>
+          <template v-if="connectionsData?.length > ITEMS_PER_PAGE">
+            <AppPagination
+              class="mg-t32 mg-b32"
+              v-model="currentPage"
+              :pages="totalPages"
+              @update:modelValue="paginationHandler"
+            />
+          </template>
+        </template>
+        <template v-else>
+          <div class="app-table__empty-stub">
+            <ui-no-data-message />
+          </div>
+        </template>
+      </template>
     </template>
 
     <template v-else>
       <div class="app-table__empty-stub">
-        <p v-if="isLoading" class="empty mg-t32">Loading…</p>
-        <p v-else class="empty mg-t32">No items yet</p>
+        <ui-loader positionCenter message="Loading" />
       </div>
-    </template>
-    <template v-if="connectionsData?.length > ITEMS_PER_PAGE">
-      <AppPagination
-        class="mg-t32 mg-b32"
-        v-model="currentPage"
-        :pages="totalPages"
-        @update:modelValue="paginationHandler"
-      />
     </template>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue'
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { IdentifiedChannel } from 'cosmjs-types/ibc/core/channel/v1/channel'
 import { IdentifiedConnection } from 'cosmjs-types/ibc/core/connection/v1/connection'
-import AppPagination from '@/components/AppPagination/AppPagination.vue'
-import ChannelDetail from '@/components/ChannelDetail.vue'
-import ArrowIcon from '@/components/icons/ArrowIcon.vue'
 import { ClientState } from 'cosmjs-types/ibc/lightclients/tendermint/v1/tendermint'
 import { QueryClientStateResponse } from 'cosmjs-types/ibc/core/client/v1/query'
+import {
+  UiLoadingErrorMessage,
+  UiLoader,
+  UiNoDataMessage,
+} from '@/components/ui'
+import AppPagination from '@/components/AppPagination/AppPagination.vue'
 
-export default defineComponent({
-  components: {
-    AppPagination,
-    ArrowIcon,
-    ChannelDetail,
-  },
-  setup: function () {
-    const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-    const ITEMS_PER_PAGE = 4
-    const currentPage = ref(1)
-    const totalPages = ref()
-    const chainIdData = ref()
-    const connectionsData = ref<IdentifiedConnection[] | undefined>()
-    const channelData = ref<IdentifiedChannel[] | undefined>()
-    const filteredConnections = ref()
-    const isShow = ref([])
+const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+const ITEMS_PER_PAGE = 4
+const currentPage = ref(1)
+const totalPages = ref(0)
+const chainIdData = ref<ClientState[]>([])
+const connectionsData = ref<IdentifiedConnection[]>([])
+const channelData = ref<IdentifiedChannel[]>([])
+const filteredConnections = ref<IdentifiedConnection[]>([])
+const isLoadingError = ref(false)
 
-    const loadIbc = async () => {
-      lockLoading()
-      try {
-        const { connections } = await callers.getConnections()
-        const clientState: QueryClientStateResponse[] = await Promise.all(
-          connections?.map((item: IdentifiedConnection) =>
-            callers.getClientState(item.clientId)
-          )
-        )
-        chainIdData.value = clientState?.map((item: QueryClientStateResponse) =>
-          ClientState.decode(item.clientState?.value as Uint8Array)
-        )
-        const { channels } = await callers.getChannel()
-        channelData.value = channels
-        connectionsData.value = connections
-        totalPages.value = Math.ceil(connections.length / ITEMS_PER_PAGE)
-        filterConnections(currentPage.value)
-      } catch (error) {
-        handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-      }
-      releaseLoading()
-    }
+const loadIbc = async () => {
+  lockLoading()
+  try {
+    const { connections } = await callers.getConnections()
+    const clientState: QueryClientStateResponse[] = await Promise.all(
+      connections?.map((item: IdentifiedConnection) =>
+        callers.getClientState(item.clientId),
+      ),
+    )
+    chainIdData.value = clientState?.map((item: QueryClientStateResponse) =>
+      ClientState.decode(item.clientState?.value as Uint8Array),
+    )
+    const { channels } = await callers.getChannel()
+    channelData.value = channels
+    connectionsData.value = connections
+    totalPages.value = Math.ceil(connections.length / ITEMS_PER_PAGE)
+    filterConnections(currentPage.value)
+  } catch (error) {
+    isLoadingError.value = true
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
 
-    const filterConnections = (newPage: number) => {
-      let tempArr = connectionsData.value
-      if (newPage === 1) {
-        filteredConnections.value = tempArr?.slice(0, newPage * ITEMS_PER_PAGE)
-      } else {
-        filteredConnections.value = tempArr?.slice(
-          (newPage - 1) * ITEMS_PER_PAGE,
-          (newPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE
-        )
-      }
-      currentPage.value = newPage
-      isShow.value = []
-    }
+const filterConnections = (newPage: number) => {
+  let tempArr = connectionsData.value
+  if (newPage === 1) {
+    filteredConnections.value = tempArr?.slice(0, newPage * ITEMS_PER_PAGE)
+  } else {
+    filteredConnections.value = tempArr?.slice(
+      (newPage - 1) * ITEMS_PER_PAGE,
+      (newPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE,
+    )
+  }
+  currentPage.value = newPage
+}
 
-    const paginationHandler = (num: number) => {
-      filterConnections(num)
-    }
+const paginationHandler = (num: number) => {
+  filterConnections(num)
+}
 
-    onMounted(async () => {
-      await loadIbc()
-    })
-
-    return {
-      isLoading,
-      ITEMS_PER_PAGE,
-      currentPage,
-      totalPages,
-      paginationHandler,
-      connectionsData,
-      channelData,
-      chainIdData,
-      filteredConnections,
-      isShow,
-    }
-  },
+onMounted(async () => {
+  await loadIbc()
 })
 </script>
 

@@ -12,6 +12,7 @@ import {
   MsgUndelegate,
 } from 'cosmjs-types/cosmos/staking/v1beta1/tx'
 import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx'
+import { MsgStoreCode } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
 import { MsgCreateVestingAccount } from 'cosmjs-types/cosmos/vesting/v1beta1/tx.js'
 import {
   MsgActivate,
@@ -50,7 +51,7 @@ import { getLokiFromString } from '@/helpers/converters'
 export const getDecodeTx = (tx: TxResponse['tx']): Tx => Tx.decode(tx)
 
 const getTime = async (
-  height: number
+  height: number,
 ): Promise<ReadonlyDateWithNanoseconds> => {
   const res = await callers.getBlockchain(height, height)
   return res.blockMetas[0].header.time
@@ -151,6 +152,9 @@ export function humanizeMessageType(type: string): string {
     case '/cosmos.distribution.v1beta1.MsgFundCommunityPool':
       return 'Fund Community Pool'
 
+    case '/cosmwasm.wasm.v1.MsgStoreCode':
+      return 'Store Code'
+
     default:
       throw new ReferenceError(`Unknown type ${type}`)
   }
@@ -187,7 +191,8 @@ export function decodeMessage(obj: {
   | MsgEditDataSource
   | MsgEditOracleScript
   | MsgFundCommunityPool
-  | MsgRemoveReporter {
+  | MsgRemoveReporter
+  | MsgStoreCode {
   switch (obj.typeUrl) {
     case '/mint.MsgWithdrawCoinsToAccFromTreasury':
       return MsgWithdrawCoinsToAccFromTreasury.decode(obj.value)
@@ -276,6 +281,9 @@ export function decodeMessage(obj: {
     case '/cosmos.vesting.v1beta1.MsgCreateVestingAccount':
       return MsgCreateVestingAccount.decode(obj.value)
 
+    case '/cosmwasm.wasm.v1.MsgStoreCode':
+      return MsgStoreCode.decode(obj.value)
+
     case '/cosmos.distribution.v1beta1.MsgFundCommunityPool':
       return MsgFundCommunityPool.decode(obj.value)
     default:
@@ -284,12 +292,13 @@ export function decodeMessage(obj: {
 }
 
 export async function getDateFromMessage(
-  tx: TxTelemetry
+  tx: TxTelemetry,
 ): Promise<DecodedTxData> {
   const DecodedTxData: DecodedTxData = {
     type: '',
     time: (await getTime(Number(tx.height))) as Date,
-    fee: '',
+    fee: '0',
+    amount: '0',
     block: tx.height,
     memo: '',
     status: 0,
@@ -305,6 +314,7 @@ export async function getDateFromMessage(
     const message = decodeMessage(obj)
     DecodedTxData.type = humanizeMessageType(obj.typeUrl)
     DecodedTxData.fee = decodedTx?.authInfo?.fee?.amount[0]?.amount
+    DecodedTxData.feeDenom = decodedTx?.authInfo?.fee?.amount[0]?.denom
     DecodedTxData.memo = decodedTx.body?.memo
       ? decodedTx.body?.memo
       : '<No Memo>'
@@ -316,21 +326,23 @@ export async function getDateFromMessage(
       if (typeof message.amount === 'object') {
         if ('denom' in message.amount && 'amount' in message.amount) {
           DecodedTxData.amount = message.amount?.amount
+          DecodedTxData.denom = message.amount?.denom
         } else {
           DecodedTxData.amount = message.amount[0]?.amount
+          DecodedTxData.denom = message.amount[0]?.denom
         }
       }
     } else {
       const amount = tx.tx_result.events
-        .find((item) => {
+        .find(item => {
           DecodedTxData.type.toLowerCase().includes(item.type.split('_')[0])
         })
-        ?.attributes?.map((item) =>
-          item.value ? new TextDecoder().decode(fromBase64(item.value)) : ''
+        ?.attributes?.map(item =>
+          item.value ? new TextDecoder().decode(fromBase64(item.value)) : '',
         )
 
       DecodedTxData.amount = getLokiFromString(
-        amount?.find((item: string) => item?.includes('loki'))
+        amount?.find((item: string) => item?.includes('loki')),
       )
     }
 
@@ -435,6 +447,7 @@ export async function getDateFromMessage(
       }
       if ('initialDeposit' in message) {
         DecodedTxData.amount = message.initialDeposit[0]?.amount
+        DecodedTxData.denom = message.initialDeposit[0]?.denom
       }
     }
     if (DecodedTxData.type === 'Report Data') {
@@ -533,7 +546,11 @@ export async function getDateFromMessage(
       }
     }
 
-    console.debug(DecodedTxData.type)
+    if (DecodedTxData.type === 'Store Code') {
+      if ('sender' in message) {
+        DecodedTxData.sender = message.sender
+      }
+    }
   }
   return DecodedTxData
 }

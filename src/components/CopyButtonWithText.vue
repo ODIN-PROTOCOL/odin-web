@@ -14,38 +14,37 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, computed } from 'vue'
+<script setup lang="ts">
+import { ref, computed } from 'vue'
 import { copyValue } from '@/helpers/helpers'
-import CopyIcon from '@/components/icons/CopyIcon.vue'
+import { CopyIcon } from '@/components/icons'
 
-export enum SCHEMES {
+enum SCHEMES {
   noBorder = 'no-border',
 }
-export default defineComponent({
-  props: {
-    value: { type: String, required: true },
-    text: { type: String, required: true },
-    scheme: { type: String, default: '' },
-  },
-  components: { CopyIcon },
-  setup: function (props) {
-    const isCopiedShown = ref(false)
+const props = withDefaults(
+  defineProps<{
+    scheme?: string
+    text: string
+    value: string
+  }>(),
+  { scheme: '' },
+)
 
-    const copy = () => {
-      copyValue(props.value)
-      isCopiedShown.value = true
-      setTimeout(() => {
-        isCopiedShown.value = false
-      }, 1300)
-    }
-    const modalBaseScheme = computed(() => {
-      const scheme = props.scheme as SCHEMES
-      if (!Object.values(SCHEMES).includes(scheme)) return ''
-      return scheme ? `copy-button-with-text__wrapper--${scheme}` : ''
-    })
-    return { copy, isCopiedShown, modalBaseScheme }
-  },
+const isCopiedShown = ref(false)
+
+const copy = () => {
+  copyValue(props.value)
+  isCopiedShown.value = true
+  setTimeout(() => {
+    isCopiedShown.value = false
+  }, 1300)
+}
+
+const modalBaseScheme = computed(() => {
+  const scheme = props.scheme as SCHEMES
+  if (!Object.values(SCHEMES).includes(scheme)) return ''
+  return scheme ? `copy-button-with-text__wrapper--${scheme}` : ''
 })
 </script>
 
@@ -127,15 +126,15 @@ export default defineComponent({
 }
 body.dark {
   .copy-button-with-text {
-  background: var(--d-clr__main-bg);
-  color: var(--d-clr__action);
-  border: 1px solid var(--d-clr__btn-normal);
-  &:hover {
-    color: var(--d-clr__action-disabled);
-    .copy-button-with-text__copy-icon {
-      fill: var(--d-clr__action-disabled);
+    background: var(--d-clr__main-bg);
+    color: var(--d-clr__action);
+    border: 1px solid var(--d-clr__btn-normal);
+    &:hover {
+      color: var(--d-clr__action-disabled);
+      .copy-button-with-text__copy-icon {
+        fill: var(--d-clr__action-disabled);
+      }
     }
   }
-}
 }
 </style>

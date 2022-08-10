@@ -1,0 +1,56 @@
+.vue-skeletor {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--clr__vue-skeleton-loader-bg);
+
+  &:not(&--shimmerless) {
+    &:after {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      transform: translateX(-100%);
+      background-image: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0),
+        rgba(255, 255, 255, 0.3),
+        rgba(37, 22, 22, 0)
+      );
+      animation: shimmer 0.5s linear 0.5s infinite;
+      content: '';
+    }
+  }
+
+  &--rect,
+  &--circle {
+    display: block;
+  }
+
+  &--circle {
+    border-radius: 50%;
+  }
+
+  &--pill,
+  &--text {
+    border-radius: 3.2rem;
+  }
+
+  &--text {
+    line-height: 1;
+    display: inline-block;
+    width: 100%;
+    height: inherit;
+    vertical-align: middle;
+    top: -0.1rem;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}

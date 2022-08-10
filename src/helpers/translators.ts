@@ -48,7 +48,7 @@ export function translateProposalStatus(status: ProposalStatus): string {
 }
 
 export function translateProposalStatusDated(
-  proposal: Proposal | ProposalDecoded
+  proposal: Proposal | ProposalDecoded,
 ): string {
   switch (proposal.status) {
     case ProposalStatus.PROPOSAL_STATUS_DEPOSIT_PERIOD:
@@ -138,12 +138,12 @@ export function translateBondStatus(bondStatus: BondStatus): string {
   }
 }
 export const assetsChanges = {
-  loki: {
-    text: 'LOKI',
-    value: 'loki',
+  odin: {
+    text: 'ODIN',
+    value: 'odin',
   },
-  miniGeo: {
-    text: 'MINIGEO',
-    value: 'minigeo',
+  geo: {
+    text: 'GEO',
+    value: 'geo',
   },
 }

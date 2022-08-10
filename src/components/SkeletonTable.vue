@@ -2,7 +2,7 @@
   <div
     v-for="(arr, index) in skeletonLoaderArray"
     :key="index"
-    class="skeleton-table__row app-table__row"
+    class="skeleton-table app-table__row"
     :class="classString"
   >
     <div
@@ -15,45 +15,42 @@
       </span>
       <skeleton-loader
         v-else
+        pill
+        shimmer
         :height="skeletonHeight"
-        rounded
-        :width="-1"
-        :radius="skeletonRadius"
-        animation="wave"
-        color="rgb(225, 229, 233)"  
+        width="100%"
         class="skeleton-table__loader"
       />
       <skeleton-loader
+        pill
+        shimmer
         :height="skeletonHeight"
-        rounded
-        :width="-1"
-        :radius="skeletonRadius"
-        animation="wave"
-        color="rgb(225, 229, 233)"
+        width="100%"
         class="skeleton-table__loader"
       />
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { computed } from 'vue'
+const props = withDefaults(
+  defineProps<{
+    headerTitles: string[]
+    classString?: string
+    tableSize?: number | string
+    skeletonHeight?: number | string
+  }>(),
+  {
+    classString: '',
+    tableSize: '5',
+    skeletonHeight: 24,
+  },
+)
 
-export default defineComponent({
-  props: {
-    headerTitles: { type: Array, required: true },
-    classString: { type: String },
-    tableSize: { type: String, default: '5' },
-    skeletonHeight: { type: Number, default: 24 },
-    skeletonRadius: { type: Number, default: 32 },
-  },
-  setup(props) {
-    const skeletonLoaderArray = Array(Number(props.tableSize)).fill(
-      props.headerTitles
-    )
-    return { skeletonLoaderArray }
-  },
-})
+const skeletonLoaderArray = computed(() =>
+  Array(Number(props.tableSize)).fill(props.headerTitles),
+)
 </script>
 <style scoped>
 .skeleton-table__loader {

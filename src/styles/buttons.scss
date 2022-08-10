@@ -23,20 +23,20 @@
     font-size: 1.6rem;
     padding: 0.5rem 2.3rem;
   }
-  &--very-small{
+  &--very-small {
     font-size: 1.4rem;
     padding: 0.6rem 1rem;
     line-height: 2rem;
     max-height: 3.2rem;
   }
-  &--medium{
+  &--medium {
     padding: 0.8rem;
     width: 18.4rem;
     height: 4rem;
     font-size: 1.6rem;
     line-height: 2.4rem;
   }
-  &--edit{
+  &--edit {
     width: 7.4rem;
     height: 4rem;
     background: var(--clr__main-bg);
@@ -97,13 +97,13 @@
       background: var(--clr__btn-disabled-red);
     }
   }
-   @include respond-to(tablet) {
-      &--very-small{
-        max-height: 3.6rem;
-        line-height: 2.4rem;
-        font-size: 1.6rem;
-      }
+  @include respond-to(tablet) {
+    &--very-small {
+      max-height: 3.6rem;
+      line-height: 2.4rem;
+      font-size: 1.6rem;
     }
+  }
 }
 
 .app-ico-btn {

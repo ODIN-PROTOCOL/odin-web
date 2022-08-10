@@ -7,7 +7,9 @@
         class="app-table__row channel-detail__row"
       >
         <div class="app-table__cell channel-detail__cell">
-          <div class="app-table__title channel-detail__cell-txt title">
+          <div
+            class="app-table__title channel-detail__cell-txt channel-detail__title"
+          >
             <span class="channel-detail__cell-txt-row">Port &#10141;</span>
             <span class="channel-detail__cell-txt-row">Counterparty Port</span>
           </div>
@@ -16,12 +18,14 @@
               >{{ channel.portId }} &#10141;</span
             >
             <span class="channel-detail__cell-txt-row">
-              {{ channel.counterparty.portId }}</span
+              {{ channel.counterparty?.portId }}</span
             >
           </div>
         </div>
         <div class="app-table__cell channel-detail__cell">
-          <div class="app-table__title channel-detail__cell-txt title">
+          <div
+            class="app-table__title channel-detail__cell-txt channel-detail__title"
+          >
             <span class="channel-detail__cell-txt-row">Channel &#10141;</span>
             <span class="channel-detail__cell-txt-row"
               >Counterparty Channel</span
@@ -32,18 +36,20 @@
               >{{ channel.channelId }} &#10141;</span
             >
             <span class="channel-detail__cell-txt-row">{{
-              channel.counterparty.channelId
+              channel.counterparty?.channelId
             }}</span>
           </div>
         </div>
         <div class="app-table__cell channel-detail__cell">
-          <span class="app-table__title channel-detail__cell-txt title"
+          <span
+            class="app-table__title channel-detail__cell-txt channel-detail__title"
             >State</span
           >
           <StatusIcon :status="channel?.state === 3 ? 'success' : 'error'" />
         </div>
         <div class="app-table__cell channel-detail__cell">
-          <span class="app-table__title channel-detail__cell-txt title"
+          <span
+            class="app-table__title channel-detail__cell-txt channel-detail__title"
             >Order</span
           >
           <span>{{ getOrder(channel.ordering) }}</span>
@@ -56,49 +62,39 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType, computed } from 'vue'
-import StatusIcon from '@/components/StatusIcon.vue'
+<script setup lang="ts">
+import { computed } from 'vue'
 import { IdentifiedChannel } from 'cosmjs-types/ibc/core/channel/v1/channel'
 import { IdentifiedConnection } from 'cosmjs-types/ibc/core/connection/v1/connection'
+import { ORDER } from '@/enums'
+import StatusIcon from '@/components/StatusIcon.vue'
 
-export default defineComponent({
-  components: { StatusIcon },
-  props: {
-    connection: {
-      type: Object as PropType<IdentifiedConnection>,
-      required: true,
-    },
-    channelData: {
-      type: Array as PropType<Array<IdentifiedChannel>>,
-      required: true,
-    },
-  },
-  setup(props) {
-    const channels = computed(() => {
-      return props.channelData?.filter(
-        (channel: IdentifiedChannel) =>
-          channel?.connectionHops[0] === props.connection?.id
-      )
-    })
-    const getOrder = (item: number) => {
-      if (item === -1) {
-        return 'Unrecognized'
-      } else if (item === 0) {
-        return 'None Unspecified'
-      } else if (item === 1) {
-        return 'Unordered'
-      } else if (item === 2) {
-        return 'Ordered'
-      }
-    }
-    return { channels, getOrder }
-  },
+const props = defineProps<{
+  connection: IdentifiedConnection
+  channelData: IdentifiedChannel[]
+}>()
+
+const channels = computed(() => {
+  return props.channelData?.filter(
+    (channel: IdentifiedChannel) =>
+      channel?.connectionHops[0] === props.connection?.id,
+  )
 })
+const getOrder = (item: number) => {
+  if (item === ORDER.unrecognized) {
+    return 'Unrecognized'
+  } else if (item === ORDER.noneUnspecified) {
+    return 'None Unspecified'
+  } else if (item === ORDER.unordered) {
+    return 'Unordered'
+  } else if (item === ORDER.ordered) {
+    return 'Ordered'
+  }
+}
 </script>
 
 <style scoped lang="scss">
-.title {
+.channel-detail__title {
   display: block;
   margin-bottom: 0.8rem;
   font-weight: 300;

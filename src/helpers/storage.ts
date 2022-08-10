@@ -1,5 +1,6 @@
 class StorageWrapper {
-  constructor(private _storage: Storage, private _prefix: string) {}
+  // eslint-disable-next-line prettier/prettier
+  constructor(private _storage: Storage, private _prefix: string) { }
 
   set(key: string, value: string): void {
     this._storage.setItem(this._key(key), value)
@@ -46,7 +47,7 @@ class FallbackStorage implements Storage {
 
 export const storage = new StorageWrapper(
   _getStorage('sessionStorage') || new FallbackStorage(),
-  'odin'
+  'odin',
 )
 
 function _getStorage(type: string): Storage | null {

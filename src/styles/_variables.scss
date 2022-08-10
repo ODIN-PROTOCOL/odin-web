@@ -8,6 +8,8 @@ $clr-action-disabled: #bfdefb;
 $clr-danger: #a30000;
 $clr-action-extra-muted: #e4f2fc;
 $clr-grey-bg: #f7f7f7;
+$clr-light-blue: #cce4ff;
+$clr-light-gray: #ced4da;
 
 // Buttons
 $clr-btn-normal: #007bff;
@@ -54,10 +56,10 @@ $clr-progressbar-negative: #f65160;
 // Status
 $clr-status-default: #6c757d;
 
-$clr-status-success: #00D097;
-$clr-status-pending: #FDC748;
-$clr-status-error: #F65160;
-$clr-status-progress: #66B0FF;
+$clr-status-success: #00d097;
+$clr-status-pending: #fdc748;
+$clr-status-error: #f65160;
+$clr-status-progress: #66b0ff;
 $clr-oracle-status-success: #00b07f;
 $clr-oracle-status-error: #f65160;
 
@@ -77,13 +79,16 @@ $clr-vue-picker-box-shadow: #00000014;
 $clr-vue-picker-current-option: #cce4ff66;
 
 // Vue Notifications
-$clr-vue-notifications-box-shadow: #00193329;
+$clr-vue-notifications-box-shadow: #00000066;
 $clr-vue-notifications-failed-border: #fcced2;
 $clr-vue-notifications-success-border: #64ffd5;
 $clr-vue-notifications-info-border: #66b0ff;
 
-// Auth 
+// Auth
 $clr-auth-base-bg: #031e3a;
+
+// Vue Skeleton Loader
+$clr-vue-skeleton-loader-bg: #e1e5e9;
 
 // ---------------- DARK THEME VARIABLES ---------------- //
 
@@ -173,3 +178,4 @@ $d-clr-vue-notifications-info-border: #66b0ff;
 
 // Auth 
 $d-clr-auth-base-bg: #031e3a;
+
