@@ -62,6 +62,7 @@ import {
   UiNoDataMessage,
 } from '@/components/ui'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
+import IbcLine from '@/components/IbcLine.vue'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const ITEMS_PER_PAGE = 4
@@ -119,78 +120,17 @@ onMounted(async () => {
 })
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .ibc-view__table {
   border: 0.1rem solid var(--clr__action);
   border-radius: 0.8rem;
   padding: 3rem 2rem;
   margin-bottom: 2.4rem;
 }
-.ibc-view__table-cell {
-  flex-direction: column;
-}
-.ibc-view__table-title {
-  display: block;
-  margin-bottom: 0.8rem;
-  font-weight: 300;
-  min-width: 13rem;
-}
-.ibc-view__body {
-  display: grid;
-  align-items: center;
-  grid:
-    auto /
-    minmax(2rem, 0.85fr)
-    minmax(6rem, 0.15fr);
-}
-.ibc-view__table-row {
-  grid:
-    auto /
-    minmax(2rem, 1fr)
-    minmax(2rem, 1fr)
-    minmax(2rem, 1fr)
-    minmax(2rem, 1fr);
-  margin-bottom: 1rem;
-  padding: 1rem 0 0;
-  border-bottom: none;
-}
-.ibc-view__show {
-  text-align: center;
-  white-space: nowrap;
-}
-.ibc-view__show-button {
-  color: var(--clr__btn-normal);
-  text-align: center;
-}
-.ibc-view__arrow-icon {
-  fill: var(--clr__btn-normal);
-  transform: translate(0.3rem, 0) rotate(270deg);
-}
-.ibc-view__arrow-icon--active {
-  transform: translate(-1rem, 1.5rem) rotate(90deg);
-  fill: var(--clr__action);
-}
 
-@include respond-to(medium) {
-  .ibc-view__body {
-    grid:
-      auto /
-      minmax(2rem, 0.75fr)
-      minmax(6rem, 0.25fr);
-  }
-}
 @include respond-to(tablet) {
   .ibc-view {
     padding-bottom: 10rem;
-  }
-  .ibc-view__body {
-    display: block;
-  }
-  .ibc-view__table-cell {
-    flex-direction: row;
-  }
-  .ibc-view__table-row {
-    grid: none;
   }
 }
 </style>

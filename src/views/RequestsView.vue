@@ -175,8 +175,8 @@ const createRequest = async () => {
     RequestFormModal,
     {
       onSubmit: async d => {
-        d.kill()
         await getRequests()
+        d.kill()
       },
     },
     { maxAskCount: maxAskCount.value },

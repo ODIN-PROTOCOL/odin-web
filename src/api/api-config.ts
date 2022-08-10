@@ -6,6 +6,8 @@ export const API_CONFIG = {
   faucet: process.env.VUE_APP_FAUCET_URL as string,
   exBridge: process.env.VUE_APP_EX_BRIDGE_URL as string,
   exBridgeFee: process.env.VUE_APP_EX_BRIDGE_FEE as string,
+  chainId: process.env.VUE_APP_CHAIN_ID as string,
+  chainName: process.env.VUE_APP_CHAIN_NAME as string,
   hdDeviation: stringToPath(process.env.VUE_APP_DEVIATION as string),
   odinScan: process.env.VUE_APP_ODIN_SCAN_URL as string,
   telemetryUrl: process.env.VUE_APP_TELEMETRY_URL?.slice(0, -1) as string,
@@ -24,9 +26,8 @@ export enum COINS_TYPE {
 
 // Configuration of the chain to which the Kepler extension connects
 export const CHAIN_CONFIG = {
-  features: ['no-legacy-stdTx'],
-  chainId: 'odin-mainnet-freya',
-  chainName: 'ODIN118',
+  chainId: API_CONFIG.chainId,
+  chainName: API_CONFIG.chainName,
   rpc: API_CONFIG.rpc,
   rest: API_CONFIG.api,
   bip44: {
@@ -49,7 +50,7 @@ export const CHAIN_CONFIG = {
     },
     {
       coinDenom: 'geo',
-      coinMinimalDenom: 'minigeo',
+      coinMinimalDenom: 'mGeo',
       coinDecimals: 6,
       coinGeckoId: 'geo',
     },

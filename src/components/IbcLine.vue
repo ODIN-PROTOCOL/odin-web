@@ -66,13 +66,7 @@ defineProps<{
 const isShowChannelDetail = ref(false)
 </script>
 
-<style lang="scss">
-.ibc-line__table {
-  border: 0.1rem solid var(--clr__action);
-  border-radius: 0.8rem;
-  padding: 3rem 2rem;
-  margin-bottom: 2.4rem;
-}
+<style scoped lang="scss">
 .ibc-line__cell {
   flex-direction: column;
 }
@@ -109,12 +103,14 @@ const isShowChannelDetail = ref(false)
   color: var(--clr__btn-normal);
   text-align: center;
 }
+
 .ibc-line__arrow-icon {
   fill: var(--clr__btn-normal);
-  transform: translate(0rem, 0.7rem) rotate(0deg);
+  transform: translate(0.3rem, 0) rotate(270deg);
 }
+
 .ibc-line__arrow-icon--active {
-  transform: translate(0rem, 0.7rem) rotate(180deg);
+  transform: translate(-1rem, 1.5rem) rotate(90deg);
   fill: var(--clr__action);
 }
 
@@ -126,6 +122,7 @@ const isShowChannelDetail = ref(false)
       minmax(6rem, 0.25fr);
   }
 }
+
 @include respond-to(tablet) {
   .ibc-line {
     display: block;

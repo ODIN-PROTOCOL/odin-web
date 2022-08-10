@@ -33,6 +33,7 @@
               class="app-form__field-input"
               name="request-ask-count"
               type="number"
+              placeholder="1"
               v-model="flattenForm.askCount"
               :disabled="isLoading"
             />
@@ -47,6 +48,7 @@
               class="app-form__field-input"
               name="request-min-count"
               type="number"
+              placeholder="1"
               v-model="flattenForm.minCount"
               :disabled="isLoading"
             />
@@ -166,8 +168,8 @@ const props = defineProps<{
 
 const form = useForm({
   oracleScriptId: ['', validators.required],
-  askCount: [1, validators.required, ...validators.num(1, props.maxAskCount)],
-  minCount: [1, validators.required, ...validators.num(1, props.maxAskCount)],
+  askCount: ['', validators.required, ...validators.num(1, props.maxAskCount)],
+  minCount: ['', validators.required, ...validators.num(1, props.maxAskCount)],
   calldata: [''],
   assets: [assetsChanges.odin.value, validators.required],
   feeLimit: [
