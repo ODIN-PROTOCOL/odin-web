@@ -1,25 +1,14 @@
 <template>
-  <div
-    class="validators-view-table-row app-table__row"
-    :class="{
-      'validators-view-table-row--top':
-        validator?.statuses[0]?.status === VALIDATOR_STATUS.active &&
-        delegations[validator.info.operatorAddress],
-    }"
-  >
+  <div class="validators-view-table-row app-table__row">
     <div class="app-table__cell">
       <span class="app-table__title">Rank</span>
       <span>{{ validator.rank }}</span>
     </div>
-    <div class="app-table__cell">
+    <div class="app-table__cell app-table__cell-txt">
       <span class="app-table__title">Validator</span>
-      <TitledLink
-        class="app-table__cell-txt app-table__link"
-        :text="validator?.descriptions[0]?.moniker"
-        :to="{
-          name: $routes.validatorDetails,
-          params: { address: validator?.info.operatorAddress },
-        }"
+      <validator-name
+        :descriptions="validator?.descriptions[0]"
+        :operatorAddress="validator.info.operatorAddress"
       />
     </div>
     <div class="app-table__cell app-table__cell-txt">
@@ -117,9 +106,9 @@ import {
   VALIDATOR_STATUS,
 } from '@/helpers/validatorHelpers'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
-import TitledLink from '@/components/TitledLink.vue'
 import Progressbar from '@/components/ProgressbarTool.vue'
 import ValidatorStatus from '@/components/ValidatorStatus.vue'
+import ValidatorName from '@/components/ValidatorName.vue'
 
 enum EVENTS {
   selectedBtn = 'selected-btn',

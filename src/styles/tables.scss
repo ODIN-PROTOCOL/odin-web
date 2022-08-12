@@ -133,13 +133,13 @@
   gap: 2rem;
   grid:
     auto /
-    minmax(2rem, 5rem)
-    minmax(5rem, 1.25fr)
+    minmax(2rem, 3rem)
+    minmax(7rem, 1.4fr)
     minmax(6rem, 1fr)
     minmax(8rem, 1fr)
     minmax(7rem, 1fr)
     minmax(6rem, 1fr)
-    minmax(24rem, 25rem);
+    minmax(24rem, 24rem);
 }
 .validators-view__table--unauthenticated {
   .validators-view__table-head,
@@ -147,8 +147,8 @@
     gap: 2rem;
     grid:
       auto /
-      minmax(2rem, 5rem)
-      minmax(5rem, 1.25fr)
+      minmax(2rem, 3rem)
+      minmax(7rem, 1.25fr)
       minmax(6rem, 1fr)
       minmax(8rem, 1fr)
       minmax(7rem, 1fr)
@@ -161,12 +161,12 @@
     gap: 2rem;
     grid:
       auto /
-      minmax(2rem, 5rem)
-      minmax(5rem, 1.5fr)
+      minmax(2rem, 3rem)
+      minmax(7rem, 1.5fr)
       minmax(6rem, 1.25fr)
       minmax(8rem, 1fr)
       minmax(7rem, 1fr)
-      minmax(24rem, 25rem);
+      minmax(24rem, 24rem);
   }
 }
 .validators-view__table--unauthenticated-inactive {
@@ -175,8 +175,8 @@
     gap: 2rem;
     grid:
       auto /
-      minmax(2rem, 5rem)
-      minmax(5rem, 1.5fr)
+      minmax(2rem, 3rem)
+      minmax(7rem, 1.5fr)
       minmax(6rem, 1.5fr)
       minmax(8rem, 1fr)
       minmax(6rem, 1fr);
@@ -237,7 +237,8 @@
   .data-sources__table-row,
   .requests-view__table-row,
   .validators-view-table-row,
-  .oracle-scripts__table-row .governance-view__table-row,
+  .oracle-scripts__table-row,
+  .governance-view__table-row,
   .requests-oracle-script__row,
   .requests-data-source__row,
   .delegators-table__table-row {
