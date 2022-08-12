@@ -37,9 +37,8 @@ const props = defineProps<{
   operatorAddress: string
 }>()
 
-const firstMonikerLetter = props.descriptions?.moniker
-  ? props.descriptions.moniker.split('')[0].toUpperCase()
-  : 'V'
+const firstMonikerLetter =
+  props.descriptions?.moniker.split('')[0].toUpperCase() || 'V'
 </script>
 <style lang="scss" scoped>
 .validator-name {
