@@ -1,6 +1,7 @@
 <template>
   <template v-if="isAppReady">
     <app-header v-if="!isAuthPage" />
+    <theme-switch />
     <router-view />
   </template>
   <div class="dialogs-container" ref="dialogsContainerRef"></div>
@@ -11,9 +12,11 @@
 import '@invisiburu/vue-picker/dist/vue-picker.min.css'
 import { computed, onMounted, ref } from 'vue'
 import { dialogs } from '@/helpers/dialogs'
+import { Theme } from '@/helpers/theme'
 import { useRoute } from 'vue-router'
 import { ROUTE_NAMES } from '@/enums'
-import AppHeader from '@/components/AppHeader.vue'
+import AppHeader from '@/components/AppHeader'
+import ThemeSwitch from '@/components/ThemeSwitch.vue'
 import NotificationsGroup from '@/components/NotificationsGroup.vue'
 
 const _readyStates = ref({
@@ -26,6 +29,9 @@ const isAppReady = computed(() => {
 // Dialogs
 const dialogsContainerRef = ref<HTMLElement>()
 onMounted(() => {
+  const userTheme = Theme.getTheme() || Theme.getMediaPreference()
+  Theme.setTheme(userTheme)
+
   if (dialogsContainerRef.value instanceof HTMLElement) {
     dialogs.init(dialogsContainerRef.value)
     _readyStates.value.dialogs = true

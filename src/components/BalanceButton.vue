@@ -4,35 +4,37 @@
   </router-link>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { WalletIcon } from '@/components/icons'
 </script>
 
 <style lang="scss" scoped>
 .balance-button {
-  position: relative;
+  width: 4.8rem;
+  height: 4.8rem;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 1rem;
+  position: relative;
+  background-color: var(--clr__action);
   border: 0.1rem solid transparent;
   border-radius: 0.4rem;
-  background: var(--clr__action);
-  width: 4.8rem;
-  height: 4.8rem;
-
   @include transition(background);
+
   &:hover {
     border: 0.1rem solid transparent;
-    background: var(--clr__btn-hover);
+    background-color: var(--clr__btn-hover);
   }
+
   &:active {
     border: 0.1rem solid transparent;
-    background: var(--clr__btn-pressed);
+    background-color: var(--clr__btn-pressed);
   }
+
   &:disabled {
     border: 0.1rem solid transparent;
-    background: var(--clr__btn-disabled);
+    background-color: var(--clr__btn-disabled);
   }
 }
 </style>

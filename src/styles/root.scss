@@ -4,7 +4,7 @@
   --clr__text: #{$clr-text};
   --clr__text-muted: #{$clr-text-muted};
   --clr__text-on-action: #{$clr-text-on-action};
-  --clr__action: #{$clr-action};
+  --clr__action: #{$clr-very-light-blue};
   --clr__action-disabled: #{$clr-action-disabled};
   --clr__danger: #{$clr-danger};
   --clr__action-extra-muted: #{$clr-action-extra-muted};
@@ -12,15 +12,23 @@
   --clr__light-blue: #{$clr-light-blue};
   --clr__light-gray: #{$clr-light-gray};
 
+  // Header
+  --clr__header-bg: #{$clr-chinese-black};
+  --clr__header-nav-txt: #{$clr-bright-gray};
+
+  // Theme Switch
+  --clr__theme-switch-txt: #{$clr-auro-metal-saurus};
+  --clr__theme-switch-bg: #{$clr-bright-gray};
+  --clr__theme-switch-active-txt: #{$clr-white};
+  --clr__theme-switch-active-bg: #{$clr-very-light-blue};
+
   // Buttons
   --clr__btn-normal: #{$clr-btn-normal};
   --clr__btn-hover: #{$clr-btn-hover};
   --clr__btn-pressed: #{$clr-btn-pressed};
+  --clr__btn-focused: #{$clr-btn-focused};
+  --clr__btn-focused-border: #{$clr-btn-focused-border};
   --clr__btn-disabled: #{$clr-btn-disabled};
-  --clr__btn-normal-red: #{$clr-btn-normal-red};
-  --clr__btn-hover-red: #{$clr-btn-hover-red};
-  --clr__btn-pressed-red: #{$clr-btn-pressed-red};
-  --clr__btn-disabled-red: #{$clr-btn-disabled-red};
 
   // Inputs
   --clr__input-bg: #{$clr-input-bg};
