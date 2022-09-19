@@ -18,7 +18,7 @@
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="`#${item.id}`"
-                :to="{
+                :name="{
                   name: $routes.requestDetails,
                   params: { id: item.id },
                 }"

@@ -51,6 +51,36 @@ const routes: Array<RouteRecordRaw> = [
           import(/* webpackChunkName: "auth" */ '@/views/AuthView.vue'),
       },
       {
+        path: '/accounts',
+        name: ROUTE_NAMES.accounts,
+        component: () => import('@/views/RequestsView.vue'),
+      },
+      {
+        path: '/accounts/:hash',
+        name: ROUTE_NAMES.accountDetails,
+        component: () => import('@/views/RequestsView.vue'),
+      },
+      {
+        path: '/blocks',
+        name: ROUTE_NAMES.blocks,
+        component: () => import('@/views/RequestsView.vue'),
+      },
+      {
+        path: '/blocks/:id',
+        name: ROUTE_NAMES.blockDetails,
+        component: () => import('@/views/RequestsView.vue'),
+      },
+      {
+        path: '/transactions',
+        name: ROUTE_NAMES.transactions,
+        component: () => import('@/views/RequestsView.vue'),
+      },
+      {
+        path: '/transactions/:hash',
+        name: ROUTE_NAMES.transactionDetails,
+        component: () => import('@/views/RequestsView.vue'),
+      },
+      {
         path: '/data-sources',
         name: ROUTE_NAMES.dataSources,
         component: () =>

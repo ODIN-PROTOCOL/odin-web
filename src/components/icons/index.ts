@@ -1,6 +1,7 @@
 export { default as AppLogoIcon } from './AppLogoIcon.vue'
 export { default as ArrowIcon } from './ArrowIcon.vue'
 export { default as CancelIcon } from './CancelIcon.vue'
+export { default as CloseIcon } from './CloseIcon.vue'
 export { default as CopyIcon } from './CopyIcon.vue'
 export { default as ErrorIcon } from './ErrorIcon.vue'
 export { default as ExitIcon } from './ExitIcon.vue'

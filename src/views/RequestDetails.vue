@@ -22,7 +22,7 @@
               <TitledLink
                 class="info-table__row-link"
                 :text="requestData.oracle_script_id"
-                :to="{
+                :name="{
                   name: $routes.oracleScriptDetails,
                   params: { id: requestData.oracle_script_id },
                 }"

@@ -12,6 +12,8 @@ import {
   format as _formatDate,
   differenceInHours,
   differenceInDays,
+  differenceInMinutes,
+  differenceInSeconds,
 } from 'date-fns'
 import Long from 'long'
 
@@ -194,4 +196,27 @@ export function trimLeadingZeros(
   } else {
     return Number(data.toFixed(fractionDigits))
   }
+}
+
+export function diffDays(dateLeft: Date, dateRight: Date): string {
+  if (differenceInDays(dateLeft, dateRight) >= 1)
+    return `${differenceInDays(dateLeft, dateRight)} days ago`
+
+  if (differenceInHours(dateLeft, dateRight) >= 1)
+    return `${differenceInHours(dateLeft, dateRight)} hours ago`
+
+  if (differenceInMinutes(dateLeft, dateRight) >= 1)
+    return `${differenceInMinutes(dateLeft, dateRight)} minutes ago`
+
+  return `${differenceInSeconds(dateLeft, dateRight)} secs ago`
+}
+
+export function cropText(value?: string): string {
+  if (!value) return ''
+  if (value.length > 11) return `${value.slice(0, 11)}…`
+  return value
+}
+
+export function getDay(time: string | number): Date {
+  return new Date(time)
 }

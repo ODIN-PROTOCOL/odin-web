@@ -113,14 +113,8 @@
         </button>
       </template>
       <template v-else>
-        <router-link
-          class="router-link-container"
-          :to="{ name: $routes.auth }"
-        >
-          <button
-            class="app-btn log-out-btn app-btn--medium"
-            type="button"
-          >
+        <router-link class="router-link-container" :to="{ name: $routes.auth }">
+          <button class="app-btn log-out-btn app-btn--medium" type="button">
             Connect Wallet
           </button>
         </router-link>

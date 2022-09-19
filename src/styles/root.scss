@@ -1,4 +1,6 @@
 :root {
+  --clr__primary: #{$clr-dark-gunmetal};
+  --clr__secondary: #{$clr-very-light-blue};
   --clr__main-bg: #{$clr-main-bg};
   --clr__splash-bg: #{$clr-splash-bg};
   --clr__text: #{$clr-text};
@@ -11,10 +13,20 @@
   --clr__grey-bg: #{$clr-grey-bg};
   --clr__light-blue: #{$clr-light-blue};
   --clr__light-gray: #{$clr-light-gray};
+  --clr__levender-blue: #{$clr-levender-blue};
+
+  // Main
+  --clr__main-text: #{$clr-dark-gunmetal};
 
   // Header
   --clr__header-bg: #{$clr-chinese-black};
   --clr__header-nav-txt: #{$clr-bright-gray};
+
+  --clr__search-bar-bg: #{$clr-white};
+  --clr__search-field-bg: #{$clr-bright-gray};
+  --clr__search-icon: #{$clr-dark-gunmetal};
+  --clr__search-icon-bg: #{$clr-very-light-blue};
+  --clr__search-bar-dropdown-bg: #{$clr-azureish-white};
 
   // Theme Switch
   --clr__theme-switch-txt: #{$clr-auro-metal-saurus};
@@ -41,6 +53,10 @@
   --clr__table-head: #{$clr-table-head};
 
   // Dropdown
+  --clr__dropdown: #{$clr-text};
+  --clr__dropdown-bg: #{$clr-white};
+  --clr__dropdown-active: #{$clr-very-light-blue};
+  --clr__dropdown-active-bg: #{$clr-levender-blue};
 
   // Shadows
   --clr__dropdown-shadow: #{$clr-dropdown-shadow};
@@ -84,9 +100,9 @@
   --clr__wallet-info-border: #{$clr-wallet-info-border};
   --clr__wallet-info-box-shadow: #{$clr-wallet-info-box-shadow};
 
-  // Vue Picker
-  --clr__vue-picker-box-shadow: #{$clr-vue-picker-box-shadow};
+  // Vue Picker 
   --clr__vue-picker-current-option: #{$clr-vue-picker-current-option};
+  --clr__vue-picker-bg: #{$clr-white};
 
   // Vue Notifications
   --clr__vue-notifications-box-shadow: #{$clr-vue-notifications-box-shadow};
@@ -97,4 +113,23 @@
   --clr__auth-base-bg: #{$clr-auth-base-bg};
   // Vue Skeleton Loader
   --clr__vue-skeleton-loader-bg: #{$clr-vue-skeleton-loader-bg};
+}
+
+:root.dark-theme {
+  // Main
+  --clr__main-text: #{$clr-white};
+
+  // Header
+  --clr__search-bar-bg: #{$clr-very-light-blue};
+  --clr__search-icon: #{$clr-white};
+  --clr__search-field-bg: #{$clr-dark-gunmetal};
+  --clr__search-icon-bg: #{$clr-chinese-black};
+
+  // Dropdown
+  --clr__dropdown: #{$clr-white};
+  --clr__dropdown-bg: #{$clr-dark-gunmetal};
+  --clr__search-bar-dropdown-bg: #{$clr-dark-blue};
+
+  // Vue Picker 
+  --clr__vue-picker-bg: #{$clr-dark-1};
 }

@@ -1,19 +1,33 @@
 <template>
-  <header
-    class="app-header fx-row"
-    :class="{ 'app-header--mobile': isOpen }"
-  >
+  <header class="app-header" :class="{ 'app-header--mobile': isOpen }">
     <div class="app-header__content">
       <div class="app-header__content-logo">
         <app-logo-icon />
       </div>
       <app-nav :is-open="isOpen" @close-burger="onBurgerClose" />
       <user-widget class="fx-sae" @close-burger="onBurgerClose" />
-      <burger-menu
-        class="app-header__burger-menu"
-        :is-open="isOpen"
-        @click="onBurgerMenuClick($event)"
-      />
+      <div class="app-header__mobile-nav">
+        <theme-switch
+          class="theme-switch"
+          :theme="currentTheme"
+          :toggle-theme="toggleTheme"
+        />
+        <burger-menu
+          class="app-header__burger-menu"
+          :is-open="isOpen"
+          @click="onBurgerMenuClick($event)"
+        />
+      </div>
+    </div>
+    <div class="app-header__search-bar">
+      <div class="app-header__content">
+        <search-bar />
+        <theme-switch
+          class="theme-switch"
+          :theme="currentTheme"
+          :toggle-theme="toggleTheme"
+        />
+      </div>
     </div>
   </header>
 </template>
@@ -24,8 +38,17 @@ import { AppLogoIcon } from '@/components/icons'
 import AppNav from '@/components/AppHeader/AppNav.vue'
 import BurgerMenu from '@/components/AppHeader/BurgerMenu.vue'
 import UserWidget from '@/components/AppHeader/UserWidget.vue'
+import SearchBar from '@/components/SearchBar/SearchBar.vue'
+import ThemeSwitch from '@/components/ThemeSwitch.vue'
+import { Theme, ThemeMode } from '@/helpers/theme'
 
 const isOpen = ref(false)
+const currentTheme = ref(Theme.getTheme())
+
+const toggleTheme = (theme: ThemeMode): void => {
+  Theme.setTheme(theme)
+  currentTheme.value = theme
+}
 
 const onBurgerMenuClick = (event: Event | MouseEvent) => {
   event.preventDefault()
@@ -62,6 +85,30 @@ const onBurgerClose = () => {
   justify-content: center;
 }
 
+.app-header__mobile-nav {
+  display: none;
+
+  @include respond-to(tablet) {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-shrink: 0;
+  }
+}
+
+.app-header__search-bar {
+  height: 8.4rem;
+  display: flex;
+  align-items: center;
+  background-color: var(--clr__search-bar-bg);
+
+  .app__container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
 @include respond-to(tablet) {
   .app-header--mobile {
     width: 100%;
@@ -80,6 +127,12 @@ const onBurgerClose = () => {
   .app-header__burger-menu {
     display: flex;
     flex-shrink: 0;
+  }
+
+  .app-header__search-bar {
+    .theme-switch {
+      display: none;
+    }
   }
 }
 </style>

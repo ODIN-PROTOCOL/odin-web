@@ -1,7 +1,6 @@
 <template>
   <template v-if="isAppReady">
     <app-header v-if="!isAuthPage" />
-    <theme-switch />
     <router-view />
   </template>
   <div class="dialogs-container" ref="dialogsContainerRef"></div>
@@ -16,7 +15,6 @@ import { Theme } from '@/helpers/theme'
 import { useRoute } from 'vue-router'
 import { ROUTE_NAMES } from '@/enums'
 import AppHeader from '@/components/AppHeader'
-import ThemeSwitch from '@/components/ThemeSwitch.vue'
 import NotificationsGroup from '@/components/NotificationsGroup.vue'
 
 const _readyStates = ref({
@@ -55,6 +53,8 @@ const isAuthPage = computed(
 @import '~@/styles/tables.scss';
 @import '~@/styles/views.scss';
 @import '~@/styles/forms.scss';
+@import '~@/styles/custom.scss';
+@import '~@/styles/dropdowns.scss';
 @import '~@/styles/shortcuts.scss';
 @import '~@/styles/atom-one-dark.scss';
 @import '~@/styles/vue-skeletor.scss';
