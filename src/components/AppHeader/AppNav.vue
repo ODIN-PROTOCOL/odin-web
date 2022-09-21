@@ -7,11 +7,25 @@
     }"
   >
     <div class="app-nav__wrap-container">
+      <NestedLink
+        :is-dropdown-open="isBlockchainDropdownOpen"
+        :list="BlockchainList"
+        @click="onBlockchainOpen"
+        @redirect="onPageChange"
+      />
+      <router-link
+        class="app-nav__link"
+        data-text="Validators"
+        :to="{ name: $routes.validators }"
+        @click="onPageChange"
+      >
+        <span>Validators</span>
+      </router-link>
       <router-link
         class="app-nav__link"
         data-text="Data Sources"
         :to="{ name: $routes.dataSources }"
-        @click="closeBurger"
+        @click="onPageChange"
       >
         <span>Data Sources</span>
       </router-link>
@@ -19,73 +33,17 @@
         class="app-nav__link"
         data-text="Oracle Scripts"
         :to="{ name: $routes.oracleScripts }"
-        @click="closeBurger"
+        @click="onPageChange"
       >
         <span>Oracle Scripts</span>
       </router-link>
       <router-link
         class="app-nav__link"
-        data-text="Requests"
-        :to="{ name: $routes.requests }"
-        @click="closeBurger"
-      >
-        <span>Requests</span>
-      </router-link>
-      <router-link
-        class="app-nav__link"
-        data-text="Transactions"
-        :to="{ name: $routes.validators }"
-        @click="closeBurger"
-      >
-        <span>Transactions</span>
-      </router-link>
-      <router-link
-        class="app-nav__link"
-        data-text="Blocks"
-        :to="{ name: $routes.validators }"
-        @click="closeBurger"
-      >
-        <span>Blocks</span>
-      </router-link>
-      <router-link
-        class="app-nav__link"
-        data-text="Validators"
-        :to="{ name: $routes.validators }"
-        @click="closeBurger"
-      >
-        <span>Validators</span>
-      </router-link>
-      <router-link
-        class="app-nav__link"
-        data-text="Top Accounts"
-        :to="{ name: $routes.validators }"
-        @click="closeBurger"
-      >
-        <span>Top Accounts</span>
-      </router-link>
-      <router-link
-        class="app-nav__link"
-        data-text="Charts & Stats"
-        :to="{ name: $routes.validators }"
-        @click="closeBurger"
-      >
-        <span>Charts & Stats</span>
-      </router-link>
-      <router-link
-        class="app-nav__link"
         data-text="Governance"
         :to="{ name: $routes.governance }"
-        @click="closeBurger"
+        @click="onPageChange"
       >
-        <span>Governance</span>
-      </router-link>
-      <router-link
-        class="app-nav__link"
-        data-text="IBCs"
-        :to="{ name: $routes.ibc }"
-        @click="closeBurger"
-      >
-        <span>IBCs</span>
+        <span>Proposals</span>
       </router-link>
     </div>
     <div class="app-nav__activities">
@@ -124,12 +82,47 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import router from '@/router'
 import { ROUTE_NAMES } from '@/enums'
 import { useAuthorization } from '@/composables/useAuthorization'
+import NestedLink from '@/components/AppHeader/NestedLink.vue'
 import { ExitIcon, WalletIcon } from '@/components/icons'
+import { isMobile } from '@/helpers/helpers'
+import { LinkList } from '@/helpers/Types'
 import { WalletTypes, wallet } from '@/api/wallet'
+
+const BlockchainList: LinkList = {
+  name: 'Blockchain',
+  links: [
+    {
+      name: ROUTE_NAMES.transactions,
+      text: 'Transactions',
+    },
+    {
+      name: ROUTE_NAMES.blocks,
+      text: 'Blocks',
+    },
+    {
+      name: ROUTE_NAMES.requests,
+      text: 'Requests',
+    },
+    {
+      name: ROUTE_NAMES.ibc,
+      text: 'IBCs',
+    },
+    {
+      name: ROUTE_NAMES.accounts,
+      text: 'Top Accounts',
+    },
+    {
+      name: ROUTE_NAMES.charts,
+      text: 'Charts & Stats',
+    },
+  ],
+}
+
+const isBlockchainDropdownOpen = ref(false)
 
 enum EVENTS {
   closeBurger = 'close-burger',
@@ -155,8 +148,14 @@ const logOutAndLeave = () => {
   router.push({ name: ROUTE_NAMES.auth })
 }
 
-const closeBurger = () => {
+const onPageChange = () => {
   emit(EVENTS.closeBurger)
+}
+
+const onBlockchainOpen = () => {
+  if (isMobile()) {
+    isBlockchainDropdownOpen.value = !isBlockchainDropdownOpen.value
+  }
 }
 
 onMounted(() => {

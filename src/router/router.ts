@@ -71,6 +71,11 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/RequestsView.vue'),
       },
       {
+        path: '/charts',
+        name: ROUTE_NAMES.charts,
+        component: () => import('@/views/RequestsView.vue'),
+      },
+      {
         path: '/transactions',
         name: ROUTE_NAMES.transactions,
         component: () => import('@/views/RequestsView.vue'),

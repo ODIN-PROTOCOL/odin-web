@@ -7,6 +7,7 @@ export enum ROUTE_NAMES {
   accountDetails = 'app.accounts.account-details',
   blocks = 'app.blocks',
   blockDetails = 'app.blocks.block-details',
+  charts = 'app.charts',
   dataSources = 'app.data-sources',
   dataSourceDetails = 'app.data-sources.data-source-details',
   oracleScripts = 'app.oracle-scripts',

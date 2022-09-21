@@ -148,3 +148,16 @@ export type TempSearchAccountInfoType = {
   geoBalance: Coin
   odinBalance: Coin
 }
+
+export type Link = {
+  to?: string
+  name?: string
+  text?: string
+  title?: string
+  url?: string
+}
+
+export type LinkList = {
+  name: string
+  links: Array<Link>
+}
