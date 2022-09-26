@@ -1,5 +1,5 @@
 <template>
-  <router-link class="titled-link" :to="to" :title="title || text">
+  <router-link class="titled-link" :to="name || to" :title="title || text">
     <span>
       {{ text }}
     </span>
@@ -13,10 +13,12 @@ withDefaults(
   defineProps<{
     text: number | string
     title?: number | string
-    to: LocationAsRelativeRaw
+    name?: LocationAsRelativeRaw
+    to?: string
   }>(),
   {
     title: '',
+    to: '#',
   },
 )
 </script>

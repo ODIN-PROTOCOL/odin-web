@@ -13,7 +13,7 @@ import { MsgDeposit, MsgVote } from '@provider/codec/cosmos/gov/v1beta1/tx'
 import { api } from './api'
 import { wallet } from './wallet'
 import { mapResponse, sendPost, sendGet } from './callersHelpers'
-import { cacheAnswers } from '@/helpers/requests'
+import { cacheAnswers, getAPIDate } from '@/helpers/requests'
 import { decodeProposal } from '@/helpers/proposalDecoders'
 
 import { NumLike } from '@/helpers/casts'
@@ -251,6 +251,15 @@ const makeCallers = () => {
       return axiosWrapper.get(
         `${API_CONFIG.telemetryUrl}/validator/${id}/reports?page[number]=${page_number}&page[limit]=${page_limit}`,
       )
+    },
+    getUnverifiedBalances: querier(qc => qc.bank.balance),
+    getValidatorByConsensusKey: cacheAnswers((validatorHash: string) => {
+      return axiosWrapper.get(
+        `${API_CONFIG.api}telemetry/validator_by_cons_addr/${validatorHash}`,
+      )
+    }),
+    getTxForTxDetailsPage: (hash: string) => {
+      return getAPIDate(`${API_CONFIG.rpc}tx?hash=0x${hash}&prove=true`)
     },
   }
 }

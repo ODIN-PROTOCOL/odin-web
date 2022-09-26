@@ -15,7 +15,7 @@
       <TitledLink
         class="app-table__cell-txt app-table__link validator-name__moniker"
         :text="descriptions.moniker"
-        :to="{
+        :name="{
           name: $routes.validatorDetails,
           params: { address: operatorAddress },
         }"

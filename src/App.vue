@@ -11,9 +11,10 @@
 import '@invisiburu/vue-picker/dist/vue-picker.min.css'
 import { computed, onMounted, ref } from 'vue'
 import { dialogs } from '@/helpers/dialogs'
+import { Theme } from '@/helpers/theme'
 import { useRoute } from 'vue-router'
 import { ROUTE_NAMES } from '@/enums'
-import AppHeader from '@/components/AppHeader.vue'
+import AppHeader from '@/components/AppHeader'
 import NotificationsGroup from '@/components/NotificationsGroup.vue'
 
 const _readyStates = ref({
@@ -26,6 +27,9 @@ const isAppReady = computed(() => {
 // Dialogs
 const dialogsContainerRef = ref<HTMLElement>()
 onMounted(() => {
+  const userTheme = Theme.getTheme() || Theme.getMediaPreference()
+  Theme.setTheme(userTheme)
+
   if (dialogsContainerRef.value instanceof HTMLElement) {
     dialogs.init(dialogsContainerRef.value)
     _readyStates.value.dialogs = true
@@ -49,6 +53,8 @@ const isAuthPage = computed(
 @import '~@/styles/tables.scss';
 @import '~@/styles/views.scss';
 @import '~@/styles/forms.scss';
+@import '~@/styles/custom.scss';
+@import '~@/styles/dropdowns.scss';
 @import '~@/styles/shortcuts.scss';
 @import '~@/styles/atom-one-dark.scss';
 @import '~@/styles/vue-skeletor.scss';

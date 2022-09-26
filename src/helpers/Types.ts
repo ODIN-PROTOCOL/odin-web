@@ -1,6 +1,12 @@
+import { BigNumber } from 'bignumber.js'
+import { BlockMeta } from '@cosmjs/tendermint-rpc'
 import { Modify } from '@/shared-types'
 import { ProposalDecoded } from '@/helpers/proposalDecoders'
-import { BigNumber } from 'bignumber.js'
+
+export interface Coin {
+  denom: string
+  amount: string
+}
 
 export interface IEventsItem {
   type: string
@@ -124,4 +130,34 @@ export interface TxTelemetry {
   readonly height: number
   readonly index: number
   readonly tx_result: TxData
+}
+
+export type SearchResultType = {
+  blocks?: Array<TransformedBlocks>
+  transactions?: Array<DecodedTxData>
+  accounts?: Array<TempSearchAccountInfoType>
+}
+
+export interface TransformedBlocks extends BlockMeta {
+  validator: string
+  txs: number
+}
+
+export type TempSearchAccountInfoType = {
+  address: string
+  geoBalance: Coin
+  odinBalance: Coin
+}
+
+export type Link = {
+  to?: string
+  name?: string
+  text?: string
+  title?: string
+  url?: string
+}
+
+export type LinkList = {
+  name: string
+  links: Array<Link>
 }

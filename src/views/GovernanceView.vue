@@ -45,7 +45,7 @@
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="item.content?.title || '-'"
-                :to="{
+                :name="{
                   name: $routes.proposal,
                   params: { id: item.proposal_id },
                 }"

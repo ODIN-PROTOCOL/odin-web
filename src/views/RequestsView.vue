@@ -36,7 +36,7 @@
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="`#${item.request.id}`"
-                :to="{
+                :name="{
                   name: $routes.requestDetails,
                   params: { id: item.request.id },
                 }"
@@ -47,7 +47,7 @@
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="`#${item.request.oracle_script_id}`"
-                :to="{
+                :name="{
                   name: $routes.oracleScriptDetails,
                   params: { id: item.request.oracle_script_id },
                 }"
