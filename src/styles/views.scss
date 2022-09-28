@@ -1,3 +1,80 @@
+.app__main-content {
+  flex: 1;
+  background-color: var(--clr__main-bg);
+}
+
+.app__main-view {
+  width: 100%;
+  max-width: 140rem;
+  padding: 3rem 3.2rem;
+  margin: 0px auto;
+}
+
+.app__main-view-table-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4.2rem;
+}
+
+.app__main-view-table-header-prefix {
+  width: 56px;
+  height: 56px;
+  padding: 1.6rem;
+  background-color: var(--clr__table-header-prefix-bg);
+  border-radius: 0.8rem;
+}
+
+.app__main-view-table-header-prefix > span {
+  color: var(--clr__secondary);
+  font-weight: bold;
+  font-size: 2rem;
+  line-height: 2.4rem;
+}
+
+.app__main-view-table-header-info {
+  margin-left: 1.6rem;
+}
+
+.app__main-view-table-header-info-title {
+  font-size: 2.4rem;
+  font-weight: 400;
+}
+
+.app__main-view-table-header-info-count {
+  color: var(--clr__text-muted);
+  font-size: 1.6rem;
+}
+
+.app__main-view-detail-container {
+  display: flex;
+  margin-bottom: 4rem;
+}
+
+.app__main-view-detail-back-icon {
+  margin-top: 1rem;
+  margin-right: 2rem;
+}
+
+.app__main-view-detail-title-container {
+  max-width: 90%;
+}
+
+.app__main-view-detail-title {
+  font-size: 2.4rem;
+  font-weight: 400;
+}
+
+.app__main-view-detail-subtitle-container {
+  display: flex;
+}
+
+.app__main-view-detail-subtitle {
+  color: var(--clr__text-muted);
+  font-size: 1.6rem;
+  font-weight: 400;
+  @include ellipsis();
+}
+
 .view-main {
   width: 100%;
   max-width: 140rem;

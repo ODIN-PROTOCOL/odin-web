@@ -1,96 +1,112 @@
 <template>
   <div class="app-table__row">
     <div class="app-table__cell">
-      <span class="app-table__title">Transaction hash</span>
-      <a
+      <span class="app-table__title">Transaction Hash</span>
+      <TitledLink
+        :name="{
+          name: $routes.transactionDetails,
+          params: { hash: transition.hash },
+        }"
         class="app-table__cell-txt app-table__link"
-        :href="`${API_CONFIG.odinScan}/transactions/${getRequestItemTxHash}`"
-      >
-        {{ tx.tx_hash }}
-      </a>
+        :text="'0x' + transition.hash"
+      />
     </div>
     <div class="app-table__cell">
       <span class="app-table__title">Type</span>
-      <span class="app-table__cell-txt" :title="type">
-        {{ type }}
+      <span class="app-table__cell-txt" :title="transition.type">
+        {{ transition.type }}
       </span>
     </div>
     <div class="app-table__cell">
       <span class="app-table__title">Block</span>
-      <a
+      <TitledLink
+        :name="{
+          name: $routes.blockDetails,
+          params: { id: transition.block },
+        }"
+        :text="transition.block"
         class="app-table__cell-txt app-table__link"
-        :href="`${API_CONFIG.odinScan}/blocks/${tx.block}`"
-      >
-        {{ tx.block }}
-      </a>
+      />
     </div>
     <div class="app-table__cell">
-      <span class="app-table__title">Date and time</span>
-      <span>{{ $fDate(tx.timestamp * 1000, 'HH:mm dd.MM.yy') }}</span>
+      <span class="app-table__title">Date</span>
+      <span class="app-table__cell-date">
+        {{ $fDate(transition.time, 'dd/MM/yy') }}
+      </span>
+      <span class="app-table__cell-time">
+        {{ $fDate(transition.time, 'HH:mm') }}
+      </span>
     </div>
     <div class="app-table__cell">
       <span class="app-table__title">Sender</span>
-      <a
-        v-if="tx.sender"
+      <TitledLink
+        v-if="transition.sender !== ''"
+        :name="{
+          name: $routes.accountDetails,
+          params: { hash: transition.sender },
+        }"
         class="app-table__cell-txt app-table__link"
-        :href="`${API_CONFIG.odinScan}/${generateAddrLink(tx.sender)}`"
-      >
-        {{ tx.sender }}
-      </a>
+        :text="transition.sender"
+      />
       <span class="app-table__cell-txt" v-else> - </span>
     </div>
     <div class="app-table__cell">
       <span class="app-table__title">Receiver</span>
-      <a
-        v-if="tx.receiver"
+      <TitledLink
+        v-if="transition.receiver !== ''"
+        :name="{
+          name: $routes.accountDetails,
+          params: { hash: transition.receiver },
+        }"
+        :text="transition.receiver"
         class="app-table__cell-txt app-table__link"
-        :href="`${API_CONFIG.odinScan}/${generateAddrLink(tx.receiver)}`"
-      >
-        {{ tx.receiver }}
-      </a>
+      />
       <span class="app-table__cell-txt" v-else> - </span>
     </div>
     <div class="app-table__cell">
-      <span class="app-table__title">Amount</span>
-      <span class="app-table__cell-txt" :title="odinAmount">{{
-        odinAmount
-      }}</span>
+      <span class="app-table__title">Transaction Fee</span>
+      <span class="app-table__cell-txt" :title="transition.fee">
+        {{ transition.fee }}
+      </span>
     </div>
     <div class="app-table__cell">
-      <span class="app-table__title">Transaction Fee</span>
-      <span class="app-table__cell-txt" :title="odinFee">
-        {{ odinFee }}
+      <span class="app-table__title">Amount</span>
+      <span :class="[amountCellClass]" :title="transition.amount">
+        {{ transition.amount }}
       </span>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { humanizeMessageType } from '@/helpers/decodeMessage'
-import { convertLokiToOdin } from '@/helpers/converters'
-import { API_CONFIG } from '@/api/api-config'
-import { txFromTelemetry } from '@/helpers/Types'
+import { computed } from 'vue'
+import { DecodedTxData } from '@/helpers/Types'
+import TitledLink from '@/components/TitledLink.vue'
 
 const props = defineProps<{
-  tx: txFromTelemetry
+  transition: DecodedTxData
 }>()
 
-const odinAmount = convertLokiToOdin(
-  props.tx.amount[0]?.amount,
-  {},
-  props.tx.amount[0]?.denom,
-)
-const odinFee = convertLokiToOdin(
-  props.tx.fee[0]?.amount,
-  {},
-  props.tx.fee[0]?.denom,
-)
-const type = humanizeMessageType('/' + props.tx.type)
-const getRequestItemTxHash = props.tx?.tx_hash.split('0x')[1]
-const generateAddrLink = (addr: string) => {
-  if (addr.includes('odinvaloper')) {
-    return `validators/${addr}`
-  } else {
-    return `account/${addr}`
+const amountCellClass = computed(() => {
+  if (props.transition.amount === '-') {
+    return 'app-table__cell-txt'
+  }
+
+  return 'app-table__cell-tag'
+})
+</script>
+
+<style lang="scss" scoped>
+@include respond-to(medium) {
+  .app-table__title {
+    display: inline-block;
+    min-width: 15rem;
+    margin-right: 2.4rem;
+    font-weight: 300;
+  }
+
+  .app-table__row {
+    grid: none;
+    padding: 3.4rem 0 1.6rem;
   }
 }
-</script>
+</style>

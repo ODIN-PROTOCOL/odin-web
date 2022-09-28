@@ -71,14 +71,14 @@ const onBurgerClose = () => {
 
 .app-header__content-logo {
   width: 9rem;
-  height: 3.4rem;
+  height: 2.8rem;
 }
 
 .app-header__content {
   width: 100%;
   max-width: 140rem;
   margin: 0 auto;
-  padding: 2.5rem 3.2rem;
+  padding: 1.8rem 3.2rem;
   gap: 5.4rem;
   display: flex;
   align-items: center;
@@ -119,7 +119,7 @@ const onBurgerClose = () => {
   .app-header__content {
     max-width: 100%;
     margin: 0;
-    padding: 2.4rem 1.6rem;
+    padding: 1.8rem 1.6rem;
     gap: 0.4rem;
     position: relative;
   }

@@ -76,16 +76,6 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/RequestsView.vue'),
       },
       {
-        path: '/transactions',
-        name: ROUTE_NAMES.transactions,
-        component: () => import('@/views/RequestsView.vue'),
-      },
-      {
-        path: '/transactions/:hash',
-        name: ROUTE_NAMES.transactionDetails,
-        component: () => import('@/views/RequestsView.vue'),
-      },
-      {
         path: '/data-sources',
         name: ROUTE_NAMES.dataSources,
         component: () =>
@@ -126,6 +116,16 @@ const routes: Array<RouteRecordRaw> = [
         path: '/requests/:id',
         name: ROUTE_NAMES.requestDetails,
         component: () => import('@/views/RequestDetails.vue'),
+      },
+      {
+        path: '/transactions',
+        name: ROUTE_NAMES.transactions,
+        component: () => import('@/views/TransactionsView.vue'),
+      },
+      {
+        path: '/transactions/:hash',
+        name: ROUTE_NAMES.transactionDetails,
+        component: () => import('@/views/TransactionsItem.vue'),
       },
       {
         path: '/validators',

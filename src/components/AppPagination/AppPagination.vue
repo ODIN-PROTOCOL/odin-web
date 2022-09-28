@@ -2,14 +2,14 @@
   <div class="app-pagination__wrapper">
     <div class="app-pagination">
       <button
-        class="app-pagination__control app-pagination__border"
+        class="app-btn app-btn--medium app-pagination__control app-pagination__border"
         :class="{ 'app-pagination__control--active': isPrevControlsActive }"
         @click="goToPreviousPage"
       >
         <ArrowIcon
           class="app-pagination__control-arrow rotate-left"
-          :width="6"
-          :height="10"
+          :width="24"
+          :height="24"
         />
       </button>
       <div>
@@ -28,14 +28,14 @@
         <span>of {{ pages }}</span>
       </div>
       <button
-        class="app-pagination__control app-pagination__border"
+        class="app-btn app-btn--medium app-pagination__control app-pagination__border"
         :class="{ 'app-pagination__control--active': isNextControlsActive }"
         @click="goToNextPage"
       >
         <ArrowIcon
           class="app-pagination__control-arrow rotate-right"
-          :width="6"
-          :height="10"
+          :width="24"
+          :height="24"
         />
       </button>
     </div>
@@ -88,48 +88,45 @@ function goToSelectedPage(event: { target: { value: string } }): void {
 }
 </script>
 
-<style lang="scss">
-.app-pagination__wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--clr-text);
-  max-height: 3.8rem;
-}
-
+<style scoped lang="scss">
 .app-pagination {
-  display: flex;
-  flex-flow: row;
-  flex-wrap: nowrap;
-  align-items: center;
-  list-style-type: none;
-  justify-content: center;
-  color: var(--clr-text);
   margin: 0;
   padding: 0;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+  color: var(--clr__main-text);
+  list-style-type: none;
+}
+
+.app-pagination__wrapper {
+  max-height: 3.8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .app-pagination__control {
+  width: 3.6rem;
+  height: 3.6rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 3.6rem;
-  height: 3.6rem;
-  border: 0.1rem solid var(--clr__input-border);
-  fill: var(--clr__input-border);
+  fill: var(--clr__pagination-icon);
+
   &--active {
     cursor: pointer;
-    border: 0.1rem solid var(--clr__action);
-    fill: var(--clr__action);
+
     svg {
-      fill: var(--clr__action);
+      fill: var(--clr__pagination-icon);
       transition: all 0.5s ease;
     }
+
     &:hover {
       svg {
-        fill: var(--clr__btn-hover);
+        fill: var(--clr__pagination-icon);
       }
-      border-color: var(--clr__btn-hover);
     }
   }
 }
@@ -137,10 +134,7 @@ function goToSelectedPage(event: { target: { value: string } }): void {
 .app-pagination__control-arrow {
   position: absolute;
   display: block;
-  width: 1rem;
-  height: 1.2rem;
-  margin: 0 0.2rem;
-  fill: var(--clr__input-border);
+  fill: var(--clr__pagination-icon);
 }
 
 .app-pagination__total-page {
@@ -152,30 +146,28 @@ function goToSelectedPage(event: { target: { value: string } }): void {
   margin: 0 0.8rem;
 }
 
+.app-pagination__border {
+  min-width: 2.6rem;
+  height: 3.6rem;
+  margin: 0 0.2rem;
+  border-radius: 0.4rem;
+}
+
 .app-pagination__input {
-  border: 0.1rem solid var(--clr__input-border);
   width: 6rem;
   height: 3.6rem;
   margin: 0 0.2rem;
+  border: 0.1rem solid var(--clr__input-border);
   border-radius: 0.4rem;
+  background-color: var(--clr__input-bg);
   text-align: center;
-  &:hover {
-    border: 0.1rem solid var(--clr__action);
-  }
 }
 
-.app-pagination__border {
-  background: var(--clr__main-bg);
-  border-radius: 0.4rem;
-  margin: 0 0.2rem;
-  min-width: 2.6rem;
-  height: 3.6rem;
+.rotate-left {
+  transform: rotate(90deg);
 }
 
 .rotate-right {
-  transform: rotate(180deg);
-}
-.rotate-left {
-  transform: translateX(-0.25rem) rotate(0deg);
+  transform: rotate(-90deg);
 }
 </style>

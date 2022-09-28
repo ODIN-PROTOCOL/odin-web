@@ -1,7 +1,9 @@
 <template>
   <template v-if="isAppReady">
     <app-header v-if="!isAuthPage" />
-    <router-view />
+    <section class="app__main-content">
+      <router-view />
+    </section>
   </template>
   <div class="dialogs-container" ref="dialogsContainerRef"></div>
   <notifications-group />
