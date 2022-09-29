@@ -52,73 +52,73 @@ defineProps<{
 }>()
 const today = new Date()
 </script>
+
 <style lang="scss" scoped>
-.search {
-  &__dropdown {
-    &--item {
-      text-decoration: none;
-      color: var(--clr__text);
-      padding: 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      &-left {
-        display: grid;
-        grid-template-columns: 4.2rem 1fr;
-        gap: 0 1rem;
-        align-items: center;
-      }
-      &-right {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: flex-end;
-        gap: 1rem;
-      }
-      &-validator {
-        display: flex;
-        align-items: center;
-        gap: 0 1rem;
-        @media (max-width: 480px) {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-      }
-      &-label {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 4.2rem;
-        height: 4.2rem;
-        background: var(--clr__input-border);
-        border-radius: 0.4rem;
-        font-size: 2rem;
-        line-height: 2.3rem;
-        grid-row-start: 1;
-        grid-row-end: 3;
-      }
-      &-time {
-        grid-row-start: 2;
-        grid-row-end: 3;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-      &-transactions,
-      &-time {
-        font-size: 1.4rem;
-        color: var(--clr__text-muted);
-      }
-      &:hover {
-        background: rgba(#ced4da, 0.3);
-      }
-    }
-    @media (max-width: 480px) {
-      width: calc(100% - 19px);
-      left: 50%;
-      transform: translate(-50%);
-    }
+.search__dropdown--item {
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--clr__text);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.search__dropdown--item-left {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 4.2rem 1fr;
+  gap: 0 1rem;
+}
+
+.search__dropdown--item-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.search__dropdown--item-validator {
+  display: flex;
+  align-items: center;
+  gap: 0 1rem;
+
+  @include respond-to(small) {
+    flex-direction: column;
+    align-items: flex-start;
   }
+}
+
+.search__dropdown--item-label {
+  width: 4.2rem;
+  height: 4.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-row-start: 1;
+  grid-row-end: 3;
+  background: var(--clr__input-border);
+  border-radius: 0.4rem;
+  font-size: 2rem;
+  line-height: 2.3rem;
+}
+
+.search__dropdown--item-time {
+  display: flex;
+  align-items: center;
+  grid-row-start: 2;
+  grid-row-end: 3;
+  gap: 0.5rem;
+}
+
+.search__dropdown--item-transactions,
+.search__dropdown--item-time {
+  color: var(--clr__text-muted);
+  font-size: 1.4rem;
+}
+
+.search__dropdown--item:hover {
+  background: rgba(#ced4da, 0.3);
 }
 </style>
