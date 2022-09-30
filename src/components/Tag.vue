@@ -1,5 +1,5 @@
 <template>
-  <div class="tag" :class="{ [tagClass]: true }">
+  <div :class="`tag ${tagClass}`">
     <span class="tag__text">{{ props.text }}</span>
   </div>
 </template>
@@ -24,16 +24,16 @@ const tagClass = computed(() => {
   border-radius: 0.4rem;
   font-size: 1rem;
   line-height: 2rem;
-}
 
-.tag--success {
-  color: var(--clr__tag-success);
-  background-color: var(--clr__tag-success-bg);
-}
+  &--success {
+    color: var(--clr__tag-success);
+    background-color: var(--clr__tag-success-bg);
+  }
 
-.tag--failed,
-.tag--error {
-  color: var(--clr__tag-failed);
-  background-color: var(--clr__tag-failed-bg);
+  &--failed,
+  &--error {
+    color: var(--clr__tag-failed);
+    background-color: var(--clr__tag-failed-bg);
+  }
 }
 </style>

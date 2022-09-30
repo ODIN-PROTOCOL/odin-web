@@ -40,7 +40,7 @@
     <div class="app-table__cell">
       <span class="app-table__title">Sender</span>
       <TitledLink
-        v-if="transition.sender !== ''"
+        v-if="transition.sender"
         :name="{
           name: $routes.accountDetails,
           params: { hash: transition.sender },
@@ -53,7 +53,7 @@
     <div class="app-table__cell">
       <span class="app-table__title">Receiver</span>
       <TitledLink
-        v-if="transition.receiver !== ''"
+        v-if="transition.receiver"
         :name="{
           name: $routes.accountDetails,
           params: { hash: transition.receiver },
@@ -71,7 +71,7 @@
     </div>
     <div class="app-table__cell">
       <span class="app-table__title">Amount</span>
-      <span :class="[amountCellClass]" :title="transition.amount">
+      <span :class="amountCellClass" :title="transition.amount">
         {{ transition.amount }}
       </span>
     </div>
