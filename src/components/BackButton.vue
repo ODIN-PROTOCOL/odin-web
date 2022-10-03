@@ -1,17 +1,12 @@
 <template>
-  <div class="back-btn__wrapper">
-    <button class="back-btn" @click.prevent="routerBack()">
-      <img src="@/assets/icons/back-arrow.svg" alt="back" />
-    </button>
-    <button class="back-btn__mobile" @click.prevent="routerBack()">
-      <img src="@/assets/icons/back-arrow-small.svg" alt="back" />
-      <span>{{ text }}</span>
-    </button>
-  </div>
+  <button class="back-button" @click.prevent="routerBack()">
+    <back-icon />
+  </button>
 </template>
 
 <script setup lang="ts">
 import { Router, useRouter } from 'vue-router'
+import { BackIcon } from '@/components/icons'
 import { ROUTE_NAMES } from '@/enums'
 
 withDefaults(
@@ -31,27 +26,3 @@ const routerBack = (): void => {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.back-btn {
-  &__wrapper {
-    display: flex;
-    align-items: center;
-    min-width: 1.6rem;
-  }
-
-  @media screen and (max-width: 768px) {
-    display: none;
-  }
-
-  &__mobile {
-    display: none;
-    color: var(--clr__action);
-
-    @media screen and (max-width: 768px) {
-      display: flex;
-      align-items: center;
-    }
-  }
-}
-</style>

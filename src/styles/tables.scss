@@ -1,85 +1,87 @@
 .app-table {
   display: block;
-  margin-bottom: 2.4rem;
-  &__title {
+  border: 0.1rem solid var(--clr__table-border);
+  border-radius: 1.6rem;
+
+  .app-table__title {
     display: none;
     font-size: 1.4rem;
-    font-weight: 300;
   }
 
-  &__head,
-  &__row {
+  .app-table__head,
+  .app-table__row {
     display: grid;
     grid: auto / auto-flow minmax(0, 1fr);
     gap: 2.4rem;
   }
 
-  &__head {
-    font-size: 1.4rem;
-    padding-bottom: 0.8rem;
+  .app-table__head {
+    border-bottom: 0.1rem solid var(--clr__table-border);
+    color: var(--clr__text-muted);
+    font-size: 1.2rem;
     font-weight: 300;
   }
 
-  &__row {
-    align-items: flex-start;
-    padding: 3.2rem 0 2rem;
-    border-bottom: 1px solid var(--clr__table-border);
+  .app-table__head > span {
+    padding: 2.4rem 2rem;
   }
 
-  &__cell {
+  .app-table__row {
+    align-items: flex-start;
+    padding: 1.4rem 0;
+    border-top: 0.1rem solid var(--clr__table-border);
+    font-size: 1.4rem;
+
+    &:first-child {
+      border: none;
+    }
+  }
+
+  .app-table__cell {
     display: flex;
     min-width: 0;
+    padding: 0 2rem;
   }
 
-  &__cell-txt {
+  .app-table__cell-date {
+    padding-right: 0.8rem;
+  }
+
+  .app-table__cell-time {
+    color: var(--clr__text-muted);
+  }
+
+  .app-table__cell-tag {
+    padding: 0.4rem 1rem;
+    background-color: var(--clr__azureish-white);
+    color: var(--clr__text);
+    border-radius: 0.4rem;
+  }
+
+  .app-table__cell-txt {
     @include ellipsis(inline-block);
   }
 
-  &__link {
+  .app-table__cell--label {
+    display: flex;
+    align-items: center;
+    color: var(--clr__text-muted);
+    font-size: 1.2rem;
+  }
+
+  .app-table__link {
     text-decoration: none;
     color: var(--clr__action);
   }
 
-  &__time {
+  .app-table__time {
     display: flex;
     flex-direction: column;
   }
 
-  &__empty-stub {
+  .app-table__empty-stub {
     margin: 10rem 0;
     text-align: center;
-  }
-}
-
-.info-table {
-  &__row {
-    display: flex;
-    padding: 1.6rem 0;
-    border-bottom: 1px solid var(--clr__table-border);
-  }
-
-  &__row-title {
-    display: inline-block;
-    min-width: 18.4rem;
-  }
-
-  &__row-value {
-    font-weight: 400;
-    &_flex {
-      display: flex;
-      min-width: 0;
-    }
-  }
-
-  &__row-link {
-    @include ellipsis(inline-block);
-    color: var(--clr__action);
-    text-decoration: none;
-    font-weight: 400;
-  }
-
-  &__row-txt {
-    overflow-wrap: anywhere;
   }
 }
 

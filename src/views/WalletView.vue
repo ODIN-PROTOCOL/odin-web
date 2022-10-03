@@ -7,10 +7,7 @@
     <div class="wallet-view__subtitle-wrapper">
       <div class="wallet-view__subtitle view-main__subtitle mg-b32">
         <div class="wallet-view__tx-info">
-          <img src="~@/assets/icons/info.svg" alt="info" />
-          <span class="wallet-view__tooltip">
-            Based on last transactions in system
-          </span>
+          <InfoIcon message="Based on last transactions in system" />
         </div>
         <span class="view-main__subtitle-item">Transaction list</span>
       </div>
@@ -86,6 +83,7 @@ import { wallet } from '@/api/wallet'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { sortingTypeTx, TYPE_TX_SORT } from '@/helpers/sortingHelpers'
+import { InfoIcon } from '@/components/icons'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import TxLine from '@/components/TxLine.vue'
 import PersonalInfo from '@/components/PersonalInfo.vue'

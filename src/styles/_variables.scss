@@ -1,4 +1,5 @@
 $clr-white: #ffffff;
+$clr-light: #f8f8f8;
 $clr-dark-gunmetal: #242628;
 $clr-very-light-blue: #6274ff;
 $clr-auro-metal-saurus: #6c757d;
@@ -7,6 +8,13 @@ $clr-chinese-black: #111111;
 $clr-dark-blue: #2f344f;
 $clr-dark-1: #1e1e1f;
 $clr-azureish-white: #dadef9;
+
+$clr-chinese-white: #d9f0dd;
+$clr-wageningen-green: #33a933;
+$clr-green: #89c794;
+$clr-red: #d77780;
+$clr-soft-magic-potion: #fddcdf;
+$clr-magic-potion: #f65160;
 
 $clr-main-bg: #ffffff;
 $clr-splash-bg: #66b0ff;
@@ -25,6 +33,9 @@ $clr-light-gray: #ced4da;
 $clr-bright-gray: #e7edf2;
 $clr-silver-sand: #c6c6c6;
 $clr-levender-blue: #c0c7ff;
+
+// Nav
+$clr-nav-switch-background: #f3f3f3;
 
 // Buttons
 $clr-btn-normal: #6274ff;
@@ -102,3 +113,4 @@ $clr-auth-base-bg: #031e3a;
 
 // Vue Skeleton Loader
 $clr-vue-skeleton-loader-bg: #e1e5e9;
+$clr-vue-skeleton-loader-bg-dark: #6c757d;

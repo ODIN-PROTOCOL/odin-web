@@ -3,7 +3,6 @@ import { toHex } from '@cosmjs/encoding'
 import { DecodedTxData, IAttributesItem, IEventsItem } from '@/helpers/Types'
 import { convertLokiToOdin } from './converters'
 import { TxTelemetry } from '@/helpers/Types'
-import { formatDate } from '@/helpers/formatters'
 import { detect } from 'detect-browser'
 
 export const isIos = (): boolean | null => {
@@ -50,7 +49,7 @@ export const prepareTransaction = async (
         type: type ? type : '-',
         hash: tx.hash ? tx.hash.toLowerCase() : '-',
         block: tx.height ? tx.height : '-',
-        time: time ? formatDate(Number(time), 'HH:mm dd.MM.yy') : '-',
+        time: time,
         sender: sender ? sender : '',
         receiver: receiver ? receiver : '',
         amount: convertLokiToOdin(String(amount), {}, denom),

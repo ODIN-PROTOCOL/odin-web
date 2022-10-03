@@ -144,6 +144,16 @@ const makeCallers = () => {
         `${API_CONFIG.telemetryUrl}/blocks/vote_proposals_statistics`,
       )
     },
+    getTxSearchFromTelemetry: (
+      page_number: number,
+      page_limit: number,
+      page_order: string,
+      block = 0,
+    ) => {
+      return sendGet(
+        `${API_CONFIG.telemetryUrl}/txs?page[number]=${page_number}&page[limit]=${page_limit}&page[order]=${page_order}&block=${block}`,
+      )
+    },
     proposalDeposit: broadcaster<MsgDeposit>(
       '/cosmos.gov.v1beta1.MsgDeposit',
       MsgDeposit,
