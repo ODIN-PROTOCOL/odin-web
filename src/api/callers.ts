@@ -92,6 +92,9 @@ const makeCallers = () => {
         `${API_CONFIG.telemetryUrl}/account_txs/${owner}?page[number]=${page_number}&page[limit]=${page_limit}&page[order]=${page_order}&type=${tx_type}`,
       )
     },
+    getBlockSize: (height: number) => {
+      return axiosWrapper.get(`${API_CONFIG.telemetryUrl}/block_size/${height}`)
+    },
     getChannel: querier(qc => qc.ibc.channel.allChannels),
     getConnections: querier(qc => qc.ibc.connection.allConnections),
     getClientState: querier(qc => qc.ibc.client.state),
