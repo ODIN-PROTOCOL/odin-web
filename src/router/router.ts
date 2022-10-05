@@ -63,12 +63,16 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: '/blocks',
         name: ROUTE_NAMES.blocks,
-        component: () => import('@/views/RequestsView.vue'),
+        component: () =>
+          import(
+            /* webpackChunkName: "blocks" */ '../views/BlocksListView.vue'
+          ),
       },
       {
         path: '/blocks/:id',
         name: ROUTE_NAMES.blockDetails,
-        component: () => import('@/views/RequestsView.vue'),
+        component: () =>
+          import(/* webpackChunkName: "blocks" */ '../views/BlocksItem.vue'),
       },
       {
         path: '/charts',

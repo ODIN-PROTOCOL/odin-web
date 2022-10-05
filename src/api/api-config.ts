@@ -17,6 +17,7 @@ export const API_CONFIG = {
 
 export const START_VALUE = {
   delegatePeriod: process.env.VUE_APP_DELEGATE_PERIOD as string,
+  minHeight: process.env.VUE_APP_MIN_POSSIBLE_BLOCK_HEIGHT as string,
 }
 // Types of coins used in wallet configurations
 export enum COINS_TYPE {
