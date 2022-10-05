@@ -1,3 +1,5 @@
+import { Coin } from '@/helpers/Types'
+
 export interface AccountStakingInfoResponse {
   delegationBalance: {
     coins: { denom: string; amount: number }[]
@@ -92,4 +94,8 @@ export interface ValidatorResponse {
     },
   ]
   validator: [ValidatorsInfo]
+}
+
+export interface SupplyResponse {
+  supply: [{ coins: Coin[] }]
 }

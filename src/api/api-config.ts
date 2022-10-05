@@ -13,6 +13,7 @@ export const API_CONFIG = {
   telemetryUrl: process.env.VUE_APP_TELEMETRY_URL?.slice(0, -1) as string,
   fee: process.env.VUE_APP_FEE as string,
   graphqlUrl: process.env.VUE_APP_NEXT_PUBLIC_GRAPHQL_URL as string,
+  graphqlActions: process.env.VUE_APP_GRAPHQL_ACTIONS_URL as string,
 }
 
 export const START_VALUE = {
