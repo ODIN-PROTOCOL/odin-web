@@ -161,3 +161,12 @@ export type LinkList = {
   name: string
   links: Array<Link>
 }
+
+export type TempBalanceType = {
+  address: string
+  mgeo_balance: number
+  loki_balance: number
+  delegated_amount: number
+  total_amount: number
+  tx_number: number
+}

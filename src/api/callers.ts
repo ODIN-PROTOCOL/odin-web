@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { MsgWithdrawCoinsToAccFromTreasury } from '@provider/codec/mint/tx'
 import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx'
 import {
@@ -146,6 +147,15 @@ const makeCallers = () => {
       return sendGet(
         `${API_CONFIG.telemetryUrl}/blocks/vote_proposals_statistics`,
       )
+    },
+    getTopAccounts: (limit: number, offset: number, sortingBy: string) => {
+      return axios.post(`${API_CONFIG.graphqlActions}/top_accounts`, {
+        input: {
+          limit: limit,
+          offset: offset,
+          sorting_by: sortingBy,
+        },
+      })
     },
     getTxSearchFromTelemetry: (
       page_number: number,

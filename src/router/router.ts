@@ -53,12 +53,18 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: '/accounts',
         name: ROUTE_NAMES.accounts,
-        component: () => import('@/views/RequestsView.vue'),
+        component: () =>
+          import(
+            /* webpackChunkName: "accounts" */ '../views/TopAccountsListView.vue'
+          ),
       },
       {
         path: '/accounts/:hash',
         name: ROUTE_NAMES.accountDetails,
-        component: () => import('@/views/RequestsView.vue'),
+        component: () =>
+          import(
+            /* webpackChunkName: "accounts" */ '../views/AccountsItem.vue'
+          ),
       },
       {
         path: '/blocks',

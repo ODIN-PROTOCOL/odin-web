@@ -82,3 +82,55 @@ export const parseLogsToGetRewardsAmount = (
     return null
   }
 }
+
+export enum TYPE_TX_SORT {
+  all = 'null',
+  delegate = 'delegate',
+  send = 'send',
+  withdraw = 'withdraw',
+}
+
+export const sortingTypeTx = [
+  {
+    text: 'All',
+    value: TYPE_TX_SORT.all,
+  },
+  {
+    text: 'Delegated',
+    value: TYPE_TX_SORT.delegate,
+  },
+  {
+    text: 'Send',
+    value: TYPE_TX_SORT.send,
+  },
+  {
+    text: 'Withdraw',
+    value: TYPE_TX_SORT.withdraw,
+  },
+]
+
+export enum TYPE_ACCOUNTS_SORT {
+  odinBalance = 'loki',
+  txs = 'txs',
+  delegations = 'delegations',
+  totalAmount = 'total_amount',
+}
+
+export const sortingTypeAccounts = [
+  {
+    text: 'Total Amount',
+    value: TYPE_ACCOUNTS_SORT.totalAmount,
+  },
+  {
+    text: 'ODIN Balance',
+    value: TYPE_ACCOUNTS_SORT.odinBalance,
+  },
+  {
+    text: 'Delegated Amount',
+    value: TYPE_ACCOUNTS_SORT.delegations,
+  },
+  {
+    text: 'Transaction Count',
+    value: TYPE_ACCOUNTS_SORT.txs,
+  },
+]
