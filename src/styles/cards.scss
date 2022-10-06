@@ -40,7 +40,7 @@
 .card-frame {
   padding: 3.2rem;
   border: 0.1rem solid var(--clr__frame-border);
-  box-shadow: 0 0.4rem 0.8rem var(--clr__frame-box-shadow);
+  background-color: var(--clr__frame-bg);
   border-radius: 0.8rem;
   @media screen and (max-width: 768px) {
     padding: 3.2rem 2.4rem;

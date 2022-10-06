@@ -150,7 +150,7 @@ const routes: Array<RouteRecordRaw> = [
         name: ROUTE_NAMES.validatorDetails,
         component: () =>
           import(
-            /* webpackChunkName: "validator" */ '@/views/ValidatorDetails.vue'
+            /* webpackChunkName: "validator" */ '@/views/ValidatorItem.vue'
           ),
       },
       {
