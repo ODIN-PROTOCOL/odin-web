@@ -110,123 +110,136 @@
     }
   }
 }
-.data-sources__table-head,
-.data-sources__table-row {
-  grid:
-    auto /
-    minmax(4rem, 2fr)
-    minmax(4rem, 2fr)
-    minmax(4rem, 2fr)
-    minmax(4rem, 1.75fr)
-    minmax(10rem, 1.25fr)
-    minmax(8rem, 1fr);
-}
-.requests-view__table-head,
-.requests-view__table-row {
-  grid:
-    auto /
-    minmax(7rem, 1fr)
-    minmax(10rem, 1.5fr)
-    minmax(8rem, 2fr)
-    minmax(10rem, 2fr);
-}
-.validators-view__table-head,
-.validators-view-table-row {
-  gap: 2rem;
-  grid:
-    auto /
-    minmax(2rem, 3rem)
-    minmax(7rem, 1.4fr)
-    minmax(6rem, 1fr)
-    minmax(8rem, 1fr)
-    minmax(7rem, 1fr)
-    minmax(6rem, 1fr)
-    minmax(24rem, 24rem);
-}
-.validators-view__table--unauthenticated {
+
+.app-table {
+  .data-sources__table-head,
+  .data-sources__table-row {
+    grid:
+      auto /
+      minmax(4rem, 2fr)
+      minmax(4rem, 2fr)
+      minmax(4rem, 2fr)
+      minmax(4rem, 1.75fr)
+      minmax(10rem, 1.25fr)
+      minmax(8rem, 1fr);
+  }
+
+  .requests-view__table-head,
+  .requests-view__table-row {
+    grid:
+      auto /
+      minmax(5rem, 1fr)
+      minmax(5rem, 1fr)
+      minmax(10rem, 2fr)
+      minmax(10rem, 2fr);
+  }
+
   .validators-view__table-head,
   .validators-view-table-row {
     gap: 2rem;
     grid:
       auto /
       minmax(2rem, 3rem)
-      minmax(7rem, 1.25fr)
+      minmax(7rem, 1.4fr)
       minmax(6rem, 1fr)
       minmax(8rem, 1fr)
       minmax(7rem, 1fr)
-      minmax(6rem, 1fr);
-  }
-}
-.validators-view__table--inactive {
-  .validators-view__table-head,
-  .validators-view-table-row {
-    gap: 2rem;
-    grid:
-      auto /
-      minmax(2rem, 3rem)
-      minmax(7rem, 1.5fr)
-      minmax(6rem, 1.25fr)
-      minmax(8rem, 1fr)
-      minmax(7rem, 1fr)
+      minmax(6rem, 1fr)
       minmax(24rem, 24rem);
   }
-}
-.validators-view__table--unauthenticated-inactive {
-  .validators-view__table-head,
-  .validators-view-table-row {
-    gap: 2rem;
+
+  .validators-view__table--unauthenticated {
+    .validators-view__table-head,
+    .validators-view-table-row {
+      gap: 2rem;
+      grid:
+        auto /
+        minmax(2rem, 3rem)
+        minmax(7rem, 1.25fr)
+        minmax(6rem, 1fr)
+        minmax(8rem, 1fr)
+        minmax(7rem, 1fr)
+        minmax(6rem, 1fr);
+    }
+  }
+
+  .validators-view__table--inactive {
+    .validators-view__table-head,
+    .validators-view-table-row {
+      gap: 2rem;
+      grid:
+        auto /
+        minmax(2rem, 3rem)
+        minmax(7rem, 1.5fr)
+        minmax(6rem, 1.25fr)
+        minmax(8rem, 1fr)
+        minmax(7rem, 1fr)
+        minmax(24rem, 24rem);
+    }
+  }
+
+  .validators-view__table--unauthenticated-inactive {
+    .validators-view__table-head,
+    .validators-view-table-row {
+      gap: 2rem;
+      grid:
+        auto /
+        minmax(2rem, 3rem)
+        minmax(7rem, 1.5fr)
+        minmax(6rem, 1.5fr)
+        minmax(8rem, 1fr)
+        minmax(6rem, 1fr);
+    }
+  }
+
+  .oracle-scripts__table-head,
+  .oracle-scripts__table-row {
     grid:
       auto /
-      minmax(2rem, 3rem)
-      minmax(7rem, 1.5fr)
-      minmax(6rem, 1.5fr)
+      minmax(2rem, 0.5fr)
+      minmax(4rem, 2fr)
+      minmax(4rem, 3fr)
+      minmax(10rem, 2fr)
+      minmax(8rem, 2fr);
+  }
+
+  .governance-view__table-head,
+  .governance-view__table-row {
+    grid:
+      auto /
+      minmax(3rem, 5rem)
       minmax(8rem, 1fr)
-      minmax(6rem, 1fr);
+      minmax(8rem, 2fr)
+      minmax(11rem, 0.5fr);
+  }
+
+  .requests-oracle-script__head,
+  .requests-oracle-script__row {
+    grid:
+      auto /
+      minmax(3rem, 0.5fr)
+      minmax(8rem, 2fr)
+      minmax(8rem, 0.5fr);
+  }
+
+  .requests-data-source__head,
+  .requests-data-source__row {
+    grid:
+      auto /
+      minmax(3rem, 1fr)
+      minmax(8rem, 2fr)
+      minmax(8rem, 0.5fr);
+  }
+
+  .delegators-table__table-head,
+  .delegators-table__table-row {
+    grid:
+      auto /
+      minmax(8rem, 4fr)
+      minmax(8rem, 2fr);
   }
 }
 
-.oracle-scripts__table-head,
-.oracle-scripts__table-row {
-  grid:
-    auto /
-    minmax(2rem, 0.5fr)
-    minmax(4rem, 2fr)
-    minmax(4rem, 3fr)
-    minmax(10rem, 2fr)
-    minmax(8rem, 2fr);
-}
-.governance-view__table-head,
-.governance-view__table-row {
-  grid:
-    auto /
-    minmax(3rem, 5rem)
-    minmax(8rem, 1fr)
-    minmax(8rem, 2fr)
-    minmax(11rem, 0.5fr);
-}
-.requests-oracle-script__head,
-.requests-oracle-script__row {
-  grid:
-    auto /
-    minmax(3rem, 0.5fr)
-    minmax(8rem, 2fr)
-    minmax(8rem, 0.5fr);
-}
-.requests-data-source__head,
-.requests-data-source__row {
-  grid:
-    auto /
-    minmax(3rem, 1fr)
-    minmax(8rem, 2fr)
-    minmax(8rem, 0.5fr);
-}
-.delegators-table__table-head,
-.delegators-table__table-row {
-  grid:
-    auto /
-    minmax(8rem, 4fr)
-    minmax(8rem, 2fr);
-}
 @include respond-to(tablet) {
   .validators-view__table--unauthenticated,
   .validators-view__table--inactive,
