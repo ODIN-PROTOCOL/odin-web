@@ -1,16 +1,19 @@
 <template>
-  <div class="app-tab" v-show="title == selectedTitle">
+  <div class="app-tab" v-show="title === selectedTitle">
     <slot />
   </div>
 </template>
 
-<script setup lang="ts">
-import { inject } from 'vue'
-defineProps<{
-  title: string
-}>()
+<script lang="ts">
+import { defineComponent, inject } from 'vue'
 
-const selectedTitle = inject('selectedTitle')
+export default defineComponent({
+  name: 'app-tab',
+  props: { title: { type: String, requred: true } },
+  setup: function () {
+    const selectedTitle = inject('selectedTitle')
+
+    return { selectedTitle }
+  },
+})
 </script>
-
-<style lang="scss" scoped></style>

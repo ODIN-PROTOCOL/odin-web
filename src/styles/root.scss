@@ -102,8 +102,8 @@
   --clr__chart-default: #{$clr-chart-default};
 
   // Frame
-  --clr__frame-border: #{$clr-frame-border};
-  --clr__frame-box-shadow: #{$clr-frame-box-shadow};
+  --clr__frame-border: #{$clr-very-light-blue};
+  --clr__frame-bg: #{$clr-azureish-white};
 
   // Wallet
   --clr__wallet-info-border: #{$clr-wallet-info-border};
@@ -173,4 +173,7 @@
   --clr__tag-success-bg: #{$clr-green};
   --clr__tag-failed: #{$clr-dark-gunmetal};
   --clr__tag-failed-bg: #{$clr-red};
+
+  // Frame
+  --clr__frame-bg: #{$clr-dark-blue};
 }

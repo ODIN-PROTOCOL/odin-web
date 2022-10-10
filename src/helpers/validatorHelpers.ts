@@ -44,3 +44,12 @@ export const isActiveValidator = async (
     .then(req => req.status?.isActive)
   return Boolean(response)
 }
+
+export function getDelegationsShares(
+  delegatedAmount: string | number,
+  delegatorShares: string | number,
+): string {
+  if (Number(delegatedAmount) !== 0) {
+    return (Number(delegatorShares) * 100) / Number(delegatedAmount) + '%'
+  } else return 0 + '%'
+}

@@ -24,7 +24,7 @@
         </div>
       </div>
       <div class="validator-info__top-line-item card-frame">
-        <span class="validator-info__top-line-item-title">Jailed?</span>
+        <span class="validator-info__top-line-item-title">Jailed</span>
         <div class="validator-info__card-balance-row-value-wrapper">
           <span
             :title="validator.statuses[0].jailed ? 'Yes' : 'No'"
@@ -61,111 +61,50 @@
         </div>
       </div>
     </div>
-    <div class="validator-info__table">
-      <div class="validator-info__delegetion card-frame">
-        <div class="validator-info__delegetion-title">Delegation</div>
-        <div class="validator-info__delegetion-balance">
-          <div class="validator-info__delegetion-balance-row">
-            <span class="validator-info__delegetion-balance-row-title"
-              >Min delegation</span
-            >
-            <div class="validator-info__card-balance-row-value-wrapper">
-              <span
-                :title="
-                  $convertLokiToOdin(validator.commissions[0].minSelfDelegation)
-                "
-                class="validator-info__card-balance-row-value app-table__cell-txt"
-              >
-                {{
-                  $convertLokiToOdin(validator.commissions[0].minSelfDelegation)
-                }}
-              </span>
-            </div>
-          </div>
-
-          <div
-            v-if="accountAddress"
-            class="validator-info__delegetion-balance-row"
-          >
-            <span class="validator-info__delegetion-balance-row-title"
-              >You delegated</span
-            >
-            <div class="validator-info__card-balance-row-value-wrapper">
-              <span
-                class="validator-info__card-balance-row-value app-table__cell-txt"
-                :title="$convertLokiToOdin(delegationsBalance)"
-              >
-                {{
-                  $convertLokiToOdin(delegationsBalance, {
-                    withDenom: true,
-                  })
-                }}
-              </span>
-            </div>
-          </div>
+    <div class="app-table">
+      <div class="app-table__row validator-info__line">
+        <div class="app-table__cell app-table__cell--label">
+          <span>Delegator Shares</span>
         </div>
-        <div
-          v-if="accountAddress"
-          class="validator-info__delegetion-btn-wrapper"
-        >
-          <button
-            v-if="delegationsBalance"
-            type="button"
-            class="validator-info__delegetion-btn app-btn app-btn--outline-red app-btn--very-small"
-            @click="selectedBtn('Undelegate')"
-          >
-            Undelegate
-          </button>
-          <button
-            v-if="delegationsBalance && validator.statuses[0].status === 3"
-            type="button"
-            class="validator-info__delegetion-btn app-btn app-btn--outlined app-btn--very-small"
-            @click="selectedBtn('Regelate')"
-          >
-            Redelegate
-          </button>
-          <button
-            v-if="validator.statuses[0].status === 3"
-            type="button"
-            class="validator-info__delegetion-btn app-btn app-btn--very-small"
-            @click="selectedBtn('Delegate')"
-          >
-            Delegate
-          </button>
+        <div class="app-table__cell">
+          <span>
+            {{
+              getDelegationsShares(
+                validator.info.delegatedAmount,
+                validator.info.delegatorShares,
+              )
+            }}
+          </span>
         </div>
       </div>
-      <div class="validator-info__description card-frame">
-        <div class="validator-info__description-title">Information</div>
-        <div class="validator-info__description-item">
-          <span class="validator-info__description-item-title"
-            >Delegator shares</span
-          >
-          <span class="validator-info__description-item-value">
-            {{ delegetionSharesPercent }}%
-          </span>
-        </div>
-        <div class="validator-info__description-item">
-          <span class="validator-info__description-item-title">
+      <div class="app-table__row validator-info__line">
+        <div class="app-table__cell app-table__cell--label">
+          <span>
             {{ isMobile() ? 'Proposed blocks' : 'Amount of proposed blocks' }}
           </span>
-          <span
-            :title="validator.blocksAggregate.aggregate.count"
-            class="validator-info__description-item-value"
-          >
+        </div>
+        <div class="app-table__cell">
+          <span class="app-table__text">
             {{ validator.blocksAggregate.aggregate.count }}
           </span>
         </div>
-        <div class="validator-info__description-item">
-          <span class="validator-info__description-item-title">Max rate</span>
-          <span class="validator-info__description-item-value">
+      </div>
+      <div class="app-table__row validator-info__line">
+        <div class="app-table__cell app-table__cell--label">
+          <span>Max rate</span>
+        </div>
+        <div class="app-table__cell">
+          <span class="app-table__text">
             {{ $trimZeros(validator.info.maxRate * 100, 2) }}%
           </span>
         </div>
-        <div class="validator-info__description-item">
-          <span class="validator-info__description-item-title"
-            >Max change rate</span
-          >
-          <span class="validator-info__description-item-value">
+      </div>
+      <div class="app-table__row validator-info__line">
+        <div class="app-table__cell app-table__cell--label">
+          <span>Max change rate</span>
+        </div>
+        <div class="app-table__cell">
+          <span class="app-table__text">
             {{ $trimZeros(validator.info.maxChangeRate * 100, 2) }}%
           </span>
         </div>
@@ -175,48 +114,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { wallet } from '@/api/wallet'
-import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
+import {
+  ValidatorInfoModify,
+  getDelegationsShares,
+} from '@/helpers/validatorHelpers'
 import { isMobile } from '@/helpers/helpers'
-import { ValidatorInfoModify } from '@/helpers/validatorHelpers'
-
-enum EVENTS {
-  selectedBtn = 'selected-btn',
-}
-
-const props = defineProps<{
+defineProps<{
   validator: ValidatorInfoModify
-  delegation: DelegationResponse
 }>()
-
-const emit = defineEmits<{
-  (
-    e: EVENTS.selectedBtn,
-    payload: { typeBtn: string; validator: ValidatorInfoModify },
-  ): void
-}>()
-
-const accountAddress = ref(wallet.isEmpty ? '' : wallet.account.address)
-
-const delegationsBalance = computed(() => {
-  if (props.delegation?.balance) {
-    return Number(props.delegation.balance?.amount)
-  } else return 0
-})
-
-const delegetionSharesPercent = computed(() => {
-  if (Number(props.validator.info.delegatedAmount) !== 0) {
-    return (
-      (Number(props.validator.info.delegatorShares) * 100) /
-      Number(props.validator.info.delegatedAmount)
-    )
-  } else return 0
-})
-
-const selectedBtn = (typeBtn: string) => {
-  emit(EVENTS.selectedBtn, { typeBtn, validator: props.validator })
-}
 </script>
 
 <style lang="scss" scoped>
@@ -226,6 +131,11 @@ const selectedBtn = (typeBtn: string) => {
   margin-bottom: 4rem;
   gap: 4rem;
 }
+
+.validator-info__line {
+  grid: auto/minmax(6rem, 2fr) minmax(9rem, 3fr);
+}
+
 .validator-info__table {
   display: flex;
   gap: 2rem;
@@ -288,7 +198,7 @@ const selectedBtn = (typeBtn: string) => {
   font-size: 1.6rem;
   line-height: 2.4rem;
   min-width: 17rem;
-  max-width: 21rem;
+  max-width: 20rem;
   width: 100%;
 }
 .validator-info__description-item-value {
