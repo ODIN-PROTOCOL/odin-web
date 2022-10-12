@@ -116,10 +116,10 @@
   .data-sources__table-row {
     grid:
       auto /
+      minmax(6rem, 3fr)
       minmax(4rem, 2fr)
       minmax(4rem, 2fr)
-      minmax(4rem, 2fr)
-      minmax(4rem, 1.75fr)
+      minmax(2rem, 1fr)
       minmax(10rem, 1.25fr)
       minmax(8rem, 1fr);
   }
@@ -228,7 +228,7 @@
       auto /
       minmax(3rem, 1fr)
       minmax(8rem, 2fr)
-      minmax(8rem, 0.5fr);
+      minmax(8rem, 1.5fr);
   }
 
   .delegators-table__table-head,
