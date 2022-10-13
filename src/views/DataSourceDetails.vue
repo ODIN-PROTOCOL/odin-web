@@ -1,12 +1,23 @@
 <template>
-  <div class="data-source-details view-main">
-    <div class="view-main__title-wrapper">
-      <div class="data-source-details__title-wrapper">
-        <BackButton text="Data Sources" />
-        <h2 class="view-main__title data-source-details__title">Data Source</h2>
-        <span v-if="!isLoadingError" class="view-main__subtitle">
-          {{ dataSourceData?.name }}
-        </span>
+  <div class="app__main-view data-source-details">
+    <div class="data-source-details__header">
+      <div
+        class="app__main-view-detail-container data-source-detail__container"
+      >
+        <div class="app__main-view-detail-back-icon">
+          <BackButton />
+        </div>
+        <div class="app__main-view-detail-title-container">
+          <h2 class="app__main-view-detail-title">Data Source</h2>
+          <div
+            v-if="!isLoadingError"
+            class="app__main-view-detail-subtitle-container"
+          >
+            <span class="app__main-view-detail-subtitle">
+              {{ dataSourceData?.name }}
+            </span>
+          </div>
+        </div>
       </div>
       <button
         v-if="isDataSourceOwner && !isLoadingError"
@@ -17,6 +28,7 @@
         Edit Data Source
       </button>
     </div>
+
     <template v-if="!isLoading">
       <template v-if="isLoadingError">
         <div class="app-table__empty-stub">
@@ -31,7 +43,7 @@
                 <span class="info-card__row-title">Owner</span>
                 <a
                   class="info-card__row-value info-card__row-value_txt info-card__row-link"
-                  :href="`${API_CONFIG.odinScan}/account/${dataSourceData.owner}`"
+                  :href="`/accounts/${dataSourceData.owner}`"
                   :title="dataSourceData.owner"
                 >
                   {{ dataSourceData.owner }}
@@ -90,7 +102,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
@@ -177,6 +188,18 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
 }
+
+.data-source-details__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4rem;
+}
+
+.data-source-detail__container {
+  margin-bottom: 0;
+}
+
 @include respond-to(tablet) {
   .data-source-details__title-wrapper {
     display: flex;

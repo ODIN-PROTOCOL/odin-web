@@ -27,3 +27,9 @@ withDefaults(
   },
 )
 </script>
+
+<style lang="scss" scoped>
+svg > path {
+  fill: var(--clr__search-icon);
+}
+</style>

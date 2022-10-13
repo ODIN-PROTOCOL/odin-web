@@ -37,12 +37,16 @@
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Timestamp</span>
-              <span>{{
-                $fDate(
-                  new Date(item.attributes.timestamp * 1000),
-                  'HH:mm dd.MM.yy',
-                )
-              }}</span>
+              <span class="app-table__cell-date">
+                {{
+                  $fDate(new Date(item.attributes.timestamp * 1000), 'dd/MM/yy')
+                }}
+              </span>
+              <span class="app-table__cell-time">
+                {{
+                  $fDate(new Date(item.attributes.timestamp * 1000), 'HH:mm')
+                }}
+              </span>
             </div>
           </div>
         </template>
@@ -128,9 +132,22 @@ onMounted(async () => {
 .requests-data-source {
   margin-bottom: 3rem;
 }
-@include respond-to(small) {
+
+@include respond-to(x-small) {
+  .app-table__head {
+    display: none;
+  }
+
   .app-table__title {
     min-width: 12rem;
+    margin-right: 2.4rem;
+    display: inline-block;
+    font-weight: 300;
+  }
+
+  .app-table__row {
+    padding: 3.4rem 0 1.6rem;
+    grid: none;
   }
 }
 </style>
