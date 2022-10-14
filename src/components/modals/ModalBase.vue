@@ -5,11 +5,11 @@
       <div class="modal-base__content-head fx-row">
         <slot name="title"></slot>
         <button
-          class="modal-base__close-btn app-ico-btn fx-sae"
+          class="modal-base__close-btn fx-sae"
           type="button"
           @click="emitClose()"
         >
-          <img src="~@/assets/icons/close.svg" alt="Close" />
+          <CloseIcon />
         </button>
       </div>
 
@@ -20,6 +20,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { CloseIcon } from '@/components/icons'
 
 enum SCHEMES {
   noMarginTitle = 'no-margin-title',
@@ -93,7 +94,7 @@ const emitClose = () => emit(EVENTS.close)
 }
 
 .modal-base__content {
-  background: var(--clr__modal-content-bg);
+  background: var(--clr__main-bg);
   border-radius: 0.8rem;
   padding: 3.2rem 2.2rem 2.4rem 3.2rem;
   z-index: 1;

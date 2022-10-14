@@ -207,9 +207,9 @@
   .governance-view__table-row {
     grid:
       auto /
-      minmax(3rem, 5rem)
+      minmax(3rem, 0.5fr)
       minmax(8rem, 1fr)
-      minmax(8rem, 2fr)
+      minmax(8rem, 1.5fr)
       minmax(11rem, 0.5fr);
   }
 

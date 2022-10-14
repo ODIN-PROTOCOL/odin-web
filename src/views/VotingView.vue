@@ -1,10 +1,19 @@
 <template>
-  <div class="voting-view view-main">
-    <div class="view-main__title-wrapper voting-view__title-wrapper">
-      <BackButton text="Proposal" />
-      <h2 class="voting-view__title view-main__title">Vote for proposal</h2>
-      <span class="view-main__subtitle">{{ proposalName }}</span>
+  <div class="app__main-view voting-view">
+    <div class="app__main-view-detail-container">
+      <div class="app__main-view-detail-back-icon">
+        <BackButton />
+      </div>
+      <div class="app__main-view-detail-title-container">
+        <h2 class="app__main-view-detail-title">Vote for Proposal</h2>
+        <div class="app__main-view-detail-subtitle-container">
+          <span class="app__main-view-detail-subtitle">
+            {{ proposalName }}
+          </span>
+        </div>
+      </div>
     </div>
+
     <template v-if="!isLoading">
       <template v-if="isLoadingError">
         <ui-loading-error-message
@@ -199,7 +208,7 @@ onMounted(async () => {
 }
 
 .voting-view__choice {
-  background: var(--clr__grey-bg);
+  background: var(--clr__main-bg);
 }
 .voting-view__choice-title {
   padding-bottom: 1rem;
