@@ -1,7 +1,24 @@
 <template>
-  <div class="oracle-scripts view-main">
-    <div class="view-main__title-wrapper">
-      <h2 class="view-main__title">Oracle Scripts</h2>
+  <div class="app__main-view oracle-scripts">
+    <div class="app__main-view-table-header oracle-scripts__table-header">
+      <div class="oracle-scripts__container">
+        <div class="app__main-view-table-header-prefix">
+          <span>Os</span>
+        </div>
+        <div class="app__main-view-table-header-info">
+          <h3 class="app__main-view-table-header-info-title">Oracle Scripts</h3>
+          <skeleton-loader
+            v-if="isLoading"
+            width="100"
+            height="24"
+            pill
+            shimmer
+          />
+          <span v-else class="app__main-view-table-header-info-count">
+            {{ oracleScriptsCount?.toLocaleString() }} Oracle Scripts found
+          </span>
+        </div>
+      </div>
       <button
         v-if="accountAddress"
         class="oracle-scripts__title-btn app-btn app-btn--medium"
@@ -22,10 +39,6 @@
 
     <div class="view-main__count-info requests__count-info">
       <h3 class="view-main__subtitle mg-b24">All oracle scripts</h3>
-      <skeleton-loader v-if="isLoading" height="24" width="150" shimmer pill />
-      <div v-else class="view-main__count-info oracle-scripts__count-info">
-        <p>{{ oracleScriptsCount }} Oracle Scripts found</p>
-      </div>
     </div>
 
     <SortLine
@@ -73,8 +86,15 @@
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Timestamp</span>
-              <span>
-                {{ $fDate(new Date(item.attributes.timestamp * 1000)) || '-' }}
+              <span class="app-table__cell-date">
+                {{
+                  $fDate(new Date(item.attributes.timestamp * 1000), 'dd/MM/yy')
+                }}
+              </span>
+              <span class="app-table__cell-time">
+                {{
+                  $fDate(new Date(item.attributes.timestamp * 1000), 'HH:mm')
+                }}
               </span>
             </div>
             <div class="app-table__cell">
@@ -243,6 +263,16 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
+.oracle-scripts__table-header {
+  justify-content: space-between;
+}
+
+.oracle-scripts__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .oracle-scripts__count-info {
   margin-bottom: 3.2rem;
 }
@@ -250,9 +280,11 @@ onMounted(async () => {
 .oracle-scripts__table-head {
   padding-bottom: 0;
 }
+
 .oracle-scripts__table-row {
   align-items: center;
 }
+
 .oracle-scripts__table-head--center {
   text-align: center;
 }
@@ -272,21 +304,37 @@ onMounted(async () => {
 }
 
 @include respond-to(tablet) {
+  .app-table__head {
+    display: none;
+  }
+
+  .app-table__title {
+    min-width: 15rem;
+    margin-right: 2.4rem;
+    display: inline-block;
+    font-weight: 300;
+  }
+
   .oracle-scripts {
     padding-bottom: 10rem;
   }
+
   .oracle-scripts__title-btn {
     display: none;
   }
+
   .oracle-scripts__count-info {
     margin-bottom: 2.4rem;
   }
+
   .oracle-scripts__table-row {
     grid: none;
   }
+
   .oracle-scripts__table-activities {
     width: 100%;
   }
+
   .oracle-scripts__table-activities-item {
     & > * {
       flex: 1;
