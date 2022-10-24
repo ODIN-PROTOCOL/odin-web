@@ -178,7 +178,6 @@ import isObjectLodash from 'lodash.isobject'
 import { fromBase64 } from '@cosmjs/encoding'
 import { Obi } from '@bandprotocol/bandchain.js'
 import { ResolveStatus } from '@provider/codec/oracle/v1/oracle'
-import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
 import { requestStatusType } from '@/helpers/statusTypes'
 import { formatDate, formatDateDifference } from '@/helpers/formatters'
@@ -221,7 +220,7 @@ const isRequestSuccess = computed(
 )
 
 const senderLink = computed(() => {
-  return `${API_CONFIG.odinScan}/account/${requestData.value?.client_id}`
+  return `/accounts/${requestData.value?.client_id}`
 })
 
 const getRequest = async () => {

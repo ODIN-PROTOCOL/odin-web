@@ -77,23 +77,23 @@ const component = computed(() => {
 <style lang="scss">
 .vue-notification-group {
   width: 100%;
-  max-width: 52rem;
   min-width: 30rem;
+  max-width: 52rem;
   bottom: 5%;
   right: 4%;
+
   .notifications-group__inner {
+    width: 93%;
+    min-width: 28rem;
+    max-width: 49.6rem;
+    margin: 2rem;
+    padding: 2.4rem 3.2rem;
     display: flex;
     align-items: center;
     gap: 2rem;
-    max-width: 49.6rem;
-    width: 93%;
-    min-width: 28rem;
-    margin: 2rem;
     background: var(--clr__main-bg);
-    color: var(--clr__text);
     box-shadow: 0 0.4rem 1.6rem var(--clr__vue-notifications-box-shadow);
     border-radius: 1.6rem;
-    padding: 2.4rem 3.2rem;
   }
 
   .notifications-group__inner-icon {
@@ -104,7 +104,6 @@ const component = computed(() => {
     font-weight: 400;
     font-size: 2.4rem;
     line-height: 3.2rem;
-    color: var(--clr__text);
   }
   .notifications-group__inner-content-wrapper {
     width: 100%;
