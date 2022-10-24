@@ -28,9 +28,7 @@
               <span class="app-table__title">Transaction hash</span>
               <a
                 class="app-table__cell-txt app-table__link"
-                :href="`${
-                  API_CONFIG.odinScan
-                }/transactions/${getRequestItemTxHash(index)}`"
+                :href="`/transactions/${getRequestItemTxHash(index)}`"
               >
                 {{ item.attributes.tx_hash }}
               </a>
@@ -76,7 +74,6 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'

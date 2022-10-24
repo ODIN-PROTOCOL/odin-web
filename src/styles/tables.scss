@@ -69,6 +69,12 @@
     font-size: 1.2rem;
   }
 
+  .app-table__title {
+    color: var(--clr__text-muted);
+    font-size: 1.2rem;
+    font-weight: 300;
+  }
+
   .app-table__link {
     text-decoration: none;
     color: var(--clr__action);

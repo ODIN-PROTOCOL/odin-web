@@ -23,7 +23,7 @@
               <span class="app-table__title">Tx hash</span>
               <a
                 class="app-table__cell-txt app-table__link"
-                :href="`${API_CONFIG.odinScan}/transactions/${item.tx_hash}`"
+                :href="`/transactions/${item.tx_hash}`"
               >
                 {{ '0x' + item.tx_hash.toLowerCase() }}
               </a>
@@ -55,7 +55,6 @@ import { onMounted, ref } from 'vue'
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
-import { API_CONFIG } from '@/api/api-config'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 

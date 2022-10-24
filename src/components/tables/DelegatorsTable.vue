@@ -15,7 +15,7 @@
             <div class="app-table__cell">
               <span class="app-table__title">Delegator</span>
               <a
-                :href="`${API_CONFIG.odinScan}/account/${item.delegation.delegatorAddress}`"
+                :href="`/accounts/${item.delegation.delegatorAddress}`"
                 class="app-table__cell-txt app-table__link"
               >
                 {{ item.delegation.delegatorAddress }}
@@ -57,7 +57,6 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { API_CONFIG } from '@/api/api-config'
 import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
