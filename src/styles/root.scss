@@ -141,13 +141,16 @@
   --clr__main-text: #{$clr-white};
 
   // Header
-  --clr__search-bar-bg: #{$clr-very-light-blue};
+  --clr__search-bar-bg: #{$clr-dark-2};
   --clr__search-icon: #{$clr-white};
   --clr__search-field-bg: #{$clr-dark-gunmetal};
   --clr__search-icon-bg: #{$clr-chinese-black};
 
   // Nav
   --clr__nav-back: #{$clr-white};
+
+  // Theme Switch
+  --clr__theme-switch-bg: #{$clr-dark-gunmetal};
 
   // Inputs
   --clr__input-bg: #{$clr-dark-1};

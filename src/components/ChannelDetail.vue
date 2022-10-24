@@ -1,58 +1,49 @@
 <template>
   <div class="app-table channel-detail">
     <template v-if="channels.length">
+      <div class="app-table__head channel-detail__head">
+        <span>Port - Counterparty Port</span>
+        <span>Channel - Counterparty Channel</span>
+        <span>State</span>
+        <span>Order</span>
+        <span></span>
+      </div>
       <div
         v-for="channel in channels"
-        :key="channel?.portId"
         class="app-table__row channel-detail__row"
+        :key="channel?.portId"
       >
         <div class="app-table__cell channel-detail__cell">
-          <div
-            class="app-table__title channel-detail__cell-txt channel-detail__title"
-          >
-            <span class="channel-detail__cell-txt-row">Port &#10141;</span>
-            <span class="channel-detail__cell-txt-row">Counterparty Port</span>
+          <div class="app-table__title channel-detail__title">
+            Port - Counterparty Port
           </div>
-          <div class="app-table__cell-row channel-detail__cell-txt">
-            <span class="channel-detail__cell-txt-row"
-              >{{ channel.portId }} &#10141;</span
-            >
-            <span class="channel-detail__cell-txt-row">
-              {{ channel.counterparty?.portId }}</span
-            >
+          <div class="app-table__cell-txt">
+            <span>
+              {{ channel.portId + ' - ' + channel.counterparty?.portId }}
+            </span>
           </div>
         </div>
         <div class="app-table__cell channel-detail__cell">
-          <div
-            class="app-table__title channel-detail__cell-txt channel-detail__title"
-          >
-            <span class="channel-detail__cell-txt-row">Channel &#10141;</span>
-            <span class="channel-detail__cell-txt-row"
-              >Counterparty Channel</span
-            >
+          <div class="app-table__title channel-detail__title">
+            Channel - Counterparty Channel
           </div>
-          <div class="app-table__cell-row channel-detail__cell-txt">
-            <span class="channel-detail__cell-txt-row"
-              >{{ channel.channelId }} &#10141;</span
-            >
-            <span class="channel-detail__cell-txt-row">{{
-              channel.counterparty?.channelId
-            }}</span>
+          <div class="app-table__cell-txt">
+            <span>
+              {{ channel.channelId + ' - ' + channel.counterparty?.channelId }}
+            </span>
           </div>
         </div>
         <div class="app-table__cell channel-detail__cell">
-          <span
-            class="app-table__title channel-detail__cell-txt channel-detail__title"
-            >State</span
-          >
+          <div class="app-table__title channel-detail__title">State</div>
           <StatusIcon :status="channel?.state === 3 ? 'success' : 'error'" />
         </div>
         <div class="app-table__cell channel-detail__cell">
-          <span
-            class="app-table__title channel-detail__cell-txt channel-detail__title"
-            >Order</span
-          >
-          <span>{{ getOrder(channel.ordering) }}</span>
+          <div class="app-table__title channel-detail__title">Order</div>
+          <div class="app-table__cell-txt">
+            <span>
+              {{ getOrder(channel.ordering) }}
+            </span>
+          </div>
         </div>
       </div>
     </template>
@@ -80,6 +71,7 @@ const channels = computed(() => {
       channel?.connectionHops[0] === props.connection?.id,
   )
 })
+
 const getOrder = (item: number) => {
   if (item === ORDER.unrecognized) {
     return 'Unrecognized'
@@ -93,65 +85,51 @@ const getOrder = (item: number) => {
 }
 </script>
 
-<style scoped lang="scss">
-.channel-detail__title {
-  display: block;
-  margin-bottom: 0.8rem;
-  font-weight: 300;
-  min-width: 13rem;
-}
+<style lang="scss" scoped>
 .channel-detail {
+  border: none;
   border-top: 0.1rem solid var(--clr__table-border);
-  padding-top: 2.3rem;
-  margin-top: 2.3rem;
+  border-radius: 0;
 }
-.channel-detail__cell {
-  margin-bottom: 0.5rem;
-  flex-direction: column;
+
+.channel-detail__head {
+  border: none;
+
+  & > span {
+    padding: 1.4rem 2rem;
+  }
 }
-.channel-detail__cell-txt-row {
-  padding-right: 0.2rem;
-}
+
+.channel-detail__head,
 .channel-detail__row {
   grid:
     auto /
-    minmax(3rem, 1fr)
-    minmax(3rem, 1.1fr)
-    minmax(3rem, 1fr)
-    minmax(3rem, 1fr)
-    minmax(2rem, 0.75fr);
+    minmax(2rem, 1fr)
+    minmax(2rem, 1fr)
+    minmax(2rem, 1fr)
+    minmax(2rem, 1fr)
+    minmax(1.5rem, 0.75fr);
   border: none;
-  padding: 0;
-  margin-bottom: 1rem;
 }
+
 .channel-detail__empty {
   text-align: center;
 }
-@include respond-to(x-medium) {
-  .channel-detail__cell-txt {
-    display: flex;
-    flex-direction: column;
-  }
-}
+
 @include respond-to(tablet) {
-  .channel-detail {
-    border-top: none;
-    padding-top: 0;
-    margin-top: 0;
-    & > *:not(:last-child) {
-      padding-bottom: 1.5rem;
-      border-bottom: 0.1rem solid var(--clr__table-border);
-    }
+  .channel-detail__head {
+    display: none;
   }
+
   .channel-detail__row {
-    display: block;
-    padding-top: 2.5rem;
+    grid: none;
   }
-  .channel-detail__empty {
-    margin-top: 2.4rem;
-  }
-  .channel-detail__cell {
-    flex-direction: row;
+
+  .channel-detail__title {
+    margin-right: 2.4rem;
+    min-width: 15rem;
+    display: inline-block;
+    font-weight: 300;
   }
 }
 </style>
