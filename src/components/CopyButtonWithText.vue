@@ -75,7 +75,6 @@ const modalBaseScheme = computed(() => {
     margin-bottom: 0;
     .copy-button-with-text {
       border: none;
-      padding: 0;
     }
     .copy-button-with-text__message {
       right: -25%;
@@ -114,6 +113,7 @@ const modalBaseScheme = computed(() => {
 @media screen and (max-width: 768px) {
   .copy-button-with-text {
     width: 100%;
+    padding: 0 2rem;
   }
   .copy-button-with-text__copy-icon {
     margin-right: 1rem;
