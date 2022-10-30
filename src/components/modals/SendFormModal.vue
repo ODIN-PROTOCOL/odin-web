@@ -90,7 +90,6 @@
             </p>
           </div>
           <div class="send-form-modal__field-info">
-            <InfoIcon class="send-form-modal__info-icon" />
             <span
               >Fee amount:
               {{ $convertLokiToOdin(fee, { onlyNumber: true }) }} ODIN</span
@@ -128,7 +127,6 @@ import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 import { ModalBase } from '@/components/modals'
 import { Coin } from '@cosmjs/amino'
 import { coin } from '@cosmjs/launchpad'
-import { InfoIcon } from '@/components/icons'
 
 const props = defineProps<{
   balance: Coin[]
@@ -214,7 +212,6 @@ const submit = async () => {
 .send-form-modal__info-balance-item {
   width: 100%;
   padding: 1.6rem 1.2rem;
-  background: var(--clr__modal-field-bg);
   padding: 0.8rem;
   border-radius: 0.8rem;
   display: flex;
