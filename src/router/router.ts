@@ -9,7 +9,7 @@ import { ROUTE_NAMES } from '@/enums'
 
 const rootRedirector = makeRootRedirector(
   { name: ROUTE_NAMES.wallet },
-  { name: ROUTE_NAMES.dataSources },
+  { name: ROUTE_NAMES.home },
 )
 const authorizedOnlyGuard = makeAuthorizedOnlyGuard({ name: ROUTE_NAMES.auth })
 const unauthorizedOnlyGuard = makeUnauthorizedOnlyGuard({
@@ -26,6 +26,12 @@ const routes: Array<RouteRecordRaw> = [
     name: ROUTE_NAMES.app,
     redirect: rootRedirector,
     children: [
+      {
+        path: '',
+        name: ROUTE_NAMES.home,
+        component: () =>
+          import(/* webpackChunkName: "home" */ '../views/HomeView.vue'),
+      },
       {
         path: '/auth',
         name: ROUTE_NAMES.auth,

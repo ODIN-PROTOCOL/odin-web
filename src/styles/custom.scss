@@ -94,3 +94,38 @@
     background-color: var(--clr__search-field-bg);
   }
 }
+
+#chartjs-tooltip {
+  position: absolute;
+  padding: 1.2rem 1.6rem;
+  pointer-events: none;
+  background-color: var(--clr__secondary);
+  border-radius: 0.8rem;
+  color: var(--clr__white);
+  max-width: 18.5rem;
+
+  &.chartjs-tooltip_bottom {
+    .chartjs-tooltip__arrow {
+      display: block;
+      width: 1.4rem;
+      height: 1.4rem;
+      position: absolute;
+      background-color: var(--clr__secondary);
+      transform: translateX(-0.7rem) rotate(45deg);
+      bottom: -0.5rem;
+      pointer-events: none;
+    }
+  }
+
+  .chartjs-tooltip {
+    &__title {
+      @include ellipsis(inline-block, 100%);
+    }
+
+    &__row-title {
+      font-size: 1.4rem;
+      font-weight: 300;
+      opacity: 0.6;
+    }
+  }
+}

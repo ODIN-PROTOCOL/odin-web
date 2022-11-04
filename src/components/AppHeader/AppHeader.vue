@@ -2,7 +2,9 @@
   <header class="app-header" :class="{ 'app-header--mobile': isOpen }">
     <div class="app-header__content">
       <div class="app-header__content-logo">
-        <app-logo-icon />
+        <router-link :to="{ name: $routes.app }" @click="onBurgerClose">
+          <app-logo-icon />
+        </router-link>
       </div>
       <app-nav :is-open="isOpen" @close-burger="onBurgerClose" />
       <user-widget class="fx-sae" @close-burger="onBurgerClose" />

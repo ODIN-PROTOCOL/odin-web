@@ -91,6 +91,16 @@
   }
 }
 
+.app-table__cell-txt {
+  @include ellipsis(inline-block);
+}
+
+.app-table__link {
+  text-decoration: none;
+  color: var(--clr__action);
+  @include ellipsis(inline-block);
+}
+
 @media screen and (max-width: 768px) {
   .app-table {
     &__head {
