@@ -133,6 +133,13 @@
   --clr__tag-success-bg: #{$clr-chinese-white};
   --clr__tag-failed: #{$clr-magic-potion};
   --clr__tag-failed-bg: #{$clr-soft-magic-potion};
+
+  // Card
+  --clr__card-bg: #{$clr-white};
+  --clr__card-border: #{$clr-light-gray};
+  --clr__card-label-tx-bg: #{$clr-light-orange};
+  --clr__card-label-block-bg: #{$clr-lavender};
+  --clr__card-label-text: #{$clr-dark-gunmetal};
 }
 
 :root.dark-theme {
@@ -180,4 +187,11 @@
 
   // Frame
   --clr__frame-bg: #{$clr-dark-blue};
+
+  // Card
+  --clr__card-bg: #{$clr-dark-gunmetal};
+  --clr__card-border: #{$clr-chinese-black};
+  --clr__card-label-tx-bg: #{$clr-dark-blue};
+  --clr__card-label-block-bg: #{$clr-dark-blue};
+  --clr__card-label-text: #{$clr-very-light-blue};
 }

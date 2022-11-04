@@ -10,6 +10,7 @@ export enum ROUTE_NAMES {
   charts = 'app.charts',
   dataSources = 'app.data-sources',
   dataSourceDetails = 'app.data-sources.data-source-details',
+  home = 'app.home',
   oracleScripts = 'app.oracle-scripts',
   oracleScriptDetails = 'app.oracle-scripts.oracle-script-details',
   requests = 'app.requests',

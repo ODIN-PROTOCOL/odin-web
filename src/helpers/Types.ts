@@ -170,3 +170,28 @@ export type TempBalanceType = {
   total_amount: number
   tx_number: number
 }
+
+export type telemetryDataForCharts = {
+  date: string
+  size?: number
+  seconds?: number
+  volume?: number
+  fee?: Coin[]
+}
+
+export type formatedTelemetryDataForCharts = {
+  data: number[]
+  labels: string[]
+}
+
+export type CoingeckoCoinsType = {
+  data: {
+    name: string
+    symbol: string
+    market_data: {
+      current_price: { usd: string }
+      market_cap: { usd: string }
+      total_supply: number | string
+    }
+  }
+}

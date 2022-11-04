@@ -82,6 +82,14 @@ const makeCallers = () => {
         `${API_CONFIG.telemetryUrl}/oracle_scripts?page[number]=${page_number}&page[limit]=${page_limit}&sort=${activities}&owner=${owner}&name=${name}`,
       )
     },
+    getTxVolumePerDays: (startTime: Date, endTime: Date) => {
+      return axios.get(`${API_CONFIG.telemetryUrl}/blocks/txVolumePerDays`, {
+        params: {
+          start_time: (startTime.getTime() / 1000).toFixed(),
+          end_time: (endTime.getTime() / 1000).toFixed(),
+        },
+      })
+    },
     getAccountTx: (
       page_number: number,
       page_limit: number,

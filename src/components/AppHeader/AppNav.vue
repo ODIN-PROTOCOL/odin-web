@@ -222,7 +222,7 @@ onUnmounted(() => {
 @include respond-to(tablet) {
   .app-nav {
     width: 100%;
-    height: calc(100vh - 8.2rem);
+    height: calc(100vh - 7.6rem);
     padding: 0 1.6rem 1.6rem 1.6rem;
     display: none;
     position: absolute;
@@ -264,13 +264,13 @@ onUnmounted(() => {
     flex-direction: column;
     justify-content: space-between;
     position: fixed;
-    top: 8.2rem;
+    top: 7.6rem;
     left: 0;
     overflow: auto;
   }
 
   .app-nav--mobile-not-authenticated {
-    top: 8.2rem;
+    top: 7.6rem;
   }
 
   .router-link-container {
