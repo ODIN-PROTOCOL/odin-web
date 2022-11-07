@@ -154,7 +154,7 @@ const showInfo = async (title: string, text: string) => {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .auth-view__field-lbl--bold {
   font-weight: 600;
 }
