@@ -43,10 +43,11 @@
           class="charts-view__chart-item"
           :to="{ name: item.chartPageName }"
         >
-          <img
+          <ChartPreview v-bind="chartPagesProps[item.id]" />
+          <!--<img
             :src="require(`/src/assets/images/${item.chartType}Chart.png`)"
             alt="chart"
-          />
+          />-->
         </router-link>
       </div>
     </div>
@@ -54,7 +55,8 @@
 </template>
 
 <script lang="ts" setup>
-import { blockchainData } from '@/const'
+import { blockchainData, chartPagesProps } from '@/const'
+import ChartPreview from '@/components/ChartPreview.vue'
 </script>
 
 <style lang="scss" scoped>
