@@ -292,6 +292,38 @@ const makeCallers = () => {
     getTxForTxDetailsPage: (hash: string) => {
       return getAPIDate(`${API_CONFIG.rpc}tx?hash=0x${hash}&prove=true`)
     },
+    getAvgSizePerDays: (startTime: Date, endTime: Date) => {
+      return axios.get(`${API_CONFIG.telemetryUrl}/blocks/avgSizePerDays`, {
+        params: {
+          start_time: (startTime.getTime() / 1000).toFixed(),
+          end_time: (endTime.getTime() / 1000).toFixed(),
+        },
+      })
+    },
+    getAvgTimePerDays: (startTime: Date, endTime: Date) => {
+      return axios.get(`${API_CONFIG.telemetryUrl}/blocks/avgTimePerDays`, {
+        params: {
+          start_time: (startTime.getTime() / 1000).toFixed(),
+          end_time: (endTime.getTime() / 1000).toFixed(),
+        },
+      })
+    },
+    getAvgTxFeePerDays: (startTime: Date, endTime: Date) => {
+      return axios.get(`${API_CONFIG.telemetryUrl}/blocks/avgTxFeePerDays`, {
+        params: {
+          start_time: (startTime.getTime() / 1000).toFixed(),
+          end_time: (endTime.getTime() / 1000).toFixed(),
+        },
+      })
+    },
+    getRequestsVolumePerDays: (startTime: Date, endTime: Date) => {
+      return axios.get(`${API_CONFIG.telemetryUrl}/requests/volume_per_days`, {
+        params: {
+          start_time: (startTime.getTime() / 1000).toFixed(),
+          end_time: (endTime.getTime() / 1000).toFixed(),
+        },
+      })
+    },
   }
 }
 
