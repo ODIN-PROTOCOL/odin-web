@@ -134,3 +134,26 @@ export const sortingTypeAccounts = [
     value: TYPE_ACCOUNTS_SORT.txs,
   },
 ]
+
+export const sortingDaysForChart = {
+  lastDay: {
+    text: 'Last day',
+    value: '1',
+  },
+  lastWeek: {
+    text: 'Last week',
+    value: '7',
+  },
+  lastTwoWeek: {
+    text: 'Last 14 days',
+    value: '14',
+  },
+  lastMoth: {
+    text: 'Last month',
+    value: '31',
+  },
+  lastYear: {
+    text: 'Last year',
+    value: '365',
+  },
+}
