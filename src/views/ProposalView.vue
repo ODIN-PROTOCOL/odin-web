@@ -155,8 +155,10 @@
               >
                 Deposited
               </span>
-              <div class="app-table__cell">
-                <span>{{ $fCoin(proposal.totalDeposit[0]) }}</span>
+              <div class="app-table__cell app-table__cell-txt">
+                <span :title="$fCoin(proposal.totalDeposit[0])">
+                  {{ $fCoin(proposal.totalDeposit[0]) }}
+                </span>
               </div>
             </div>
           </div>

@@ -43,7 +43,7 @@
 
     <SortLine
       :is-loading="isLoading"
-      :title="'Oracle Scripts'"
+      title="Oracle Scripts"
       v-model:oracleScriptsName="oracleScriptsName"
       v-model:sortingOwnersValue="sortingOwnersValue"
       v-model:sortingActivitiesValue="sortingActivitiesValue"

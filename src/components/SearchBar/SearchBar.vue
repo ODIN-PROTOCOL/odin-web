@@ -100,11 +100,18 @@ import {
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { prepareBlocks } from '@/helpers/blocksHelper'
 
+enum FILTER_BY {
+  ACCOUNT = 'Account',
+  ALL = 'All Filters',
+  BLOCK = 'Block',
+  TRANSACTION = 'Tx hash',
+}
+
 const filters = ref<Array<string>>([
-  'All Filters',
-  'Block',
-  'Tx hash',
-  'Account',
+  FILTER_BY.ALL,
+  FILTER_BY.BLOCK,
+  FILTER_BY.TRANSACTION,
+  FILTER_BY.ACCOUNT,
 ])
 
 const inputPlaceholder = computed(() =>
@@ -182,21 +189,21 @@ const getBlock = async (): Promise<Array<TransformedBlocks>> => {
 const searchBy = async (): Promise<Array<SearchResultType> | null> => {
   if (searchedText.value === '') return (searchResult.value = null)
   try {
-    if (activeFilter.value === 'Blocks') {
+    if (activeFilter.value === FILTER_BY.BLOCK) {
       return (searchResult.value = [
         {
           blocks: await getBlock(),
         },
       ])
     }
-    if (activeFilter.value === 'Transaction') {
+    if (activeFilter.value === FILTER_BY.TRANSACTION) {
       return (searchResult.value = [
         {
           transactions: await getTransactions(),
         },
       ])
     }
-    if (activeFilter.value === 'Account') {
+    if (activeFilter.value === FILTER_BY.ACCOUNT) {
       return (searchResult.value = [
         {
           accounts: await getAccount(),

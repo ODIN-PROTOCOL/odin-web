@@ -31,10 +31,10 @@
 
     <SortLine
       :is-loading="isLoading"
-      :oracleScriptsName="dataSourceName"
-      :sortingActivitiesValue="sortingActivitiesValue"
-      :sortingOwnersValue="sortingOwnersValue"
-      :title="'Data Source'"
+      title="Data Source"
+      v-model:oracleScriptsName="dataSourceName"
+      v-model:sortingActivitiesValue="sortingActivitiesValue"
+      v-model:sortingOwnersValue="sortingOwnersValue"
     />
 
     <div class="app-table">
