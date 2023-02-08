@@ -18,7 +18,7 @@
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="`#${item.id}`"
-                :to="{
+                :name="{
                   name: $routes.requestDetails,
                   params: { id: item.id },
                 }"
@@ -28,21 +28,23 @@
               <span class="app-table__title">Transaction hash</span>
               <a
                 class="app-table__cell-txt app-table__link"
-                :href="`${
-                  API_CONFIG.odinScan
-                }/transactions/${getRequestItemTxHash(index)}`"
+                :href="`/transactions/${getRequestItemTxHash(index)}`"
               >
                 {{ item.attributes.tx_hash }}
               </a>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Timestamp</span>
-              <span>{{
-                $fDate(
-                  new Date(item.attributes.timestamp * 1000),
-                  'HH:mm dd.MM.yy',
-                )
-              }}</span>
+              <span class="app-table__cell-date">
+                {{
+                  $fDate(new Date(item.attributes.timestamp * 1000), 'dd/MM/yy')
+                }}
+              </span>
+              <span class="app-table__cell-time">
+                {{
+                  $fDate(new Date(item.attributes.timestamp * 1000), 'HH:mm')
+                }}
+              </span>
             </div>
           </div>
         </template>
@@ -72,7 +74,6 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
@@ -128,9 +129,22 @@ onMounted(async () => {
 .requests-oracle-script {
   margin-bottom: 3rem;
 }
+
 @include respond-to(small) {
+  .app-table__head {
+    display: none;
+  }
+
   .app-table__title {
     min-width: 12rem;
+    margin-right: 2.4rem;
+    display: inline-block;
+    font-weight: 300;
+  }
+
+  .app-table__row {
+    padding: 3.4rem 0 1.6rem;
+    grid: none;
   }
 }
 </style>

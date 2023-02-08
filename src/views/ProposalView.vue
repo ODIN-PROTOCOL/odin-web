@@ -1,12 +1,18 @@
 <template>
-  <div class="view-main proposal-view">
-    <div class="view-main__title-wrapper">
-      <div class="view-main__title proposal-view__title-info">
-        <BackButton text="Governance" />
-        <h2 class="view-main__title proposal-view__title">Proposal</h2>
-        <span class="view-main__subtitle" v-if="proposal">
-          {{ proposal.content.title }}
-        </span>
+  <div class="app__main-view proposal-view">
+    <div class="proposal-view__header">
+      <div class="app__main-view-detail-container proposal-view__container">
+        <div class="app__main-view-detail-back-icon">
+          <BackButton />
+        </div>
+        <div class="app__main-view-detail-title-container">
+          <h2 class="app__main-view-detail-title">Proposal</h2>
+          <div class="app__main-view-detail-subtitle-container">
+            <span v-if="proposal" class="app__main-view-detail-subtitle">
+              {{ proposal.content.title }}
+            </span>
+          </div>
+        </div>
       </div>
       <router-link
         v-if="proposal && !wallet.isEmpty"
@@ -32,104 +38,147 @@
       </template>
       <template v-else>
         <template v-if="proposal">
-          <div class="info-table proposal-view__table mg-b32">
-            <div v-if="proposal.proposerAddress" class="info-table__row">
-              <span class="info-table__row-title proposal-view__table-row-title"
-                >Proposer's account ID</span
+          <div class="app-table proposal-view__table mg-b32">
+            <div v-if="proposal.proposerAddress" class="app-table__row">
+              <span
+                class="app-table__cell app-table__cell--label proposal-view__table-row-title"
               >
-              <div class="info-table__row-value info-table__row-value_flex">
-                <a
-                  class="info-table__row-link"
-                  :href="`${API_CONFIG.odinScan}/account/${proposal.proposerAddress}`"
-                >
-                  {{ proposal.proposerAddress }}
-                </a>
+                Proposer's account ID
+              </span>
+              <div class="app-table__cell">
+                <TitledLink
+                  :name="{
+                    name: $routes.accountDetails,
+                    params: { hash: proposal.proposerAddress },
+                  }"
+                  :text="proposal.proposerAddress"
+                  class="app-table__cell-txt app-table__link"
+                />
                 <CopyButton :text="proposal.proposerAddress" />
               </div>
             </div>
-            <div class="info-table__row">
-              <span class="info-table__row-title proposal-view__table-row-title"
-                >Description</span
+            <div class="app-table__row">
+              <span
+                class="app-table__cell app-table__cell--label proposal-view__table-row-title"
               >
-              <Markdown
-                class="info-table__row-value"
-                :source="proposal.content?.description"
-              />
+                Description
+              </span>
+              <div class="app-table__cell">
+                <Markdown
+                  class="info-table__row-value"
+                  :source="proposal.content?.description"
+                />
+              </div>
             </div>
-            <div class="info-table__row">
-              <span class="info-table__row-title proposal-view__table-row-title"
-                >Status</span
+            <div class="app-table__row">
+              <span
+                class="app-table__cell app-table__cell--label proposal-view__table-row-title"
               >
-              <StatusBlock
-                :text="proposalStatusType[proposal.status].name"
-                :status="proposalStatusType[proposal.status].status"
-              />
+                Status
+              </span>
+              <div class="app-table__cell">
+                <Tag
+                  :text="proposalStatusType[proposal.status].name"
+                  :type="proposalStatusType[proposal.status].status"
+                />
+              </div>
             </div>
-            <div class="info-table__row">
-              <span class="info-table__row-title proposal-view__table-row-title"
-                >"Support" tally</span
+            <div class="app-table__row">
+              <span
+                class="app-table__cell app-table__cell--label proposal-view__table-row-title"
               >
-              <Tally
-                v-if="tally"
-                class="app-table__cell-txt"
-                :tally="tally"
-                is-only-yes
-                is-short
-                is-titled
-              />
+                "Support" tally
+              </span>
+              <div class="app-table__cell">
+                <Tally
+                  v-if="tally"
+                  class="app-table__cell-txt"
+                  :tally="tally"
+                  is-only-yes
+                  is-short
+                  is-titled
+                />
+              </div>
             </div>
           </div>
 
           <h3 class="view-main__subtitle mg-b24">Details</h3>
-          <div class="info-table mg-b32">
-            <div class="info-table__row">
-              <span class="info-table__row-title proposal-view__table-row-title"
-                >Proposal created</span
+          <div class="app-table mg-b32">
+            <div class="app-table__row">
+              <span
+                class="app-table__cell app-table__cell--label proposal-view__table-row-title"
               >
-              <span class="info-table__row-value">
-                {{ $fDate(proposal.submitTime) }}
+                Proposal created
               </span>
+              <div class="app-table__cell">
+                <span class="app-table__cell-date">
+                  {{ $fDate(proposal.submitTime, 'dd/MM/yy') }}
+                </span>
+                <span class="app-table__cell-time">
+                  {{ $fDate(proposal.submitTime, 'HH:mm') }}
+                </span>
+              </div>
             </div>
-            <div class="info-table__row">
-              <span class="info-table__row-title proposal-view__table-row-title"
-                >Voting start</span
+            <div class="app-table__row">
+              <span
+                class="app-table__cell app-table__cell--label proposal-view__table-row-title"
               >
-              <span class="info-table__row-value">
-                {{ $fDate(proposal.votingStartTime) }}
+                Voting start
               </span>
+              <div class="app-table__cell">
+                <span class="app-table__cell-date">
+                  {{ $fDate(proposal.votingStartTime, 'dd/MM/yy') }}
+                </span>
+                <span class="app-table__cell-time">
+                  {{ $fDate(proposal.votingStartTime, 'HH:mm') }}
+                </span>
+              </div>
             </div>
-            <div class="info-table__row">
-              <span class="info-table__row-title proposal-view__table-row-title"
-                >Voting end</span
+            <div class="app-table__row">
+              <span
+                class="app-table__cell app-table__cell--label proposal-view__table-row-title"
               >
-              <span class="info-table__row-value">
-                {{ $fDate(proposal.votingEndTime) }}
+                Voting end
               </span>
+              <div class="app-table__cell">
+                <span class="app-table__cell-date">
+                  {{ $fDate(proposal.votingEndTime, 'dd/MM/yy') }}
+                </span>
+                <span class="app-table__cell-time">
+                  {{ $fDate(proposal.votingEndTime, 'HH:mm') }}
+                </span>
+              </div>
             </div>
-            <div class="info-table__row">
-              <span class="info-table__row-title proposal-view__table-row-title"
-                >Deposited</span
+            <div class="app-table__row">
+              <span
+                class="app-table__cell app-table__cell--label proposal-view__table-row-title"
               >
-              <span class="info-table__row-value">
-                {{ $fCoin(proposal.totalDeposit[0]) }}
+                Deposited
               </span>
+              <div class="app-table__cell app-table__cell-txt">
+                <span :title="$fCoin(proposal.totalDeposit[0])">
+                  {{ $fCoin(proposal.totalDeposit[0]) }}
+                </span>
+              </div>
             </div>
           </div>
+
           <div v-if="proposal.content?.changes">
             <h3 class="view-main__subtitle mg-b24">Changes</h3>
-            <div class="info-table mg-b32">
+            <div class="app-table mg-b32">
               <div
                 v-for="(change, title) in proposal.content.changes[0]"
                 :key="change"
-                class="info-table__row"
+                class="app-table__row"
               >
                 <span
-                  class="info-table__row-title proposal-view__table-row-title"
-                  >{{ capitalizeFirstLetter(title) }}</span
+                  class="app-table__cell app-table__cell--label proposal-view__table-row-title"
                 >
-                <span class="info-table__row-value">
-                  {{ change }}
+                  {{ capitalizeFirstLetter(title) }}
                 </span>
+                <div class="app-table__cell">
+                  <span class="app-table__cell-txt">{{ change }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -169,7 +218,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import { ProposalDecoded } from '@/helpers/proposalDecoders'
@@ -187,9 +235,10 @@ import {
 } from '@/components/ui'
 import Tally from '@/components/Tally.vue'
 import BackButton from '@/components/BackButton.vue'
-import StatusBlock from '@/components/StatusBlock.vue'
 import CopyButton from '@/components/CopyButton.vue'
+import Tag from '@/components/Tag.vue'
 import Markdown from 'vue3-markdown-it'
+import TitledLink from '@/components/TitledLink.vue'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const route: RouteLocationNormalizedLoaded = useRoute()
@@ -244,24 +293,47 @@ onMounted(async () => {
 .proposal-view__title {
   margin: 0 1.6rem 0 2rem;
 }
+
 .proposal-view__title-info {
   display: flex;
   align-items: center;
 }
+
+.proposal-view__title-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.proposal-view__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4rem;
+}
+
+.proposal-view__container {
+  margin-bottom: 0;
+}
+
 @include respond-to(tablet) {
   .proposal-view {
     padding-bottom: 10rem;
   }
+
   .proposal-view__title {
     margin: 0.8rem 0 0.4rem 0;
   }
+
   .proposal-view__title-btn {
     display: none;
   }
+
   .proposal-view__table-row-title {
     display: inline-block;
     min-width: 15.4rem;
   }
+
   .proposal-view__title-info {
     display: flex;
     flex-direction: column;

@@ -1,0 +1,15 @@
+.search__dropdown--item {
+  .search__dropdown--item-label {
+    background-color: var(--clr__search-bar-dropdown-bg);
+    color: var(--clr__secondary);
+  }
+
+  .search__dropdown--item-height {
+    @include ellipsis();
+    color: var(--clr__action);
+  }
+
+  .search__dropdown--item-validator {
+    color: var(--clr__main-text);
+  }
+}

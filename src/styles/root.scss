@@ -1,26 +1,54 @@
 :root {
+  --clr__primary: #{$clr-dark-gunmetal};
+  --clr__secondary: #{$clr-very-light-blue};
+  --clr__white: #{$clr-white};
+  --clr__azureish-white: #{$clr-azureish-white};
   --clr__main-bg: #{$clr-main-bg};
   --clr__splash-bg: #{$clr-splash-bg};
   --clr__text: #{$clr-text};
   --clr__text-muted: #{$clr-text-muted};
   --clr__text-on-action: #{$clr-text-on-action};
-  --clr__action: #{$clr-action};
+  --clr__action: #{$clr-very-light-blue};
   --clr__action-disabled: #{$clr-action-disabled};
   --clr__danger: #{$clr-danger};
   --clr__action-extra-muted: #{$clr-action-extra-muted};
   --clr__grey-bg: #{$clr-grey-bg};
   --clr__light-blue: #{$clr-light-blue};
   --clr__light-gray: #{$clr-light-gray};
+  --clr__levender-blue: #{$clr-levender-blue};
+
+  // Main
+  --clr__main-bg: #{$clr-light};
+  --clr__main-text: #{$clr-dark-gunmetal};
+
+  // Header
+  --clr__header-bg: #{$clr-chinese-black};
+  --clr__header-nav-txt: #{$clr-bright-gray};
+
+  --clr__search-bar-bg: #{$clr-white};
+  --clr__search-field-bg: #{$clr-bright-gray};
+  --clr__search-icon: #{$clr-dark-gunmetal};
+  --clr__search-icon-bg: #{$clr-very-light-blue};
+  --clr__search-bar-dropdown-bg: #{$clr-azureish-white};
+
+  // Nav
+  --clr__nav-back: #{$clr-dark-gunmetal};
+  --clr__nav-switch-color: #{$clr-silver-sand};
+  --clr__nav-switch-background: #{$clr-nav-switch-background};
+
+  // Theme Switch
+  --clr__theme-switch-txt: #{$clr-auro-metal-saurus};
+  --clr__theme-switch-bg: #{$clr-bright-gray};
+  --clr__theme-switch-active-txt: #{$clr-white};
+  --clr__theme-switch-active-bg: #{$clr-very-light-blue};
 
   // Buttons
   --clr__btn-normal: #{$clr-btn-normal};
   --clr__btn-hover: #{$clr-btn-hover};
   --clr__btn-pressed: #{$clr-btn-pressed};
+  --clr__btn-focused: #{$clr-btn-focused};
+  --clr__btn-focused-border: #{$clr-btn-focused-border};
   --clr__btn-disabled: #{$clr-btn-disabled};
-  --clr__btn-normal-red: #{$clr-btn-normal-red};
-  --clr__btn-hover-red: #{$clr-btn-hover-red};
-  --clr__btn-pressed-red: #{$clr-btn-pressed-red};
-  --clr__btn-disabled-red: #{$clr-btn-disabled-red};
 
   // Inputs
   --clr__input-bg: #{$clr-input-bg};
@@ -28,18 +56,23 @@
   --clr__input-border: #{$clr-input-border};
 
   // Tables
-  --clr__table-border: #{$clr-table-border};
+  --clr__table-header-prefix-bg: #{$clr-azureish-white};
+  --clr__table-border: #{$clr-light-gray};
   --clr__table-row-hover: #{$clr-table-row-hover};
   --clr__table-head: #{$clr-table-head};
 
   // Dropdown
+  --clr__dropdown: #{$clr-text};
+  --clr__dropdown-bg: #{$clr-white};
+  --clr__dropdown-active: #{$clr-very-light-blue};
+  --clr__dropdown-active-bg: #{$clr-levender-blue};
 
   // Shadows
   --clr__dropdown-shadow: #{$clr-dropdown-shadow};
   --clr__dropdown-link: #{$clr-dropdown-link};
 
   // Tips
-  --clr__tooltip-bg: #{$clr-tooltip-bg};
+  --clr__tooltip-bg: #{$clr-very-light-blue};
   --clr__tooltip-text: #{$clr-tooltip-text};
 
   // Modals
@@ -69,24 +102,96 @@
   --clr__chart-default: #{$clr-chart-default};
 
   // Frame
-  --clr__frame-border: #{$clr-frame-border};
-  --clr__frame-box-shadow: #{$clr-frame-box-shadow};
+  --clr__frame-border: #{$clr-very-light-blue};
+  --clr__frame-bg: #{$clr-azureish-white};
 
   // Wallet
   --clr__wallet-info-border: #{$clr-wallet-info-border};
   --clr__wallet-info-box-shadow: #{$clr-wallet-info-box-shadow};
 
-  // Vue Picker
-  --clr__vue-picker-box-shadow: #{$clr-vue-picker-box-shadow};
+  // Vue Picker 
   --clr__vue-picker-current-option: #{$clr-vue-picker-current-option};
+  --clr__vue-picker-bg: #{$clr-white};
 
   // Vue Notifications
   --clr__vue-notifications-box-shadow: #{$clr-vue-notifications-box-shadow};
   --clr__vue-notifications-failed-border: #{$clr-vue-notifications-failed-border};
   --clr__vue-notifications-success-border: #{$clr-vue-notifications-success-border};
   --clr__vue-notifications-info-border: #{$clr-vue-notifications-info-border};
+
   // Auth
   --clr__auth-base-bg: #{$clr-auth-base-bg};
+
   // Vue Skeleton Loader
   --clr__vue-skeleton-loader-bg: #{$clr-vue-skeleton-loader-bg};
+
+  // Pagination
+  --clr__pagination-icon: #{$clr-white};
+
+  // Tags
+  --clr__tag-success: #{$clr-wageningen-green};
+  --clr__tag-success-bg: #{$clr-chinese-white};
+  --clr__tag-failed: #{$clr-magic-potion};
+  --clr__tag-failed-bg: #{$clr-soft-magic-potion};
+
+  // Card
+  --clr__card-bg: #{$clr-white};
+  --clr__card-border: #{$clr-light-gray};
+  --clr__card-label-tx-bg: #{$clr-light-orange};
+  --clr__card-label-block-bg: #{$clr-lavender};
+  --clr__card-label-text: #{$clr-dark-gunmetal};
+}
+
+:root.dark-theme {
+  // Main
+  --clr__main-bg: #{$clr-dark-gunmetal};
+  --clr__main-text: #{$clr-white};
+
+  // Header
+  --clr__search-bar-bg: #{$clr-dark-2};
+  --clr__search-icon: #{$clr-white};
+  --clr__search-field-bg: #{$clr-dark-gunmetal};
+  --clr__search-icon-bg: #{$clr-chinese-black};
+
+  // Nav
+  --clr__nav-back: #{$clr-white};
+
+  // Theme Switch
+  --clr__theme-switch-bg: #{$clr-dark-gunmetal};
+
+  // Inputs
+  --clr__input-bg: #{$clr-dark-1};
+  --clr__input-bg-disabled: #{$clr-dark-1};
+  --clr__input-border: transparent;
+
+  // Tables
+  --clr__table-header-prefix-bg: #{$clr-dark-blue};
+  --clr__table-border: #{$clr-chinese-black};
+
+  // Dropdown
+  --clr__dropdown: #{$clr-white};
+  --clr__dropdown-bg: #{$clr-dark-gunmetal};
+  --clr__search-bar-dropdown-bg: #{$clr-dark-blue};
+
+  // Vue Picker n
+  --clr__vue-picker-bg: #{$clr-dark-1};
+
+  // Vue Skeleton Loader
+  --clr__vue-skeleton-loader-bg: #{$clr-vue-skeleton-loader-bg-dark};
+
+  // Tags
+  --clr__tag-success: #{$clr-dark-gunmetal};
+  --clr__tag-success-bg: #{$clr-green};
+  --clr__tag-failed: #{$clr-dark-gunmetal};
+  --clr__tag-failed-bg: #{$clr-red};
+
+  // Frame
+  --clr__frame-bg: #{$clr-dark-blue};
+
+  // Card
+  --clr__card-bg: #{$clr-dark-gunmetal};
+  --clr__card-border: #{$clr-chinese-black};
+  --clr__card-label-tx-bg: #{$clr-dark-blue};
+  --clr__card-label-block-bg: #{$clr-dark-blue};
+  --clr__card-label-text: #{$clr-very-light-blue};
 }

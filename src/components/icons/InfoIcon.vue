@@ -1,34 +1,83 @@
 <template>
-  <svg
-    :class="className"
-    :width="width"
-    :height="height"
-    :viewBox="`0 0 ${width} ${height}`"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M8 1C4.13438 1 1 4.13438 1 8C1 11.8656 4.13438 15 8 15C11.8656 15 15 11.8656 15 8C15 4.13438 11.8656 1 8 1ZM8 13.8125C4.79063 13.8125 2.1875 11.2094 2.1875 8C2.1875 4.79063 4.79063 2.1875 8 2.1875C11.2094 2.1875 13.8125 4.79063 13.8125 8C13.8125 11.2094 11.2094 13.8125 8 13.8125Z"
-      fill="#6C757D"
-    />
-    <path
-      d="M7.25 5.25C7.25 5.44891 7.32902 5.63968 7.46967 5.78033C7.61032 5.92098 7.80109 6 8 6C8.19891 6 8.38968 5.92098 8.53033 5.78033C8.67098 5.63968 8.75 5.44891 8.75 5.25C8.75 5.05109 8.67098 4.86032 8.53033 4.71967C8.38968 4.57902 8.19891 4.5 8 4.5C7.80109 4.5 7.61032 4.57902 7.46967 4.71967C7.32902 4.86032 7.25 5.05109 7.25 5.25ZM8.375 7H7.625C7.55625 7 7.5 7.05625 7.5 7.125V11.375C7.5 11.4437 7.55625 11.5 7.625 11.5H8.375C8.44375 11.5 8.5 11.4437 8.5 11.375V7.125C8.5 7.05625 8.44375 7 8.375 7Z"
-      fill="#6C757D"
-    />
-  </svg>
+  <div class="info-icon">
+    <svg
+      :width="width"
+      :height="height"
+      :viewBox="`0 0 ${width} ${height}`"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M8 1C4.13438 1 1 4.13438 1 8C1 11.8656 4.13438 15 8 15C11.8656 15 15 11.8656 15 8C15 4.13438 11.8656 1 8 1ZM8 13.8125C4.79063 13.8125 2.1875 11.2094 2.1875 8C2.1875 4.79063 4.79063 2.1875 8 2.1875C11.2094 2.1875 13.8125 4.79063 13.8125 8C13.8125 11.2094 11.2094 13.8125 8 13.8125Z"
+      />
+      <path
+        d="M7.25 5.25C7.25 5.44891 7.32902 5.63968 7.46967 5.78033C7.61032 5.92098 7.80109 6 8 6C8.19891 6 8.38968 5.92098 8.53033 5.78033C8.67098 5.63968 8.75 5.44891 8.75 5.25C8.75 5.05109 8.67098 4.86032 8.53033 4.71967C8.38968 4.57902 8.19891 4.5 8 4.5C7.80109 4.5 7.61032 4.57902 7.46967 4.71967C7.32902 4.86032 7.25 5.05109 7.25 5.25V5.25ZM8.375 7H7.625C7.55625 7 7.5 7.05625 7.5 7.125V11.375C7.5 11.4438 7.55625 11.5 7.625 11.5H8.375C8.44375 11.5 8.5 11.4438 8.5 11.375V7.125C8.5 7.05625 8.44375 7 8.375 7Z"
+      />
+    </svg>
+    <span class="info-icon__message">
+      {{ message }}
+    </span>
+  </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 withDefaults(
   defineProps<{
-    className?: string
+    message: string
     width?: number | string
     height?: number | string
   }>(),
   {
-    className: '',
     width: 16,
     height: 16,
   },
 )
 </script>
+
+<style lang="scss" scoped>
+.info-icon {
+  height: 2.3rem;
+  margin-right: 0.9rem;
+  display: flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+
+  &:hover {
+    .info-icon__message {
+      display: block;
+    }
+  }
+
+  .info-icon__message {
+    min-width: 30rem;
+    padding: 1.2rem 2.4rem;
+    display: none;
+    position: absolute;
+    bottom: 130%;
+    left: -50%;
+    background: var(--clr__tooltip-bg);
+    color: var(--clr__tooltip-text);
+    border-radius: 0.8rem;
+    font-size: 1.6rem;
+    font-weight: 400;
+    line-height: 1.6rem;
+
+    &:before {
+      content: '';
+      width: 0.6rem;
+      height: 0.6rem;
+      display: block;
+      position: absolute;
+      bottom: -0.3rem;
+      left: 1.6rem;
+      background: var(--clr__tooltip-bg);
+      transform: translateX(-50%) rotate(45deg);
+    }
+  }
+
+  svg > path {
+    fill: var(--clr__tooltip-bg);
+  }
+}
+</style>

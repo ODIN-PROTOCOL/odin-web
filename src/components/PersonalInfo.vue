@@ -62,26 +62,25 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { computed, onMounted, onUnmounted } from 'vue'
-import { API_CONFIG } from '@/api/api-config'
 import { COINS_LIST } from '@/api/api-config'
 import { wallet } from '@/api/wallet'
 import { usePoll } from '@/composables/usePoll'
 import { useBalances } from '@/composables/useBalances'
-import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import { ShareFormModal, SendFormModal } from '@/components/modals'
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import { ShareIcon } from '@/components/icons'
-
 import CopyButtonWithText from '@/components/CopyButtonWithText.vue'
 
 const accountAddress = wallet.account.address
 const validatorPrefix = 'odinvaloper'
+
 const accountLink = computed(() => {
   if (accountAddress.includes(validatorPrefix)) {
-    return `${API_CONFIG.odinScan}/validators/${accountAddress}`
+    return `/validators/${accountAddress}`
   } else {
-    return `${API_CONFIG.odinScan}/account/${accountAddress}`
+    return `/accounts/${accountAddress}`
   }
 })
 
@@ -89,6 +88,7 @@ const {
   coins: [lokiCoins],
   load: loadBalances,
 } = useBalances([COINS_LIST.LOKI])
+
 const lokiPoll = usePoll(loadBalances, 5000)
 
 const isEmptyBalance = computed(() => {
@@ -127,26 +127,31 @@ onUnmounted(() => {
   line-height: 3.2rem;
   font-weight: 400;
 }
+
 .personal-info__card-btn-wrapper {
   display: flex;
   align-items: center;
   gap: 1.6rem;
 }
+
 .personal-info__link-scan {
   text-decoration-line: underline;
   text-align: center;
   color: var(--clr__action);
   font-size: 1.4rem;
   line-height: 2rem;
+
   &--mobile {
     display: none;
   }
 }
+
 .personal-info__card {
   width: 100%;
   display: flex;
   flex-direction: column;
 }
+
 .personal-info__card-title {
   display: inline-block;
   font-size: 2.4rem;
@@ -154,86 +159,105 @@ onUnmounted(() => {
   padding-right: 0.8rem;
   margin-bottom: 3.2rem;
 }
+
 .personal-info__card-balance {
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .personal-info__card-balance-row {
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 1.6rem;
   min-width: 10rem;
   &:not(:last-child) {
     border-right: 0.1rem solid var(--clr__input-border);
     margin-right: 2rem;
   }
 }
+
 .personal-info__card-balance-row-title {
   font-size: 1.6rem;
 }
+
 .personal-info__card-balance-row-value-wrapper {
   display: flex;
   flex-direction: column;
   position: relative;
 }
+
 .personal-info__card-balance-row-value {
   width: 100%;
   font-weight: 600;
-  color: var(--clr__text);
 }
+
 .personal-info__card-activities {
   display: flex;
+  flex-flow: row wrap;
   align-items: center;
   gap: 2.4rem;
 }
+
 .personal-info__card-title-wrapper {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
 }
+
 .personal-info__card-address {
-  color: var(--clr__text-muted);
   margin-bottom: 2rem;
+  font-size: 1.6rem;
+  @include ellipsis();
 }
+
 .personal-info__copy-button-with-text {
   align-items: flex-start;
 }
+
 .personal-info__share-btn {
   width: 8.9rem;
   height: 3.2rem;
   padding: 0.6rem 0;
 }
+
 .personal-info__send-btn {
   width: 6.5rem;
   height: 3.2rem;
 }
+
 .personal-info__share-icon {
   margin-right: 0.8rem;
 }
+
 @include respond-to(tablet) {
   .personal-info {
     display: flex;
     flex-direction: column;
   }
+
   .personal-info__card {
     width: 100%;
   }
+
   .personal-info__card-balance-row {
     padding-left: 0.4rem;
   }
+
   .personal-info__link-scan {
     display: none;
+
     &--mobile {
       display: inline-block;
     }
   }
 }
+
 @include respond-to(small) {
   .personal-info__card {
     padding: 2.2rem;
   }
+
   .personal-info__card-btn-wrapper {
     display: flex;
     align-items: center;

@@ -1,16 +1,24 @@
 <template>
-  <div class="oracle-scripts-details view-main">
-    <div class="view-main__title-wrapper">
-      <div class="oracle-scripts-details__title-wrapper">
-        <BackButton text="Oracle Scripts" />
-        <h2 class="view-main__title oracle-scripts-details__title">
-          Oracle Script
-        </h2>
-        <span v-if="!isLoadingError" class="view-main__subtitle">
-          {{ oracleScriptData?.name }}
-        </span>
+  <div class="app__main-view oracle-scripts-details">
+    <div class="oracle-scripts-details__header">
+      <div
+        class="app__main-view-detail-container oracle-scripts-details__container"
+      >
+        <div class="app__main-view-detail-back-icon">
+          <BackButton />
+        </div>
+        <div class="app__main-view-detail-title-container">
+          <h2 class="app__main-view-detail-title">Oracle Scripts</h2>
+          <div
+            v-if="!isLoadingError"
+            class="app__main-view-detail-subtitle-container"
+          >
+            <span class="app__main-view-detail-subtitle">
+              {{ oracleScriptData?.name }}
+            </span>
+          </div>
+        </div>
       </div>
-
       <button
         v-if="isOracleScriptOwner && !isLoadingError"
         class="oracle-scripts-details__title-btn app-btn app-btn--medium"
@@ -35,7 +43,7 @@
                 <span class="info-card__row-title">Owner</span>
                 <a
                   class="info-card__row-value info-card__row-value_txt info-card__row-link"
-                  :href="`${API_CONFIG.odinScan}/account/${oracleScriptData.owner}`"
+                  :href="`/accounts/${oracleScriptData.owner}`"
                   :title="oracleScriptData.owner"
                 >
                   {{ oracleScriptData.owner }}
@@ -98,7 +106,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { API_CONFIG } from '@/api/api-config'
 import { callers } from '@/api/callers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
@@ -180,31 +187,50 @@ onMounted(async () => {
 .oracle-scripts-details__title {
   margin: 0 1.6rem 0 2rem;
 }
+
 .oracle-scripts-details__empty-msg {
   text-align: center;
 }
+
 .oracle-scripts-details__card {
   margin-bottom: 3.4rem;
 }
+
 .oracle-scripts-details__title-wrapper {
   display: flex;
   align-items: center;
 }
+
+.oracle-scripts-details__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4rem;
+}
+
+.oracle-scripts-details__container {
+  margin-bottom: 0;
+}
+
 @include respond-to(tablet) {
   .oracle-scripts-details__title {
     margin: 0.8rem 0 0.4rem 0;
   }
+
   .oracle-scripts-details__title-wrapper {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
   }
+
   .oracle-scripts-details__tab-content {
     margin-bottom: 12rem;
   }
+
   .oracle-scripts-details {
     padding-bottom: 10rem;
   }
+
   .oracle-scripts-details__title-btn {
     display: none;
   }

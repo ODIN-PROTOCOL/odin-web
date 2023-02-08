@@ -11,6 +11,7 @@ import {
   MsgEditValidator,
   MsgUndelegate,
 } from 'cosmjs-types/cosmos/staking/v1beta1/tx'
+import { MsgExec } from 'cosmjs-types/cosmos/authz/v1beta1/tx'
 import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx'
 import { MsgStoreCode } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
 import { MsgCreateVestingAccount } from 'cosmjs-types/cosmos/vesting/v1beta1/tx.js'
@@ -155,6 +156,9 @@ export function humanizeMessageType(type: string): string {
     case '/cosmwasm.wasm.v1.MsgStoreCode':
       return 'Store Code'
 
+    case '/cosmos.authz.v1beta1.MsgExec':
+      return 'Authz MsgExec'
+
     default:
       throw new ReferenceError(`Unknown type ${type}`)
   }
@@ -192,7 +196,8 @@ export function decodeMessage(obj: {
   | MsgEditOracleScript
   | MsgFundCommunityPool
   | MsgRemoveReporter
-  | MsgStoreCode {
+  | MsgStoreCode
+  | MsgExec {
   switch (obj.typeUrl) {
     case '/mint.MsgWithdrawCoinsToAccFromTreasury':
       return MsgWithdrawCoinsToAccFromTreasury.decode(obj.value)
@@ -286,6 +291,10 @@ export function decodeMessage(obj: {
 
     case '/cosmos.distribution.v1beta1.MsgFundCommunityPool':
       return MsgFundCommunityPool.decode(obj.value)
+
+    case '/cosmos.authz.v1beta1.MsgExec':
+      return MsgExec.decode(obj.value)
+
     default:
       throw new ReferenceError(`Unknown type ${obj.typeUrl}`)
   }

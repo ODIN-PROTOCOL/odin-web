@@ -3,7 +3,6 @@ import { toHex } from '@cosmjs/encoding'
 import { DecodedTxData, IAttributesItem, IEventsItem } from '@/helpers/Types'
 import { convertLokiToOdin } from './converters'
 import { TxTelemetry } from '@/helpers/Types'
-import { formatDate } from '@/helpers/formatters'
 import { detect } from 'detect-browser'
 
 export const isIos = (): boolean | null => {
@@ -50,7 +49,7 @@ export const prepareTransaction = async (
         type: type ? type : '-',
         hash: tx.hash ? tx.hash.toLowerCase() : '-',
         block: tx.height ? tx.height : '-',
-        time: time ? formatDate(Number(time), 'HH:mm dd.MM.yy') : '-',
+        time: time,
         sender: sender ? sender : '',
         receiver: receiver ? receiver : '',
         amount: convertLokiToOdin(String(amount), {}, denom),
@@ -82,4 +81,79 @@ export const parseLogsToGetRewardsAmount = (
   } catch (error) {
     return null
   }
+}
+
+export enum TYPE_TX_SORT {
+  all = 'null',
+  delegate = 'delegate',
+  send = 'send',
+  withdraw = 'withdraw',
+}
+
+export const sortingTypeTx = [
+  {
+    text: 'All',
+    value: TYPE_TX_SORT.all,
+  },
+  {
+    text: 'Delegated',
+    value: TYPE_TX_SORT.delegate,
+  },
+  {
+    text: 'Send',
+    value: TYPE_TX_SORT.send,
+  },
+  {
+    text: 'Withdraw',
+    value: TYPE_TX_SORT.withdraw,
+  },
+]
+
+export enum TYPE_ACCOUNTS_SORT {
+  odinBalance = 'loki',
+  txs = 'txs',
+  delegations = 'delegations',
+  totalAmount = 'total_amount',
+}
+
+export const sortingTypeAccounts = [
+  {
+    text: 'Total Amount',
+    value: TYPE_ACCOUNTS_SORT.totalAmount,
+  },
+  {
+    text: 'ODIN Balance',
+    value: TYPE_ACCOUNTS_SORT.odinBalance,
+  },
+  {
+    text: 'Delegated Amount',
+    value: TYPE_ACCOUNTS_SORT.delegations,
+  },
+  {
+    text: 'Transaction Count',
+    value: TYPE_ACCOUNTS_SORT.txs,
+  },
+]
+
+export const sortingDaysForChart = {
+  lastDay: {
+    text: 'Last day',
+    value: '1',
+  },
+  lastWeek: {
+    text: 'Last week',
+    value: '7',
+  },
+  lastTwoWeek: {
+    text: 'Last 14 days',
+    value: '14',
+  },
+  lastMoth: {
+    text: 'Last month',
+    value: '31',
+  },
+  lastYear: {
+    text: 'Last year',
+    value: '365',
+  },
 }

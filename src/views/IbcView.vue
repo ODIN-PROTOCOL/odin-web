@@ -1,7 +1,7 @@
 <template>
-  <div class="view-main ibc-view">
-    <div class="view-main__title-wrapper">
-      <h2 class="view-main__title">IBCs</h2>
+  <div class="app__main-view ibc-view">
+    <div class="app__main-view-table-header">
+      <h3 class="app__main-view-table-header-info-title">IBCs</h3>
     </div>
     <template v-if="!isLoading">
       <template v-if="isLoadingError">
@@ -120,12 +120,10 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .ibc-view__table {
-  border: 0.1rem solid var(--clr__action);
-  border-radius: 0.8rem;
-  padding: 3rem 2rem;
   margin-bottom: 2.4rem;
+  border-radius: 0.8rem;
 }
 
 @include respond-to(tablet) {

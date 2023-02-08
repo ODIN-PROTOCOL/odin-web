@@ -3,7 +3,7 @@
     :class="className"
     :width="width"
     :height="height"
-    viewBox="0 0 26 26"
+    :viewBox="`0 0 ${width} ${height}`"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >

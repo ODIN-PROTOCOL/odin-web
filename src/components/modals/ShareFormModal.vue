@@ -85,7 +85,6 @@
 import { dialogs } from '@/helpers/dialogs'
 import { wallet } from '@/api/wallet'
 import { ModalBase } from '@/components/modals'
-import { API_CONFIG } from '@/api/api-config'
 import {
   MailIcon,
   TelegramIcon,
@@ -95,7 +94,7 @@ import {
 import QrcodeVue from 'qrcode.vue'
 import CopyButton from '@/components/CopyButton.vue'
 
-const addressLink = `${API_CONFIG.odinScan}/account/${wallet.account.address}`
+const addressLink = `/accounts/${wallet.account.address}`
 const textMessage = 'MY ODIN ACCOUNT:'
 const mailLink = encodeURI(`mailto:?subject=${textMessage}&body=${addressLink}`)
 const telegramLink = encodeURI(
@@ -143,7 +142,6 @@ const onClose = dialogs.getHandler('onClose')
 .receive-modal__info-address {
   margin-top: 0.4rem;
   display: flex;
-  background: var(--clr__modal-field-bg);
   border-radius: 0.8rem;
   padding: 1rem 0.8rem;
   gap: 0.4rem;

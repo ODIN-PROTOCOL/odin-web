@@ -1,0 +1,131 @@
+.app-filter {
+  display: flex;
+  width: 11.6rem;
+  height: 4.8rem;
+  position: relative;
+  &:focus {
+    border: 0.1rem solid var(--clr__input-border);
+  }
+  &__dropdown-inner {
+    .vue-picker-option_cur,
+    .vue-picker-option:hover {
+      color: var(--clr__action);
+      background: var(--clr__vue-picker-current-option);
+    }
+  }
+  &--coin {
+    border: 0.1rem solid transparent;
+    min-width: 13.8rem;
+  }
+  &--rounding {
+    &-left {
+      border-radius: 0.8rem 0 0 0.8rem;
+    }
+  }
+}
+
+._vue-picker {
+  width: 13rem;
+  font-weight: 400;
+
+  .vue-picker__opener,
+  .vue-picker__opener:focus {
+    background-color: var(--clr__vue-picker-bg);
+    border: none;
+    box-shadow: inset 0 0 0 0.1rem transparent;
+  }
+
+  .vue-picker__dropdown {
+    padding: 0;
+    background-color: var(--clr__dropdown-bg);
+    border: none;
+    border-radius: 0.4rem;
+    box-shadow: 0 0.4rem 2.4rem var(--clr__dropdown-shadow);
+  }
+
+  .vue-picker__opener-txt,
+  .vue-picker-option {
+    color: var(--clr__dropdown);
+    white-space: nowrap;
+    transition: all 0.5s ease;
+  }
+
+  .vue-picker__opener-ico {
+    height: 100%;
+    display: flex;
+    align-items: center;
+
+    &:after {
+      border: solid var(--clr__dropdown);
+      border-width: 0 0.2rem 0.2rem 0;
+      transition: all 0.5s ease;
+    }
+  }
+
+  &.vue-picker_open {
+    .vue-picker__opener-ico {
+      &:after {
+        border: solid var(--clr__secondary);
+        border-width: 0 0.2rem 0.2rem 0;
+        transform: rotate(225deg);
+      }
+    }
+
+    .vue-picker__opener-txt {
+      color: var(--clr__secondary);
+      font-weight: bold;
+    }
+  }
+
+  &__dropdown-custom {
+    .vue-picker-option:hover:not(:disabled),
+    .vue-picker-option_cur {
+      font-weight: 600;
+      color: var(--clr__secondary);
+      background: var(--clr__levender-blue);
+    }
+  }
+}
+
+// Specific for search-bar
+.search-bar {
+  .vue-picker__opener,
+  .vue-picker__opener:focus {
+    background-color: var(--clr__search-field-bg);
+  }
+}
+
+#chartjs-tooltip {
+  position: absolute;
+  padding: 1.2rem 1.6rem;
+  pointer-events: none;
+  background-color: var(--clr__secondary);
+  border-radius: 0.8rem;
+  color: var(--clr__white);
+  max-width: 18.5rem;
+
+  &.chartjs-tooltip_bottom {
+    .chartjs-tooltip__arrow {
+      display: block;
+      width: 1.4rem;
+      height: 1.4rem;
+      position: absolute;
+      background-color: var(--clr__secondary);
+      transform: translateX(-0.7rem) rotate(45deg);
+      bottom: -0.5rem;
+      pointer-events: none;
+    }
+  }
+
+  .chartjs-tooltip {
+    &__title {
+      @include ellipsis(inline-block, 100%);
+    }
+
+    &__row-title {
+      font-size: 1.4rem;
+      font-weight: 300;
+      opacity: 0.6;
+    }
+  }
+}

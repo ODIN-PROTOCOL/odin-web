@@ -1,28 +1,30 @@
 <template>
-  <div class="copy-button__wrapper" :class="modalBaseScheme">
+  <div class="copy-button__wrapper">
     <button class="copy-button" @click.prevent="copy()">
-      <CopyIcon class="copy-button__copy-icon" />
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M10.6667 0.666667H2.66667C1.93333 0.666667 1.33333 1.26667 1.33333 2V11.3333H2.66667V2H10.6667V0.666667ZM12.6667 3.33333H5.33333C4.6 3.33333 4 3.93333 4 4.66667V14C4 14.7333 4.6 15.3333 5.33333 15.3333H12.6667C13.4 15.3333 14 14.7333 14 14V4.66667C14 3.93333 13.4 3.33333 12.6667 3.33333ZM12.6667 14H5.33333V4.66667H12.6667V14Z"
+          fill="#6274ff"
+        />
+      </svg>
     </button>
     <div v-show="isCopiedShown" class="copy-button__message">Copied!</div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { copyValue } from '@/helpers/helpers'
-import { CopyIcon } from '@/components/icons'
 
-enum SCHEMES {
-  black = 'black',
-}
-
-const props = withDefaults(
-  defineProps<{
-    scheme?: string
-    text: string
-  }>(),
-  { scheme: '' },
-)
+const props = defineProps<{
+  text: string
+}>()
 
 const isCopiedShown = ref(false)
 
@@ -33,12 +35,6 @@ const copy = () => {
     isCopiedShown.value = false
   }, 1300)
 }
-
-const modalBaseScheme = computed(() => {
-  const scheme = props.scheme as SCHEMES
-  if (!Object.values(SCHEMES).includes(scheme)) return ''
-  return scheme ? `copy-button__wrapper--${scheme}` : ''
-})
 </script>
 
 <style lang="scss" scoped>
@@ -50,29 +46,27 @@ const modalBaseScheme = computed(() => {
   height: 2.2rem;
   border-radius: 50%;
   &:hover {
-    background: var(--clr__action-disabled);
+    background: var(--clr__azureish-white);
   }
 }
+
 .copy-button__wrapper {
   position: relative;
   display: flex;
   align-items: center;
   padding-left: 0.4rem;
-  &--black {
-    .copy-button__copy-icon {
-      fill: var(--clr__text);
-    }
-  }
 }
+
 .copy-button__message {
   position: absolute;
   bottom: 130%;
   left: 50%;
   transform: translateX(-50%);
   padding: 1.2rem 2.4rem;
-  background: var(--clr__tooltip-bg);
+  background: var(--clr__secondary);
   border-radius: 0.8rem;
-  color: var(--clr__tooltip-text);
+  color: var(--clr__white);
+  font-size: 1.6rem;
 
   &:before {
     content: '';
@@ -83,7 +77,7 @@ const modalBaseScheme = computed(() => {
     bottom: -0.3rem;
     left: 50%;
     transform: translateX(-50%) rotate(45deg);
-    background: var(--clr__tooltip-bg);
+    background: var(--clr__secondary);
   }
 }
 

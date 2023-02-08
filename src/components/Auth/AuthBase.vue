@@ -10,20 +10,17 @@
 
     <div class="auth-base__content">
       <form class="auth-base__form" @submit.prevent="emitSubmit">
-        <img
-          class="auth-base__form-logo"
-          src="~@/assets/brand/odin-logo-black.png"
-          alt="ODIN logo"
-        />
+        <app-logo-icon class="auth-base__form-logo" />
         <h2 class="auth-base__content-title">Sign in</h2>
-
         <slot name="content"></slot>
       </form>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
+import { AppLogoIcon } from '@/components/icons'
+
 enum EVENTS {
   submit = 'submit',
 }
@@ -37,17 +34,17 @@ const emitSubmit = () => emit(EVENTS.submit)
 
 <style lang="scss" scoped>
 .auth-base {
+  height: 100vh;
   display: grid;
   grid: 100% / 1fr 0.85fr;
   flex: 1;
 }
+
 .auth-base__splash {
-  background: url('~@/assets/images/auth_background.png') no-repeat center
-    var(--clr__auth-base-bg);
-  background-size: cover;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: var(--clr__secondary);
 }
 
 .auth-base__splash-logo {
@@ -62,18 +59,20 @@ const emitSubmit = () => emit(EVENTS.submit)
 }
 
 .auth-base__content {
+  padding: 3.2rem;
   display: flex;
   justify-content: flex-start;
   align-items: center;
   flex: 1;
-  padding: 3.2rem;
   position: relative;
+  background-color: var(--clr__main-bg);
 }
 
 .auth-base__content-title {
+  margin-bottom: 2rem;
+  text-align: center;
   font-size: 4rem;
   font-weight: 400;
-  margin-bottom: 5.6rem;
 }
 
 .auth-base__form {

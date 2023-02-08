@@ -1,7 +1,24 @@
 <template>
-  <div class="requests-view view-main">
-    <div class="view-main__title-wrapper">
-      <h2 class="view-main__title">Requests</h2>
+  <div class="app__main-view requests-view">
+    <div class="app__main-view-table-header requests-view__table-header">
+      <div class="requests-view__container">
+        <div class="app__main-view-table-header-prefix">
+          <span>Rq</span>
+        </div>
+        <div class="app__main-view-table-header-info">
+          <h3 class="app__main-view-table-header-info-title">Requests</h3>
+          <skeleton-loader
+            v-if="isLoading"
+            width="100"
+            height="24"
+            pill
+            shimmer
+          />
+          <span v-else class="app__main-view-table-header-info-count">
+            {{ requestsCount?.toLocaleString() }} requests found
+          </span>
+        </div>
+      </div>
       <button
         v-if="accountAddress"
         class="requests-view__title-btn app-btn app-btn--medium"
@@ -10,11 +27,6 @@
       >
         Create Request
       </button>
-    </div>
-
-    <div class="view-main__count-info requests-view__count-info">
-      <skeleton-loader v-if="isLoading" height="24" width="150" shimmer pill />
-      <p v-else>{{ requestsCount }} requests found</p>
     </div>
 
     <div class="app-table requests-view__table">
@@ -36,7 +48,7 @@
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="`#${item.request.id}`"
-                :to="{
+                :name="{
                   name: $routes.requestDetails,
                   params: { id: item.request.id },
                 }"
@@ -47,7 +59,7 @@
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="`#${item.request.oracle_script_id}`"
-                :to="{
+                :name="{
                   name: $routes.oracleScriptDetails,
                   params: { id: item.request.oracle_script_id },
                 }"
@@ -63,9 +75,12 @@
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Timestamp</span>
-              <span>{{
-                $fDate(new Date(item.result.request_time * 1000))
-              }}</span>
+              <span class="app-table__cell-date">
+                {{ $fDate(item.result.request_time * 1000, 'dd/MM/yy') }}
+              </span>
+              <span class="app-table__cell-time">
+                {{ $fDate(item.result.request_time * 1000, 'HH:mm') }}
+              </span>
             </div>
           </div>
         </template>
@@ -82,14 +97,13 @@
       </div>
     </div>
 
-    <template v-if="requestsCount > ITEMS_PER_PAGE">
-      <AppPagination
-        class="mg-t32 mg-b32"
-        v-model="currentPage"
-        :pages="totalPages"
-        @update:modelValue="paginationHandler"
-      />
-    </template>
+    <AppPagination
+      v-if="requestsCount > ITEMS_PER_PAGE"
+      class="mg-t32 mg-b32"
+      v-model="currentPage"
+      :pages="totalPages"
+      @update:modelValue="paginationHandler"
+    />
 
     <div v-if="accountAddress" class="view-main__mobile-activities">
       <button
@@ -104,26 +118,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { callers } from '@/api/callers'
-import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
-import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
-import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { wallet } from '@/api/wallet'
+import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
+import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import { RequestFormModal } from '@/components/modals'
-import TitledLink from '@/components/TitledLink.vue'
-import Progressbar from '@/components/ProgressbarTool.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
+import Progressbar from '@/components/ProgressbarTool.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
+import TitledLink from '@/components/TitledLink.vue'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-const ITEMS_PER_PAGE = 25
+
 const currentPage = ref(1)
 const totalPages = ref(0)
 const requests = ref()
 const requestsCount = ref()
 const maxAskCount = ref()
+
 const accountAddress = wallet.isEmpty ? '' : wallet.account.address
+const ITEMS_PER_PAGE = 20
 
 const headerTitles = [
   { title: 'Request ID' },
@@ -131,24 +147,30 @@ const headerTitles = [
   { title: 'Report Status' },
   { title: 'Timestamp' },
 ]
+
 const getRequests = async () => {
   lockLoading()
+
   try {
     requests.value = []
+
     const req = await callers.getRequests(
       ITEMS_PER_PAGE,
       (currentPage.value - 1) * ITEMS_PER_PAGE,
     )
+
     requests.value = req.data.result.result.requests
     await getRequestsCount()
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
+
   releaseLoading()
 }
 
 const getRequestsCount = async () => {
   lockLoading()
+
   try {
     const res = await callers.getCounts()
     requestsCount.value = Number(res.requestCount)
@@ -156,17 +178,20 @@ const getRequestsCount = async () => {
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
+
   releaseLoading()
 }
 
 const getParams = async () => {
   lockLoading()
+
   try {
     const response = await callers.getOracleParams()
     maxAskCount.value = response.params?.maxAskCount.toNumber()
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
+
   releaseLoading()
 }
 
@@ -195,16 +220,37 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-.requests-view__count-info {
-  margin-bottom: 3.2rem;
+.requests-view__table-header {
+  justify-content: space-between;
 }
+
+.requests-view__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 @include respond-to(tablet) {
+  .app-table__head {
+    display: none;
+  }
+
+  .app-table__title {
+    min-width: 15rem;
+    margin-right: 2.4rem;
+    display: inline-block;
+    font-weight: 300;
+  }
+
+  .app-table__row {
+    padding: 3.4rem 0 1.6rem;
+    grid: none;
+  }
+
   .requests-view {
     padding-bottom: 10rem;
   }
-  .requests-view__count-info {
-    margin-bottom: 0;
-  }
+
   .requests-view__title-btn {
     display: none;
   }

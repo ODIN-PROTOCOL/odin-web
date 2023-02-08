@@ -26,10 +26,7 @@
                   @keypress.enter="navigate"
                   class="top-oracle-scripts__item-button"
                 >
-                  <img
-                    src="@/assets/icons/forward-arrow.svg"
-                    alt="enter-arrow"
-                  />
+                  <ForwardArrow />
                 </button>
               </router-link>
             </div>
@@ -60,6 +57,7 @@
 </template>
 
 <script setup lang="ts">
+import { ForwardArrow } from '@/components/icons'
 import TopOracleScriptsSkeleton from '@/components/TopOracleScriptsSkeleton.vue'
 import { OracleScriptFromTelemetry } from '@/types'
 
@@ -79,6 +77,7 @@ defineProps<{
   font-size: 1.6rem;
   line-height: 2.4rem;
 }
+
 .top-oracle-scripts__item {
   display: flex;
   flex-direction: column;
@@ -86,6 +85,7 @@ defineProps<{
   min-width: 26rem;
   min-height: 24rem;
 }
+
 .top-oracle-scripts__item-title {
   font-weight: 600;
   font-size: 1.8rem;
@@ -111,40 +111,48 @@ defineProps<{
   display: grid;
   grid: auto/ repeat(2, 1fr);
 }
+
 .top-oracle-scripts__item-info-title {
   padding-bottom: 0.8rem;
   color: var(--clr__text-muted);
 }
+
 .top-oracle-scripts__item-description {
   display: flex;
   justify-content: space-between;
   flex-direction: column;
 }
+
 .top-oracle-scripts__item-value {
   display: flex;
   flex-direction: column;
 }
+
 .top-oracle-scripts__item-info-text {
   max-width: 15rem;
 }
+
 @include respond-to(medium) {
   .top-oracle-scripts {
     grid: auto/repeat(2, 1fr);
     gap: 2rem;
   }
 }
+
 @include respond-to(tablet) {
   .top-oracle-scripts {
     grid: auto/repeat(6, 1fr);
     overflow-x: scroll;
     margin-bottom: 2rem;
   }
+
   .top-oracle-scripts__item {
     min-width: 28.7rem;
     min-height: 26.5rem;
     justify-content: space-between;
     padding: 3.2rem 1.6rem;
     margin-bottom: 0.7rem;
+
     &:first-child {
       margin-left: 0.7rem;
     }

@@ -1,7 +1,14 @@
 <template>
-  <div class="governance-view view-main">
-    <div class="view-main__title-wrapper">
-      <h2 class="view-main__title">Governance</h2>
+  <div class="app__main-view governance-view">
+    <div class="app__main-view-table-header governance-view__table-header">
+      <div class="governance-view__container">
+        <div class="app__main-view-table-header-prefix">
+          <span>Ps</span>
+        </div>
+        <div class="app__main-view-table-header-info">
+          <h3 class="app__main-view-table-header-info-title">Proposals</h3>
+        </div>
+      </div>
       <button
         v-if="accountAddress"
         class="governance-view__title-btn app-btn app-btn--medium"
@@ -16,6 +23,7 @@
       <h3 class="info-card__title governance-view__info-title mg-b40">
         Total number of proposals in ODIN
       </h3>
+
       <CustomDoughnutChart
         :data="proposalsDataForChart"
         :is-loading="isLoading"
@@ -45,7 +53,7 @@
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="item.content?.title || '-'"
-                :to="{
+                :name="{
                   name: $routes.proposal,
                   params: { id: item.proposal_id },
                 }"
@@ -55,16 +63,16 @@
               <span class="app-table__title">Proposer's account ID</span>
               <a
                 class="app-table__cell-txt app-table__link"
-                :href="`${API_CONFIG.odinScan}/account/${item.proposerAddress}`"
+                :href="`/accounts/${item.proposerAddress}`"
               >
                 {{ item.proposerAddress }}
               </a>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Proposal status</span>
-              <StatusBlock
-                :status="proposalStatusType[item.status].status"
+              <Tag
                 :text="proposalStatusType[item.status].name"
+                :type="proposalStatusType[item.status].status"
               />
             </div>
           </div>
@@ -106,7 +114,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { callers } from '@/api/callers'
-import { API_CONFIG } from '@/api/api-config'
 import { getProposalsCountByStatus } from '@/helpers/proposalHelpers'
 import { proposalStatusType } from '@/helpers/statusTypes'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
@@ -118,9 +125,9 @@ import { ChartDataItem } from '@/helpers/Types'
 import { wallet } from '@/api/wallet'
 import TitledLink from '@/components/TitledLink.vue'
 import CustomDoughnutChart from '@/components/charts/CustomDoughnutChart.vue'
-import StatusBlock from '@/components/StatusBlock.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
+import Tag from '@/components/Tag.vue'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const ITEMS_PER_PAGE = 30
@@ -236,24 +243,54 @@ onMounted(async () => {
 .governance-view__info {
   width: 60rem;
 }
+
 .governance-view__info-title {
   font-weight: 400;
   font-size: 2.4rem;
   line-height: 2.9rem;
 }
 
+.governance-view__table-header {
+  justify-content: space-between;
+}
+
+.governance-view__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 @include respond-to(tablet) {
   .governance-view__title-btn {
     display: none;
   }
+
   .governance-view {
     padding-bottom: 10rem;
   }
+
   .governance-view__title-btn {
     display: none;
   }
+
   .governance-view__info {
     width: 100%;
+  }
+
+  .app-table__head {
+    display: none;
+  }
+
+  .app-table__title {
+    min-width: 12rem;
+    margin-right: 2.4rem;
+    display: inline-block;
+    font-weight: 300;
+  }
+
+  .app-table__row {
+    padding: 3.4rem 0 1.6rem;
+    grid: none;
   }
 }
 </style>

@@ -1,7 +1,24 @@
 <template>
-  <div class="view-main data-sources">
-    <div class="view-main__title-wrapper">
-      <h2 class="view-main__title">Data Sources</h2>
+  <div class="app__main-view data-sources">
+    <div class="app__main-view-table-header data-sources__table-header">
+      <div class="data-sources__container">
+        <div class="app__main-view-table-header-prefix">
+          <span>Ds</span>
+        </div>
+        <div class="app__main-view-table-header-info">
+          <h3 class="app__main-view-table-header-info-title">Data Sources</h3>
+          <skeleton-loader
+            v-if="isLoading"
+            width="100"
+            height="24"
+            pill
+            shimmer
+          />
+          <span v-else class="app__main-view-table-header-info-count">
+            {{ dataSourcesCount?.toLocaleString() }} Data Sources found
+          </span>
+        </div>
+      </div>
       <button
         v-if="accountAddress"
         class="data-sources__title-btn app-btn app-btn--medium"
@@ -12,17 +29,12 @@
       </button>
     </div>
 
-    <div class="data-sources__count-info">
-      <skeleton-loader v-if="isLoading" height="24" width="150" shimmer pill />
-      <p v-else>{{ dataSourcesCount }} Data Sources found</p>
-    </div>
-
     <SortLine
       :is-loading="isLoading"
-      :title="'Data Source'"
+      title="Data Source"
       v-model:oracleScriptsName="dataSourceName"
-      v-model:sortingOwnersValue="sortingOwnersValue"
       v-model:sortingActivitiesValue="sortingActivitiesValue"
+      v-model:sortingOwnersValue="sortingOwnersValue"
     />
 
     <div class="app-table">
@@ -45,7 +57,7 @@
               <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="`#${item.id} ${item.name}`"
-                :to="{
+                :name="{
                   name: $routes.dataSourceDetails,
                   params: { id: item.id },
                 }"
@@ -71,9 +83,15 @@
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Timestamp</span>
-              <span>
-                {{ $fDate(new Date(item.timestamp * 1000)) || '-' }}
-              </span>
+              <template v-if="item.timestamp">
+                <span class="app-table__cell-date">
+                  {{ $fDate(new Date(item.timestamp * 1000), 'dd/MM/yy') }}
+                </span>
+                <span class="app-table__cell-time">
+                  {{ $fDate(new Date(item.timestamp * 1000), 'HH:mm') }}
+                </span>
+              </template>
+              <span v-else class="app-table__cell-txt">-</span>
             </div>
             <div class="app-table__cell">
               <div class="app-table__activities data-sources__table-activities">
@@ -233,10 +251,43 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped lang="scss">
-.data-sources__count-info {
-  margin-bottom: 3.2rem;
+<style lang="scss" scoped>
+.data-sources__table-header {
+  justify-content: space-between;
 }
+
+.data-sources__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@include respond-to(tablet) {
+  .app-table__head {
+    display: none;
+  }
+
+  .app-table__title {
+    min-width: 15rem;
+    margin-right: 2.4rem;
+    display: inline-block;
+    font-weight: 300;
+  }
+
+  .app-table__row {
+    padding: 3.4rem 0 1.6rem;
+    grid: none;
+  }
+
+  .data-sources {
+    padding-bottom: 10rem;
+  }
+
+  .data-sources__title-btn {
+    display: none;
+  }
+}
+
 .data-sources__table-row {
   align-items: center;
 }
@@ -270,9 +321,6 @@ onMounted(async () => {
   }
   .data-sources__title-btn {
     display: none;
-  }
-  .data-sources__count-info {
-    margin-bottom: 2.4rem;
   }
 }
 </style>

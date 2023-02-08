@@ -1,13 +1,13 @@
 <template>
   <div class="user-widget fx-row">
     <template v-if="isLoggedIn">
-      <BalanceButton @click="closeBurger" />
+      <BalanceButton class="user-widget__wallet" />
       <button
         class="user-widget__log-out app-ico-btn"
         type="button"
         @click="logOutAndLeave()"
       >
-        <img src="~@/assets/icons/exit.svg" alt="Log out" />
+        <exit-icon />
       </button>
     </template>
     <template v-if="!isLoggedIn">
@@ -25,6 +25,7 @@
 import { useAuthorization } from '@/composables/useAuthorization'
 import { ROUTE_NAMES } from '@/enums'
 import BalanceButton from '@/components/BalanceButton.vue'
+import { ExitIcon } from '@/components/icons'
 import router from '@/router'
 
 enum EVENTS {
@@ -45,10 +46,12 @@ const emit = defineEmits<{
 }>()
 
 const { logOut, isLoggedIn } = useAuthorization()
+
 const logOutAndLeave = () => {
   logOut()
   router.push({ name: ROUTE_NAMES.auth })
 }
+
 const closeBurger = () => {
   emit(EVENTS.closeBurger)
 }
@@ -63,8 +66,16 @@ const closeBurger = () => {
   text-decoration: none;
 }
 
-@media (max-width: 768px) {
-  .user-widget__log-out {
+.user-widget__log-out {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@include respond-to(tablet) {
+  .user-widget__log-out,
+  .user-widget__wallet,
+  .user-widget__connect-wallet-btn {
     display: none;
   }
 }

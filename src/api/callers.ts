@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { MsgWithdrawCoinsToAccFromTreasury } from '@provider/codec/mint/tx'
 import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx'
 import {
@@ -13,7 +14,7 @@ import { MsgDeposit, MsgVote } from '@provider/codec/cosmos/gov/v1beta1/tx'
 import { api } from './api'
 import { wallet } from './wallet'
 import { mapResponse, sendPost, sendGet } from './callersHelpers'
-import { cacheAnswers } from '@/helpers/requests'
+import { cacheAnswers, getAPIDate } from '@/helpers/requests'
 import { decodeProposal } from '@/helpers/proposalDecoders'
 
 import { NumLike } from '@/helpers/casts'
@@ -81,6 +82,14 @@ const makeCallers = () => {
         `${API_CONFIG.telemetryUrl}/oracle_scripts?page[number]=${page_number}&page[limit]=${page_limit}&sort=${activities}&owner=${owner}&name=${name}`,
       )
     },
+    getTxVolumePerDays: (startTime: Date, endTime: Date) => {
+      return axios.get(`${API_CONFIG.telemetryUrl}/blocks/txVolumePerDays`, {
+        params: {
+          start_time: (startTime.getTime() / 1000).toFixed(),
+          end_time: (endTime.getTime() / 1000).toFixed(),
+        },
+      })
+    },
     getAccountTx: (
       page_number: number,
       page_limit: number,
@@ -91,6 +100,9 @@ const makeCallers = () => {
       return sendGet(
         `${API_CONFIG.telemetryUrl}/account_txs/${owner}?page[number]=${page_number}&page[limit]=${page_limit}&page[order]=${page_order}&type=${tx_type}`,
       )
+    },
+    getBlockSize: (height: number) => {
+      return axiosWrapper.get(`${API_CONFIG.telemetryUrl}/block_size/${height}`)
     },
     getChannel: querier(qc => qc.ibc.channel.allChannels),
     getConnections: querier(qc => qc.ibc.connection.allConnections),
@@ -142,6 +154,25 @@ const makeCallers = () => {
     getProposalsStatistic: () => {
       return sendGet(
         `${API_CONFIG.telemetryUrl}/blocks/vote_proposals_statistics`,
+      )
+    },
+    getTopAccounts: (limit: number, offset: number, sortingBy: string) => {
+      return axios.post(`${API_CONFIG.graphqlActions}/top_accounts`, {
+        input: {
+          limit: limit,
+          offset: offset,
+          sorting_by: sortingBy,
+        },
+      })
+    },
+    getTxSearchFromTelemetry: (
+      page_number: number,
+      page_limit: number,
+      page_order: string,
+      block = 0,
+    ) => {
+      return sendGet(
+        `${API_CONFIG.telemetryUrl}/txs?page[number]=${page_number}&page[limit]=${page_limit}&page[order]=${page_order}&block=${block}`,
       )
     },
     proposalDeposit: broadcaster<MsgDeposit>(
@@ -251,6 +282,47 @@ const makeCallers = () => {
       return axiosWrapper.get(
         `${API_CONFIG.telemetryUrl}/validator/${id}/reports?page[number]=${page_number}&page[limit]=${page_limit}`,
       )
+    },
+    getUnverifiedBalances: querier(qc => qc.bank.balance),
+    getValidatorByConsensusKey: cacheAnswers((validatorHash: string) => {
+      return axiosWrapper.get(
+        `${API_CONFIG.api}telemetry/validator_by_cons_addr/${validatorHash}`,
+      )
+    }),
+    getTxForTxDetailsPage: (hash: string) => {
+      return getAPIDate(`${API_CONFIG.rpc}tx?hash=0x${hash}&prove=true`)
+    },
+    getAvgSizePerDays: (startTime: Date, endTime: Date) => {
+      return axios.get(`${API_CONFIG.telemetryUrl}/blocks/avgSizePerDays`, {
+        params: {
+          start_time: (startTime.getTime() / 1000).toFixed(),
+          end_time: (endTime.getTime() / 1000).toFixed(),
+        },
+      })
+    },
+    getAvgTimePerDays: (startTime: Date, endTime: Date) => {
+      return axios.get(`${API_CONFIG.telemetryUrl}/blocks/avgTimePerDays`, {
+        params: {
+          start_time: (startTime.getTime() / 1000).toFixed(),
+          end_time: (endTime.getTime() / 1000).toFixed(),
+        },
+      })
+    },
+    getAvgTxFeePerDays: (startTime: Date, endTime: Date) => {
+      return axios.get(`${API_CONFIG.telemetryUrl}/blocks/avgTxFeePerDays`, {
+        params: {
+          start_time: (startTime.getTime() / 1000).toFixed(),
+          end_time: (endTime.getTime() / 1000).toFixed(),
+        },
+      })
+    },
+    getRequestsVolumePerDays: (startTime: Date, endTime: Date) => {
+      return axios.get(`${API_CONFIG.telemetryUrl}/requests/volume_per_days`, {
+        params: {
+          start_time: (startTime.getTime() / 1000).toFixed(),
+          end_time: (endTime.getTime() / 1000).toFixed(),
+        },
+      })
     },
   }
 }
