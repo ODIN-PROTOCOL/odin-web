@@ -36,18 +36,18 @@
         </div>
       </div>
     </div>
-    <div class="app-table">
+    <div v-if="transactions" class="app-table">
       <div class="app-table__head">
         <span v-for="(item, index) in headerTitles" :key="index">
           {{ item.title }}
         </span>
       </div>
-      <div>
+      <div class="app-table__body">
         <template v-if="transactions?.length">
-          <TxLine
+          <AccountTxLine
             v-for="(item, index) in transactions"
             :key="index"
-            :transition="item"
+            :tx="item.attributes"
           />
         </template>
         <template v-else>
@@ -84,10 +84,10 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { sortingTypeTx, TYPE_TX_SORT } from '@/helpers/sortingHelpers'
 import { InfoIcon } from '@/components/icons'
+import AccountTxLine from '@/components/AccountTxLine.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import PersonalInfo from '@/components/PersonalInfo.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
-import TxLine from '@/components/TxLine.vue'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 
@@ -119,7 +119,7 @@ const getTransactions = async () => {
     const tx = await callers
       .getAccountTx(
         currentPage.value - 1,
-        50,
+        ITEMS_PER_PAGE,
         wallet.account.address,
         'desc',
         sortingValue.value,
