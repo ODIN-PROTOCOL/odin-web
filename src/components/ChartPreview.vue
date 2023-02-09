@@ -72,7 +72,7 @@ const { getDataMethodName } = toRefs(props)
 const chartData = ref()
 const isLoading = ref(false)
 const isLoadingError = ref(false)
-const sortingValue = ref(sortingDaysForChart.lastDay.value)
+const sortingValue = ref(sortingDaysForChart.lastMonth.value)
 
 onMounted(async (): Promise<void> => {
   await getChartData()

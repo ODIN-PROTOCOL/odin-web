@@ -114,7 +114,7 @@ const props = withDefaults(
 const { getDataMethodName } = toRefs(props)
 const chartData = ref()
 const isLoading = ref(false)
-const sortingValue = ref(sortingDaysForChart.lastWeek.value)
+const sortingValue = ref(sortingDaysForChart.lastMonth.value)
 const isLoadingError = ref(false)
 
 const getChartData = async () => {
