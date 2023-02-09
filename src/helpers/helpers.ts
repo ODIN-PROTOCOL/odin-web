@@ -148,7 +148,7 @@ export const sortingDaysForChart = {
     text: 'Last 14 days',
     value: '14',
   },
-  lastMoth: {
+  lastMonth: {
     text: 'Last month',
     value: '31',
   },
