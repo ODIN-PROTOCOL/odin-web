@@ -115,12 +115,17 @@ const { getDataMethodName } = toRefs(props)
 const chartData = ref()
 const isLoading = ref(false)
 const sortingValue = ref(sortingDaysForChart.lastMonth.value)
+const sortingValueYear = ref(sortingDaysForChart.lastYear.value)
 const isLoadingError = ref(false)
 
 const getChartData = async () => {
   const endDate = new Date()
   const startDate = new Date()
-  startDate.setDate(startDate.getDate() - Number(sortingValue.value))
+  const sorting_value =
+    getDataMethodName.value == 'getRequestsVolumePerDays'
+      ? sortingValueYear.value
+      : sortingValue.value
+  startDate.setDate(startDate.getDate() - Number(sorting_value))
   isLoading.value = true
   try {
     const { data } = await callers[getDataMethodName.value](startDate, endDate)
