@@ -60,28 +60,111 @@
         is-for-validators
       />
     </div>
+    <div v-if="hasActionButtons" class="app-table__cell">
+      <div class="app-table__activities validators-view-table-row__activities">
+        <div
+          v-if="validator?.statuses[0]?.status === VALIDATOR_STATUS.active"
+          class="app-table__activities-item validators-view-table-row__activities-item"
+        >
+          <button
+            v-if="delegations[validator.info.operatorAddress]"
+            class="app-btn app-btn--outlined app-btn--very-small w-min108"
+            type="button"
+            @click="selectedBtn('Regelate')"
+          >
+            Redelegate
+          </button>
+          <button
+            class="app-btn app-btn--very-small w-min108"
+            type="button"
+            @click="selectedBtn('Delegate')"
+          >
+            Delegate
+          </button>
+        </div>
+        <div
+          v-if="delegations[validator.info.operatorAddress]"
+          class="app-table__activities-item validators-view-table-row__activities-item"
+        >
+          <button
+            class="app-btn app-btn--outlined app-btn--very-small w-min108"
+            type="button"
+            @click="selectedBtn('Claim rewards')"
+          >
+            Claim rewards
+          </button>
+          <button
+            class="app-btn app-btn--outline-red app-btn--very-small w-min108"
+            type="button"
+            @click="selectedBtn('Undelegate')"
+          >
+            Undelegate
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
+import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import {
   getValidatorStatus,
   ValidatorInfoModify,
+  VALIDATOR_STATUS,
 } from '@/helpers/validatorHelpers'
 import ProgressbarTool from '@/components/ProgressbarTool.vue'
 import TitledLink from '@/components/TitledLink.vue'
 import ValidatorStatus from '@/components/ValidatorStatus.vue'
 
-defineProps<{
-  validator: ValidatorInfoModify
-  tabStatus: string
+enum EVENTS {
+  selectedBtn = 'selected-btn',
+}
+
+const props = defineProps<{
+  delegations: DelegationResponse
+  hasActionButtons: boolean
   inactiveValidatorsTitle: string
+  tabStatus: string
+  validator: ValidatorInfoModify
 }>()
+
+const emit = defineEmits<{
+  (
+    e: EVENTS.selectedBtn,
+    payload: { typeBtn: string; validator: ValidatorInfoModify },
+  ): void
+}>()
+
+const selectedBtn = (typeBtn: string) => {
+  emit(EVENTS.selectedBtn, { typeBtn, validator: props.validator })
+}
 </script>
 
 <style lang="scss" scoped>
 .validators-view-table-row {
   align-items: center;
+}
+
+.validators-view-table-row__cell--center {
+  justify-content: center;
+}
+
+.validators-view-table-row__cell--margin-left {
+  margin-left: 2rem;
+}
+
+.validators-view-table-row__activities {
+  width: 100%;
+  & > *:not(:last-child) {
+    margin-bottom: 1.6rem;
+  }
+}
+
+.validators-view-table-row__activities-item {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1.6rem;
 }
 
 .validators-view-table-row__cell--center {

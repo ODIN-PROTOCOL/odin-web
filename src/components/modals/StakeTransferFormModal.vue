@@ -438,6 +438,7 @@ const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
 .stake-transfer-form-modal__option-moniker,
 .stake-transfer-form-modal__option-balance,
 .stake-transfer-form-modal__field-balance-value {
+  color: var(--clr__main-text);
   font-weight: 600;
 }
 .stake-transfer-form-modal__option-adress {
@@ -490,6 +491,7 @@ const onClose = preventIf(dialogs.getHandler('onClose'), isLoading)
   flex-direction: column;
   padding: 1.2rem 1.6rem;
 }
+
 @include respond-to(tablet) {
   .stake-transfer-form-modal__option-info {
     max-width: 7rem;

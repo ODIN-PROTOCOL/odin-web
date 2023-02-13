@@ -94,7 +94,7 @@ const emitClose = () => emit(EVENTS.close)
 }
 
 .modal-base__content {
-  background: var(--clr__main-bg);
+  background: var(--clr__modal-bg);
   border-radius: 0.8rem;
   padding: 3.2rem 2.2rem 2.4rem 3.2rem;
   z-index: 1;

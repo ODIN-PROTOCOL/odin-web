@@ -49,6 +49,10 @@
   --clr__btn-focused: #{$clr-btn-focused};
   --clr__btn-focused-border: #{$clr-btn-focused-border};
   --clr__btn-disabled: #{$clr-btn-disabled};
+  --clr__btn-normal-red: #{$clr-btn-normal-red};
+  --clr__btn-hover-red: #{$clr-btn-hover-red};
+  --clr__btn-pressed-red: #{$clr-btn-pressed-red};
+  --clr__btn-disabled-red: #{$clr-btn-disabled-red};
 
   // Inputs
   --clr__input-bg: #{$clr-input-bg};
@@ -76,6 +80,7 @@
   --clr__tooltip-text: #{$clr-tooltip-text};
 
   // Modals
+  --clr__modal-bg: #{$clr-white};
   --clr__modal-backdrop-bg: #{$clr-modal-backdrop-bg};
   --clr__modal-content-bg: #{$clr-modal-content-bg};
   --clr__modal-content-shadow: #{$clr-modal-content-shadow};
@@ -175,6 +180,7 @@
 
   // Vue Picker n
   --clr__vue-picker-bg: #{$clr-dark-1};
+  --clr__vue-picker-current-option: #{$clr-levender-blue};
 
   // Vue Skeleton Loader
   --clr__vue-skeleton-loader-bg: #{$clr-vue-skeleton-loader-bg-dark};
@@ -194,4 +200,8 @@
   --clr__card-label-tx-bg: #{$clr-dark-blue};
   --clr__card-label-block-bg: #{$clr-dark-blue};
   --clr__card-label-text: #{$clr-very-light-blue};
+
+    // Modals
+    --clr__modal-bg: #{$clr-dark-gunmetal};
+    --clr__modal-field-bg: #{$clr-dark-2};
 }

@@ -85,28 +85,98 @@
           class="validators-item__validator-status"
         />
       </div>
+      <div v-if="hasActionButtons" class="app-table__cell">
+        <div
+          class="app-table__activities validators-view-table-row-mobile__activities"
+        >
+          <div
+            v-if="validator?.statuses[0]?.status === VALIDATOR_STATUS.active"
+            class="app-table__activities-item validators-view-table-row-mobile__activities-item"
+          >
+            <button
+              v-if="delegations[validator.info.operatorAddress]"
+              class="app-btn app-btn--outlined app-btn--very-small w-min108"
+              type="button"
+              @click="selectedBtn('Regelate')"
+            >
+              Redelegate
+            </button>
+            <button
+              class="app-btn app-btn--very-small w-min108"
+              type="button"
+              @click="selectedBtn('Delegate')"
+            >
+              Delegate
+            </button>
+          </div>
+          <div
+            v-if="delegations[validator.info.operatorAddress]"
+            class="app-table__activities-item validators-view-table-row-mobile__activities-item"
+          >
+            <button
+              class="app-btn app-btn--outlined app-btn--very-small w-min108"
+              type="button"
+              @click="selectedBtn('Claim rewards')"
+            >
+              Claim rewards
+            </button>
+            <button
+              class="app-btn app-btn--outline-red app-btn--very-small w-min108"
+              type="button"
+              @click="selectedBtn('Undelegate')"
+            >
+              Undelegate
+            </button>
+          </div>
+        </div>
+      </div>
     </template>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, toRef, watch } from 'vue'
+import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
 import {
   getValidatorStatus,
   ValidatorInfoModify,
+  VALIDATOR_STATUS,
 } from '@/helpers/validatorHelpers'
 import { ArrowIcon } from '@/components/icons'
 import ProgressbarTool from '@/components/ProgressbarTool.vue'
 import TitledLink from '@/components/TitledLink.vue'
 import ValidatorStatus from '@/components/ValidatorStatus.vue'
 
-defineProps<{
-  validator: ValidatorInfoModify
-  tabStatus: string
+enum EVENTS {
+  selectedBtn = 'selected-btn',
+}
+
+const props = defineProps<{
+  currentPage: number
+  delegations: DelegationResponse
+  hasActionButtons: boolean
   inactiveValidatorsTitle: string
+  tabStatus: string
+  validator: ValidatorInfoModify
+}>()
+
+const emit = defineEmits<{
+  (
+    e: EVENTS.selectedBtn,
+    payload: { typeBtn: string; validator: ValidatorInfoModify },
+  ): void
 }>()
 
 const isShowValidatorDetails = ref(false)
+
+const currentPage = toRef(props, 'currentPage')
+const tabStatus = toRef(props, 'tabStatus')
+
+const selectedBtn = (typeBtn: string) => {
+  emit(EVENTS.selectedBtn, { typeBtn, validator: props.validator })
+}
+
+watch([tabStatus, currentPage], () => (isShowValidatorDetails.value = false))
 </script>
 
 <style lang="scss" scoped>
@@ -134,7 +204,7 @@ const isShowValidatorDetails = ref(false)
   align-items: center;
 }
 
-.validators-table-row-mobile__activities {
+.validators-view-table-row-mobile__activities {
   width: 100%;
 
   & > *:not(:last-child) {
@@ -142,11 +212,10 @@ const isShowValidatorDetails = ref(false)
   }
 }
 
-.validators-table-row-mobile__activities-item {
+.validators-view-table-row-mobile__activities-item {
   display: flex;
   justify-content: flex-end;
   gap: 1.6rem;
-
   & > * {
     flex: 1;
   }
