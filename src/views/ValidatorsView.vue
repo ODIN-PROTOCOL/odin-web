@@ -1,31 +1,63 @@
 <template>
   <div
     class="app__main-view validators-view load-fog"
-    :class="{ 'load-fog_show': isLoading && validators?.length }"
+    :class="{
+      'load-fog_show': isLoading && validators?.length,
+      'validators-view--large-padding': isDelegator,
+    }"
   >
-    <div class="app__main-view-table-header">
-      <div class="app__main-view-table-header-prefix">
-        <span>Vd</span>
+    <div class="validators-view__container">
+      <div class="app__main-view-table-header">
+        <div class="app__main-view-table-header-prefix">
+          <span>Vd</span>
+        </div>
+        <div class="app__main-view-table-header-info">
+          <h3 class="app__main-view-table-header-info-title">Validators</h3>
+          <skeleton-loader
+            v-if="isLoading || isValidatorsResponseLoading"
+            width="100"
+            height="24"
+            pill
+            shimmer
+          />
+          <span v-else class="app__main-view-table-header-info-count">
+            {{ validatorsCount.toLocaleString() }} validators found
+          </span>
+        </div>
       </div>
-      <div class="app__main-view-table-header-info">
-        <h3 class="app__main-view-table-header-info-title">Validators</h3>
-        <skeleton-loader
-          v-if="isLoading || isValidatorsResponseLoading"
-          width="100"
-          height="24"
-          pill
-          shimmer
-        />
-        <span v-else class="app__main-view-table-header-info-count">
-          {{ validatorsCount.toLocaleString() }} validators found
-        </span>
+      <div class="validators-view__title-btn-wrraper">
+        <button
+          v-if="isDelegator && delegations && validators"
+          class="validators-view__title-btn app-btn app-btn--medium"
+          type="button"
+          @click="stakeTransfer"
+        >
+          Stake transfer
+        </button>
+        <button
+          v-if="isDelegator && delegations && validators"
+          class="validators-view__title-btn--white app-btn app-btn--medium"
+          type="button"
+          @click="claimAllRewards"
+        >
+          Claim all rewards
+        </button>
       </div>
     </div>
     <div class="validators-view__filter">
-      <AppTabs @changeTab="tabHandler($event)">
-        <AppTab :title="activeValidatorsTitle" />
-        <AppTab :title="inactiveValidatorsTitle" />
-      </AppTabs>
+      <template v-if="isDisabledDelegationsTab">
+        <AppTabs @changeTab="tabHandler($event)">
+          <AppTab :title="myValidatorsTitle" />
+          <AppTab :title="activeValidatorsTitle" />
+          <AppTab :title="inactiveValidatorsTitle" />
+        </AppTabs>
+      </template>
+      <template v-else>
+        <AppTabs @changeTab="tabHandler($event)">
+          <AppTab :title="activeValidatorsTitle" />
+          <AppTab :title="inactiveValidatorsTitle" />
+        </AppTabs>
+      </template>
       <div class="validators-view__filter-search">
         <div class="validators-view__filter-search-input-wrapper">
           <InputField
@@ -78,19 +110,26 @@
           <template v-if="windowInnerWidth > 768">
             <ValidatorsTableRow
               v-for="validator in filteredValidators"
+              :delegations="delegations"
               :key="validator.operatorAddress"
-              :validator="validator"
-              :tab-status="tabStatus"
+              :has-action-buttons="Boolean(accountAddress)"
               :inactive-validators-title="inactiveValidatorsTitle"
+              :tab-status="tabStatus"
+              :validator="validator"
+              @selectedBtn="openModal"
             />
           </template>
           <template v-else>
             <ValidatorsTableRowMobile
               v-for="validator in filteredValidators"
+              :current-page="currentPage"
+              :delegations="delegations"
               :key="validator.operatorAddress"
+              :has-action-buttons="Boolean(accountAddress)"
+              :inactive-validators-title="inactiveValidatorsTitle"
               :validator="validator"
               :tab-status="tabStatus"
-              :inactive-validators-title="inactiveValidatorsTitle"
+              @selectedBtn="openModal"
             />
           </template>
         </template>
@@ -114,18 +153,55 @@
         @update:modelValue="paginationHandler"
       />
     </template>
+
+    <div
+      v-if="accountAddress"
+      class="view-main__mobile-activities validators-view__mobile-activities"
+    >
+      <button
+        v-if="isDelegator && delegations && validators"
+        class="app-btn w-full app-btn--medium"
+        type="button"
+        @click="stakeTransfer"
+      >
+        Stake transfer
+      </button>
+      <button
+        v-if="isDelegator && delegations && validators"
+        class="validators-view__title-btn--white app-btn w-full app-btn--medium"
+        type="button"
+        @click="claimAllRewards"
+      >
+        Claim all rewards
+      </button>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted, computed, onUnmounted, watch } from 'vue'
+import { DelegationResponse } from 'cosmjs-types/cosmos/staking/v1beta1/staking'
+import { callers } from '@/api/callers'
+import { wallet } from '@/api/wallet'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
-import { isActiveValidator, VALIDATOR_STATUS } from '@/helpers/validatorHelpers'
+import {
+  isActiveValidator,
+  ValidatorInfoModify,
+  VALIDATOR_STATUS,
+} from '@/helpers/validatorHelpers'
 import { useQuery } from '@vue/apollo-composable'
 import { ValidatorsQuery } from '@/graphql/queries'
 import { ValidatorsResponse, ValidatorsInfo } from '@/graphql/types'
 import { CancelIcon, SearchIcon } from '@/components/icons'
+import {
+  ClaimAllRewardsFormModal,
+  ClaimRewardsFormModal,
+  DelegateFormModal,
+  RedelegateFormModal,
+  StakeTransferFormModal,
+  UndelegateFormModal,
+} from '@/components/modals'
 import AppTabs from '@/components/tabs/AppTabs.vue'
 import AppTab from '@/components/tabs/AppTab.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
@@ -133,6 +209,7 @@ import InputField from '@/components/fields/InputField.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 import ValidatorsTableRowMobile from '@/components/ValidatorsTableRowMobile.vue'
 import ValidatorsTableRow from '@/components/ValidatorsTableRow.vue'
+import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const ITEMS_PER_PAGE = 50
@@ -142,17 +219,46 @@ const filteredValidatorsCount = ref(0)
 const validatorsCount = ref(0)
 const filteredValidators = ref()
 const validators = ref()
+const delegations = ref<{ [k: string]: DelegationResponse }>({})
+const isDelegator = computed(() => Object.keys(delegations.value).length !== 0)
+const allValitors = ref<ValidatorsInfo[]>([])
 const activeValidators = ref<ValidatorsInfo[]>([])
 const inactiveValidators = ref<ValidatorsInfo[]>([])
+const delegatedAdress = ref<string[]>([])
+const accountAddress = ref(wallet.isEmpty ? '' : wallet.account.address)
 const inputPlaceholder = ref('Search')
+
 const activeValidatorsTitle = computed(() =>
   activeValidators.value?.length
     ? `Active (${activeValidators.value?.length})`
     : 'Active',
 )
+
+const myValidatorsTitle = computed(() =>
+  activeValidators.value?.length
+    ? `My delegations (${myDelegationsValitors.value?.length})`
+    : 'My delegations',
+)
+
+const myDelegationsValitors = computed(() =>
+  delegatedAdress.value.map((validatorAddress: string) => {
+    return {
+      ...allValitors.value.find(
+        (validator: ValidatorsInfo) =>
+          validator.info.operatorAddress === validatorAddress,
+      ),
+    }
+  }),
+)
+
 const inactiveValidatorsTitle = ref('Inactive')
 const tabStatus = ref(activeValidatorsTitle.value)
 const searchValue = ref('')
+
+const isDisabledDelegationsTab = computed(() =>
+  Boolean(myDelegationsValitors.value.length),
+)
+
 const headerTitles = computed(() => {
   if (windowInnerWidth.value > 768) {
     return [
@@ -181,7 +287,9 @@ const getValidators = async () => {
   if (isValidatorsResponseLoading.value) {
     return
   }
+
   lockLoading()
+
   try {
     const copyActiveValidator =
       result.value?.validator?.filter(
@@ -226,13 +334,20 @@ const getValidators = async () => {
       }),
     )) as unknown as ValidatorsInfo[]
 
-    validators.value = activeValidators.value
-    tabStatus.value = activeValidatorsTitle.value
-    validatorsCount.value = result.value?.validator?.length || 0
+    allValitors.value = [...inactiveValidators.value, ...activeValidators.value]
+
+    validators.value = isDisabledDelegationsTab.value
+      ? [...myDelegationsValitors.value]
+      : [...activeValidators.value]
+    tabStatus.value = isDisabledDelegationsTab.value
+      ? myValidatorsTitle.value
+      : activeValidatorsTitle.value
+    validatorsCount.value = allValitors.value.length
     filterValidators(currentPage.value)
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
+
   releaseLoading()
 }
 
@@ -262,9 +377,71 @@ const paginationHandler = (num: number) => {
   filterValidators(num)
 }
 
-watch([searchValue], async () => {
-  filterValidators()
-})
+const loadData = async () => {
+  lockLoading()
+  try {
+    await getDelegations()
+    await getValidators()
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLoading()
+}
+
+const stakeTransfer = async () => {
+  if (!delegations.value) return
+  await showDialogHandler(
+    StakeTransferFormModal,
+    {
+      onSubmit: async d => {
+        d.kill()
+        await loadData()
+      },
+    },
+    {
+      activeValidators: activeValidators.value,
+      delegation: delegations.value,
+      allValidators: allValitors.value,
+    },
+  )
+}
+
+const claimAllRewards = async () => {
+  await showDialogHandler(ClaimAllRewardsFormModal, {
+    onSubmit: async d => {
+      d.kill()
+      await loadData()
+    },
+  })
+}
+
+const getDelegations = async () => {
+  if (!accountAddress.value) {
+    return
+  }
+
+  lockLoading()
+
+  try {
+    // TODO: delegations returns invalid delegator's amount?
+    const response = await callers.getDelegations(accountAddress.value)
+    const _delegations: { [k: string]: DelegationResponse } = {}
+    for (const delegation of response.delegationResponses) {
+      if (!delegation.delegation?.validatorAddress) continue
+      _delegations[delegation.delegation.validatorAddress] = delegation
+    }
+    delegations.value = _delegations
+    delegatedAdress.value = Object.keys(delegations.value)
+    tabStatus.value = isDisabledDelegationsTab.value
+      ? myValidatorsTitle.value
+      : activeValidatorsTitle.value
+  } catch (error) {
+    // error is ignored, since no delegations also throws the error
+    delegations.value = {}
+    tabStatus.value = activeValidatorsTitle.value
+  }
+  releaseLoading()
+}
 
 const tabHandler = async (title: string) => {
   if (title !== tabStatus.value) {
@@ -273,6 +450,8 @@ const tabHandler = async (title: string) => {
       validators.value = [...activeValidators.value]
     } else if (tabStatus.value === inactiveValidatorsTitle.value) {
       validators.value = [...inactiveValidators.value]
+    } else if (tabStatus.value === myValidatorsTitle.value) {
+      validators.value = [...myDelegationsValitors.value]
     }
     filterValidators(1)
   }
@@ -281,23 +460,129 @@ const clearText = (): void => {
   searchValue.value = ''
 }
 
-watch([isValidatorsResponseLoading], async () => {
-  await getValidators()
-})
+const openModal = (event: { typeBtn: string; validator: ValidatorsInfo }) => {
+  if (event.typeBtn === 'Delegate') {
+    delegate(event.validator)
+  } else if (event.typeBtn === 'Regelate') {
+    redelegate(event.validator)
+  } else if (event.typeBtn === 'Claim rewards') {
+    withdrawRewards(event.validator)
+  } else if (event.typeBtn === 'Undelegate') {
+    undelegate(event.validator)
+  }
+}
+
+const delegate = async (validator: ValidatorInfoModify) => {
+  await showDialogHandler(
+    DelegateFormModal,
+    {
+      onSubmit: async d => {
+        d.kill()
+        await loadData()
+      },
+    },
+    {
+      validator,
+      delegation: delegations.value[validator.info.operatorAddress],
+    },
+  )
+}
+
+const redelegate = async (validator: ValidatorInfoModify) => {
+  await showDialogHandler(
+    RedelegateFormModal,
+    {
+      onSubmit: async d => {
+        d.kill()
+        await loadData()
+      },
+    },
+    {
+      validator,
+      delegation: delegations.value[validator.info.operatorAddress],
+    },
+  )
+}
+
+const undelegate = async (validator: ValidatorInfoModify) => {
+  if (!delegations.value[validator.info.operatorAddress]) return
+  await showDialogHandler(
+    UndelegateFormModal,
+    {
+      onSubmit: async d => {
+        d.kill()
+        await loadData()
+      },
+    },
+    {
+      validator,
+      delegation: delegations.value[validator.info.operatorAddress],
+    },
+  )
+}
+
+const withdrawRewards = async (validator: ValidatorInfoModify) => {
+  if (!delegations.value[validator.info.operatorAddress]) return
+  await showDialogHandler(
+    ClaimRewardsFormModal,
+    {
+      onSubmit: async d => {
+        d.kill()
+        await loadData()
+      },
+    },
+    { validator },
+  )
+}
 
 onMounted(async () => {
   window.addEventListener('resize', updateWidth)
-  await getValidators()
+  await loadData()
 })
 
 onUnmounted(async () => {
   window.removeEventListener('resize', updateWidth)
 })
+
+watch([isValidatorsResponseLoading], async () => {
+  await getValidators()
+})
+
+watch([searchValue], async () => {
+  filterValidators()
+})
 </script>
 
 <style lang="scss" scoped>
+.validators-view__container {
+  margin-bottom: 4.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .validators-view__count-info {
   margin-bottom: 3.2rem;
+}
+
+.validators-view__title-btn-wrraper {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 2.4rem;
+}
+
+.validators-view__title-btn {
+  &--white {
+    background: var(--clr__main-bg);
+    color: var(--clr__action);
+
+    &:hover {
+      opacity: 0.7;
+    }
+    &:active {
+      transform: scale(0.9);
+    }
+  }
 }
 
 .validators-view__table-cell--center {
@@ -401,7 +686,18 @@ onUnmounted(async () => {
   justify-content: space-between;
   align-items: center;
 }
+
+.validators-view__mobile-activities {
+  & > *:not(:last-child) {
+    margin-bottom: 0.8rem;
+  }
+}
+
 @include respond-to(tablet) {
+  .validators-view--large-padding {
+    padding-bottom: 20rem;
+  }
+
   .validators-view__table-head {
     display: none;
   }
@@ -409,9 +705,15 @@ onUnmounted(async () => {
   .validators-view__count-info {
     margin-bottom: 0;
   }
+
+  .validators-view__title-btn-wrraper {
+    display: none;
+  }
+
   .validators-view__table-cell--center {
     justify-content: flex-start;
   }
+
   .validators-view__table-cell--end {
     justify-content: flex-start;
   }
@@ -421,14 +723,21 @@ onUnmounted(async () => {
     flex-direction: column;
     align-items: stretch;
   }
+
   .validators-view__filter-search {
     margin-bottom: 1.6rem;
   }
+
   .validators-view__filter-search-input-wrapper {
     width: 100%;
   }
+
   .validators-view__filter-search-input {
     width: 100%;
   }
+}
+
+.app__main-view-table-header {
+  margin-bottom: 0;
 }
 </style>

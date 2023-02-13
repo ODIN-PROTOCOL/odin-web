@@ -83,7 +83,10 @@ const getChartData = async () => {
   const endDate = new Date()
   const startDate = new Date()
 
-  const sorting_value = getDataMethodName.value == "getRequestsVolumePerDays" ? sortingValueYear.value : sortingValue.value
+  const sorting_value =
+    getDataMethodName.value == 'getRequestsVolumePerDays'
+      ? sortingValueYear.value
+      : sortingValue.value
   startDate.setDate(startDate.getDate() - Number(sorting_value))
   isLoading.value = true
 
