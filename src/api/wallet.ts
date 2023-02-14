@@ -1,5 +1,8 @@
 import { AccountData, OfflineSigner } from '@cosmjs/launchpad'
-import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing'
+import {
+  DirectSecp256k1HdWallet,
+  OfflineDirectSigner,
+} from '@cosmjs/proto-signing'
 import { API_CONFIG } from './api-config'
 import { Window as KeplrWindow } from '@keplr-wallet/types'
 
@@ -14,11 +17,15 @@ export enum WalletTypes {
 }
 
 export class OdinWallet {
-  _wallet: DirectSecp256k1HdWallet | OfflineSigner | null = null
+  _wallet:
+      | DirectSecp256k1HdWallet
+      | OfflineSigner
+      | OfflineDirectSigner
+      | null = null
   _walletAccounts: readonly AccountData[] | null = null
   _walletType: WalletTypes | null = null
 
-  get signer(): DirectSecp256k1HdWallet | OfflineSigner {
+  get signer(): DirectSecp256k1HdWallet | OfflineSigner | OfflineDirectSigner {
     if (!this._wallet) {
       throw new ReferenceError('OdinWallet not initialized!')
     }
@@ -47,20 +54,20 @@ export class OdinWallet {
     if (walletData.type === WalletTypes.ODIN_WALLET) {
       DirectSecp256k1HdWallet.fromMnemonic
       this._wallet = await DirectSecp256k1HdWallet.fromMnemonic(
-        walletData.key,
-        {
-          hdPaths: [API_CONFIG.hdDeviation],
-          prefix: 'odin',
-        },
+          walletData.key,
+          {
+            hdPaths: [API_CONFIG.hdDeviation],
+            prefix: 'odin',
+          },
       )
     } else if (walletData.type === WalletTypes.KEPLR_WALLET) {
       const offlineSigner =
-        window.getOfflineSigner != null
-          ? window.getOfflineSigner(walletData.key)
-          : null
+          window.getOfflineSignerAuto != null
+              ? await window.getOfflineSignerAuto(walletData.key)
+              : null
       if (offlineSigner === null)
         throw new ReferenceError(
-          'Something went wrong. Error with offline signer.',
+            'Something went wrong. Error with offline signer.',
         )
       this._wallet = offlineSigner
     }
