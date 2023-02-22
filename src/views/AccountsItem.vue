@@ -61,14 +61,9 @@
 
       <div v-if="transactions" class="app-table">
         <div class="app-table__head accounts-item__head">
-          <span> Transaction hash </span>
-          <span> Type </span>
-          <span> Block </span>
-          <span> Date and time </span>
-          <span> Sender </span>
-          <span> Receiver </span>
-          <span> Amount </span>
-          <span> Transaction Fee </span>
+          <span v-for="(item, index) in headerTitles" :key="index">
+            {{ item.title }}
+          </span>
         </div>
         <div class="app-table__body">
           <template v-if="transactions?.length">
@@ -141,8 +136,8 @@ const headerTitles = [
   { title: 'Date and time' },
   { title: 'Sender' },
   { title: 'Receiver' },
-  { title: 'Amount' },
   { title: 'Transaction Fee' },
+  { title: 'Amount' },
 ]
 
 const getTotalAmount = async (
