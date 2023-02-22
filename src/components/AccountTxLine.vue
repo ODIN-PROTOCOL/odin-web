@@ -55,18 +55,18 @@
       <span class="app-table__cell-txt" v-else>-</span>
     </div>
     <div class="app-table__cell">
-      <span class="app-table__title account-tx-line__title">Amount</span>
-      <span class="app-table__cell-txt" :title="odinAmount">{{
-        odinAmount
-      }}</span>
-    </div>
-    <div class="app-table__cell">
       <span class="app-table__title account-tx-line__title">
         Transaction Fee
       </span>
       <span class="app-table__cell-txt" :title="odinFee">
         {{ odinFee }}
       </span>
+    </div>
+    <div class="app-table__cell">
+      <span class="app-table__title account-tx-line__title">Amount</span>
+      <span class="app-table__cell-txt" :title="odinAmount">{{
+        odinAmount
+      }}</span>
     </div>
   </div>
 </template>
