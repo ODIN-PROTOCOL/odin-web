@@ -48,13 +48,13 @@ export const CHAIN_CONFIG = {
       coinDenom: 'odin',
       coinMinimalDenom: 'loki',
       coinDecimals: 6,
-      coinGeckoId: 'odin',
+      coinGeckoId: 'odin-protocol',
     },
     {
       coinDenom: 'geo',
       coinMinimalDenom: 'mGeo',
       coinDecimals: 6,
-      coinGeckoId: 'geo',
+      coinGeckoId: 'geodb',
     },
   ],
   feeCurrencies: [
@@ -62,14 +62,14 @@ export const CHAIN_CONFIG = {
       coinDenom: 'odin',
       coinMinimalDenom: 'loki',
       coinDecimals: 6,
-      coinGeckoId: 'odin',
+      coinGeckoId: 'odin-protocol',
     },
   ],
   stakeCurrency: {
     coinDenom: 'odin',
     coinMinimalDenom: 'loki',
     coinDecimals: 6,
-    coinGeckoId: 'odin',
+    coinGeckoId: 'odin-protocol',
   },
   coinType: COINS_TYPE.MAIN,
   gasPriceStep: {
