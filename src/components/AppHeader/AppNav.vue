@@ -161,11 +161,19 @@ const onBlockchainOpen = () => {
 onMounted(() => {
   if (!wallet.isEmpty && wallet.type === WalletTypes.KEPLR_WALLET) {
     window.addEventListener('keplr_keystorechange', logOutAndLeave)
+  } else if (
+    wallet.type === WalletTypes.COSMOSTATION_WALLET &&
+    window?.cosmostation?.cosmos
+  ) {
+    window.cosmostation.cosmos.on('accountChanged', logOutAndLeave)
   }
 })
 
 onUnmounted(() => {
-  window.removeEventListener('keplr_keystorechange', logOutAndLeave)
+  window.addEventListener('keplr_keystorechange', logOutAndLeave)
+  if (window?.cosmostation?.cosmos) {
+    window.cosmostation.cosmos.on('accountChanged', logOutAndLeave)
+  }
 })
 </script>
 

@@ -29,6 +29,27 @@
       </div>
     </template>
 
+    <template v-else-if="loginType === LOGIN_TYPE.COSMOSTATION494" #content>
+      <div class="app-form__field auth-view__field">
+        <label
+          class="app-form__field-lbl auth-view__field-lbl auth-view__field-lbl--bold"
+        >
+          Coin type 494
+        </label>
+        <button class="app-btn w-full" type="submit" :disabled="isLoading">
+          Connect with Cosmostation
+        </button>
+        <div class="auth-view__field-additional">
+          <router-link
+            class="auth-view__field-additional-btn"
+            :to="{ name: $routes.auth }"
+          >
+            Use keplr login with coin type 118
+          </router-link>
+        </div>
+      </div>
+    </template>
+
     <template v-else-if="loginType === LOGIN_TYPE.MNEMONIC494" #content>
       <div class="app-form__field auth-view__field">
         <label class="app-form__field-lbl"> Mnemonic </label>
@@ -105,7 +126,8 @@ const props = defineProps<{
 }>()
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
-const { logInWithKeplrWallet, logInWithOdinWallet } = useAuthorization()
+const { logInWithKeplrWallet, logInWithOdinWallet, logInWithCosmostation } =
+  useAuthorization()
 const form = useForm({
   mnemonic: ['', validators.required],
 })
@@ -119,6 +141,9 @@ const submit = async () => {
       await logInWithKeplrWallet(CHAIN_CONFIG.chainId, COINS_TYPE.MAIN)
     } else if (props.loginType === LOGIN_TYPE.KEPLR494) {
       await logInWithKeplrWallet(CHAIN_CONFIG.chainId, COINS_TYPE.ADDITIONAL)
+    } else if (props.loginType === LOGIN_TYPE.COSMOSTATION494) {
+      // await logInWithKeplrWallet(CHAIN_CONFIG.chainId, COINS_TYPE.ADDITIONAL)
+      await logInWithCosmostation(CHAIN_CONFIG.chainId, COINS_TYPE.ADDITIONAL)
     } else if (props.loginType === LOGIN_TYPE.MNEMONIC494) {
       await logInWithOdinWallet(form.mnemonic.val())
     }

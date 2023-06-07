@@ -14,6 +14,7 @@ declare global {
 export enum WalletTypes {
   ODIN_WALLET,
   KEPLR_WALLET,
+  COSMOSTATION_WALLET,
 }
 
 export class OdinWallet {
@@ -70,8 +71,23 @@ export class OdinWallet {
           'Something went wrong. Error with offline signer.',
         )
       this._wallet = offlineSigner
+    } else if (walletData.type === WalletTypes.COSMOSTATION_WALLET) {
+      if (!window?.cosmostation?.providers?.keplr)
+        throw new ReferenceError(
+          'Something went wrong. Error with cosmostation.',
+        )
+      const offlineSigner =
+        window.cosmostation.providers.keplr != null
+          ? await window.cosmostation.providers.keplr.getOfflineSignerAuto(
+              walletData.key,
+            )
+          : null
+      if (offlineSigner === null)
+        throw new ReferenceError(
+          'Something went wrong. Error with offline signer.',
+        )
+      this._wallet = offlineSigner
     }
-
     if (this._wallet) {
       this._walletAccounts = await this._wallet.getAccounts()
       this._walletType = walletData.type
