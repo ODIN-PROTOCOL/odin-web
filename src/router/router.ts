@@ -50,6 +50,14 @@ const routes: Array<RouteRecordRaw> = [
           import(/* webpackChunkName: "auth" */ '@/views/AuthView.vue'),
       },
       {
+        path: '/auth/cosmostation494',
+        name: ROUTE_NAMES.authCosmostation494,
+        props: { loginType: LOGIN_TYPE.COSMOSTATION494 },
+        beforeEnter: unauthorizedOnlyGuard,
+        component: () =>
+          import(/* webpackChunkName: "auth" */ '@/views/AuthView.vue'),
+      },
+      {
         path: '/auth/mnemonic494',
         name: ROUTE_NAMES.authMnemonic494,
         props: { loginType: LOGIN_TYPE.MNEMONIC494 },

@@ -3,6 +3,7 @@ export enum ROUTE_NAMES {
   auth = 'app.auth',
   authKeplr494 = 'app.auth-keplr-494',
   authMnemonic494 = 'app.auth-mnemonic-494',
+  authCosmostation494 = 'app.auth-cosmostation494',
   accounts = 'app.accounts',
   accountDetails = 'app.accounts.account-details',
   blocks = 'app.blocks',

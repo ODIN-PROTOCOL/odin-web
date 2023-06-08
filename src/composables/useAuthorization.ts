@@ -4,7 +4,6 @@ import { storage } from '@/helpers/storage'
 import { readonly, ref } from 'vue'
 import { useBalances } from './useBalances'
 import { CHAIN_CONFIG, COINS_TYPE } from '@/api/api-config'
-
 const _isLoggedIn = ref<boolean>(false)
 const isLoggedInReadonly = readonly(_isLoggedIn)
 
@@ -68,7 +67,53 @@ async function createSessionWithKeplrWallet(
 
   return wallet
 }
+async function createSessionWithCosmostationWallet(
+  chainId: string,
+  coinType: COINS_TYPE,
+): Promise<OdinWallet> {
+  if (!window?.cosmostation?.providers?.keplr) {
+    throw new ReferenceError(
+      'Please install the cosmostation extension in your browser.',
+    )
+  } else {
+    if (
+      typeof window?.cosmostation?.providers?.keplr
+        ?.experimentalSuggestChain === 'function'
+    ) {
+      try {
+        await window?.cosmostation?.providers?.keplr?.experimentalSuggestChain({
+          ...CHAIN_CONFIG,
+          bip44: { coinType },
+          coinType,
+        })
+      } catch {
+        throw new ReferenceError(
+          'Something went wrong. Failed to suggest chain.',
+        )
+      }
+    } else {
+      throw new ReferenceError(
+        'Something went wrong. Please use the recent version of Keplr extension.',
+      )
+    }
 
+    try {
+      await window.cosmostation.providers.keplr.enable(chainId)
+      await wallet.init({
+        type: WalletTypes.COSMOSTATION_WALLET,
+        key: chainId,
+      })
+      await Promise.all([api.attachWallet(wallet), useBalances().load()])
+      _isLoggedIn.value = true
+      storage.set('chainId', chainId)
+      storage.set('coinType', coinType.toString())
+    } catch (err) {
+      throw new ReferenceError((err as Error).message)
+    }
+  }
+
+  return wallet
+}
 function destroySession(): void {
   wallet.clear()
   api.detachWallet()
@@ -105,6 +150,7 @@ export function useAuthorization() {
     isLoggedIn: isLoggedInReadonly,
     logInWithOdinWallet: createSessionWithOdinWallet,
     logInWithKeplrWallet: createSessionWithKeplrWallet,
+    logInWithCosmostation: createSessionWithCosmostationWallet,
     logOut: destroySession,
     tryRestoreSession,
   }
