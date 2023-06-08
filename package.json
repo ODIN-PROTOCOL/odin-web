@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.6.8",
-    "@bandprotocol/bandchain.js": "^2.1.4",
+    "@bandprotocol/bandchain.js": "==2.1.4",
     "@cosmjs/crypto": "^0.28.11",
     "@cosmjs/encoding": "^0.28.11",
     "@cosmjs/launchpad": "^0.27.1",
@@ -50,7 +50,8 @@
     "vue-router": "^4.0.0-0",
     "vue-skeletor": "^1.0.6",
     "vue3-markdown-it": "^1.0.10",
-    "web3": "^1.5.1"
+    "web3": "^1.5.1",
+    "yarn": "^1.22.19"
   },
   "devDependencies": {
     "@keplr-wallet/types": "^0.9.9",

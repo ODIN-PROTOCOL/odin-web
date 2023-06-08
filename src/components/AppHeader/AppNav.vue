@@ -162,6 +162,7 @@ onMounted(() => {
   if (!wallet.isEmpty && wallet.type === WalletTypes.KEPLR_WALLET) {
     window.addEventListener('keplr_keystorechange', logOutAndLeave)
   } else if (
+    !wallet.isEmpty &&
     wallet.type === WalletTypes.COSMOSTATION_WALLET &&
     window?.cosmostation?.cosmos
   ) {

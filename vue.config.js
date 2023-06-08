@@ -3,6 +3,9 @@ const path = require('path')
 
 module.exports = {
   configureWebpack: {
+    experiments: {
+      asyncWebAssembly: true,
+    },
     resolve: {
       fallback: {
         fs: false,

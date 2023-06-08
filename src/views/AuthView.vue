@@ -142,7 +142,6 @@ const submit = async () => {
     } else if (props.loginType === LOGIN_TYPE.KEPLR494) {
       await logInWithKeplrWallet(CHAIN_CONFIG.chainId, COINS_TYPE.ADDITIONAL)
     } else if (props.loginType === LOGIN_TYPE.COSMOSTATION494) {
-      // await logInWithKeplrWallet(CHAIN_CONFIG.chainId, COINS_TYPE.ADDITIONAL)
       await logInWithCosmostation(CHAIN_CONFIG.chainId, COINS_TYPE.ADDITIONAL)
     } else if (props.loginType === LOGIN_TYPE.MNEMONIC494) {
       await logInWithOdinWallet(form.mnemonic.val())
