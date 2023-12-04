@@ -15,6 +15,7 @@ export const prepareBlocks = async (
       return {
         ...item,
         validator: validatorData.data.result.result.operator_address,
+        name: validatorData.data.result.result.description.moniker,
         txs: addData.block.txs.length,
       }
     }),

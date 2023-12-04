@@ -10,7 +10,7 @@
             name: $routes.transactionDetails,
             params: { hash: tx.hash },
           }"
-          :text="cropText(`0x${tx.hash}`)"
+          :text="formatTxString(tx.hash)"
         />
         <span v-else>No info</span>
       </div>
@@ -56,7 +56,7 @@
 
 <script lang="ts" setup>
 import { DecodedTxData } from '@/helpers/Types'
-import { diffDays, getDay, cropText } from '@/helpers/formatters'
+import { diffDays, getDay, formatTxString } from '@/helpers/formatters'
 import TitledLink from '@/components/TitledLink.vue'
 
 defineProps<{

@@ -192,6 +192,15 @@ watch([sortingValue], async () => {
   currentPage.value = 1
   await getAccountInfo()
 })
+
+// Watch 'route.params.hash' to get the Account info
+watch(
+  () => route.params.hash,
+  async () => {
+    currentPage.value = 1
+    await getAccountInfo()
+  }
+)
 </script>
 
 <style lang="scss" scoped>
