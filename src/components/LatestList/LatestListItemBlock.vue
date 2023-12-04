@@ -26,12 +26,9 @@
             name: $routes.validatorDetails,
             params: { address: block.validator },
           }"
-          :text="`${block.validator}`"
+          :text="`${block.name}`"
           class="app-table__cell-txt app-table__link"
         />
-      </div>
-      <div class="latest-list-item__transactions">
-        <span>{{ block.txs }} transactions</span>
       </div>
     </div>
   </div>

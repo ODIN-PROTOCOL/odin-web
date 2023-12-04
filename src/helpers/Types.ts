@@ -140,6 +140,7 @@ export type SearchResultType = {
 
 export interface TransformedBlocks extends BlockMeta {
   validator: string
+  name: string
   txs: number
 }
 

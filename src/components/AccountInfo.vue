@@ -62,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ComputedRef } from 'vue'
+import { computed, ComputedRef, watch } from 'vue'
 import { useQuery, UseQueryReturn } from '@vue/apollo-composable'
 import { AccountStakingInfoQuery } from '@/graphql/queries'
 import {
@@ -79,6 +79,7 @@ const props = defineProps<{
 const {
   result,
   loading,
+  refetch,
 }: UseQueryReturn<AccountStakingInfoResponse, AccountStakingInfoVariables> =
   useQuery<AccountStakingInfoResponse, AccountStakingInfoVariables>(
     AccountStakingInfoQuery,
@@ -86,6 +87,16 @@ const {
       address: props.address,
     },
   )
+
+watch(
+  () => props.address,
+  async (value) => {
+    // Use the updated props.address in the refetch call
+    await refetch({
+      address: value,
+    });
+  }
+);
 
 const stakedLokiAmount = computed(() => {
   const odinCoin = result.value?.delegationBalance?.coins?.find(

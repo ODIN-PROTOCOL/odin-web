@@ -220,3 +220,13 @@ export function cropText(value?: string): string {
 export function getDay(time: string | number): Date {
   return new Date(time)
 }
+
+export function formatTxString(input: string, substract = 6) {
+  if (input.length < ((substract * 2) + 1)) {
+    return input;
+  }
+  const preString = input.substring(0, substract);
+  const postString = input.substring(input.length - substract);
+
+  return preString + "..." + postString;
+}

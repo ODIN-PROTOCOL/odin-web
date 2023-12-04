@@ -8,7 +8,7 @@
           params: { hash: transition.hash },
         }"
         class="app-table__cell-txt app-table__link"
-        :text="'0x' + transition.hash"
+        :text="transition.hash"
       />
     </div>
     <div class="app-table__cell">

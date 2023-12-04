@@ -80,7 +80,7 @@ const headerTitles = [
   { title: 'Date' },
   { title: 'Sender' },
   { title: 'Receiver' },
-  { title: 'Transaction Fee' },
+  { title: 'GAS (ODIN)' },
   { title: 'Amount' },
 ]
 const getTransactions = async () => {

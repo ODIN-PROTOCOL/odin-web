@@ -2,25 +2,6 @@
   <transition name="fade" mode="out-in" appear>
     <div class="latest-stats">
       <div class="latest-stats__wrapper">
-        <LatestList :header="latestBlocksHeader">
-          <transition-group name="fade" mode="out-in">
-            <template v-if="latestBlocks.length">
-              <LatestListItemBlock
-                v-for="item in latestBlocks"
-                :key="item.blockId.hash"
-                :block="item"
-              />
-            </template>
-            <template v-else>
-              <template v-if="isLoading">
-                <SkeletonLatestListItemBlock v-for="item of 5" :key="item" />
-              </template>
-              <div v-else class="latest-stats__list-item">
-                <span class="latest-stats__list-item--empty">No Item</span>
-              </div>
-            </template>
-          </transition-group>
-        </LatestList>
         <LatestList :header="latestTransactionsHeader">
           <transition-group name="fade" mode="out-in">
             <template v-if="latestTransactions.length">
@@ -33,6 +14,25 @@
             <template v-else>
               <template v-if="isLoading">
                 <SkeletonLatestListItemTx v-for="item of 5" :key="item" />
+              </template>
+              <div v-else class="latest-stats__list-item">
+                <span class="latest-stats__list-item--empty">No Item</span>
+              </div>
+            </template>
+          </transition-group>
+        </LatestList>
+        <LatestList :header="latestBlocksHeader">
+          <transition-group name="fade" mode="out-in">
+            <template v-if="latestBlocks.length">
+              <LatestListItemBlock
+                v-for="item in latestBlocks"
+                :key="item.blockId.hash"
+                :block="item"
+              />
+            </template>
+            <template v-else>
+              <template v-if="isLoading">
+                <SkeletonLatestListItemBlock v-for="item of 5" :key="item" />
               </template>
               <div v-else class="latest-stats__list-item">
                 <span class="latest-stats__list-item--empty">No Item</span>
