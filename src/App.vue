@@ -4,6 +4,7 @@
     <section class="app__main-content">
       <router-view />
     </section>
+    <app-footer v-if="!isAuthPage" />
   </template>
   <div class="dialogs-container" ref="dialogsContainerRef"></div>
   <notifications-group />
@@ -17,6 +18,7 @@ import { Theme } from '@/helpers/theme'
 import { useRoute } from 'vue-router'
 import { ROUTE_NAMES } from '@/enums'
 import AppHeader from '@/components/AppHeader'
+import AppFooter from '@/components/AppFooter'
 import NotificationsGroup from '@/components/NotificationsGroup.vue'
 
 const _readyStates = ref({

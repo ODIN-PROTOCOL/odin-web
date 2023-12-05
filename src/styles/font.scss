@@ -1,10 +1,35 @@
 @font-face {
-  font-family: 'Atlas Grotesk Web Regular';
-  src: url('@/assets/fonts/AtlasGrotesk-Regular.otf') format('opentype');
+  font-family: 'New Order';
+  src: url('@/assets/fonts/New Order Medium.otf') format('opentype');
+  font-weight: 500; /* Medium */
+}
+
+@font-face {
+  font-family: 'New Order';
+  src: url('@/assets/fonts/New Order Regular.otf') format('opentype');
+  font-weight: 400; /* Regular */
+}
+
+@font-face {
+  font-family: 'New Order';
+  src: url('@/assets/fonts/New Order Semibold.otf') format('opentype');
+  font-weight: 600; /* Semibold */
+}
+
+@font-face {
+  font-family: 'New Order';
+  src: url('@/assets/fonts/New Order Bold.otf') format('opentype');
+  font-weight: 700; /* Bold */
+}
+
+@font-face {
+  font-family: 'New Order';
+  src: url('@/assets/fonts/New Order Light.otf') format('opentype');
+  font-weight: 300; /* Light */
 }
 
 body,
 html {
-  font-family: 'Atlas Grotesk Web Regular', sans-serif;
+  font-family: 'New Order', sans-serif;
   color: var(--clr__main-text);
 }

@@ -199,7 +199,7 @@ watch(
   async () => {
     currentPage.value = 1
     await getAccountInfo()
-  }
+  },
 )
 </script>
 

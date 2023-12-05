@@ -14,6 +14,7 @@ export const prepareBlocks = async (
       )
       return {
         ...item,
+        hash: toHex(item.blockId.hash),
         validator: validatorData.data.result.result.operator_address,
         name: validatorData.data.result.result.description.moniker,
         txs: addData.block.txs.length,
