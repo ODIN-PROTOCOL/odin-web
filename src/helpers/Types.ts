@@ -39,6 +39,7 @@ export type DecodedTxData = {
   memo?: string
   gasWanted?: string | number
   gasUsed?: string | number
+  receiver_name?: string | undefined
 }
 
 export type txFromTelemetry = {

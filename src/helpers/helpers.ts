@@ -37,11 +37,11 @@ export const prepareTransaction = async (
       denom,
       time,
       fee,
-      feeDenom,
       memo,
       status,
       gasUsed,
       gasWanted,
+      receiver_name,
     } = await getDateFromMessage(tx)
     tempArr = [
       ...tempArr,
@@ -52,8 +52,9 @@ export const prepareTransaction = async (
         time: time,
         sender: sender ? sender : '',
         receiver: receiver ? receiver : '',
+        receiver_name: receiver_name ? receiver_name : '',
         amount: convertLokiToOdin(String(amount), {}, denom),
-        fee: convertLokiToOdin(String(fee), {}, feeDenom),
+        fee: convertLokiToOdin(String(fee), { onlyNumber: true, toFixed: 2 }),
         memo: memo ? memo : '-',
         status: Number(status) > -1 ? 'Success' : 'Failed',
         gasUsed: gasUsed ? gasUsed : '-',

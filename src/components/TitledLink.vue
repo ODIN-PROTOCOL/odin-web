@@ -22,3 +22,9 @@ withDefaults(
   },
 )
 </script>
+
+<style scoped>
+.titled-link {
+  text-overflow: unset !important;
+}
+</style>

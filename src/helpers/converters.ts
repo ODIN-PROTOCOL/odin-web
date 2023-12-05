@@ -5,6 +5,7 @@ type ConverterOptions = {
   withDenom?: boolean
   withPrecise?: boolean
   onlyNumber?: boolean
+  toFixed?: number
 }
 
 const FORMAT_OPTIONS = {
@@ -41,6 +42,7 @@ export function convertLokiToOdin(
   if (options && options.withDenom) {
     return big.format(res, FORMAT_OPTIONS) + ' ' + denom
   } else if (options && options.onlyNumber) {
+    if (options.toFixed) return res.toFixed(options.toFixed)
     return res
   } else {
     return res + ' ' + denom

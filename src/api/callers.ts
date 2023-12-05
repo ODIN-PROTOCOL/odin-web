@@ -130,6 +130,12 @@ const makeCallers = () => {
         `${API_CONFIG.api}cosmos/gov/v1beta1/proposals?pagination.offset=${page_number}&pagination.limit=${page_limit}&pagination.reverse=${page_reverse}`,
       )
     },
+    getBoundedToken: () => {
+      return axiosWrapper.get(`${API_CONFIG.api}cosmos/staking/v1beta1/pool`)
+    },
+    getInflationRate: () => {
+      return axiosWrapper.get(`${API_CONFIG.api}mint/parameters`)
+    },
     createProposal: broadcaster<MsgSubmitProposal>(
       '/cosmos.gov.v1beta1.MsgSubmitProposal',
       MsgSubmitProposal,
@@ -253,6 +259,9 @@ const makeCallers = () => {
       return sendGet(
         `${API_CONFIG.telemetryUrl}/validator/${proposer}/transactions?page[number]=${page_number}&page[limit]=${page_limit}&page[order]=desc`,
       )
+    },
+    getBlockOnHeight: (height: number | string = '') => {
+      return axiosWrapper.get(`${API_CONFIG.rpc}block?height=${height}`)
     },
     getDataSourceCode: (id: string) => {
       return sendGet(`${API_CONFIG.telemetryUrl}/data_source_code/${id}`)

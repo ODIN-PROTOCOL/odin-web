@@ -46,6 +46,14 @@
             </div>
             <div class="app-table__cell">
               <span class="app-table__title blocks-list__table-title">
+                Block Hash
+              </span>
+              <span class="app-table__cell-txt fs-c-muted" :title="item.hash">
+                {{ item.hash }}
+              </span>
+            </div>
+            <div class="app-table__cell">
+              <span class="app-table__title blocks-list__table-title">
                 Date
               </span>
               <span class="app-table__cell-date">
@@ -72,7 +80,7 @@
                   name: $routes.validatorDetails,
                   params: { address: item.validator },
                 }"
-                :text="item.validator"
+                :text="item.name"
                 class="app-table__cell-txt app-table__link"
               />
             </div>
@@ -129,8 +137,9 @@ const blocksCount = computed(() =>
 
 const headerTitles = [
   { title: 'Block' },
+  { title: 'Block Hash' },
   { title: 'Date' },
-  { title: 'Transactions' },
+  { title: 'TXN' },
   { title: 'Validator' },
 ]
 

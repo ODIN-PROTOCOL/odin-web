@@ -90,13 +90,13 @@ const {
 
 watch(
   () => props.address,
-  async (value) => {
+  async value => {
     // Use the updated props.address in the refetch call
     await refetch({
       address: value,
-    });
-  }
-);
+    })
+  },
+)
 
 const stakedLokiAmount = computed(() => {
   const odinCoin = result.value?.delegationBalance?.coins?.find(

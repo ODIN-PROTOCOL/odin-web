@@ -58,13 +58,14 @@
 
 <script setup lang="ts">
 import { callers } from '@/api/callers'
-import { ref, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { prepareTransaction } from '@/helpers/helpers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import TxLine from '@/components/TxLine.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
+import { DecodedTxData } from '@/helpers/Types'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 
@@ -107,6 +108,17 @@ const updateHandler = async () => {
 onMounted(async () => {
   await getTransactions()
 })
+
+// IMPORTANT:: This is the Temporary Fixed once API Update will auto-fix
+watch(transactions, value => {
+  transactions.value = value.filter((item: DecodedTxData) => {
+    if (item.type === 'Withdraw delegator reward') {
+      return item.sender && item.receiver && item.amount
+    }
+    return true
+  })
+})
+// IMPORTANT:: This is the Temporary Fixed once API Update will auto-fix
 </script>
 
 <style lang="scss" scoped>

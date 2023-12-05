@@ -7,8 +7,11 @@
           name: $routes.transactionDetails,
           params: { hash: transition.hash },
         }"
+        :title="transition.hash"
+        :text="
+          formatTxString(transition.hash ? transition.hash?.toString() : '')
+        "
         class="app-table__cell-txt app-table__link"
-        :text="transition.hash"
       />
     </div>
     <div class="app-table__cell">
@@ -58,13 +61,17 @@
           name: $routes.accountDetails,
           params: { hash: transition.receiver },
         }"
-        :text="transition.receiver"
+        :text="
+          transition.receiver_name
+            ? transition.receiver_name
+            : transition.receiver
+        "
         class="app-table__cell-txt app-table__link"
       />
       <span class="app-table__cell-txt" v-else> - </span>
     </div>
     <div class="app-table__cell">
-      <span class="app-table__title">Transaction Fee</span>
+      <span class="app-table__title">GAS (ODIN)</span>
       <span class="app-table__cell-txt" :title="transition.fee">
         {{ transition.fee }}
       </span>
@@ -81,6 +88,7 @@
 import { computed } from 'vue'
 import { DecodedTxData } from '@/helpers/Types'
 import TitledLink from '@/components/TitledLink.vue'
+import { formatTxString } from '@/helpers/formatters'
 
 const props = defineProps<{
   transition: DecodedTxData
