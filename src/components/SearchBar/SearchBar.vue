@@ -34,7 +34,14 @@
             <CloseIcon />
           </button>
         </template>
-        <template v-if="searchResult">
+        <template v-if="searchLoading">
+          <div class="search-bar__dropdown">
+            <div class="search-bar__dropdown-empty-msg">
+              <span>Loading...</span>
+            </div>
+          </div>
+        </template>
+        <template v-if="!searchLoading && searchResult">
           <div class="search-bar__dropdown">
             <template v-for="(result, idx) in searchResult" :key="idx">
               <template v-if="result.blocks?.length !== 0">
@@ -99,6 +106,7 @@ import {
 } from '@/helpers/Types'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { prepareBlocks } from '@/helpers/blocksHelper'
+import { ROUTE_NAMES } from '@/enums'
 
 enum FILTER_BY {
   ACCOUNT = 'Account',
@@ -121,9 +129,53 @@ const inputPlaceholder = computed(() =>
 const activeFilter = ref<string>(filters.value[0])
 const searchedText = ref<string | null>('')
 const searchResult = ref<Array<SearchResultType> | null>(null)
+const searchLoading = ref<boolean>(false)
 
 watch(activeFilter, () => {
   searchResult.value = null
+})
+
+watch(searchResult, value => {
+  // Adding delay to show the result before auto-redirect
+  setTimeout(() => {
+    if (value) {
+      const [firstResult] = value
+
+      if (firstResult.blocks?.length) {
+        const blockHeader = firstResult.blocks[0].header
+        const blockHeight = blockHeader?.height
+
+        router.push({
+          name: ROUTE_NAMES.blockDetails,
+          params: { id: blockHeight },
+        })
+
+        return
+      }
+
+      if (firstResult.transactions?.length) {
+        const transactionHash = firstResult.transactions[0].hash
+
+        router.push({
+          name: ROUTE_NAMES.transactionDetails,
+          params: { hash: transactionHash },
+        })
+
+        return
+      }
+
+      if (firstResult.accounts?.length) {
+        const accountAddress = firstResult.accounts[0].address
+
+        router.push({
+          name: ROUTE_NAMES.accountDetails,
+          params: { hash: accountAddress },
+        })
+
+        return
+      }
+    }
+  }, 500)
 })
 
 const getTransactions = async (): Promise<Array<DecodedTxData>> => {
@@ -189,6 +241,7 @@ const getBlock = async (): Promise<Array<TransformedBlocks>> => {
 const searchBy = async (): Promise<Array<SearchResultType> | null> => {
   if (searchedText.value === '') return (searchResult.value = null)
   try {
+    searchLoading.value = true
     if (activeFilter.value === FILTER_BY.BLOCK) {
       return (searchResult.value = [
         {
@@ -220,6 +273,8 @@ const searchBy = async (): Promise<Array<SearchResultType> | null> => {
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
     searchResult.value = null
+  } finally {
+    searchLoading.value = false
   }
   return null
 }

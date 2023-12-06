@@ -19,10 +19,11 @@
             <ibc-line
               :connection="connection"
               :channel-data="channelData"
-              :chain-id-data="chainIdData[index]"
+              :chain-id-data="filteredChainIdData[index]"
             />
           </div>
-          <template v-if="connectionsData?.length > ITEMS_PER_PAGE">
+          <!-- IMPORTANT:: Temporary remove pagination -->
+          <template v-if="false && connectionsData?.length > ITEMS_PER_PAGE">
             <AppPagination
               class="mg-t32 mg-b32"
               v-model="currentPage"
@@ -30,6 +31,7 @@
               @update:modelValue="paginationHandler"
             />
           </template>
+          <!-- IMPORTANT:: Temporary remove pagination -->
         </template>
         <template v-else>
           <div class="app-table__empty-stub">
@@ -72,6 +74,7 @@ const chainIdData = ref<ClientState[]>([])
 const connectionsData = ref<IdentifiedConnection[]>([])
 const channelData = ref<IdentifiedChannel[]>([])
 const filteredConnections = ref<IdentifiedConnection[]>([])
+const filteredChainIdData = ref<ClientState[]>([])
 const isLoadingError = ref(false)
 
 const loadIbc = async () => {
@@ -99,16 +102,52 @@ const loadIbc = async () => {
 }
 
 const filterConnections = (newPage: number) => {
-  let tempArr = connectionsData.value
+  /**
+   * IMPORTANT:: This is temporary fix. This should fix from the API
+   */
+
+  // Find connection with id 'connection-9'
+  let desiredConnectionId = 'connection-9'
+
+  // Filter connections by id
+  let filteredConnection = connectionsData.value.filter(
+    item => item.id === desiredConnectionId,
+  )
+
+  // Find index of the connection with id 'connection-9'
+  let connectionIndex = connectionsData.value.findIndex(
+    item => item.id === desiredConnectionId,
+  )
+
+  // Extract chain data for the connection at the found index
+  let chainDataForConnection = chainIdData.value.filter(
+    (_, idx) => idx === connectionIndex,
+  )
+
   if (newPage === 1) {
-    filteredConnections.value = tempArr?.slice(0, newPage * ITEMS_PER_PAGE)
+    filteredConnections.value = filteredConnection?.slice(
+      0,
+      newPage * ITEMS_PER_PAGE,
+    )
+    filteredChainIdData.value = chainDataForConnection?.slice(
+      0,
+      newPage * ITEMS_PER_PAGE,
+    )
   } else {
-    filteredConnections.value = tempArr?.slice(
+    filteredConnections.value = filteredConnection?.slice(
+      (newPage - 1) * ITEMS_PER_PAGE,
+      (newPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE,
+    )
+    filteredChainIdData.value = chainDataForConnection?.slice(
       (newPage - 1) * ITEMS_PER_PAGE,
       (newPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE,
     )
   }
   currentPage.value = newPage
+
+  /**
+   * IMPORTANT:: This is temporary fix. This should fix from the API
+   */
 }
 
 const paginationHandler = (num: number) => {

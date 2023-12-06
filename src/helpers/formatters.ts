@@ -230,3 +230,30 @@ export function formatTxString(input: string, substract = 6) {
 
   return preString + '...' + postString
 }
+
+export function priceFormatter(
+  price: number,
+  options?: Intl.NumberFormatOptions,
+) {
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 4,
+    maximumFractionDigits: 4,
+    ...options,
+  })
+
+  return formatter.format(price)
+}
+
+export function formattedNumber(
+  number: number,
+  options?: Intl.NumberFormatOptions,
+) {
+  return new Intl.NumberFormat('en-US', {
+    notation: 'compact',
+    maximumFractionDigits: 1,
+    minimumFractionDigits: 1,
+    ...options,
+  }).format(number)
+}
