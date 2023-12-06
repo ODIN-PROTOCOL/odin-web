@@ -58,14 +58,13 @@
 
 <script setup lang="ts">
 import { callers } from '@/api/callers'
-import { ref, watch, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { prepareTransaction } from '@/helpers/helpers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import TxLine from '@/components/TxLine.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
-import { DecodedTxData } from '@/helpers/Types'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 
@@ -92,7 +91,25 @@ const getTransactions = async () => {
       .getTxSearchFromTelemetry(page.value - 1, ITEMS_PER_PAGE, 'desc')
       .then(resp => resp.json())
 
-    transactions.value = await prepareTransaction(data)
+    const transaction = await prepareTransaction(data)
+
+    // IMPORTANT:: This is the Temporary Fixed. once API update it will auto-fix
+    // Use a Set to keep track of unique Block IDs
+    const uniqueIds = new Set()
+
+    transactions.value = transaction.filter(item => {
+      if (item.type === 'Withdraw delegator reward') {
+        if ((!item.sender && !item.receiver) || uniqueIds.has(item.block)) {
+          return false
+        } else {
+          uniqueIds.add(item.block)
+          return true
+        }
+      }
+      return true
+    })
+    // IMPORTANT:: This is the Temporary Fixed. once API update it will auto-fix
+
     totalTransactions.value = total_count
     totalPages.value = Math.ceil(totalTransactions.value / ITEMS_PER_PAGE)
   } catch (error) {
@@ -108,17 +125,6 @@ const updateHandler = async () => {
 onMounted(async () => {
   await getTransactions()
 })
-
-// IMPORTANT:: This is the Temporary Fixed once API Update will auto-fix
-watch(transactions, value => {
-  transactions.value = value.filter((item: DecodedTxData) => {
-    if (item.type === 'Withdraw delegator reward') {
-      return item.sender && item.receiver && item.amount
-    }
-    return true
-  })
-})
-// IMPORTANT:: This is the Temporary Fixed once API Update will auto-fix
 </script>
 
 <style lang="scss" scoped>
