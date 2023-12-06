@@ -71,6 +71,24 @@ const makeCallers = () => {
       MsgEditOracleScript,
     ),
     getOracleScripts: querier(qc => qc.oracle.unverified.oracleScripts),
+    getOdinPrice: () => {
+      return axios.post(
+        API_CONFIG.ordinPriceUrl,
+        [
+          {
+            id: '1',
+            jsonrpc: '2.0',
+            method: 'cg_simpleprice',
+            params: ['odin-protocol'],
+          },
+        ],
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+    },
     getSortedOracleScripts: (
       page_number: number,
       page_limit: number,
@@ -135,6 +153,17 @@ const makeCallers = () => {
     },
     getInflationRate: () => {
       return axiosWrapper.get(`${API_CONFIG.api}mint/parameters`)
+    },
+    getBoundedPool: () => {
+      return axiosWrapper.get(`${API_CONFIG.api}cosmos/staking/v1beta1/pool`)
+    },
+    getSupply: () => {
+      return axiosWrapper.get(`${API_CONFIG.api}cosmos/bank/v1beta1/supply`)
+    },
+    getCommunityPool: () => {
+      return axiosWrapper.get(
+        `${API_CONFIG.api}cosmos/distribution/v1beta1/community_pool`,
+      )
     },
     createProposal: broadcaster<MsgSubmitProposal>(
       '/cosmos.gov.v1beta1.MsgSubmitProposal',
@@ -283,6 +312,9 @@ const makeCallers = () => {
       return sendGet(
         `${API_CONFIG.telemetryUrl}/requests/data_sources/${id}?page[number]=${page_number}&page[limit]=${page_limit}`,
       )
+    },
+    getValidatorInfo: () => {
+      return axiosWrapper.get(`${API_CONFIG.rpc}validators`)
     },
     getValidatorUptime: () => {
       return sendGet(`${API_CONFIG.telemetryUrl}/validators`)
