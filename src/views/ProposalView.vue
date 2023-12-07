@@ -66,7 +66,7 @@
               <div class="app-table__cell">
                 <Markdown
                   class="info-table__row-value"
-                  :source="proposal.content?.description"
+                  :source="fixMarkdown(proposal.content?.description)"
                 />
               </div>
             </div>
@@ -237,8 +237,8 @@ import Tally from '@/components/Tally.vue'
 import BackButton from '@/components/BackButton.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import Tag from '@/components/Tag.vue'
-import Markdown from 'vue3-markdown-it'
 import TitledLink from '@/components/TitledLink.vue'
+import Markdown from 'vue3-markdown-it'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const route: RouteLocationNormalizedLoaded = useRoute()
@@ -246,6 +246,12 @@ const proposal = ref()
 const tally = ref()
 const voteBtnText = ref('Show result')
 const isLoadingError = ref(false)
+
+function fixMarkdown(apiMarkdown: string) {
+  let markdown = apiMarkdown.replace(/\\u0026/g, '&').replace(/\\n/g, '\n')
+  markdown = markdown.replace(/\\(.)/g, '$1')
+  return markdown
+}
 
 const getProposal = async () => {
   lockLoading()
