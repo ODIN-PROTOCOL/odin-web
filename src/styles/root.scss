@@ -149,7 +149,7 @@
 
 :root.dark-theme {
   // Main
-  --clr__main-bg: #{$clr-dark-gunmetal};
+  --clr__main-bg: #{$clr-chinese-black};
   --clr__main-text: #{$clr-white};
 
   // Header
@@ -171,7 +171,7 @@
 
   // Tables
   --clr__table-header-prefix-bg: #{$clr-dark-blue};
-  --clr__table-border: #{$clr-chinese-black};
+  --clr__table-border: #{$clr-dark-gunmetal};
 
   // Dropdown
   --clr__dropdown: #{$clr-white};
@@ -195,8 +195,8 @@
   --clr__frame-bg: #{$clr-dark-blue};
 
   // Card
-  --clr__card-bg: #{$clr-dark-gunmetal};
-  --clr__card-border: #{$clr-chinese-black};
+  --clr__card-bg: #{$clr-chinese-black};
+  --clr__card-border: #{$clr-dark-gunmetal};
   --clr__card-label-tx-bg: #{$clr-dark-blue};
   --clr__card-label-block-bg: #{$clr-dark-blue};
   --clr__card-label-text: #{$clr-very-light-blue};

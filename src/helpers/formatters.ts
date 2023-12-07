@@ -246,14 +246,20 @@ export function priceFormatter(
   return formatter.format(price)
 }
 
-export function formattedNumber(
-  number: number,
-  options?: Intl.NumberFormatOptions,
-) {
-  return new Intl.NumberFormat('en-US', {
+export function convertToDecimal(number: number, decimal: number, precise = 2) {
+  const numberString = number.toString();
+  const resultString =
+    numberString.substring(0, decimal) + '.' + numberString.substring(decimal, decimal + precise);
+
+  return parseFloat(resultString);
+}
+
+export function numberFormatter(number: number, options?: Intl.NumberFormatOptions,) {
+  const formatter = new Intl.NumberFormat('en-US', {
     notation: 'compact',
-    maximumFractionDigits: 1,
-    minimumFractionDigits: 1,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
     ...options,
-  }).format(number)
+  })
+  return formatter.format(number)
 }

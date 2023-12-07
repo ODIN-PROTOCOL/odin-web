@@ -27,7 +27,7 @@ defineProps<{
 .latest-list {
   width: 100%;
   padding: 3.2rem 2.4rem 5.6rem 2.4rem;
-  background-color: var(--clr__card-bg);
+  background-color: var(--clr__main-bg);
   border: 0.1rem solid var(--clr__card-border);
   border-radius: 0.8rem;
 
