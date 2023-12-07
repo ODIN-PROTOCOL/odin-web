@@ -247,14 +247,19 @@ export function priceFormatter(
 }
 
 export function convertToDecimal(number: number, decimal: number, precise = 2) {
-  const numberString = number.toString();
+  const numberString = number.toString()
   const resultString =
-    numberString.substring(0, decimal) + '.' + numberString.substring(decimal, decimal + precise);
+    numberString.substring(0, decimal) +
+    '.' +
+    numberString.substring(decimal, decimal + precise)
 
-  return parseFloat(resultString);
+  return parseFloat(resultString)
 }
 
-export function numberFormatter(number: number, options?: Intl.NumberFormatOptions,) {
+export function numberFormatter(
+  number: number,
+  options?: Intl.NumberFormatOptions,
+) {
   const formatter = new Intl.NumberFormat('en-US', {
     notation: 'compact',
     minimumFractionDigits: 2,

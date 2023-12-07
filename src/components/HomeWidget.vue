@@ -225,7 +225,7 @@ const fetchData = async () => {
     ])
 
     const supplyAmount = supply.data.supply.find(
-      item => item.denom === 'loki'
+      item => item.denom === 'loki',
     ).amount
 
     inflation.value = inflationData.data.inflation
@@ -253,7 +253,7 @@ const fetchData = async () => {
       {
         onlyNumber: true,
         toFixed: 2,
-      }
+      },
     )
   } finally {
     fetchLoading.value = false
