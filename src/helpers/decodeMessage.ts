@@ -402,6 +402,10 @@ export async function getDateFromMessage(
         DecodedTxData.sender = message?.delegatorAddress
       }
       if ('validatorAddress' in message) {
+        const data = await callers.getValidator(message?.validatorAddress)
+        if (data.validator && data.validator.description) {
+          DecodedTxData.receiver_name = data.validator?.description.moniker
+        }
         DecodedTxData.receiver = message?.validatorAddress
       }
     }
@@ -410,6 +414,10 @@ export async function getDateFromMessage(
         DecodedTxData.sender = message?.delegatorAddress
       }
       if ('validatorAddress' in message) {
+        const data = await callers.getValidator(message?.validatorAddress)
+        if (data.validator && data.validator.description) {
+          DecodedTxData.receiver_name = data.validator?.description.moniker
+        }
         DecodedTxData.receiver = message?.validatorAddress
       }
     }
@@ -428,6 +436,10 @@ export async function getDateFromMessage(
         DecodedTxData.sender = message.delegatorAddress
       }
       if ('validatorAddress' in message) {
+        const data = await callers.getValidator(message?.validatorAddress)
+        if (data.validator && data.validator.description) {
+          DecodedTxData.receiver_name = data.validator?.description.moniker
+        }
         DecodedTxData.receiver = message.validatorAddress
       }
     }
@@ -452,6 +464,10 @@ export async function getDateFromMessage(
         DecodedTxData.sender = message.delegatorAddress
       }
       if ('validatorAddress' in message) {
+        const data = await callers.getValidator(message?.validatorAddress)
+        if (data.validator && data.validator.description) {
+          DecodedTxData.receiver_name = data.validator?.description.moniker
+        }
         DecodedTxData.receiver = message.validatorAddress
       }
     }
@@ -485,6 +501,10 @@ export async function getDateFromMessage(
         DecodedTxData.sender = message.signer
       }
       if ('validatorAddress' in message) {
+        const data = await callers.getValidator(message?.validatorAddress)
+        if (data.validator && data.validator.description) {
+          DecodedTxData.receiver_name = data.validator?.description.moniker
+        }
         DecodedTxData.receiver = message.validatorAddress
       }
     }
