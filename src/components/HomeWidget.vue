@@ -283,17 +283,17 @@ const fetchData = async () => {
   }
 }
 
-let timer = null
-onMounted(() => {
-  timer = setInterval(async () => {
-    const odinPriceData = await callers.getOdinPrice()
-    odinPrice.value = odinPriceData.data[0].result['odin-protocol'].usd
-  }, 2000)
-})
+// let timer = null
+// onMounted(() => {
+//   timer = setInterval(async () => {
+//     const odinPriceData = await callers.getOdinPrice()
+//     odinPrice.value = odinPriceData.data[0].result['odin-protocol'].usd
+//   }, 2000)
+// })
 
-onUnmounted(() => {
-  clearInterval(timer)
-})
+// onUnmounted(() => {
+//   clearInterval(timer)
+// })
 
 onMounted(fetchData)
 </script>
