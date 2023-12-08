@@ -173,9 +173,9 @@
         <h4 v-else>{{ (inflation * 100).toFixed(2) + '%' }}</h4>
       </div>
 
-      <!-- Stacking APR Widget-->
+      <!-- Staking APR Widget-->
       <div class="content">
-        <p>Stacking APR</p>
+        <p>Staking APR</p>
         <skeleton-loader
           v-if="fetchLoading"
           width="100"
