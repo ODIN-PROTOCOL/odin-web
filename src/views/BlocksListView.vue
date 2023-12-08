@@ -49,7 +49,7 @@
                 Block Hash
               </span>
               <span class="app-table__cell-txt fs-c-muted" :title="item.hash">
-                {{ item.hash }}
+                {{ formatTxString(item.hash) }}
               </span>
             </div>
             <div class="app-table__cell">
@@ -119,6 +119,7 @@ import { START_VALUE } from '@/api/api-config'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 import TitledLink from '@/components/TitledLink.vue'
+import { formatTxString } from '@/helpers/formatters'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const ITEMS_PER_PAGE = 20

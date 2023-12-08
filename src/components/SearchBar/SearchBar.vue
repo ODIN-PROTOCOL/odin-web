@@ -1,7 +1,8 @@
 <template>
   <div class="search-bar">
     <div class="search-bar__row">
-      <VuePicker
+      <!-- IMPORTANT::Temporary remove vue-picker -->
+      <!-- <VuePicker
         class="app-form__field-input app-filter app-filter--rounding-left _vue-picker"
         name="filter"
         v-model="activeFilter"
@@ -16,9 +17,10 @@
             >
               {{ filter }}
             </VuePickerOption>
-          </div>
+          </div>  
         </template>
-      </VuePicker>
+      </VuePicker> -->
+      <!-- IMPORTANT::Temporary remove vue-picker -->
       <div class="search-bar__input-wrapper">
         <input
           :class="{

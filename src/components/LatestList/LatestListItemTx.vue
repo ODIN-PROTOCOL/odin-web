@@ -10,6 +10,7 @@
             name: $routes.transactionDetails,
             params: { hash: tx.hash },
           }"
+          :title="tx.hash"
           :text="formatTxString(tx.hash)"
         />
         <span v-else>No info</span>
@@ -27,7 +28,8 @@
             name: $routes.accountDetails,
             params: { hash: tx.sender },
           }"
-          :text="tx.sender"
+          :title="tx.sender"
+          :text="formatTxString(tx.sender)"
           class="app-table__link"
         />
         <span v-else>No info</span>
@@ -40,7 +42,8 @@
             name: $routes.accountDetails,
             params: { hash: tx.receiver },
           }"
-          :text="tx.receiver"
+          :title="tx.receiver"
+          :text="formatTxString(tx.receiver)"
           class="app-table__link"
         />
         <span v-else>No info</span>

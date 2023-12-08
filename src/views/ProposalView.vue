@@ -295,7 +295,7 @@ onMounted(async () => {
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .proposal-view__title {
   margin: 0 1.6rem 0 2rem;
 }
@@ -344,6 +344,22 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+.info-table__row-value {
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-bottom: 8px;
+  }
+  p {
+    margin-bottom: 2rem;
+    a {
+      color: var(--clr__action);
+    }
   }
 }
 </style>
