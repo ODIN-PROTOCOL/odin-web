@@ -72,11 +72,7 @@ const makeCallers = () => {
     ),
     getOracleScripts: querier(qc => qc.oracle.unverified.oracleScripts),
     getOdinPrice: () => {
-      return axios.post(API_CONFIG.ordinPriceUrl, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
+      return axios.get(API_CONFIG.ordinPriceUrl)
     },
     getSortedOracleScripts: (
       page_number: number,

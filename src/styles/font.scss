@@ -1,35 +1,29 @@
-@font-face {
-  font-family: 'New Order';
-  src: url('@/assets/fonts/New Order Medium.otf') format('opentype');
-  font-weight: 500; /* Medium */
-}
+// @font-face {
+//   font-family: 'New Order';
+//   src: url('@/assets/fonts/ArchimotoV01-Black.otf') format('opentype');
+//   font-weight: 400; /* Medium */
+// }
 
 @font-face {
-  font-family: 'New Order';
-  src: url('@/assets/fonts/New Order Regular.otf') format('opentype');
+  font-family: 'Archi moto';
+  src: url('@/assets/fonts/ArchimotoV01-Regular.otf') format('opentype');
   font-weight: 400; /* Regular */
 }
 
 @font-face {
-  font-family: 'New Order';
-  src: url('@/assets/fonts/New Order Semibold.otf') format('opentype');
-  font-weight: 600; /* Semibold */
+  font-family: 'Archi moto';
+  src: url('@/assets/fonts/ArchimotoV01-Medium.otf') format('opentype');
+  font-weight: 500; /* Medium */
 }
 
 @font-face {
-  font-family: 'New Order';
-  src: url('@/assets/fonts/New Order Bold.otf') format('opentype');
+  font-family: 'Archi moto';
+  src: url('@/assets/fonts/ArchimotoV01-Thin.otf') format('opentype');
   font-weight: 700; /* Bold */
-}
-
-@font-face {
-  font-family: 'New Order';
-  src: url('@/assets/fonts/New Order Light.otf') format('opentype');
-  font-weight: 300; /* Light */
 }
 
 body,
 html {
-  font-family: 'New Order', sans-serif;
+  font-family: 'Archi moto', sans-serif;
   color: var(--clr__main-text);
 }

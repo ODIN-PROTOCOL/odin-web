@@ -10,7 +10,20 @@
         pill
         shimmer
       />
-      <h4 class="widget-green-color" v-else>{{ priceFormatter(odinPrice) }}</h4>
+      <div v-else class="widget-odin-price">
+        <h4 class="widget-green-color">
+          {{ priceFormatter(odinPrice) }}
+        </h4>
+        <div
+          class="widget-odin-percentage"
+          :class="isODINPriceUp ? 'green' : 'red'"
+        >
+          <span v-if="isODINPriceUp" v-html="`&#9650;`"></span>
+          <span v-else v-html="`&#9660;`"></span>
+          {{ isODINPriceUp ? '+' : '-' }}
+          {{ odinPric24HRChange.toFixed(2) + '%' }}
+        </div>
+      </div>
     </div>
 
     <!-- Market Cap widget -->
@@ -199,7 +212,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { callers } from '@/api/callers'
 import {
   priceFormatter,
@@ -212,6 +225,7 @@ const createDataRef = (defaultValue = 0) => ref(defaultValue)
 
 const fetchLoading = ref(true)
 const odinPrice = createDataRef()
+const odinPric24HRChange = createDataRef()
 const marketCap = createDataRef('$554k')
 const latestBlock = createDataRef()
 const validators = createDataRef()
@@ -249,7 +263,7 @@ const fetchData = async () => {
     ])
 
     const supplyAmount = supply.data.supply.find(
-      item => item.denom === 'loki',
+      item => item.denom === 'loki'
     ).amount
     inflation.value = inflationData.data.inflation
     latestBlock.value = blockData.data.result.block.header.height
@@ -270,30 +284,37 @@ const fetchData = async () => {
         (boundedPool.data.pool.bonded_tokens / Number(supplyAmount))) *
       100
     ).toFixed(2)
-    odinPrice.value = odinPriceData.data[0].result['odin-protocol'].usd
+    if (odinPriceData.data.price) {
+      odinPrice.value = odinPriceData.data.price
+      odinPric24HRChange.value = odinPriceData.data['24h_change']
+    }
     fdv.value = +convertLokiToOdin(
       (supplyAmount * odinPrice.value).toString(),
       {
         onlyNumber: true,
         toFixed: 2,
-      },
+      }
     )
   } finally {
     fetchLoading.value = false
   }
 }
 
-// let timer = null
-// onMounted(() => {
-//   timer = setInterval(async () => {
-//     const odinPriceData = await callers.getOdinPrice()
-//     odinPrice.value = odinPriceData.data[0].result['odin-protocol'].usd
-//   }, 2000)
-// })
+const isODINPriceUp = computed(() => odinPric24HRChange.value > 0)
 
-// onUnmounted(() => {
-//   clearInterval(timer)
-// })
+let timer = null
+onMounted(() => {
+  timer = setInterval(async () => {
+    const odinPriceData = await callers.getOdinPrice()
+    if (odinPriceData.data.price) {
+      odinPrice.value = odinPriceData.data.price
+    }
+  }, 2000)
+})
+
+onUnmounted(() => {
+  clearInterval(timer)
+})
 
 onMounted(fetchData)
 </script>
@@ -378,6 +399,25 @@ onMounted(fetchData)
   }
 }
 
+.widget-odin-price {
+  .widget-odin-percentage {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.2rem;
+    font-size: 14px;
+    margin-top: 1rem;
+  }
+
+  .widget-odin-percentage.green {
+    color: green;
+  }
+
+  .widget-odin-percentage.red {
+    color: red;
+  }
+}
+
 .widget-action-color {
   color: var(--clr__btn-normal);
 }
@@ -399,9 +439,12 @@ onMounted(fetchData)
 }
 
 @include respond-to(small) {
-  // .home-widget-group,
   .widget-content {
     grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+
+  .widget-odin-price {
+    flex-wrap: wrap;
   }
 }
 </style>
