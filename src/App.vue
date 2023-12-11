@@ -1,10 +1,22 @@
 <template>
   <template v-if="isAppReady">
-    <app-header v-if="!isAuthPage" />
-    <section class="app__main-content">
+    <app-sidebar
+      v-if="!isAuthPage"
+      :open="sidebarState"
+      @toggleSidebar="toggleSidebar"
+    />
+    <section
+      class="app__main-content"
+      :class="sidebarState ? 'sidebar-open' : 'sidebar-close'"
+    >
+      <app-header
+        v-if="!isAuthPage"
+        :open="sidebarState"
+        @toggleSidebar="toggleSidebar"
+      />
       <router-view />
+      <app-footer v-if="!isAuthPage" />
     </section>
-    <app-footer v-if="!isAuthPage" />
   </template>
   <div class="dialogs-container" ref="dialogsContainerRef"></div>
   <notifications-group />
@@ -18,8 +30,10 @@ import { Theme } from '@/helpers/theme'
 import { useRoute } from 'vue-router'
 import { ROUTE_NAMES } from '@/enums'
 import AppHeader from '@/components/AppHeader'
+import AppSidebar from '@/components/AppSidebar'
 import AppFooter from '@/components/AppFooter'
 import NotificationsGroup from '@/components/NotificationsGroup.vue'
+import { isMobile } from './helpers/helpers'
 
 const _readyStates = ref({
   dialogs: false,
@@ -43,8 +57,14 @@ onMounted(() => {
 const route = useRoute()
 
 const isAuthPage = computed(
-  () => route?.name?.toString().includes(ROUTE_NAMES.auth) ?? true,
+  () => route?.name?.toString().includes(ROUTE_NAMES.auth) ?? true
 )
+
+const sidebarState = ref(!isMobile())
+
+const toggleSidebar = () => {
+  sidebarState.value = !sidebarState.value
+}
 </script>
 
 <style lang="scss">

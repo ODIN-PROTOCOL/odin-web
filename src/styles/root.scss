@@ -22,8 +22,8 @@
   --clr__main-text: #{$clr-dark-gunmetal};
 
   // Header
-  --clr__header-bg: #{$clr-chinese-black};
-  --clr__header-nav-txt: #{$clr-bright-gray};
+  --clr__header-bg: #{$clr-light};
+  --clr__header-nav-txt: #{$clr-text};
 
   --clr__search-bar-bg: #{$clr-white};
   --clr__search-field-bg: #{$clr-bright-gray};
@@ -153,6 +153,7 @@
   --clr__main-text: #{$clr-white};
 
   // Header
+  --clr__header-bg: #{$clr-chinese-black};
   --clr__search-bar-bg: #{$clr-dark-2};
   --clr__search-icon: #{$clr-white};
   --clr__search-field-bg: #{$clr-dark-gunmetal};

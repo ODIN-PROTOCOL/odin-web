@@ -20,7 +20,7 @@
         >
           <span v-if="isODINPriceUp" v-html="`&#9650;`"></span>
           <span v-else v-html="`&#9660;`"></span>
-          {{ isODINPriceUp ? '+' : '-' }}
+          {{ isODINPriceUp ? '+' : '' }}
           {{ odinPric24HRChange.toFixed(2) + '%' }}
         </div>
       </div>
@@ -173,9 +173,9 @@
         <h4 v-else>{{ (inflation * 100).toFixed(2) + '%' }}</h4>
       </div>
 
-      <!-- Stacking APR Widget-->
+      <!-- Staking APR Widget-->
       <div class="content">
-        <p>Stacking APR</p>
+        <p>Staking APR</p>
         <skeleton-loader
           v-if="fetchLoading"
           width="100"
@@ -301,21 +301,6 @@ const fetchData = async () => {
 }
 
 const isODINPriceUp = computed(() => odinPric24HRChange.value > 0)
-
-let timer = null
-onMounted(() => {
-  timer = setInterval(async () => {
-    const odinPriceData = await callers.getOdinPrice()
-    if (odinPriceData.data.price) {
-      odinPrice.value = odinPriceData.data.price
-    }
-  }, 2000)
-})
-
-onUnmounted(() => {
-  clearInterval(timer)
-})
-
 onMounted(fetchData)
 </script>
 
@@ -410,11 +395,11 @@ onMounted(fetchData)
   }
 
   .widget-odin-percentage.green {
-    color: green;
+    color: #0BAE5F;
   }
 
   .widget-odin-percentage.red {
-    color: red;
+    color: #BE1A0E;
   }
 }
 

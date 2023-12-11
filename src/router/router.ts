@@ -65,14 +65,16 @@ const routes: Array<RouteRecordRaw> = [
         component: () =>
           import(/* webpackChunkName: "auth" */ '@/views/AuthView.vue'),
       },
-      {
-        path: '/accounts',
-        name: ROUTE_NAMES.accounts,
-        component: () =>
-          import(
-            /* webpackChunkName: "accounts" */ '@/views/TopAccountsListView.vue'
-          ),
-      },
+      // Important::Temporary Remove
+      // {
+      //   path: '/accounts',
+      //   name: ROUTE_NAMES.accounts,
+      //   component: () =>
+      //     import(
+      //       /* webpackChunkName: "accounts" */ '@/views/TopAccountsListView.vue'
+      //     ),
+      // },
+      // Important::Temporary Remove
       {
         path: '/accounts/:hash',
         name: ROUTE_NAMES.accountDetails,
