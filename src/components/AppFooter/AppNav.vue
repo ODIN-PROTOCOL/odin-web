@@ -18,7 +18,7 @@ import { links } from '@/const'
 }
 
 .app-nav a {
-  color: var(--clr__white);
+  color: var(--clr__main-text);
   text-decoration: none;
   font-size: 1.5rem;
   white-space: nowrap;

@@ -1,42 +1,77 @@
 <template>
   <div class="app-icon">
-    <a target="_blank" :href="social.telegram" title="Telegram">
-      <img src="~@/assets/icons/telegram.svg" />
-    </a>
-    <a target="_blank" :href="social.twitter" title="Twitter">
-      <img src="~@/assets/icons/twitter.svg" />
-    </a>
-    <a target="_blank" :href="social.discord" title="Discord">
-      <img src="~@/assets/icons/discord.svg" />
-    </a>
-    <a target="_blank" :href="social.reddit" title="Reddit">
-      <img src="~@/assets/icons/reddit.svg" />
-    </a>
-    <a target="_blank" :href="social.coinmarketcap" title="Coin Market Cap">
-      <img src="~@/assets/icons/coinmarketcap.svg" />
-    </a>
-    <a target="_blank" :href="social.github" title="Github">
-      <img src="~@/assets/icons/github.svg" />
-    </a>
-    <a target="_blank" :href="social.coingeko" title="CoinGeko">
-      <img src="~@/assets/icons/coingeko.svg" />
-    </a>
+    <template v-for="nav in navs" :key="nav.title">
+      <a target="_blank" :href="social.telegram" :title="nav.title">
+        <component :is="nav.icon" />
+      </a>
+    </template>
   </div>
 </template>
 
 <script setup lang="ts">
 import { social } from '@/const'
+import {
+  Telegram,
+  Twitter,
+  Discord,
+  Reddit,
+  CoinMarketCap,
+  Github,
+  CoinGeko,
+} from '@/components/icons'
+
+const navs = [
+  {
+    title: 'Telegram',
+    link: social.telegram,
+    icon: Telegram,
+  },
+  {
+    title: 'Twitter',
+    link: social.twitter,
+    icon: Twitter,
+  },
+  {
+    title: 'Discord',
+    link: social.discord,
+    icon: Discord,
+  },
+  {
+    title: 'Reddit',
+    link: social.reddit,
+    icon: Reddit,
+  },
+  {
+    title: 'Coin Market Cap',
+    link: social.coinmarketcap,
+    icon: CoinMarketCap,
+  },
+  {
+    title: 'Github',
+    link: social.github,
+    icon: Github,
+  },
+  {
+    title: 'CoinGeko',
+    link: social.coingeko,
+    icon: CoinGeko,
+  },
+]
 </script>
 
 <style scoped>
 .app-icon {
   display: flex;
+  align-items: center;
   gap: 3rem;
 }
 
 .app-icon a {
   width: 2rem;
-  color: var(--clr__white);
   text-decoration: none;
+}
+
+.app-icon a svg {
+  width: 2rem;
 }
 </style>

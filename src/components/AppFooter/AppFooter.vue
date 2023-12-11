@@ -1,11 +1,11 @@
 <template>
   <footer class="app-footer">
     <div class="app-footer__content">
-      <div class="app-header__content-logo">
+      <!-- <div class="app-header__content-logo">
         <router-link :to="{ name: $routes.app }">
           <app-logo-icon />
         </router-link>
-      </div>
+      </div> -->
       <app-nav />
       <app-icon />
     </div>
@@ -13,7 +13,6 @@
 </template>
 
 <script setup lang="ts">
-import { AppLogoIcon } from '@/components/icons'
 import AppNav from '@/components/AppFooter/AppNav.vue'
 import AppIcon from '@/components/AppFooter/AppIcon.vue'
 </script>

@@ -125,7 +125,7 @@ const filters = ref<Array<string>>([
 ])
 
 const inputPlaceholder = computed(() =>
-  isMobile() ? 'Search' : 'Searching by account address, block, Tx hash',
+  isMobile() ? 'Search' : 'Search by Address, TX hash, Block',
 )
 
 const activeFilter = ref<string>(filters.value[0])
@@ -297,7 +297,8 @@ router.beforeEach(() => {
 }
 
 .search-bar__input-wrapper {
-  width: 39.6rem;
+  max-width: 39.6rem;
+  width: 100%;
   position: relative;
   border-radius: none;
 }
@@ -369,7 +370,7 @@ router.beforeEach(() => {
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  background-color: var(--clr__search-icon-bg);
+  background-color: var(--clr__action);
   border-top-right-radius: 0.4rem;
   border-bottom-right-radius: 0.4rem;
 
@@ -385,6 +386,7 @@ router.beforeEach(() => {
   position: absolute;
   right: 1rem;
   top: 1.2rem;
+  background-color: var(--clr__action);
 }
 
 @include respond-to(tablet) {

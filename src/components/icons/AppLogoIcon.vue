@@ -52,7 +52,7 @@ withDefaults(
 
 <style lang="scss" scoped>
 svg > g > path {
-  fill: var(--clr__white);
+  fill: var(--clr__main-text);
 }
 
 .auth-base__form-logo > g > path {

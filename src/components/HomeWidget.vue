@@ -20,7 +20,7 @@
         >
           <span v-if="isODINPriceUp" v-html="`&#9650;`"></span>
           <span v-else v-html="`&#9660;`"></span>
-          {{ isODINPriceUp ? '+' : '-' }}
+          {{ isODINPriceUp ? '+' : '' }}
           {{ odinPric24HRChange.toFixed(2) + '%' }}
         </div>
       </div>
@@ -212,7 +212,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { callers } from '@/api/callers'
 import {
   priceFormatter,
@@ -301,21 +301,6 @@ const fetchData = async () => {
 }
 
 const isODINPriceUp = computed(() => odinPric24HRChange.value > 0)
-
-let timer = null
-onMounted(() => {
-  timer = setInterval(async () => {
-    const odinPriceData = await callers.getOdinPrice()
-    if (odinPriceData.data.price) {
-      odinPrice.value = odinPriceData.data.price
-    }
-  }, 2000)
-})
-
-onUnmounted(() => {
-  clearInterval(timer)
-})
-
 onMounted(fetchData)
 </script>
 
@@ -410,11 +395,11 @@ onMounted(fetchData)
   }
 
   .widget-odin-percentage.green {
-    color: green;
+    color: #0bae5f;
   }
 
   .widget-odin-percentage.red {
-    color: red;
+    color: #be1a0e;
   }
 }
 

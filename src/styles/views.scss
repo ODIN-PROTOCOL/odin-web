@@ -1,11 +1,28 @@
 .app__main-content {
   flex: 1;
   background-color: var(--clr__main-bg);
+  transition: all 0.3s;
+}
+
+.app__main-content.sidebar-open {
+  padding-left: 24rem;
+}
+
+.app__main-content.sidebar-close {
+  padding-left: 0rem;
+}
+
+@include respond-to(medium) {
+  .app__main-content,
+  .app__main-content.sidebar-open {
+    padding-left: 0rem !important;
+  }
 }
 
 .app__main-view {
   width: 100%;
   max-width: 140rem;
+  min-height: calc(100vh - 181.65px);
   padding: 3rem 3.2rem;
   margin: 0px auto;
 }
