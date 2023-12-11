@@ -32,7 +32,7 @@
 </template>
 
 <style scoped>
-svg  path {
+svg path {
   fill: var(--clr__main-text);
 }
 </style>

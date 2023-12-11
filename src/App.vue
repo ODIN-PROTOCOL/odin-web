@@ -57,7 +57,7 @@ onMounted(() => {
 const route = useRoute()
 
 const isAuthPage = computed(
-  () => route?.name?.toString().includes(ROUTE_NAMES.auth) ?? true
+  () => route?.name?.toString().includes(ROUTE_NAMES.auth) ?? true,
 )
 
 const sidebarState = ref(!isMobile())

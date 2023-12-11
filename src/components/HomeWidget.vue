@@ -212,7 +212,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { callers } from '@/api/callers'
 import {
   priceFormatter,
@@ -395,11 +395,11 @@ onMounted(fetchData)
   }
 
   .widget-odin-percentage.green {
-    color: #0BAE5F;
+    color: #0bae5f;
   }
 
   .widget-odin-percentage.red {
-    color: #BE1A0E;
+    color: #be1a0e;
   }
 }
 

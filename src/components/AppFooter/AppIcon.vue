@@ -10,7 +10,15 @@
 
 <script setup lang="ts">
 import { social } from '@/const'
-import { Telegram, Twitter, Discord, Reddit, CoinMarketCap, Github, CoinGeko } from '@/components/icons'
+import {
+  Telegram,
+  Twitter,
+  Discord,
+  Reddit,
+  CoinMarketCap,
+  Github,
+  CoinGeko,
+} from '@/components/icons'
 
 const navs = [
   {

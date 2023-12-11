@@ -8,7 +8,7 @@
     viewBox="0,0,256,256"
   >
     <g
-    fill-rule="nonzero"
+      fill-rule="nonzero"
       stroke="none"
       stroke-width="1"
       stroke-linecap="butt"
