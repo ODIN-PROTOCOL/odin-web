@@ -332,7 +332,7 @@ export async function getDateFromMessage(
     DecodedTxData.fee = decodedTx?.authInfo?.fee?.amount[0]?.amount
     DecodedTxData.feeDenom = decodedTx?.authInfo?.fee?.amount[0]?.denom
     DecodedTxData.memo = decodedTx.body?.memo
-    ? decodedTx.body?.memo
+      ? decodedTx.body?.memo
       : '<No Memo>'
     DecodedTxData.status = tx.tx_result.code
     DecodedTxData.gasWanted = tx.tx_result.gas_wanted
