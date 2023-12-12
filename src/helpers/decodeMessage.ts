@@ -11,7 +11,7 @@ import {
   MsgEditValidator,
   MsgUndelegate,
 } from 'cosmjs-types/cosmos/staking/v1beta1/tx'
-import { MsgExec } from 'cosmjs-types/cosmos/authz/v1beta1/tx'
+import { MsgExec, MsgGrant } from 'cosmjs-types/cosmos/authz/v1beta1/tx'
 import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx'
 import { MsgStoreCode } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
 import { MsgCreateVestingAccount } from 'cosmjs-types/cosmos/vesting/v1beta1/tx.js'
@@ -159,6 +159,9 @@ export function humanizeMessageType(type: string): string {
     case '/cosmos.authz.v1beta1.MsgExec':
       return 'Authz MsgExec'
 
+    case '/cosmos.authz.v1beta1.MsgGrant':
+      return 'Authz MsgGrant'
+
     default:
       throw new ReferenceError(`Unknown type ${type}`)
   }
@@ -197,7 +200,8 @@ export function decodeMessage(obj: {
   | MsgFundCommunityPool
   | MsgRemoveReporter
   | MsgStoreCode
-  | MsgExec {
+  | MsgExec
+  | MsgGrant {
   switch (obj.typeUrl) {
     case '/mint.MsgWithdrawCoinsToAccFromTreasury':
       return MsgWithdrawCoinsToAccFromTreasury.decode(obj.value)
@@ -295,6 +299,9 @@ export function decodeMessage(obj: {
     case '/cosmos.authz.v1beta1.MsgExec':
       return MsgExec.decode(obj.value)
 
+    case '/cosmos.authz.v1beta1.MsgGrant':
+      return MsgGrant.decode(obj.value)
+
     default:
       throw new ReferenceError(`Unknown type ${obj.typeUrl}`)
   }
@@ -325,7 +332,7 @@ export async function getDateFromMessage(
     DecodedTxData.fee = decodedTx?.authInfo?.fee?.amount[0]?.amount
     DecodedTxData.feeDenom = decodedTx?.authInfo?.fee?.amount[0]?.denom
     DecodedTxData.memo = decodedTx.body?.memo
-      ? decodedTx.body?.memo
+    ? decodedTx.body?.memo
       : '<No Memo>'
     DecodedTxData.status = tx.tx_result.code
     DecodedTxData.gasWanted = tx.tx_result.gas_wanted
