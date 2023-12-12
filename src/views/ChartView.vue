@@ -75,7 +75,12 @@
       </template>
       <template v-else>
         <div class="app-table__empty-stub">
-          <ui-loader positionCenter message="Loading" />
+          <skeleton-loader
+            class="info-panel__chart-skeleton"
+            width="100%"
+            pill
+            shimmer
+          />
         </div>
       </template>
     </div>
@@ -91,11 +96,7 @@ import { sortingDaysForChart } from '@/helpers/helpers'
 import CustomBarChart from '@/components/charts/CustomBarChart.vue'
 import CustomLineChart from '@/components/charts/CustomLineChart.vue'
 import BackButton from '@/components/BackButton.vue'
-import {
-  UiLoadingErrorMessage,
-  UiLoader,
-  UiNoDataMessageWithImg,
-} from '@/components/ui'
+import { UiLoadingErrorMessage, UiNoDataMessageWithImg } from '@/components/ui'
 
 const props = withDefaults(
   defineProps<{
@@ -178,5 +179,10 @@ onMounted(async (): Promise<void> => {
       width: 100%;
     }
   }
+}
+
+.chart-panel__chart-skeleton {
+  height: 100px;
+  border-radius: 8px;
 }
 </style>

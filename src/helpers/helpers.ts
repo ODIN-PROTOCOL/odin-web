@@ -53,7 +53,7 @@ export const prepareTransaction = async (
         sender: sender ? sender : '',
         receiver: receiver ? receiver : '',
         receiver_name: receiver_name ? receiver_name : '',
-        amount: convertLokiToOdin(String(amount), {}, denom),
+        amount: convertLokiToOdin(String(amount), { withDenom: true }, denom),
         fee: convertLokiToOdin(String(fee), { onlyNumber: true, toFixed: 2 }),
         memo: memo ? memo : '-',
         status: Number(status) > -1 ? 'Success' : 'Failed',

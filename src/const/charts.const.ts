@@ -1,40 +1,42 @@
 import { ROUTE_NAMES } from '@/enums'
 
-export const blockchainData = [
-  [
-    {
-      id: 'averageOdinBlockSizeChart',
-      title: 'Average ODIN Block Size Chart',
-      chartType: 'bar',
-      chartPageName: ROUTE_NAMES.averageOdinBlockSizeChart,
-    },
-    {
-      id: 'averageBlockTimeChart',
-      title: 'Average Block Time Chart',
-      chartType: 'bar',
-      chartPageName: ROUTE_NAMES.averageBlockTimeChart,
-    },
-  ],
-  [
-    {
-      id: 'dailyTransactionsVolumeChart',
-      title: 'Daily Transactions Volume Chart',
-      chartType: 'line',
-      chartPageName: ROUTE_NAMES.dailyTransactionsVolumeChart,
-    },
-    {
-      id: 'averageTransactionFeeChart',
-      title: 'Average Transaction Fee Chart',
-      chartType: 'line',
-      chartPageName: ROUTE_NAMES.averageTransactionFeeChart,
-    },
-    {
-      id: 'averageRequestsChart',
-      title: 'Total Requests Chart',
-      chartType: 'line',
-      chartPageName: ROUTE_NAMES.totalRequestsChart,
-    },
-  ],
+export const blockChainDataBlocks = [
+  {
+    id: 'averageOdinBlockSizeChart',
+    title: 'Average ODIN Block Size Chart',
+    chartType: 'bar',
+    chartPageName: ROUTE_NAMES.averageOdinBlockSizeChart,
+  },
+  {
+    id: 'averageBlockTimeChart',
+    title: 'Average Block Time Chart',
+    chartType: 'bar',
+    chartPageName: ROUTE_NAMES.averageBlockTimeChart,
+  },
+]
+
+export const blockChainDataTransactions = [
+  {
+    id: 'dailyTransactionsVolumeChart',
+    title: 'Daily Transactions Volume Chart',
+    chartType: 'line',
+    chartPageName: ROUTE_NAMES.dailyTransactionsVolumeChart,
+  },
+  {
+    id: 'averageTransactionFeeChart',
+    title: 'Average Transaction Fee Chart',
+    chartType: 'line',
+    chartPageName: ROUTE_NAMES.averageTransactionFeeChart,
+  },
+]
+
+export const blockChainDataRequests = [
+  {
+    id: 'averageRequestsChart',
+    title: 'Total Requests Chart',
+    chartType: 'line',
+    chartPageName: ROUTE_NAMES.totalRequestsChart,
+  },
 ]
 
 export const chartPagesProps = {

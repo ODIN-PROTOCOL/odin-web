@@ -117,7 +117,7 @@ const isActive = (to: string) => {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .app-sidebar {
   position: fixed;
   top: 0;
@@ -127,6 +127,8 @@ const isActive = (to: string) => {
   background-color: var(--clr__header-bg);
   z-index: 999;
   border-right: 1px solid var(--clr__card-border);
+  -webkit-transition: all 0.3s;
+  -o-transition: all 0.3s;
   transition: all 0.3s;
   overflow-y: auto;
 }
@@ -141,12 +143,19 @@ const isActive = (to: string) => {
 
 .app-sidebar__app-logo {
   padding: 4rem 2rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
   justify-content: space-between;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
 
   .drawer-close {
     display: none;
+    cursor: pointer;
   }
 
   @include respond-to(medium) {
@@ -163,13 +172,19 @@ const isActive = (to: string) => {
 
 .app-sidebar__nav-link {
   a {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
     gap: 1.8rem;
     padding: 1rem 1.5rem;
     color: var(--clr__text-muted);
     text-decoration: none;
     border-left: 4px solid transparent;
+    -webkit-transition: all 0.2s;
+    -o-transition: all 0.2s;
     transition: all 0.2s;
 
     span {

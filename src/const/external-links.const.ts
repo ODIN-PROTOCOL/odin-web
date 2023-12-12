@@ -8,8 +8,8 @@ export const links = {
 export const social = {
   telegram: 'https://t.me/odinprotocol',
   twitter: 'https://twitter.com/odinprotocol',
-  discord: 'https://discord.com/invite/BrBfcgmnk2',
-  reddit: 'https://www.reddit.com/r/OdinProtocol/',
+  discord: 'https://discord.gg/BrBfcgmnk2',
+  reddit: 'https://www.reddit.com/r/OdinProtocol',
   coinmarketcap: 'https://coinmarketcap.com/currencies/odin-protocol/',
   github: 'https://github.com/ODIN-PROTOCOL',
   coingeko: 'https://www.coingecko.com/en/coins/odin-protocol',

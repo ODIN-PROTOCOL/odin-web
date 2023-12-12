@@ -386,7 +386,6 @@ router.beforeEach(() => {
   position: absolute;
   right: 1rem;
   top: 1.2rem;
-  background-color: var(--clr__action);
 }
 
 @include respond-to(tablet) {

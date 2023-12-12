@@ -157,7 +157,13 @@
               </span>
               <div class="app-table__cell app-table__cell-txt">
                 <span :title="$fCoin(proposal.totalDeposit[0])">
-                  {{ $fCoin(proposal.totalDeposit[0]) }}
+                  {{
+                    convertLokiToOdin(
+                      proposal.totalDeposit[0].amount,
+                      {},
+                      proposal.totalDeposit[0].denom,
+                    )
+                  }}
                 </span>
               </div>
             </div>
@@ -239,6 +245,7 @@ import CopyButton from '@/components/CopyButton.vue'
 import Tag from '@/components/Tag.vue'
 import TitledLink from '@/components/TitledLink.vue'
 import Markdown from 'vue3-markdown-it'
+import { convertLokiToOdin } from '@/helpers/converters'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const route: RouteLocationNormalizedLoaded = useRoute()

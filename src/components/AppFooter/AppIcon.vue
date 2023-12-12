@@ -1,7 +1,7 @@
 <template>
   <div class="app-icon">
     <template v-for="nav in navs" :key="nav.title">
-      <a target="_blank" :href="social.telegram" :title="nav.title">
+      <a target="_blank" :href="nav.link" :title="nav.title">
         <component :is="nav.icon" />
       </a>
     </template>

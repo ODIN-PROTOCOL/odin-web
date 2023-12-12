@@ -1,5 +1,5 @@
 <template>
-  <BarChart ref="barRef" v-bind="barChartProps" />
+  <BarChart class="custom-bar-chart" ref="barRef" v-bind="barChartProps" />
 </template>
 
 <script lang="ts" setup>
