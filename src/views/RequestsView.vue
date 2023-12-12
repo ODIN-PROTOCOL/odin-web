@@ -172,7 +172,7 @@ const getRequests = async () => {
 
     const req = await callers.getRequests(
       ITEMS_PER_PAGE,
-      (currentPage.value - 1) * ITEMS_PER_PAGE
+      (currentPage.value - 1) * ITEMS_PER_PAGE,
     )
 
     requests.value = req.data.result.result.requests
@@ -220,7 +220,7 @@ const createRequest = async () => {
         d.kill()
       },
     },
-    { maxAskCount: maxAskCount.value }
+    { maxAskCount: maxAskCount.value },
   )
 }
 

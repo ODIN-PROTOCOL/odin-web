@@ -3,9 +3,7 @@
     <div class="info-panel">
       <InfoPanelData class="info-panel__data" :info-panel-rows="totalData" />
       <div class="info-panel__chart-wrapper">
-        <h3 class="info-panel__chart-title">
-          Transactions history statistics
-        </h3>
+        <h3 class="info-panel__chart-title">Transactions history statistics</h3>
         <div class="info-panel__chart">
           <skeleton-loader
             v-if="isLoading"

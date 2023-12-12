@@ -13,7 +13,7 @@ export const blockChainDataBlocks = [
     chartType: 'bar',
     chartPageName: ROUTE_NAMES.averageBlockTimeChart,
   },
-];
+]
 
 export const blockChainDataTransactions = [
   {

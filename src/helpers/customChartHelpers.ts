@@ -16,7 +16,7 @@ export const getChartOptions = (datasetUnit: string, labels: string[]) => {
     responsive: true,
     scales: {
       yAxis: {
-        display: false, 
+        display: false,
         ticks: {
           count: 6,
         },

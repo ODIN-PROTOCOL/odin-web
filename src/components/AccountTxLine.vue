@@ -87,7 +87,7 @@ const props = defineProps<{
 const odinAmount = convertLokiToOdin(
   props.tx.amount[0]?.amount,
   {
-    withDenom: true
+    withDenom: true,
   },
   props.tx.amount[0]?.denom,
 )

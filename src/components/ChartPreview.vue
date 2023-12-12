@@ -53,11 +53,7 @@ import { sortingDaysForChart } from '@/helpers/helpers'
 import { formatDataForCharts } from '@/helpers/customChartHelpers'
 import CustomBarChart from '@/components/charts/CustomBarChart.vue'
 import CustomLineChart from '@/components/charts/CustomLineChart.vue'
-import {
-  UiLoadingErrorMessage,
-  UiLoader,
-  UiNoDataMessageWithImg,
-} from '@/components/ui'
+import { UiLoadingErrorMessage, UiNoDataMessageWithImg } from '@/components/ui'
 
 const props = withDefaults(
   defineProps<{
@@ -70,7 +66,7 @@ const props = withDefaults(
   }>(),
   {
     datasetUnit: '',
-  }
+  },
 )
 
 const { getDataMethodName } = toRefs(props)

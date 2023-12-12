@@ -108,7 +108,7 @@ const getODINRedirectLink = (hash: string) => {
   if (hash?.startsWith('osmo')) {
     return {
       href: `${API_CONFIG.mintScanUrl}${hash}`,
-      target: '_blank'
+      target: '_blank',
     }
   }
   return {
