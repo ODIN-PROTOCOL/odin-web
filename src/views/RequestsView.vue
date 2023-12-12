@@ -28,7 +28,21 @@
         Create Request
       </button>
     </div>
-
+    <div class="charts-view__section">
+      <div
+        v-for="item in blockChainDataRequests"
+        class="charts-view__chart-wrapper"
+        :key="item.title"
+      >
+        <h4 class="charts-view__chart-title">{{ item.title }}</h4>
+        <router-link
+          class="charts-view__chart-item"
+          :to="{ name: item.chartPageName }"
+        >
+          <ChartPreview v-bind="chartPagesProps[item.id]" />
+        </router-link>
+      </div>
+    </div>
     <div class="app-table requests-view__table">
       <div class="app-table__head requests-view__table-head">
         <span>Request ID</span>
@@ -129,6 +143,8 @@ import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import Progressbar from '@/components/ProgressbarTool.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 import TitledLink from '@/components/TitledLink.vue'
+import ChartPreview from '@/components/ChartPreview.vue'
+import { blockChainDataRequests, chartPagesProps } from '@/const'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 
@@ -156,7 +172,7 @@ const getRequests = async () => {
 
     const req = await callers.getRequests(
       ITEMS_PER_PAGE,
-      (currentPage.value - 1) * ITEMS_PER_PAGE,
+      (currentPage.value - 1) * ITEMS_PER_PAGE
     )
 
     requests.value = req.data.result.result.requests
@@ -204,7 +220,7 @@ const createRequest = async () => {
         d.kill()
       },
     },
-    { maxAskCount: maxAskCount.value },
+    { maxAskCount: maxAskCount.value }
   )
 }
 
@@ -219,7 +235,7 @@ onMounted(async () => {
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .requests-view__table-header {
   justify-content: space-between;
 }
@@ -253,6 +269,26 @@ onMounted(async () => {
 
   .requests-view__title-btn {
     display: none;
+  }
+}
+
+.charts-view__section {
+  margin-bottom: 4rem;
+
+  .charts-view__chart-wrapper {
+    padding: 2rem;
+    border-radius: 8px;
+    border: 0.1rem solid var(--clr__card-border);
+
+    .charts-view__chart-title {
+      margin-top: 0;
+      color: var(--clr__text-muted);
+      margin-bottom: 4rem;
+    }
+
+    .custom-line-chart {
+      height: 100px;
+    }
   }
 }
 </style>

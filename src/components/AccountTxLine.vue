@@ -9,7 +9,8 @@
           name: $routes.transactionDetails,
           params: { hash: getRequestItemTxHash },
         }"
-        :text="tx.tx_hash"
+        :title="tx.tx_hash"
+        :text="formatTxString(tx.tx_hash)"
         class="app-table__cell-txt app-table__link"
       />
     </div>
@@ -40,7 +41,8 @@
         v-if="tx.sender"
         :to="tx.sender"
         class="app-table__cell-txt app-table__link"
-        :text="tx.sender"
+        :title="tx.sender"
+        :text="formatTxString(tx.sender)"
       />
       <span class="app-table__cell-txt" v-else>-</span>
     </div>
@@ -50,7 +52,8 @@
         v-if="tx.receiver"
         :to="tx.receiver"
         class="app-table__cell-txt app-table__link"
-        :text="tx.receiver"
+        :title="tx.receiver"
+        :text="formatTxString(tx.receiver)"
       />
       <span class="app-table__cell-txt" v-else>-</span>
     </div>
@@ -75,6 +78,7 @@ import { humanizeMessageType } from '@/helpers/decodeMessage'
 import { convertLokiToOdin } from '@/helpers/converters'
 import { AccountTx } from '@/helpers/Types'
 import TitledLink from '@/components/TitledLink.vue'
+import { formatTxString } from '@/helpers/formatters'
 
 const props = defineProps<{
   tx: AccountTx
@@ -82,7 +86,9 @@ const props = defineProps<{
 
 const odinAmount = convertLokiToOdin(
   props.tx.amount[0]?.amount,
-  {},
+  {
+    withDenom: true
+  },
   props.tx.amount[0]?.denom,
 )
 

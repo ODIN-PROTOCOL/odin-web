@@ -44,12 +44,10 @@
       <span class="app-table__title">Sender</span>
       <TitledLink
         v-if="transition.sender"
-        :name="{
-          name: $routes.accountDetails,
-          params: { hash: transition.sender },
-        }"
+        v-bind="getODINRedirectLink(transition.sender)"
         class="app-table__cell-txt app-table__link"
-        :text="transition.sender"
+        :title="transition.sender"
+        :text="formatTxString(transition.sender)"
       />
       <span class="app-table__cell-txt" v-else> - </span>
     </div>
@@ -57,14 +55,16 @@
       <span class="app-table__title">Receiver</span>
       <TitledLink
         v-if="transition.receiver"
-        :name="{
-          name: $routes.accountDetails,
-          params: { hash: transition.receiver },
-        }"
-        :text="
+        v-bind="getODINRedirectLink(transition.receiver)"
+        :title="
           transition.receiver_name
             ? transition.receiver_name
             : transition.receiver
+        "
+        :text="
+          transition.receiver_name
+            ? transition.receiver_name
+            : formatTxString(transition.receiver)
         "
         class="app-table__cell-txt app-table__link"
       />
@@ -89,6 +89,8 @@ import { computed } from 'vue'
 import { DecodedTxData } from '@/helpers/Types'
 import TitledLink from '@/components/TitledLink.vue'
 import { formatTxString } from '@/helpers/formatters'
+import { ROUTE_NAMES } from '@/enums'
+import { API_CONFIG } from '@/api/api-config'
 
 const props = defineProps<{
   transition: DecodedTxData
@@ -101,6 +103,21 @@ const amountCellClass = computed(() => {
 
   return 'app-table__cell-tag'
 })
+
+const getODINRedirectLink = (hash: string) => {
+  if (hash?.startsWith('osmo')) {
+    return {
+      href: `${API_CONFIG.mintScanUrl}${hash}`,
+      target: '_blank'
+    }
+  }
+  return {
+    name: {
+      name: ROUTE_NAMES.accountDetails,
+      params: { hash: hash },
+    },
+  }
+}
 </script>
 
 <style lang="scss" scoped>

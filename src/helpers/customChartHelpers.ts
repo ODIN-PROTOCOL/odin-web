@@ -16,12 +16,13 @@ export const getChartOptions = (datasetUnit: string, labels: string[]) => {
     responsive: true,
     scales: {
       yAxis: {
-        beginAtZero: true,
+        display: false, 
         ticks: {
           count: 6,
         },
       },
       xAxis: {
+        display: false,
         grid: {
           display: false,
         },

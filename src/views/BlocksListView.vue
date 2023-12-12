@@ -18,6 +18,21 @@
         </span>
       </div>
     </div>
+    <div class="charts-view__section">
+      <div
+        v-for="item in blockChainDataBlocks"
+        class="charts-view__chart-wrapper"
+        :key="item.title"
+      >
+        <h4 class="charts-view__chart-title">{{ item.title }}</h4>
+        <router-link
+          class="charts-view__chart-item"
+          :to="{ name: item.chartPageName }"
+        >
+          <ChartPreview v-bind="chartPagesProps[item.id]" />
+        </router-link>
+      </div>
+    </div>
     <div class="app-table blocks-list__table">
       <div class="app-table__head blocks-list__table-head">
         <span v-for="(item, index) in headerTitles" :key="index">
@@ -110,6 +125,7 @@
 </template>
 
 <script setup lang="ts">
+import { blockChainDataBlocks, chartPagesProps } from '@/const'
 import { ref, onMounted, computed } from 'vue'
 import { callers } from '@/api/callers'
 import { prepareBlocks } from '@/helpers/blocksHelper'
@@ -120,6 +136,7 @@ import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 import TitledLink from '@/components/TitledLink.vue'
 import { formatTxString } from '@/helpers/formatters'
+import ChartPreview from '@/components/ChartPreview.vue'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const ITEMS_PER_PAGE = 20
@@ -198,7 +215,7 @@ onMounted(async (): Promise<void> => {
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @include respond-to(tablet) {
   .blocks-list__table-row {
     grid: none;
@@ -214,6 +231,29 @@ onMounted(async (): Promise<void> => {
     min-width: 15rem;
     margin-right: 2.4rem;
     font-weight: 300;
+  }
+}
+
+.charts-view__section {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2.4rem;
+  margin-bottom: 4rem;
+
+  .charts-view__chart-wrapper {
+    padding: 2rem;
+    border-radius: 8px;
+    border: 0.1rem solid var(--clr__card-border);
+
+    .charts-view__chart-title {
+      margin-top: 0;
+      color: var(--clr__text-muted);
+      margin-bottom: 4rem;
+    }
+
+    .custom-bar-chart {
+      height: 100px;
+    }
   }
 }
 </style>

@@ -75,7 +75,12 @@
       </template>
       <template v-else>
         <div class="app-table__empty-stub">
-          <ui-loader positionCenter message="Loading" />
+          <skeleton-loader
+            class="info-panel__chart-skeleton"
+            width="100%"
+            pill
+            shimmer
+          />
         </div>
       </template>
     </div>
@@ -108,7 +113,7 @@ const props = withDefaults(
   }>(),
   {
     datasetUnit: '',
-  },
+  }
 )
 
 const { getDataMethodName } = toRefs(props)
@@ -178,5 +183,10 @@ onMounted(async (): Promise<void> => {
       width: 100%;
     }
   }
+}
+
+.chart-panel__chart-skeleton {
+  height: 100px;
+  border-radius: 8px;
 }
 </style>

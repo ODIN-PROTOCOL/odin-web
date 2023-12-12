@@ -3,9 +3,9 @@
     <div class="info-panel">
       <InfoPanelData class="info-panel__data" :info-panel-rows="totalData" />
       <div class="info-panel__chart-wrapper">
-        <div class="info-panel__chart-title">
+        <h3 class="info-panel__chart-title">
           Transactions history statistics
-        </div>
+        </h3>
         <div class="info-panel__chart">
           <skeleton-loader
             v-if="isLoading"
@@ -166,9 +166,9 @@ onMounted(async () => {
 }
 
 .info-panel__chart-title {
-  margin-bottom: 1.53rem;
-  font-size: 2.4rem;
+  margin-bottom: 4rem;
   font-weight: 400;
+  color: var(--clr__text-muted);
 }
 
 .info-panel__chart {

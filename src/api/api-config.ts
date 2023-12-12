@@ -15,6 +15,7 @@ export const API_CONFIG = {
   fee: process.env.VUE_APP_FEE as string,
   graphqlUrl: process.env.VUE_APP_NEXT_PUBLIC_GRAPHQL_URL as string,
   graphqlActions: process.env.VUE_APP_GRAPHQL_ACTIONS_URL as string,
+  mintScanUrl: process.env.VUE_APP_MINSTSCAN_URL as string
 }
 
 export const START_VALUE = {

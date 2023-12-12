@@ -289,7 +289,9 @@ const fetchData = async () => {
       odinPric24HRChange.value = odinPriceData.data['24h_change']
     }
     fdv.value = +convertLokiToOdin(
-      (supplyAmount * odinPrice.value).toString(),
+      // Important::Temporary Fix Number
+      (27652292 * odinPrice.value).toString(),
+      // Important::Temporary Fix Number
       {
         onlyNumber: true,
         toFixed: 2,

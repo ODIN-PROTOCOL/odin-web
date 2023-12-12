@@ -101,12 +101,6 @@ const routes: Array<RouteRecordRaw> = [
           import(/* webpackChunkName: "charts" */ '@/views/ChartsPage.vue'),
         children: [
           {
-            path: '',
-            name: ROUTE_NAMES.chartsStats,
-            component: () =>
-              import(/* webpackChunkName: "charts" */ '@/views/ChartsView.vue'),
-          },
-          {
             path: 'validators',
             name: ROUTE_NAMES.blockValidatorsChart,
             component: () =>
