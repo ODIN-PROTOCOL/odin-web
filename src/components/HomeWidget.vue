@@ -38,7 +38,7 @@
       />
       <template v-else>
         <h4>{{ marketCap }}</h4>
-        <small>(FDA {{ numberFormatter(fdv) }})</small>
+        <small>(FDV {{ numberFormatter(fdv) }})</small>
       </template>
     </div>
 
@@ -226,7 +226,7 @@ const createDataRef = (defaultValue = 0) => ref(defaultValue)
 const fetchLoading = ref(true)
 const odinPrice = createDataRef()
 const odinPric24HRChange = createDataRef()
-const marketCap = createDataRef('$554k')
+const marketCap = createDataRef('$884k')
 const latestBlock = createDataRef()
 const validators = createDataRef()
 const transaction = createDataRef()
