@@ -9,8 +9,8 @@
           name: $routes.transactionDetails,
           params: { hash: getRequestItemTxHash },
         }"
-        :title="tx.tx_hash"
-        :text="formatTxString(tx.tx_hash)"
+        :title="tx.tx_hash.replace(/^0x/, '')"
+        :text="formatTxString(tx.tx_hash.replace(/^0x/, ''))"
         class="app-table__cell-txt app-table__link"
       />
     </div>
