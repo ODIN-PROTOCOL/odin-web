@@ -1,7 +1,7 @@
 <template>
   <aside class="app-sidebar" :class="open ? 'open' : 'close'">
     <div class="app-sidebar__app-logo">
-      <router-link :to="{ name: $routes.app }">
+      <router-link :to="{ name: $routes.app }" @click="closeSidebar">
         <app-logo-icon />
       </router-link>
 
@@ -15,7 +15,7 @@
         class="app-sidebar__nav-link"
         :class="isActive(nav.to) ? 'active' : ''"
       >
-        <router-link :to="nav.to">
+        <router-link :to="nav.to" @click="closeSidebar">
           <component :is="nav.icon" class="nav-icon" />
           <span>{{ nav.title }}</span>
         </router-link>
@@ -113,6 +113,12 @@ const isActive = (to: string) => {
     return route.fullPath === '/'
   } else {
     return route.fullPath.startsWith(to)
+  }
+}
+
+const closeSidebar = () => {
+  if (window.innerWidth <= 1022) {
+    emit('toggleSidebar')
   }
 }
 </script>
