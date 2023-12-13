@@ -248,19 +248,19 @@ onMounted(async () => {
 
 @include respond-to(tablet) {
   .app-table__head {
-    display: none;
+    display: none !important;
   }
 
   .app-table__title {
     min-width: 15rem;
     margin-right: 2.4rem;
-    display: inline-block;
+    display: inline-block !important;
     font-weight: 300;
   }
 
   .app-table__row {
     padding: 3.4rem 0 1.6rem;
-    grid: none;
+    grid: none !important;
   }
 
   .requests-view {
@@ -268,7 +268,7 @@ onMounted(async () => {
   }
 
   .requests-view__title-btn {
-    display: none;
+    display: none !important;
   }
 }
 

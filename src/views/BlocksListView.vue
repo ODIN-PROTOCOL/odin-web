@@ -218,18 +218,18 @@ onMounted(async (): Promise<void> => {
 <style lang="scss">
 @include respond-to(tablet) {
   .blocks-list__table-row {
-    grid: none;
-    padding: 3.4rem 0 1.6rem;
+    grid: none !important;
+    padding: 3.4rem 0 1.6rem !important;
   }
 
   .blocks-list__table-head {
-    display: none;
+    display: none !important;
   }
 
   .blocks-list__table-title {
-    display: inline-block;
+    display: inline-block !important;
     min-width: 15rem;
-    margin-right: 2.4rem;
+    margin-right: 2.4rem !important;
     font-weight: 300;
   }
 }
@@ -254,6 +254,12 @@ onMounted(async (): Promise<void> => {
     .custom-bar-chart {
       height: 100px;
     }
+  }
+}
+
+@include respond-to(small) {
+  .charts-view__section {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 }
 </style>

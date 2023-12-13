@@ -19,6 +19,7 @@ import AppIcon from '@/components/AppFooter/AppIcon.vue'
 
 <style scoped lang="scss">
 .app-footer {
+  border-top: 1px solid var(--clr__card-border);
   background-color: var(--clr__header-bg);
 }
 

@@ -173,4 +173,10 @@ onMounted(async () => {
     }
   }
 }
+
+@include respond-to(small) {
+  .charts-view__section {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+}
 </style>

@@ -15,6 +15,12 @@
     gap: 2.4rem;
   }
 
+  @include respond-to(tablet) {
+    .app-table__head {
+      display: none;
+    }
+  }
+
   .app-table__head {
     border-bottom: 0.1rem solid var(--clr__table-border);
     color: var(--clr__text-muted);

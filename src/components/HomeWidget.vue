@@ -37,7 +37,14 @@
         shimmer
       />
       <template v-else>
-        <h4>{{ marketCap }}</h4>
+        <h4>
+          {{
+            priceFormatter(marketCap, {
+              notation: 'compact',
+              maximumSignificantDigits: 5,
+            })
+          }}
+        </h4>
         <small>(FDV {{ numberFormatter(fdv) }})</small>
       </template>
     </div>
@@ -226,7 +233,7 @@ const createDataRef = (defaultValue = 0) => ref(defaultValue)
 const fetchLoading = ref(true)
 const odinPrice = createDataRef()
 const odinPric24HRChange = createDataRef()
-const marketCap = createDataRef('$884k')
+const marketCap = createDataRef()
 const latestBlock = createDataRef()
 const validators = createDataRef()
 const transaction = createDataRef()
@@ -265,6 +272,7 @@ const fetchData = async () => {
     const supplyAmount = supply.data.supply.find(
       item => item.denom === 'loki',
     ).amount
+
     inflation.value = inflationData.data.inflation
     latestBlock.value = blockData.data.result.block.header.height
     validators.value = validatorData.data.result.total
@@ -288,10 +296,13 @@ const fetchData = async () => {
       odinPrice.value = odinPriceData.data.price
       odinPric24HRChange.value = odinPriceData.data['24h_change']
     }
+
+    // Important::Temporary Value
+    marketCap.value = 27652292 * odinPrice.value
+    // Important::Temporary Value
+
     fdv.value = +convertLokiToOdin(
-      // Important::Temporary Fix Number
-      (27652292 * odinPrice.value).toString(),
-      // Important::Temporary Fix Number
+      (supplyAmount * odinPrice.value).toString(),
       {
         onlyNumber: true,
         toFixed: 2,
