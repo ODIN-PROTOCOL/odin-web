@@ -38,7 +38,7 @@ withDefaults(
   }>(),
   {
     isOpen: false,
-  }
+  },
 )
 
 const emit = defineEmits<{
