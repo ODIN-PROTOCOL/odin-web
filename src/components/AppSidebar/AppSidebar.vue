@@ -23,6 +23,18 @@
 
       <div v-if="nav.divider" class="app-sidebar__divider"></div>
     </template>
+
+    <template v-if="!isLoggedIn">
+      <div class="app-sidebar_connect-wallet">
+        <router-link
+          class="app-btn app-btn--small user-widget__connect-wallet-btn"
+          :to="{ name: $routes.auth }"
+          @click="closeSidebar"
+        >
+          Connect Wallet
+        </router-link>
+      </div>
+    </template>
   </aside>
 </template>
 
@@ -40,6 +52,7 @@ import {
   DocumentIcon,
   CloseIcon,
 } from '@/components/icons'
+import { useAuthorization } from '@/composables/useAuthorization'
 import { useRoute } from 'vue-router'
 
 defineProps({
@@ -50,6 +63,8 @@ defineProps({
 
 const emit = defineEmits(['toggleSidebar'])
 const route = useRoute()
+
+const { isLoggedIn } = useAuthorization()
 
 const navs = [
   {
@@ -213,6 +228,21 @@ const closeSidebar = () => {
   a,
   .nav-icon {
     color: var(--clr__action) !important;
+  }
+}
+
+.app-sidebar_connect-wallet {
+  display: none;
+  padding: 1rem 1.5rem;
+}
+
+.user-widget__connect-wallet-btn {
+  text-decoration: none;
+}
+
+@include respond-to(tablet) {
+  .app-sidebar_connect-wallet {
+    display: block;
   }
 }
 </style>
