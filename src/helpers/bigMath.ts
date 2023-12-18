@@ -104,7 +104,11 @@ export function bigToStrStrict(num: NumLike): string {
 }
 
 function bigConvectOdinAndGeo(num: NumLike): string {
-  return bigFormat(bigDivide(num, _bn(10).exponentiatedBy(6)))
+  return bigFormat(bigDivide(num, _bn(10).exponentiatedBy(6), {
+    decimals: 1
+  }), {
+    decimals: 1
+  })
 }
 
 export const big = {
