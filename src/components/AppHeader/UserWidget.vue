@@ -73,8 +73,6 @@ const closeBurger = () => {
 }
 
 @include respond-to(tablet) {
-  .user-widget__log-out,
-  .user-widget__wallet,
   .user-widget__connect-wallet-btn {
     display: none;
   }
