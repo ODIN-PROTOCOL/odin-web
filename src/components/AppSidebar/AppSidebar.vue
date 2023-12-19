@@ -10,6 +10,22 @@
       </div>
     </div>
 
+    <div v-if="!isLoggedIn" class="app-sidebar__divider"></div>
+
+    <template v-if="!isLoggedIn">
+      <div class="app-sidebar_connect-wallet">
+        <router-link
+          class="app-btn app-btn--small user-widget__connect-wallet-btn"
+          :to="{ name: $routes.auth }"
+          @click="closeSidebar"
+        >
+          Connect Wallet
+        </router-link>
+      </div>
+    </template>
+
+    <div v-if="!isLoggedIn" class="app-sidebar__divider"></div>
+
     <template v-for="nav in navs" :key="nav.to">
       <div
         class="app-sidebar__nav-link"
@@ -22,18 +38,6 @@
       </div>
 
       <div v-if="nav.divider" class="app-sidebar__divider"></div>
-    </template>
-
-    <template v-if="!isLoggedIn">
-      <div class="app-sidebar_connect-wallet">
-        <router-link
-          class="app-btn app-btn--small user-widget__connect-wallet-btn"
-          :to="{ name: $routes.auth }"
-          @click="closeSidebar"
-        >
-          Connect Wallet
-        </router-link>
-      </div>
     </template>
   </aside>
 </template>
@@ -152,6 +156,7 @@ const closeSidebar = () => {
   -o-transition: all 0.3s;
   transition: all 0.3s;
   overflow-y: auto;
+  height: 100vh;
 }
 
 .app-sidebar.open {
