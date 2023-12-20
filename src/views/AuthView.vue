@@ -113,6 +113,8 @@ const flattenForm = form.flatten()
 const copyWarning = ref(false)
 
 const submit = async () => {
+  // prevent double submit
+  if (isLoading.value === true) return
   lockLoading()
   try {
     if (props.loginType === LOGIN_TYPE.KEPLR118) {
