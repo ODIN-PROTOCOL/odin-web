@@ -53,9 +53,9 @@
               <TitledLink
                 :name="{
                   name: $routes.blockDetails,
-                  params: { id: item.header.height },
+                  params: { id: item.height },
                 }"
-                :text="item.header.height"
+                :text="item.height"
                 class="app-table__cell-txt app-table__link"
               />
             </div>
@@ -72,10 +72,10 @@
                 Date
               </span>
               <span class="app-table__cell-date">
-                {{ $fDate(item.header.time, 'dd/MM/yy') }}
+                {{ $fDate($parseISO(item.timestamp), 'dd/MM/yy') }}
               </span>
               <span class="app-table__cell-time">
-                {{ $fDate(item.header.time, 'HH:mm') }}
+                {{ $fDate($parseISO(item.timestamp), 'HH:mm') }}
               </span>
             </div>
             <div class="app-table__cell">
@@ -93,9 +93,14 @@
               <TitledLink
                 :name="{
                   name: $routes.validatorDetails,
-                  params: { address: item.validator },
+                  params: {
+                    address: item.validator.validator_info.operator_address,
+                  },
                 }"
-                :text="item.name"
+                :text="
+                  item.validatorDetails?.moniker ||
+                  item.validator.validator_info.operator_address
+                "
                 class="app-table__cell-txt app-table__link"
               />
             </div>
@@ -128,30 +133,32 @@
 import { blockChainDataBlocks, chartPagesProps } from '@/const'
 import { ref, onMounted, computed } from 'vue'
 import { callers } from '@/api/callers'
-import { prepareBlocks } from '@/helpers/blocksHelper'
+import { prepareBlockMetas } from '@/helpers/blocksHelper'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
-import { START_VALUE } from '@/api/api-config'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 import TitledLink from '@/components/TitledLink.vue'
 import { formatTxString } from '@/helpers/formatters'
 import ChartPreview from '@/components/ChartPreview.vue'
+import { ValidatorDetailedInfo } from '@/graphql/types/responses'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const ITEMS_PER_PAGE = 20
-const MIN_POSSIBLE_BLOCK_HEIGHT = Number(START_VALUE.minHeight)
 
 const blocks = ref()
 const currentPage = ref<number>(1)
 const lastBlockHeight = ref()
+const blocksCount = ref<number>(0)
 const minHeight = ref()
 const maxHeight = ref()
-const totalPages = ref<number>()
+const totalPages = ref<number>(0)
+const validators = ref<ValidatorDetailedInfo[]>([])
 
-const blocksCount = computed(() =>
-  lastBlockHeight.value ? lastBlockHeight.value - MIN_POSSIBLE_BLOCK_HEIGHT : 0,
-)
+const getValidators = async (): Promise<void> => {
+  const response = await callers.getValidators()
+  validators.value = response.data.validators || []
+}
 
 const headerTitles = [
   { title: 'Block' },
@@ -165,14 +172,25 @@ const initBlocks = async () => {
   lockLoading()
 
   try {
-    const { lastHeight, blockMetas } = await callers.getBlockchain()
-    blocks.value = await prepareBlocks(blockMetas)
-    lastBlockHeight.value = lastHeight
-    totalPages.value = Math.ceil(
-      (lastHeight - MIN_POSSIBLE_BLOCK_HEIGHT) / ITEMS_PER_PAGE,
+    await getValidators()
+
+    const response = await callers.getBlockchain(
+      ITEMS_PER_PAGE,
+      'desc',
+      currentPage.value * ITEMS_PER_PAGE,
     )
-    maxHeight.value = lastHeight
-    minHeight.value = lastHeight - ITEMS_PER_PAGE
+    const blockMetas = response.data.blockMetas
+
+    blocks.value = await prepareBlockMetas(blockMetas, validators.value)
+    lastBlockHeight.value = response.data.latestBlock[0].height || 0
+    blocksCount.value = response.data.totalCount.aggregate.count || 0
+
+    totalPages.value = Math.ceil(
+      Number(blocksCount.value) /
+        ITEMS_PER_PAGE,
+    )
+    maxHeight.value = lastBlockHeight.value
+    minHeight.value = lastBlockHeight.value - ITEMS_PER_PAGE
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
@@ -180,21 +198,27 @@ const initBlocks = async () => {
   releaseLoading()
 }
 
-const getBLocks = async (): Promise<void> => {
+const getBlocks = async (): Promise<void> => {
   lockLoading()
 
   try {
     blocks.value = []
-    const { lastHeight, blockMetas } = await callers.getBlockchain(
-      minHeight.value,
-      maxHeight.value,
-    )
+    await getValidators()
 
-    lastBlockHeight.value = lastHeight
-    totalPages.value = Math.ceil(
-      (lastHeight - MIN_POSSIBLE_BLOCK_HEIGHT) / ITEMS_PER_PAGE,
+    const response = await callers.getBlockchain(
+      ITEMS_PER_PAGE,
+      'desc',
+      currentPage.value * ITEMS_PER_PAGE,
     )
-    blocks.value = await prepareBlocks(blockMetas)
+    blocksCount.value = response.data.totalCount.aggregate.count || 0
+
+    const { blockMetas } = response.data
+    lastBlockHeight.value = response.data.latestBlock[0].height || 0
+
+    totalPages.value = Math.ceil(
+      blocksCount.value / ITEMS_PER_PAGE,
+    )
+    blocks.value = await prepareBlockMetas(blockMetas, validators.value)
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
@@ -203,11 +227,7 @@ const getBLocks = async (): Promise<void> => {
 }
 
 const updateHandler = async (num: number) => {
-  minHeight.value = lastBlockHeight.value - num * ITEMS_PER_PAGE
-  maxHeight.value = minHeight.value + ITEMS_PER_PAGE
-  if (minHeight.value < MIN_POSSIBLE_BLOCK_HEIGHT)
-    minHeight.value = MIN_POSSIBLE_BLOCK_HEIGHT
-  await getBLocks()
+  await getBlocks()
 }
 
 onMounted(async (): Promise<void> => {

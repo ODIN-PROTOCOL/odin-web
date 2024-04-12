@@ -16,6 +16,8 @@ import {
   differenceInSeconds,
 } from 'date-fns'
 import Long from 'long'
+import { Moment } from 'moment'
+import * as moment from 'moment'
 
 const NBSP = '\u00A0'
 
@@ -144,8 +146,9 @@ export function formatDateDifference(
 }
 
 function _getDateDifference(dateLeft: Date | number): string {
-  const hourRange = Math.abs(differenceInHours(dateLeft, new Date()))
-
+  const nowUTC = moment.utc()
+  // const hourRange = Math.abs(differenceInHours(dateLeft, new Date()))
+  const hourRange = moment.duration(nowUTC.diff(dateLeft)).asHours()
   if (hourRange <= 1) {
     return `${hourRange} hour ago`
   } else if (hourRange < 48) {
@@ -209,6 +212,15 @@ export function diffDays(dateLeft: Date, dateRight: Date): string {
     return `${differenceInMinutes(dateLeft, dateRight)} minutes ago`
 
   return `${differenceInSeconds(dateLeft, dateRight)} secs ago`
+}
+
+export function diffMoment(dateLeft: Moment, dateRight: Moment): string {
+  const diff = moment.duration(dateRight.diff(dateLeft))
+  if (diff.asDays() >= 1) return `${diff.asDays()} days ago`
+  if (diff.asHours() >= 1) return `${diff.asHours()} hours ago`
+  if (diff.asMinutes() >= 1) return `${diff.asMinutes()} minutes ago`
+  if (diff.asSeconds() >= 1) return `${diff.asSeconds()} seconds ago`
+  return 'just now'
 }
 
 export function cropText(value?: string): string {

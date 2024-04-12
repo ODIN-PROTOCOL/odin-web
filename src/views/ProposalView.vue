@@ -66,7 +66,7 @@
               <div class="app-table__cell">
                 <Markdown
                   class="info-table__row-value"
-                  :source="fixMarkdown(proposal.content?.description)"
+                  :source="fixMarkdown(proposal.description || '')"
                 />
               </div>
             </div>
@@ -112,10 +112,10 @@
               </span>
               <div class="app-table__cell">
                 <span class="app-table__cell-date">
-                  {{ $fDate(proposal.submitTime, 'dd/MM/yy') }}
+                  {{ $fDate($parseISO(proposal.submitTime), 'dd/MM/yy') }}
                 </span>
                 <span class="app-table__cell-time">
-                  {{ $fDate(proposal.submitTime, 'HH:mm') }}
+                  {{ $fDate($parseISO(proposal.submitTime), 'HH:mm') }}
                 </span>
               </div>
             </div>
@@ -127,10 +127,10 @@
               </span>
               <div class="app-table__cell">
                 <span class="app-table__cell-date">
-                  {{ $fDate(proposal.votingStartTime, 'dd/MM/yy') }}
+                  {{ $fDate($parseISO(proposal.votingStartTime), 'dd/MM/yy') }}
                 </span>
                 <span class="app-table__cell-time">
-                  {{ $fDate(proposal.votingStartTime, 'HH:mm') }}
+                  {{ $fDate($parseISO(proposal.votingStartTime), 'HH:mm') }}
                 </span>
               </div>
             </div>
@@ -142,10 +142,10 @@
               </span>
               <div class="app-table__cell">
                 <span class="app-table__cell-date">
-                  {{ $fDate(proposal.votingEndTime, 'dd/MM/yy') }}
+                  {{ $fDate($parseISO(proposal.votingEndTime), 'dd/MM/yy') }}
                 </span>
                 <span class="app-table__cell-time">
-                  {{ $fDate(proposal.votingEndTime, 'HH:mm') }}
+                  {{ $fDate($parseISO(proposal.votingEndTime), 'HH:mm') }}
                 </span>
               </div>
             </div>
@@ -156,12 +156,12 @@
                 Deposited
               </span>
               <div class="app-table__cell app-table__cell-txt">
-                <span :title="$fCoin(proposal.totalDeposit[0])">
+                <span :title="$fCoin(proposal.deposits[0])">
                   {{
                     convertLokiToOdin(
-                      proposal.totalDeposit[0].amount,
+                      proposal.deposits[0].amount,
                       {},
-                      proposal.totalDeposit[0].denom,
+                      proposal.deposits[0].denom,
                     )
                   }}
                 </span>
@@ -188,7 +188,7 @@
               </div>
             </div>
           </div>
-        </template>
+        </template>        
         <template v-else>
           <div class="app-table__empty-stub">
             <ui-no-data-message />
@@ -226,11 +226,8 @@
 import { ref, onMounted } from 'vue'
 import { callers } from '@/api/callers'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
-import { ProposalDecoded } from '@/helpers/proposalDecoders'
-import { PROPOSAL_STATUS } from '@/enums'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
-import { getTransformedProposals } from '@/helpers/proposalHelpers'
 import { proposalStatusType } from '@/helpers/statusTypes'
 import { capitalizeFirstLetter } from '@/helpers/formatters'
 import { wallet } from '@/api/wallet'
@@ -263,15 +260,15 @@ function fixMarkdown(apiMarkdown: string) {
 const getProposal = async () => {
   lockLoading()
   try {
-    const response = await callers.getProposal(String(route.params.id))
-    const transformedProposals = await getTransformedProposals([
-      response.proposal,
-    ])
-    proposal.value = transformedProposals[0]
-    if (proposal.value?.status === PROPOSAL_STATUS.votingPeriod) {
+    const response = await callers.getProposal(Number(route.params.id))
+    proposal.value = response.data.proposal[0] || null
+
+    if (proposal.value?.status === 'PROPOSAL_STATUS_VOTING_PERIOD') {
       voteBtnText.value = 'Vote'
     }
-    await getTally(proposal.value)
+    
+    tally.value = response.data.proposal[0].finalTallyResult
+
   } catch (error) {
     isLoadingError.value = true
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
@@ -279,23 +276,23 @@ const getProposal = async () => {
   releaseLoading()
 }
 
-const getTally = async (proposal: ProposalDecoded) => {
-  lockLoading()
-  try {
-    if (Number(proposal.status) === PROPOSAL_STATUS.votingPeriod) {
-      tally.value = await callers
-        .getProposalTally(proposal.proposalId)
-        .then(r => r.tally)
-        .catch(() => proposal.finalTallyResult)
-    } else {
-      tally.value = proposal.finalTallyResult
-    }
-  } catch (error) {
-    isLoadingError.value = true
-    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-  }
-  releaseLoading()
-}
+// const getTally = async (proposal: ProposalDecoded) => {
+//   lockLoading()
+//   try {
+//     if (Number(proposal.status) === PROPOSAL_STATUS.votingPeriod) {
+//       tally.value = await callers
+//         .getProposalTally(proposal.proposalId)
+//         .then(r => r.tally)
+//         .catch(() => proposal.finalTallyResult)
+//     } else {
+//       tally.value = proposal.finalTallyResult
+//     }
+//   } catch (error) {
+//     isLoadingError.value = true
+//     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+//   }
+//   releaseLoading()
+// }
 
 onMounted(async () => {
   await getProposal()

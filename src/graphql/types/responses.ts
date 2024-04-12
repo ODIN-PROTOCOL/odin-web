@@ -1,4 +1,5 @@
-import { Coin } from '@/helpers/Types'
+import { AmountDetails, Coin } from '@/helpers/Types'
+import { Any } from 'cosmjs-types/google/protobuf/any'
 
 export interface AccountStakingInfoResponse {
   delegationBalance: {
@@ -7,6 +8,106 @@ export interface AccountStakingInfoResponse {
   stakingPool: {
     bonded: number
     unbonded: number
+  }
+}
+
+export interface ValidatorBaseInfo {
+  validator: {
+    validator_info: {
+      operator_address: string
+    }
+  }
+}
+
+export interface ValidatorDetailedInfo extends ValidatorBaseInfo {
+  moniker: string
+  avatarUrl: string
+  details: string
+}
+
+export interface ValidatorsResponse {
+  validators: ValidatorDetailedInfo[]
+}
+
+export interface BlockInfo {
+  hash: string
+  height: number
+  txs: number
+  timestamp: string
+  validator: {
+    validator_info: {
+      operator_address: string
+    }
+  }
+  size: number
+}
+
+export interface BlockInfo {
+  hash: string
+  height: number
+  txs: number
+  timestamp: string
+  size: number
+}
+
+export interface TransformedBlockInfo extends BlockInfo {
+  validatorDetails: ValidatorDetailedInfo | null
+}
+
+export interface BlockMetaResponse {
+  blockMetas: BlockInfo[]
+  latestBlock: BlockInfo[]
+  totalCount: {
+    aggregate: {
+      count: number
+    }
+  }
+}
+
+export interface LatestBlockInfo {
+  height: number
+  time: string
+}
+
+export interface LatestBlocksResponse {}
+
+export interface Transaction {
+  hash: string
+  sender: string
+  gas_used: number
+  gas_wanted: number
+  memo: string
+  messages: Any[]
+  logs: Any[]
+  fee: AmountDetails[]
+  success: boolean
+  height: number
+  block: {
+    timestamp: string
+  }
+}
+
+export interface TxResponseData {
+  transaction: Transaction[]
+  transaction_aggregate: {
+    aggregate: {
+      count: number
+    }
+  }
+}
+
+export interface TxResponse {
+  data: TxResponseData
+}
+
+export interface TxVolumeData {
+  day: string
+  transaction_volume: number
+}
+
+export interface TxVolumePerDaysResponse {
+  data: {
+    daily_transaction_volume: TxVolumeData[]
   }
 }
 
@@ -56,7 +157,7 @@ export interface ValidatorsInfo {
   ]
 }
 
-export interface ValidatorsResponse {
+export interface DetailedValidatorsResponse {
   slashingParams: [
     {
       params: {
@@ -98,4 +199,8 @@ export interface ValidatorResponse {
 
 export interface SupplyResponse {
   supply: [{ coins: Coin[] }]
+}
+
+export interface TreasuryPoolResponse { 
+  treasuryPool: [{ coins: Coin[] }]
 }

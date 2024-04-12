@@ -9,23 +9,30 @@ import { proposalStatusType } from '@/helpers/statusTypes'
 import { callers } from '@/api/callers'
 import { ProposalStatus } from '@provider/codec/cosmos/gov/v1beta1/gov'
 
-export const getTransformedProposals = async (
-  proposals: ProposalDecoded[],
-): Promise<TransformedProposal[]> => {
-  const transformedProposals = await Promise.all(
-    proposals.map(async item => {
-      const response = await callers.getProposer(item.proposalId)
-      const proposer = await response.json()
-      return {
-        ...item,
-        proposerAddress: proposer.result.proposer,
-        humanizeStatus: proposalStatusType[item.status].name,
-      }
-    }),
-  )
+// export const getTransformedProposals = async (
+//   proposals: ProposalDecoded[],
+// ): Promise<TransformedProposal[]> => {
+//   const transformedProposals = await Promise.all(
+//     proposals.map(async item => {
+      
+//       if (!item.proposalId) return { 
+//         ...item,
+//         proposerAddress: '',
+//         humanizeStatus: proposalStatusType[item.status].name,
+//       }
 
-  return transformedProposals
-}
+//       const response = await callers.getProposer(item.proposalId)
+//       const proposer = await response.json()
+//       return {
+//         ...item,
+//         proposerAddress: proposer.result.proposer,
+//         humanizeStatus: proposalStatusType[item.status].name,
+//       }
+//     }),
+//   )
+
+//   return transformedProposals
+// }
 
 const defaultProposalsCountBlank: defaultChartDataBlank[] = [
   { name: 'Approved', color: '#00D097' },

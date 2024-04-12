@@ -160,11 +160,11 @@ const getDelegators = async () => {
 }
 
 watch([isValidatorResponseLoading], async () => {
-  await getValidator()
+  // await getValidator()
 })
 
 onMounted(async () => {
-  await getValidator()
+  // await getValidator()
   await getDelegators()
 })
 </script>

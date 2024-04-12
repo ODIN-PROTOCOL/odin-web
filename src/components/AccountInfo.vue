@@ -25,6 +25,29 @@
             </span>
           </div>
         </div>
+        <div class="account-info__card-balance-row">
+          <span class="account-info__card-balance-row-title">DOKI</span>
+          <div class="account-info__card-balance-row-value-wrapper">
+            <span
+              class="account-info__card-balance-row-value app-table__cell-txt"
+              :title="dokiBalance"
+            >
+              {{ dokiBalance }}
+            </span>
+          </div>
+        </div>
+        <div class="account-info__card-balance-row">
+          <span class="account-info__card-balance-row-title">MYRK</span>
+          <div class="account-info__card-balance-row-value-wrapper">
+            <span
+              class="account-info__card-balance-row-value app-table__cell-txt app-table__link"
+              :title="myrkBalance"
+            >
+              {{ myrkBalance }}
+            </span>
+          </div>
+        </div>
+
       </div>
     </div>
     <div class="account-info__card card-frame">
@@ -73,6 +96,8 @@ import {
 const props = defineProps<{
   odinBalance: string
   geoBalance: string
+  dokiBalance: string
+  myrkBalance: string
   address: string
 }>()
 
@@ -109,7 +134,10 @@ const stakedPercentage: ComputedRef<string> = computed(() => {
   if (loading.value) {
     return '0%'
   }
-  const odinStakingPool = result?.value?.stakingPool[0]
+  const odinStakingPool = result?.value?.stakingPool || {
+    bonded: '0',
+    unbonded: '0',
+  }
   const bondedTotal = Number(odinStakingPool?.bonded)
   const unbondedTotal = Number(odinStakingPool?.unbonded)
   const stakingTotal = bondedTotal + unbondedTotal

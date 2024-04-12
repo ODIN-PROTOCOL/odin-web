@@ -191,8 +191,8 @@ import {
   VALIDATOR_STATUS,
 } from '@/helpers/validatorHelpers'
 import { useQuery } from '@vue/apollo-composable'
-import { ValidatorsQuery } from '@/graphql/queries'
-import { ValidatorsResponse, ValidatorsInfo } from '@/graphql/types'
+import { DetailedValidatorsQuery } from '@/graphql/queries'
+import { ValidatorsInfo, DetailedValidatorsResponse } from '@/graphql/types'
 import { CancelIcon, SearchIcon } from '@/components/icons'
 import {
   ClaimAllRewardsFormModal,
@@ -221,7 +221,7 @@ const filteredValidators = ref()
 const validators = ref()
 const delegations = ref<{ [k: string]: DelegationResponse }>({})
 const isDelegator = computed(() => Object.keys(delegations.value).length !== 0)
-const allValitors = ref<ValidatorsInfo[]>([])
+const allValidators = ref<ValidatorsInfo[]>([])
 const activeValidators = ref<ValidatorsInfo[]>([])
 const inactiveValidators = ref<ValidatorsInfo[]>([])
 const delegatedAdress = ref<string[]>([])
@@ -243,7 +243,7 @@ const myValidatorsTitle = computed(() =>
 const myDelegationsValitors = computed(() =>
   delegatedAdress.value.map((validatorAddress: string) => {
     return {
-      ...allValitors.value.find(
+      ...allValidators.value.find(
         (validator: ValidatorsInfo) =>
           validator.info.operatorAddress === validatorAddress,
       ),
@@ -278,7 +278,8 @@ const updateWidth = () => {
   windowInnerWidth.value = document.documentElement.clientWidth
 }
 const { result, loading: isValidatorsResponseLoading } =
-  useQuery<ValidatorsResponse>(ValidatorsQuery)
+  useQuery<DetailedValidatorsResponse>(DetailedValidatorsQuery)
+
 const signedBlocks = computed(() =>
   Number(result.value?.slashingParams[0]?.params?.signed_blocks_window),
 )
@@ -334,7 +335,10 @@ const getValidators = async () => {
       }),
     )) as unknown as ValidatorsInfo[]
 
-    allValitors.value = [...inactiveValidators.value, ...activeValidators.value]
+    allValidators.value = [
+      ...inactiveValidators.value,
+      ...activeValidators.value,
+    ]
 
     validators.value = isDisabledDelegationsTab.value
       ? [...myDelegationsValitors.value]
@@ -342,7 +346,7 @@ const getValidators = async () => {
     tabStatus.value = isDisabledDelegationsTab.value
       ? myValidatorsTitle.value
       : activeValidatorsTitle.value
-    validatorsCount.value = allValitors.value.length
+    validatorsCount.value = allValidators.value.length
     filterValidators(currentPage.value)
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
@@ -354,10 +358,17 @@ const getValidators = async () => {
 const filterValidators = (newPage = 1) => {
   let tempArr = validators.value
   if (searchValue.value.trim()) {
-    tempArr = tempArr.filter((item: ValidatorsInfo) =>
-      item.descriptions[0].moniker
-        .toLowerCase()
-        .includes(searchValue.value.toLowerCase()),
+    tempArr = tempArr.filter((item: ValidatorsInfo) =>  {            
+        console.log(item.descriptions)
+        if (item.descriptions === undefined) { return false }
+        if (!item.descriptions?.length) { return false }
+        if (item.descriptions[0].moniker === undefined) { return false }
+
+        const processed = item.descriptions[0].moniker
+          .toLowerCase()
+          .includes(searchValue.value.toLowerCase())
+        return processed
+      },
     )
   }
   if (newPage === 1) {
@@ -401,7 +412,7 @@ const stakeTransfer = async () => {
     {
       activeValidators: activeValidators.value,
       delegation: delegations.value,
-      allValidators: allValitors.value,
+      allValidators: allValidators.value,
     },
   )
 }

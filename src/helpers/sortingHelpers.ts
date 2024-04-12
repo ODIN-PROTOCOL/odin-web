@@ -7,10 +7,10 @@ export enum OWNERS_SORT {
   all = 'null',
 }
 export enum TYPE_TX_SORT {
-  all = 'null',
-  delegate = 'delegate',
-  send = 'send',
-  withdraw = 'withdraw',
+  all = '%%',
+  delegate = 'cosmos.staking.v1beta1.MsgDelegate',
+  send = 'cosmos.bank.v1beta1.MsgSend',
+  withdraw = 'cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward',
 }
 
 export const sortingActivities = [

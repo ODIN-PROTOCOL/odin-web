@@ -99,7 +99,7 @@ import {
   TransactionItem,
 } from '@/components/SearchBar'
 import { CloseIcon, SearchIcon } from '@/components/icons'
-import { isMobile, prepareTransaction } from '@/helpers/helpers'
+import { isMobile, prepareRPCTransaction, prepareTransaction } from '@/helpers/helpers'
 import {
   DecodedTxData,
   SearchResultType,
@@ -107,8 +107,9 @@ import {
   TransformedBlocks,
 } from '@/helpers/Types'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
-import { prepareBlocks } from '@/helpers/blocksHelper'
+import { prepareBlockMetas } from '@/helpers/blocksHelper'
 import { ROUTE_NAMES } from '@/enums'
+import { TransformedBlockInfo, ValidatorDetailedInfo } from '@/graphql/types'
 
 enum FILTER_BY {
   ACCOUNT = 'Account',
@@ -132,6 +133,12 @@ const activeFilter = ref<string>(filters.value[0])
 const searchedText = ref<string | null>('')
 const searchResult = ref<Array<SearchResultType> | null>(null)
 const searchLoading = ref<boolean>(false)
+const validators = ref<ValidatorDetailedInfo[]>([])
+
+const getValidators = async (): Promise<void> => {
+  const response = await callers.getValidators()
+  validators.value = response.data.validators || []
+}
 
 watch(activeFilter, () => {
   searchResult.value = null
@@ -182,6 +189,7 @@ watch(searchResult, value => {
 
 const getTransactions = async (): Promise<Array<DecodedTxData>> => {
   const TRANSACTION_HASH_LENGTH = 64
+  await getValidators()
   const transactionToSearch = String(searchedText.value)
   if (
     !transactionToSearch ||
@@ -191,7 +199,7 @@ const getTransactions = async (): Promise<Array<DecodedTxData>> => {
   }
   try {
     const res = await callers.getTxForTxDetailsPage(String(transactionToSearch))
-    return await prepareTransaction([res.data.result])
+    return await prepareRPCTransaction([res.data.result], validators.value)
   } catch {
     return []
   }
@@ -228,13 +236,13 @@ const getAccount = async (): Promise<Array<TempSearchAccountInfoType>> => {
   }
 }
 
-const getBlock = async (): Promise<Array<TransformedBlocks>> => {
+const getBlock = async (): Promise<TransformedBlockInfo[]> => {
   try {
-    const { blockMetas } = await callers.getBlockchain(
-      Number(searchedText.value),
-      Number(searchedText.value),
+    const { data } = await callers.getBlock(
+      searchedText.value,
+      Number(searchedText.value) || 0,
     )
-    return await prepareBlocks(blockMetas)
+    return await prepareBlockMetas(data.blockMetas, validators.value)
   } catch {
     return []
   }

@@ -28,6 +28,8 @@
         :address="String(route.params.hash)"
         :geo-balance="geoBalance"
         :odin-balance="odinBalance"
+        :doki-balance="dokiBalance"
+        :myrk-balance="myrkBalance"
       />
       <div class="accounts-item__subtitle-line">
         <div class="accounts-item__subtitle app__main-view-subtitle mg-b32">
@@ -66,11 +68,11 @@
           </span>
         </div>
         <div class="app-table__body">
-          <template v-if="transactions?.length">
-            <AccountTxLine
+          <template v-if="transactions?.length">            
+            <TxLine
               v-for="(item, index) in transactions"
               :key="index"
-              :tx="item.attributes"
+              :tx="item"
             />
           </template>
           <template v-else>
@@ -105,12 +107,12 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { Bech32 } from '@cosmjs/encoding'
 import { big } from '@/helpers/bigMath'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
-import { sortingTypeTx, TYPE_TX_SORT } from '@/helpers/helpers'
+import { prepareTransaction, sortingTypeTx, TYPE_TX_SORT } from '@/helpers/helpers'
 import { UiLoadingErrorMessage, UiNoDataMessage } from '@/components/ui'
 import BackButton from '@/components/BackButton.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
-import AccountTxLine from '@/components/AccountTxLine.vue'
+import TxLine from '@/components/TxLine.vue'
 import AccountInfo from '@/components/AccountInfo.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 import InfoIcon from '@/components/icons/InfoIcon.vue'
@@ -119,8 +121,10 @@ const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const route: RouteLocationNormalizedLoaded = useRoute()
 
 const isLoadingError = ref(false)
-const geoBalance = ref('0')
-const odinBalance = ref('0')
+const geoBalance = ref('0.0')
+const odinBalance = ref('0.0')
+const dokiBalance = ref('0.0')
+const myrkBalance = ref('0.0')
 const transactions = ref()
 const totalTxCount = ref(0)
 const currentPage = ref(1)
@@ -140,45 +144,54 @@ const headerTitles = [
   { title: 'Amount' },
 ]
 
-const getTotalAmount = async (
-  validatorAddress: string,
-  denom: string,
-): Promise<string> =>
-  callers
-    .getUnverifiedBalances(validatorAddress, denom)
-    .then(res => big.bigConvectOdinAndGeo(res.amount).toString())
+const getAllBalances = async (
+  address: string,  
+): Promise<any> => callers.getAllBalances(address)
+    .then(res => {      
+      let balances: any = {}
+      res.forEach((item: any) => {
+        balances[item.denom] = big.bigConvectOdinAndGeo(item.amount || "0.0" ).toString()
+      }) 
+      return balances
+    })
 
-const getAccountInfo = async () => {
-  lockLoading()
+  const getAccountInfo = async () => {
+    lockLoading()
 
-  try {
-    transactions.value = []
-    const validatorAddress = Bech32.encode(
-      'odin',
-      Bech32.decode(route.params.hash as string).data,
-    )
-    const tx = await callers
-      .getAccountTx(
-        currentPage.value - 1,
-        20,
-        validatorAddress,
-        'desc',
-        sortingValue.value,
-      )
-      .then(resp => resp.json())
+    try {
+      transactions.value = []
+      const validatorAddress = Bech32.encode(
+        'odin',
+        Bech32.decode(route.params.hash as string).data,
+      )    
+      const txResponse = await callers
+        .getAccountIndexedTx(
+          currentPage.value - 1,
+          20,
+          validatorAddress,
+          'desc',
+          sortingValue.value,
+        )
 
-    geoBalance.value = await getTotalAmount(validatorAddress, 'minigeo')
-    odinBalance.value = await getTotalAmount(validatorAddress, 'loki')
-    transactions.value = tx.data
-    totalTxCount.value = tx.total_count
-    totalPages.value = Math.ceil(tx.total_count / ITEMS_PER_PAGE)
-  } catch (error) {
-    isLoadingError.value = true
-    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+        const balances = await getAllBalances(validatorAddress)
+        
+        geoBalance.value = balances['minigeo'] || '0.0'
+        odinBalance.value = balances['loki'] || '0.0'
+        dokiBalance.value = balances['udoki'] || '0.0'
+        myrkBalance.value = balances['umyrk'] || '0.0'
+        
+        const txs = txResponse.data.message.map((message: any) => message.transaction)
+
+        transactions.value = prepareTransaction(txs, [])
+        totalTxCount.value = txResponse.data.transactions_aggregate.aggregate.count
+        totalPages.value = Math.ceil(totalTxCount.value / ITEMS_PER_PAGE)
+
+    } catch (error) { 
+      isLoadingError.value = true
+      handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+    }
+    releaseLoading()
   }
-
-  releaseLoading()
-}
 
 onMounted(async () => {
   await getAccountInfo()

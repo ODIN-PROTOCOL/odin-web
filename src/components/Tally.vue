@@ -6,6 +6,7 @@
 import { useVoteProgress } from '@/composables/useVoteProgress'
 import { translateTally, translateTallyShort } from '@/helpers/translators'
 import { TallyResult } from '@provider/codec/cosmos/gov/v1beta1/gov'
+import { ta } from 'date-fns/locale'
 import { computed, toRef } from 'vue'
 
 const props = withDefaults(
@@ -36,7 +37,7 @@ const _getTallyProgress = () => ({
 const _getLong = () => translateTally(_getTallyProgress())
 const _getShort = () => translateTallyShort(_getTallyProgress())
 
-const translated = computed(() => {
+const translated = computed(() => {  
   if (!props.tally) return 'N/A'
   if (props.isOnlyYes) return _getTallyProgress().yes
   return props.isShort ? _getShort() : _getLong()

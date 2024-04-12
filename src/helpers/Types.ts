@@ -2,6 +2,7 @@ import { BigNumber } from 'bignumber.js'
 import { BlockMeta } from '@cosmjs/tendermint-rpc'
 import { Modify } from '@/shared-types'
 import { ProposalDecoded } from '@/helpers/proposalDecoders'
+import { TransformedBlockInfo } from '@/graphql/types/responses'
 
 export interface Coin {
   denom: string
@@ -104,7 +105,7 @@ export type ProposalChanges = {
 type StatusTypesItem = { name: string; status: string }
 
 export type StatusTypes = {
-  [key: number]: StatusTypesItem
+  [key: string]: StatusTypesItem
 }
 
 type ProposalsStatisticItem = { Name: string; Count: number }
@@ -134,7 +135,7 @@ export interface TxTelemetry {
 }
 
 export type SearchResultType = {
-  blocks?: Array<TransformedBlocks>
+  blocks?: Array<TransformedBlockInfo>
   transactions?: Array<DecodedTxData>
   accounts?: Array<TempSearchAccountInfoType>
 }
@@ -178,7 +179,7 @@ export type telemetryDataForCharts = {
   size?: number
   seconds?: number
   volume?: number
-  fee?: Coin[]
+  fee?: number
 }
 
 export type formatedTelemetryDataForCharts = {

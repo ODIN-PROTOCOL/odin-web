@@ -107,18 +107,18 @@ const navs = [
     divider: false,
     to: '/data-sources',
   },
-  {
-    title: 'Oracle Scripts',
-    icon: CodeIcon,
-    divider: false,
-    to: '/oracle-scripts',
-  },
-  {
-    title: 'Requests',
-    icon: ArrowDown,
-    divider: true,
-    to: '/requests',
-  },
+  // {
+  //   title: 'Oracle Scripts',
+  //   icon: CodeIcon,
+  //   divider: false,
+  //   to: '/oracle-scripts',
+  // },
+  // {
+  //   title: 'Requests',
+  //   icon: ArrowDown,
+  //   divider: true,
+  //   to: '/requests',
+  // },
   {
     title: 'IBCs',
     icon: CubeTransparentIcon,

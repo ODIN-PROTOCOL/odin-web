@@ -39,6 +39,8 @@ export const getValidatorStatus = (status: number, isActive: boolean) => {
 export const isActiveValidator = async (
   validatorAddress: string,
 ): Promise<boolean> => {
+  if (!validatorAddress) return false
+
   const response = await callers
     .getValidatorStatus(validatorAddress)
     .then(req => req.status?.isActive)

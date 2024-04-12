@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
-export const ValidatorsQuery = gql`
-  query Validators {
+export const DetailedValidatorsQuery = gql`
+  query DetailedValidators {
     stakingPool: staking_pool(limit: 1, order_by: { height: desc }) {
       bondedTokens: bonded_tokens
     }

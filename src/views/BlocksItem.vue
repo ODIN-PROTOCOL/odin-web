@@ -60,10 +60,10 @@
               </div>
               <div class="app-table__cell">
                 <span class="app-table__cell-date">
-                  {{ $fDate(blockTimestamp, 'dd/MM/yy') }}
+                  {{ $fDate($parseISO(blockTimestamp), 'dd/MM/yy') }}
                 </span>
                 <span class="app-table__cell-time">
-                  {{ $fDate(blockTimestamp, 'HH:mm') }}
+                  {{ $fDate($parseISO(blockTimestamp), 'HH:mm') }}
                 </span>
               </div>
             </div>
@@ -151,6 +151,7 @@ import BackButton from '@/components/BackButton.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import TitledLink from '@/components/TitledLink.vue'
 import InfoIcon from '@/components/icons/InfoIcon.vue'
+import { ValidatorDetailedInfo } from '@/graphql/types/responses'
 
 const route: RouteLocationNormalizedLoaded = useRoute()
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
@@ -165,35 +166,51 @@ const blocksTransactions = ref()
 const blockCreator = ref('-')
 const blockSize = ref()
 
+const validators = ref<ValidatorDetailedInfo[]>([])
+
+const getValidators = async (): Promise<void> => {
+  const response = await callers.getValidators()
+  validators.value = response.data.validators || []
+}
+
 const getBlock = async () => {
   lockLoading()
 
-  try {
-    blockInfo.value = await callers.getBlock(Number(route.params.id))
-    blockHash.value = '0x' + toHex(blockInfo.value.blockId.hash)
-    blockParentHash.value =
-      '0x' + toHex(blockInfo.value.block.header.lastBlockId.hash)
-    blockTimestamp.value = blockInfo.value.block.header.time
-    const res = await callers.getBlockSize(Number(route.params.id))
-    blockSize.value = res?.data?.block?.BlockSize
-    const validatorData = await callers.getValidatorByConsensusKey(
-      toHex(blockInfo.value.block.header.proposerAddress),
+  try {    
+    const blockResponse = await callers.getBlock(
+      String(route.params.id),
+      Number(route.params.id),
     )
+    blockInfo.value = blockResponse.data
 
-    blockCreator.value = validatorData.data.result.result.operator_address
-    const { data } = await callers
-      .getTxSearchFromTelemetry(0, 30, 'desc', Number(route.params.id))
-      .then(resp => resp.json())
-    blocksTransactions.value = await prepareTransaction(data)
+    blockHash.value = '0x' + blockInfo.value.blockMetas[0].hash
+    blockParentHash.value =
+      '0x' + blockInfo.value.latestBlock[0].hash
+
+    blockTimestamp.value = blockInfo.value.blockMetas[0].timestamp    
+    blockSize.value = blockInfo.value.blockMetas[0].size
+    blockCreator.value = blockInfo.value.blockMetas[0].validator.validator_info.operator_address
+    blockHeight.value = blockInfo.value.blockMetas[0].height
+
+    const response = await callers.getTxByBlock(
+      0,
+      30,
+      'desc',
+      Number(blockHeight.value),
+    )
+    blocksTransactions.value = await prepareTransaction(
+      response?.data?.transaction || [],
+      validators.value,
+    )
   } catch (error) {
     isLoadingError.value = true
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
-
   releaseLoading()
 }
 
 onMounted(async () => {
+  await getValidators()
   await getBlock()
 })
 </script>
