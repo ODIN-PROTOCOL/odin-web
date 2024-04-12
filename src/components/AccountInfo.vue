@@ -47,7 +47,6 @@
             </span>
           </div>
         </div>
-
       </div>
     </div>
     <div class="account-info__card card-frame">

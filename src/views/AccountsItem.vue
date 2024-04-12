@@ -68,7 +68,7 @@
           </span>
         </div>
         <div class="app-table__body">
-          <template v-if="transactions?.length">            
+          <template v-if="transactions?.length">
             <TxLine
               v-for="(item, index) in transactions"
               :key="index"
@@ -107,7 +107,11 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { Bech32 } from '@cosmjs/encoding'
 import { big } from '@/helpers/bigMath'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
-import { prepareTransaction, sortingTypeTx, TYPE_TX_SORT } from '@/helpers/helpers'
+import {
+  prepareTransaction,
+  sortingTypeTx,
+  TYPE_TX_SORT,
+} from '@/helpers/helpers'
 import { UiLoadingErrorMessage, UiNoDataMessage } from '@/components/ui'
 import BackButton from '@/components/BackButton.vue'
 import CopyButton from '@/components/CopyButton.vue'
@@ -144,54 +148,54 @@ const headerTitles = [
   { title: 'Amount' },
 ]
 
-const getAllBalances = async (
-  address: string,  
-): Promise<any> => callers.getAllBalances(address)
-    .then(res => {      
-      let balances: any = {}
-      res.forEach((item: any) => {
-        balances[item.denom] = big.bigConvectOdinAndGeo(item.amount || "0.0" ).toString()
-      }) 
-      return balances
+const getAllBalances = async (address: string): Promise<any> =>
+  callers.getAllBalances(address).then(res => {
+    let balances: any = {}
+    res.forEach((item: any) => {
+      balances[item.denom] = big
+        .bigConvectOdinAndGeo(item.amount || '0.0')
+        .toString()
     })
+    return balances
+  })
 
-  const getAccountInfo = async () => {
-    lockLoading()
+const getAccountInfo = async () => {
+  lockLoading()
 
-    try {
-      transactions.value = []
-      const validatorAddress = Bech32.encode(
-        'odin',
-        Bech32.decode(route.params.hash as string).data,
-      )    
-      const txResponse = await callers
-        .getAccountIndexedTx(
-          currentPage.value - 1,
-          20,
-          validatorAddress,
-          'desc',
-          sortingValue.value,
-        )
+  try {
+    transactions.value = []
+    const validatorAddress = Bech32.encode(
+      'odin',
+      Bech32.decode(route.params.hash as string).data,
+    )
+    const txResponse = await callers.getAccountIndexedTx(
+      currentPage.value - 1,
+      20,
+      validatorAddress,
+      'desc',
+      sortingValue.value,
+    )
 
-        const balances = await getAllBalances(validatorAddress)
-        
-        geoBalance.value = balances['minigeo'] || '0.0'
-        odinBalance.value = balances['loki'] || '0.0'
-        dokiBalance.value = balances['udoki'] || '0.0'
-        myrkBalance.value = balances['umyrk'] || '0.0'
-        
-        const txs = txResponse.data.message.map((message: any) => message.transaction)
+    const balances = await getAllBalances(validatorAddress)
 
-        transactions.value = prepareTransaction(txs, [])
-        totalTxCount.value = txResponse.data.transactions_aggregate.aggregate.count
-        totalPages.value = Math.ceil(totalTxCount.value / ITEMS_PER_PAGE)
+    geoBalance.value = balances['minigeo'] || '0.0'
+    odinBalance.value = balances['loki'] || '0.0'
+    dokiBalance.value = balances['udoki'] || '0.0'
+    myrkBalance.value = balances['umyrk'] || '0.0'
 
-    } catch (error) { 
-      isLoadingError.value = true
-      handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-    }
-    releaseLoading()
+    const txs = txResponse.data.message.map(
+      (message: any) => message.transaction,
+    )
+
+    transactions.value = prepareTransaction(txs, [])
+    totalTxCount.value = txResponse.data.transactions_aggregate.aggregate.count
+    totalPages.value = Math.ceil(totalTxCount.value / ITEMS_PER_PAGE)
+  } catch (error) {
+    isLoadingError.value = true
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
+  releaseLoading()
+}
 
 onMounted(async () => {
   await getAccountInfo()

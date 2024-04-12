@@ -150,10 +150,14 @@ const accountAddress = wallet.isEmpty ? '' : wallet.account.address
 const getProposals = async () => {
   lockLoading()
   try {
-    const response = await callers.getProposals((currentPage.value - 1) * ITEMS_PER_PAGE, ITEMS_PER_PAGE, "desc")
+    const response = await callers.getProposals(
+      (currentPage.value - 1) * ITEMS_PER_PAGE,
+      ITEMS_PER_PAGE,
+      'desc',
+    )
     proposals.value = response.data.proposal || []
     proposalsCount.value = response.data.proposal_aggregate.aggregate.count || 0
-    totalPages.value = Math.ceil(proposalsCount.value / ITEMS_PER_PAGE)    
+    totalPages.value = Math.ceil(proposalsCount.value / ITEMS_PER_PAGE)
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
@@ -172,7 +176,6 @@ const getProposalStatistic = async () => {
   }
   releaseLoading()
 }
-
 
 const getChangesParams = async () => {
   lockLoading()

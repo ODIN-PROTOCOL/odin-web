@@ -188,7 +188,7 @@
               </div>
             </div>
           </div>
-        </template>        
+        </template>
         <template v-else>
           <div class="app-table__empty-stub">
             <ui-no-data-message />
@@ -266,9 +266,8 @@ const getProposal = async () => {
     if (proposal.value?.status === 'PROPOSAL_STATUS_VOTING_PERIOD') {
       voteBtnText.value = 'Vote'
     }
-    
-    tally.value = response.data.proposal[0].finalTallyResult
 
+    tally.value = response.data.proposal[0].finalTallyResult
   } catch (error) {
     isLoadingError.value = true
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)

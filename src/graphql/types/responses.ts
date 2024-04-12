@@ -201,6 +201,6 @@ export interface SupplyResponse {
   supply: [{ coins: Coin[] }]
 }
 
-export interface TreasuryPoolResponse { 
+export interface TreasuryPoolResponse {
   treasuryPool: [{ coins: Coin[] }]
 }

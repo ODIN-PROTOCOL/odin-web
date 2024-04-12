@@ -185,10 +185,7 @@ const initBlocks = async () => {
     lastBlockHeight.value = response.data.latestBlock[0].height || 0
     blocksCount.value = response.data.totalCount.aggregate.count || 0
 
-    totalPages.value = Math.ceil(
-      Number(blocksCount.value) /
-        ITEMS_PER_PAGE,
-    )
+    totalPages.value = Math.ceil(Number(blocksCount.value) / ITEMS_PER_PAGE)
     maxHeight.value = lastBlockHeight.value
     minHeight.value = lastBlockHeight.value - ITEMS_PER_PAGE
   } catch (error) {
@@ -215,9 +212,7 @@ const getBlocks = async (): Promise<void> => {
     const { blockMetas } = response.data
     lastBlockHeight.value = response.data.latestBlock[0].height || 0
 
-    totalPages.value = Math.ceil(
-      blocksCount.value / ITEMS_PER_PAGE,
-    )
+    totalPages.value = Math.ceil(blocksCount.value / ITEMS_PER_PAGE)
     blocks.value = await prepareBlockMetas(blockMetas, validators.value)
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)

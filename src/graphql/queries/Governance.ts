@@ -1,8 +1,12 @@
 import gql from 'graphql-tag'
 
 export const ProposalQuery = gql`
-query ProposalsQuery($limit: Int = 10, $offset: Int = 0, $order: order_by = desc) @cached {
-    proposal(limit: $limit, offset: $offset, order_by: {id: $order}) {
+  query ProposalsQuery(
+    $limit: Int = 10
+    $offset: Int = 0
+    $order: order_by = desc
+  ) @cached {
+    proposal(limit: $limit, offset: $offset, order_by: { id: $order }) {
       proposalId: id
       description
       content
@@ -26,16 +30,16 @@ query ProposalsQuery($limit: Int = 10, $offset: Int = 0, $order: order_by = desc
       }
     }
     proposal_aggregate {
-        aggregate {
-          count
-        }
+      aggregate {
+        count
+      }
     }
   }
 `
 
 export const ProposalByIdQuery = gql`
-query ProposalByIdQuery($id: Int!) @cached {
-    proposal(where: {id: {_eq: $id}}) {
+  query ProposalByIdQuery($id: Int!) @cached {
+    proposal(where: { id: { _eq: $id } }) {
       proposalId: id
       description
       content
@@ -58,13 +62,13 @@ query ProposalByIdQuery($id: Int!) @cached {
         depositor_address
       }
     }
-  }  
+  }
 `
 
 export const TreasuryPoolQuery = gql`
-query TreasuryPool {
+  query TreasuryPool {
     treasuryPool: treasury_pool {
       coins
     }
-  }  
+  }
 `

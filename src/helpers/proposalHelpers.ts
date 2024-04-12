@@ -14,8 +14,8 @@ import { ProposalStatus } from '@provider/codec/cosmos/gov/v1beta1/gov'
 // ): Promise<TransformedProposal[]> => {
 //   const transformedProposals = await Promise.all(
 //     proposals.map(async item => {
-      
-//       if (!item.proposalId) return { 
+
+//       if (!item.proposalId) return {
 //         ...item,
 //         proposerAddress: '',
 //         humanizeStatus: proposalStatusType[item.status].name,

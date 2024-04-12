@@ -13,11 +13,15 @@ export const AvgFeeQuery = gql`
 `
 
 export const TxAtBlockQuery = gql`
-  query TxAtBlockQuery($height: bigint = 0, $limit: Int = 10, $offset: Int = 0) {
+  query TxAtBlockQuery(
+    $height: bigint = 0
+    $limit: Int = 10
+    $offset: Int = 0
+  ) {
     transaction(
       limit: $limit
       offset: $offset
-      where: { height: { _eq: $height } }      
+      where: { height: { _eq: $height } }
     ) {
       hash
       sender
@@ -37,32 +41,49 @@ export const TxAtBlockQuery = gql`
 `
 
 export const TxFromAddressQuery = gql`
-query AccountMessages($address: [String!], $limit: Int = 0, $offset: Int = 0, $order: order_by = desc, $tx_type: String = "%%") @cached {
-  message(limit: $limit, offset: $offset, order_by: [{height: $order}, {transaction_hash: $order}], distinct_on: [transaction_hash, height]) {
-    transaction {
-      fee
-      gas_used
-      gas_wanted
-      hash
-      height
-      logs
-      memo
-      messages
-      partition_id
-      sender
-      success
-      block {
-        timestamp
-        size
+  query AccountMessages(
+    $address: [String!]
+    $limit: Int = 0
+    $offset: Int = 0
+    $order: order_by = desc
+    $tx_type: String = "%%"
+  ) @cached {
+    message(
+      limit: $limit
+      offset: $offset
+      order_by: [{ height: $order }, { transaction_hash: $order }]
+      distinct_on: [transaction_hash, height]
+    ) {
+      transaction {
+        fee
+        gas_used
+        gas_wanted
+        hash
+        height
+        logs
+        memo
+        messages
+        partition_id
+        sender
+        success
+        block {
+          timestamp
+          size
+        }
+      }
+    }
+    transactions_aggregate: message_aggregate(
+      distinct_on: transaction_hash
+      where: {
+        involved_accounts_addresses: { _contains: $address }
+        type: { _ilike: $tx_type }
+      }
+    ) {
+      aggregate {
+        count
       }
     }
   }
-  transactions_aggregate: message_aggregate(distinct_on: transaction_hash, where: {involved_accounts_addresses: {_contains: $address}, type: {_ilike: $tx_type}}) {
-    aggregate {
-      count
-    }
-  }
-}
 `
 
 export const TxQuery = gql`

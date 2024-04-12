@@ -99,7 +99,11 @@ import {
   TransactionItem,
 } from '@/components/SearchBar'
 import { CloseIcon, SearchIcon } from '@/components/icons'
-import { isMobile, prepareRPCTransaction, prepareTransaction } from '@/helpers/helpers'
+import {
+  isMobile,
+  prepareRPCTransaction,
+  prepareTransaction,
+} from '@/helpers/helpers'
 import {
   DecodedTxData,
   SearchResultType,

@@ -45,10 +45,10 @@
       <div class="app-table__body">
         <template v-if="transactions?.length">
           <TxLine
-              v-for="(item, index) in transactions"
-              :key="index"
-              :tx="item"
-            />
+            v-for="(item, index) in transactions"
+            :key="index"
+            :tx="item"
+          />
         </template>
         <template v-else>
           <SkeletonTable
@@ -116,20 +116,20 @@ const getTransactions = async () => {
   lockLoading()
 
   try {
-    const txResponse = await callers
-      .getAccountIndexedTx(
+    const txResponse = await callers.getAccountIndexedTx(
       currentPage.value - 1,
       20,
       wallet.account.address,
       'desc',
       sortingValue.value,
     )
-    const txs = txResponse.data.message.map((message: any) => message.transaction)    
+    const txs = txResponse.data.message.map(
+      (message: any) => message.transaction,
+    )
     transactions.value = prepareTransaction(txs, [])
 
     const totalTxCount = txResponse.data.transactions_aggregate.aggregate.count
     totalPages.value = Math.ceil(totalTxCount.value / ITEMS_PER_PAGE)
-    
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }

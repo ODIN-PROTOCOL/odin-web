@@ -176,7 +176,7 @@ const getValidators = async (): Promise<void> => {
 const getBlock = async () => {
   lockLoading()
 
-  try {    
+  try {
     const blockResponse = await callers.getBlock(
       String(route.params.id),
       Number(route.params.id),
@@ -184,12 +184,12 @@ const getBlock = async () => {
     blockInfo.value = blockResponse.data
 
     blockHash.value = '0x' + blockInfo.value.blockMetas[0].hash
-    blockParentHash.value =
-      '0x' + blockInfo.value.latestBlock[0].hash
+    blockParentHash.value = '0x' + blockInfo.value.latestBlock[0].hash
 
-    blockTimestamp.value = blockInfo.value.blockMetas[0].timestamp    
+    blockTimestamp.value = blockInfo.value.blockMetas[0].timestamp
     blockSize.value = blockInfo.value.blockMetas[0].size
-    blockCreator.value = blockInfo.value.blockMetas[0].validator.validator_info.operator_address
+    blockCreator.value =
+      blockInfo.value.blockMetas[0].validator.validator_info.operator_address
     blockHeight.value = blockInfo.value.blockMetas[0].height
 
     const response = await callers.getTxByBlock(

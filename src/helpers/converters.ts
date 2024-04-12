@@ -18,10 +18,10 @@ const ODIN_DENOM = 'ODIN'
 const LOKI_DENOM = 'LOKI'
 const GEO_DENOM = 'GEO'
 const MINIGEO_DENOM = 'MINIGEO'
-const UDOKI_DENOM = "UDOKI"
-const UMYRK_DENOM = "UMYRK"
-const MYRK_DENOM = "MYRK"
-const DOKI_DENOM = "DOKI"
+const UDOKI_DENOM = 'UDOKI'
+const UMYRK_DENOM = 'UMYRK'
+const MYRK_DENOM = 'MYRK'
+const DOKI_DENOM = 'DOKI'
 const LOKI_MULTIPLIER = 1000000
 const UDOKI_MULTIPLIER = 1000000
 const UMYRK_MULTIPLIER = 1000000
@@ -40,9 +40,9 @@ export function convertLokiToOdin(
     denom = DOKI_DENOM
   } else if (denom.toUpperCase() === UMYRK_DENOM || denom === MYRK_DENOM) {
     denom = MYRK_DENOM
-  } else { 
+  } else {
     denom = GEO_DENOM
-   }
+  }
   let res: BigNumber
   if (options && options.withPrecise) {
     res = big.fromPrecise(big.multiply(amount, ODIN_MULTIPLIER))

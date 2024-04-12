@@ -53,7 +53,11 @@ import {
 
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
 import { apolloClient } from './apollo-provider'
-import { ProposalByIdQuery, ProposalQuery, TreasuryPoolQuery } from '@/graphql/queries/Governance'
+import {
+  ProposalByIdQuery,
+  ProposalQuery,
+  TreasuryPoolQuery,
+} from '@/graphql/queries/Governance'
 import { Data } from '@bandprotocol/bandchain.js'
 import { DataSourceQuery } from '@/graphql/queries/DataSource'
 
@@ -104,25 +108,21 @@ const makeCallers = () => {
       page_number: number,
       page_limit: number,
       address: string,
-      page_order = "desc",
+      page_order = 'desc',
       tx_type: string,
     ) => {
       return apolloClient.query({
         query: TxFromAddressQuery,
         variables: {
           address: `{${address}}`,
-          tx_type: tx_type,          
+          tx_type: tx_type,
           limit: page_limit,
           order: page_order,
-          offset: page_number * page_limit,          
+          offset: page_number * page_limit,
         },
       })
     },
-    getProposals: (
-      offset: number,
-      page_limit: number,
-      order = "desc",
-    ) => {
+    getProposals: (offset: number, page_limit: number, order = 'desc') => {
       return apolloClient.query({
         query: ProposalQuery,
         variables: { limit: page_limit, order: order, offset: offset },
@@ -140,7 +140,7 @@ const makeCallers = () => {
         variables: { limit: page_limit, order: order, offset: offset },
       })
     },
-    getBlock: (hash: string | null = "", height = 0) => {
+    getBlock: (hash: string | null = '', height = 0) => {
       return apolloClient.query<BlockMetaResponse, BlockQueryVariables>({
         query: BlockQuery,
         variables: { hash: hash, height: height },
@@ -283,19 +283,17 @@ const makeCallers = () => {
     getProposer: (proposalId: NumLike) => {
       return sendGet(`${API_CONFIG.api}/gov/proposals/${proposalId}/proposer`)
     },
-    getProposalChanges: () => {      
+    getProposalChanges: () => {
       return sendGet(`${API_CONFIG.graphqlActions}/vote_proposals`)
     },
     getProposalsStatistic: () => {
-      return sendGet(
-        `${API_CONFIG.graphqlActions}/vote_proposals_statistics`,
-      )
+      return sendGet(`${API_CONFIG.graphqlActions}/vote_proposals_statistics`)
     },
-    getTreasuryPool: () => { 
+    getTreasuryPool: () => {
       return apolloClient.query<TreasuryPoolResponse>({
-        query: TreasuryPoolQuery       
+        query: TreasuryPoolQuery,
       })
-    },    
+    },
     getTopAccounts: (limit: number, offset: number, sortingBy: string) => {
       return axios.post(`${API_CONFIG.graphqlActions}/top_accounts`, {
         input: {

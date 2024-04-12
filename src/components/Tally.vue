@@ -37,7 +37,7 @@ const _getTallyProgress = () => ({
 const _getLong = () => translateTally(_getTallyProgress())
 const _getShort = () => translateTallyShort(_getTallyProgress())
 
-const translated = computed(() => {  
+const translated = computed(() => {
   if (!props.tally) return 'N/A'
   if (props.isOnlyYes) return _getTallyProgress().yes
   return props.isShort ? _getShort() : _getLong()

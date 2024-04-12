@@ -8,9 +8,7 @@
           params: { hash: tx.hash },
         }"
         :title="tx.hash"
-        :text="
-          formatTxString(tx.hash ? tx.hash?.toString() : '')
-        "
+        :text="formatTxString(tx.hash ? tx.hash?.toString() : '')"
         class="app-table__cell-txt app-table__link"
       />
     </div>
@@ -56,15 +54,9 @@
       <TitledLink
         v-if="tx.receiver"
         v-bind="getODINRedirectLink(tx.receiver)"
-        :title="
-          tx.receiver_name
-            ? tx.receiver_name
-            : tx.receiver
-        "
+        :title="tx.receiver_name ? tx.receiver_name : tx.receiver"
         :text="
-          tx.receiver_name
-            ? tx.receiver_name
-            : formatTxString(tx.receiver)
+          tx.receiver_name ? tx.receiver_name : formatTxString(tx.receiver)
         "
         class="app-table__cell-txt app-table__link"
       />

@@ -358,18 +358,23 @@ const getValidators = async () => {
 const filterValidators = (newPage = 1) => {
   let tempArr = validators.value
   if (searchValue.value.trim()) {
-    tempArr = tempArr.filter((item: ValidatorsInfo) =>  {            
-        console.log(item.descriptions)
-        if (item.descriptions === undefined) { return false }
-        if (!item.descriptions?.length) { return false }
-        if (item.descriptions[0].moniker === undefined) { return false }
+    tempArr = tempArr.filter((item: ValidatorsInfo) => {
+      console.log(item.descriptions)
+      if (item.descriptions === undefined) {
+        return false
+      }
+      if (!item.descriptions?.length) {
+        return false
+      }
+      if (item.descriptions[0].moniker === undefined) {
+        return false
+      }
 
-        const processed = item.descriptions[0].moniker
-          .toLowerCase()
-          .includes(searchValue.value.toLowerCase())
-        return processed
-      },
-    )
+      const processed = item.descriptions[0].moniker
+        .toLowerCase()
+        .includes(searchValue.value.toLowerCase())
+      return processed
+    })
   }
   if (newPage === 1) {
     filteredValidators.value = tempArr?.slice(0, newPage * ITEMS_PER_PAGE)

@@ -105,7 +105,7 @@ export function bigToStrStrict(num: NumLike): string {
 
 function bigConvectOdinAndGeo(num: NumLike): string {
   if (num === undefined) {
-    return "0"
+    return '0'
   }
   return bigFormat(
     bigDivide(num, _bn(10).exponentiatedBy(6), {

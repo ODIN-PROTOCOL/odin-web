@@ -54,7 +54,7 @@
           >
             <div class="app-table__cell">
               <span class="app-table__title">Data Source</span>
-              <span>#{{ item.id }} {{item.name }}</span>
+              <span>#{{ item.id }} {{ item.name }}</span>
               <!-- <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="`#${item.id} ${item.name}`"
@@ -184,14 +184,13 @@ const getDataSources = async () => {
   lockLoading()
   try {
     dataSources.value = []
-    const response = await callers
-      .getSortedDataSources(
-        currentPage.value - 1,
-        ITEMS_PER_PAGE,
-        sortingActivitiesValue.value,
-        sortingOwnersValue.value,
-        dataSourceName.value,
-      )
+    const response = await callers.getSortedDataSources(
+      currentPage.value - 1,
+      ITEMS_PER_PAGE,
+      sortingActivitiesValue.value,
+      sortingOwnersValue.value,
+      dataSourceName.value,
+    )
 
     if (response.data) {
       dataSources.value = response.data.data_source
@@ -204,7 +203,7 @@ const getDataSources = async () => {
       //   }),
       // )
     }
-    dataSourcesCount.value = response.data.data_source_aggregate.aggregate.count    
+    dataSourcesCount.value = response.data.data_source_aggregate.aggregate.count
     totalPages.value = Math.ceil(dataSourcesCount.value / ITEMS_PER_PAGE)
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
