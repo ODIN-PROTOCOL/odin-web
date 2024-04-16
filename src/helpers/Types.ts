@@ -180,6 +180,7 @@ export type telemetryDataForCharts = {
   seconds?: number
   volume?: number
   fee?: number
+  value?: number
 }
 
 export type formatedTelemetryDataForCharts = {

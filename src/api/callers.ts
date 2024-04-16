@@ -59,7 +59,15 @@ import {
   TreasuryPoolQuery,
 } from '@/graphql/queries/Governance'
 import { Data } from '@bandprotocol/bandchain.js'
-import { DataSourceQuery } from '@/graphql/queries/DataSource'
+import {
+  AvgRequestsQuery,
+  DataSourceQuery,
+  OracleScriptQuery,
+  OracleScriptRequestsQuery,
+  OracleScriptsAllRequestsQuery,
+  OracleScriptsMostRequestedQuery,
+  OracleScriptsQuery,
+} from '@/graphql/queries/DataSource'
 
 const makeCallers = () => {
   const broadcaster = api.makeBroadcastCaller.bind(api)
@@ -173,6 +181,12 @@ const makeCallers = () => {
         variables: { start: startTime, end: endTime },
       })
     },
+    getRequestsVolumePerDays: (startTime: Date, endTime: Date) => {
+      return apolloClient.query({
+        query: AvgRequestsQuery,
+        variables: { start: startTime, end: endTime },
+      })
+    },
     getCounts: querier(qc => qc.oracle.unverified.counts),
     createDataSource: broadcaster<MsgCreateDataSource>(
       '/oracle.v1.MsgCreateDataSource',
@@ -214,15 +228,31 @@ const makeCallers = () => {
       return axios.get(API_CONFIG.ordinPriceUrl)
     },
     getSortedOracleScripts: (
-      page_number: number,
+      offset: number,
       page_limit: number,
       activities: string,
-      owner: string,
+      owner: string | null,
       name: string,
     ) => {
-      return sendGet(
-        `${API_CONFIG.telemetryUrl}/oracle_scripts?page[number]=${page_number}&page[limit]=${page_limit}&sort=${activities}&owner=${owner}&name=${name}`,
-      )
+      return apolloClient.query({
+        query: OracleScriptsQuery,
+        variables: {
+          offset: offset,
+          limit: page_limit,
+          owner: owner,
+          name: `%${name}%` || '%%',
+        },
+      })
+    },
+    getMostUsedSortedOracleScripts: (
+      offset: number,
+      page_limit: number,
+      owner: string | null,
+    ) => {
+      return apolloClient.query({
+        query: OracleScriptsMostRequestedQuery,
+        variables: { offset: offset, limit: page_limit, owner: owner },
+      })
     },
     getAccountTx: (
       page_number: number,
@@ -241,15 +271,21 @@ const makeCallers = () => {
     getChannel: querier(qc => qc.ibc.channel.allChannels),
     getConnections: querier(qc => qc.ibc.connection.allConnections),
     getClientState: querier(qc => qc.ibc.client.state),
-    getOracleScript: querier(qc => qc.oracle.unverified.oracleScript),
+    getOracleScript: (id: number) => {
+      return apolloClient.query({
+        query: OracleScriptQuery,
+        variables: { id: id },
+      })
+    },
     createRequest: broadcaster<MsgRequestData>(
       '/oracle.v1.MsgRequestData',
       MsgRequestData,
     ),
-    getRequests: (page_limit: number, page_number: number) => {
-      return axiosWrapper.get(
-        `${API_CONFIG.rpc}api/oracle/requests?limit=${page_limit}&offset=${page_number}&reverse=true`,
-      )
+    getRequests: (offset: number, limit: number) => {
+      return apolloClient.query({
+        query: OracleScriptsAllRequestsQuery,
+        variables: { offset: offset, limit: limit },
+      })
     },
     getRequest: (id: number) => {
       return axiosWrapper.get(`${API_CONFIG.rpc}api/oracle/requests/${id}`)
@@ -380,12 +416,13 @@ const makeCallers = () => {
     },
     getOracleScriptRequests: (
       id: string,
-      page_number: number,
+      offset: number,
       page_limit: number,
     ) => {
-      return sendGet(
-        `${API_CONFIG.telemetryUrl}/requests/oracle_scripts/${id}?page[number]=${page_number}&page[limit]=${page_limit}`,
-      )
+      return apolloClient.query({
+        query: OracleScriptRequestsQuery,
+        variables: { offset: offset, limit: page_limit, id: id },
+      })
     },
     getDataSourceRequests: (
       id: string,
@@ -416,14 +453,6 @@ const makeCallers = () => {
     }),
     getTxForTxDetailsPage: (hash: string) => {
       return getAPIDate(`${API_CONFIG.rpc}tx?hash=0x${hash}&prove=true`)
-    },
-    getRequestsVolumePerDays: (startTime: Date, endTime: Date) => {
-      return axios.get(`${API_CONFIG.telemetryUrl}/requests/volume_per_days`, {
-        params: {
-          start_time: (startTime.getTime() / 1000).toFixed(),
-          end_time: (endTime.getTime() / 1000).toFixed(),
-        },
-      })
     },
   }
 }

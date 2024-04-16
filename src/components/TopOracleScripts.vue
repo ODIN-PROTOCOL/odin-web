@@ -4,20 +4,20 @@
     <template v-else>
       <div
         v-for="script in topOracleScripts"
-        :key="script.attributes.id"
+        :key="script.id"
         class="top-oracle-scripts__item card-frame"
       >
         <div class="top-oracle-scripts__item-description">
           <div class="top-oracle-scripts__item-row">
             <div class="top-oracle-scripts__item-title">
-              {{ script.attributes.name }}
+              {{ script.name }}
             </div>
             <div class="top-oracle-scripts__item-link">
               <router-link
                 v-slot="{ navigate }"
                 :to="{
                   name: $routes.oracleScriptDetails,
-                  params: { id: script.attributes.id },
+                  params: { id: script.id },
                 }"
                 custom
               >
@@ -32,7 +32,7 @@
             </div>
           </div>
           <span class="top-oracle-scripts__item-text">
-            {{ script.attributes.description || 'No description' }}
+            {{ script.description || 'No description' }}
           </span>
         </div>
         <div class="top-oracle-scripts__item-info">
@@ -41,13 +41,7 @@
               Requests number
             </div>
             <div class="top-oracle-scripts__item-info-text">
-              {{ script.attributes.requests_number }}
-            </div>
-          </div>
-          <div class="top-oracle-scripts__item-info-value">
-            <div class="top-oracle-scripts__item-info-title">Response time</div>
-            <div class="top-oracle-scripts__item-info-text">
-              {{ script.attributes.response_time }} s
+              {{ script.requests_aggregate?.aggregate.count || 0 }}
             </div>
           </div>
         </div>

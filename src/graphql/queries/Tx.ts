@@ -6,7 +6,7 @@ export const AvgFeeQuery = gql`
       order_by: { day: asc }
       where: { day: { _gte: $start, _lte: $end } }
     ) {
-      fee: avg_daily_fee
+      value: avg_daily_fee
       date: day
     }
   }

@@ -18,8 +18,9 @@
         <SearchIcon />
       </button>
     </div>
+
     <div class="sort-line__selection">
-      <div class="sort-line__selection-item">
+      <!-- <div class="sort-line__selection-item">
         <span class="sort-line__selection-item-title">Sort by:</span>
         <VuePicker
           class="sort-line__vue-picker sort-line__vue-picker--activites _vue-picker"
@@ -40,7 +41,8 @@
             </div>
           </template>
         </VuePicker>
-      </div>
+      </div> -->
+
       <div v-if="!wallet.isEmpty" class="sort-line__selection-item">
         <span class="sort-line__selection-item-title">{{ title }}:</span>
         <VuePicker

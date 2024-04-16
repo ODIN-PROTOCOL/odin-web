@@ -25,12 +25,7 @@
         :key="item.title"
       >
         <h4 class="charts-view__chart-title">{{ item.title }}</h4>
-        <router-link
-          class="charts-view__chart-item"
-          :to="{ name: item.chartPageName }"
-        >
-          <ChartPreview v-bind="chartPagesProps[item.id]" />
-        </router-link>
+        <ChartPreview v-bind="chartPagesProps[item.id]" />
       </div>
     </div>
     <div class="app-table">

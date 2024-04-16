@@ -60,41 +60,37 @@
         <template v-if="oracleScripts?.length">
           <div
             v-for="item in oracleScripts"
-            :key="item.attributes.id.toString()"
+            :key="item.id.toString()"
             class="app-table__row oracle-scripts__table-row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">ID</span>
-              <span>#{{ item.attributes.id }}</span>
+              <span>#{{ item.id }}</span>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Oracle Script</span>
               <TitledLink
                 class="app-table__cell-txt app-table__link"
-                :text="item.attributes.name"
+                :text="item.name"
                 :name="{
                   name: $routes.oracleScriptDetails,
-                  params: { id: item.attributes.id },
+                  params: { id: item.id },
                 }"
               />
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Description</span>
               <span>
-                {{ item.attributes.description || 'No description' }}
+                {{ item.description || 'No description' }}
               </span>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Timestamp</span>
               <span class="app-table__cell-date">
-                {{
-                  $fDate(new Date(item.attributes.timestamp * 1000), 'dd/MM/yy')
-                }}
+                {{ $fDate($parseISO(item.timestamp), 'dd/MM/yy') }}
               </span>
               <span class="app-table__cell-time">
-                {{
-                  $fDate(new Date(item.attributes.timestamp * 1000), 'HH:mm')
-                }}
+                {{ $fDate($parseISO(item.timestamp), 'HH:mm') }}
               </span>
             </div>
             <div class="app-table__cell">
@@ -105,10 +101,10 @@
                   class="app-table__activities-item oracle-scripts__table-activities-item"
                 >
                   <button
-                    v-if="accountAddress === item.attributes.owner"
+                    v-if="accountAddress === item.owner"
                     class="app-btn app-btn--edit"
                     type="button"
-                    @click="editOracleScript(item.attributes)"
+                    @click="editOracleScript(item)"
                   >
                     Edit
                   </button>
@@ -188,17 +184,16 @@ const headerTitles = [
 const getOracleScripts = async () => {
   lockLoading()
   try {
-    const { data, total_count } = await callers
-      .getSortedOracleScripts(
-        currentPage.value - 1,
-        ITEMS_PER_PAGE,
-        sortingActivitiesValue.value,
-        sortingOwnersValue.value,
-        oracleScriptsName.value,
-      )
-      .then(response => response.json())
-    oracleScripts.value = data
-    oracleScriptsCount.value = total_count
+    const { data } = await callers.getSortedOracleScripts(
+      (currentPage.value - 1) * ITEMS_PER_PAGE,
+      ITEMS_PER_PAGE,
+      sortingActivitiesValue.value,
+      sortingOwnersValue.value,
+      oracleScriptsName.value,
+    )
+
+    oracleScripts.value = data.oracle_script
+    oracleScriptsCount.value = data.total_count.aggregate.count
     totalPages.value = Math.ceil(oracleScriptsCount.value / ITEMS_PER_PAGE)
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
@@ -209,10 +204,12 @@ const getOracleScripts = async () => {
 const getMostRequestedOracleScripts = async () => {
   lockLoading()
   try {
-    mostRequestedOracleScripts.value = await callers
-      .getSortedOracleScripts(0, 6, 'most_requested', 'null', '')
-      .then(response => response.json())
-      .then(data => data.data)
+    const topScriptsResponse = await callers.getMostUsedSortedOracleScripts(
+      0,
+      6,
+      null,
+    )
+    mostRequestedOracleScripts.value = topScriptsResponse.data.oracle_script
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }

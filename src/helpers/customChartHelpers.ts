@@ -238,8 +238,8 @@ export const formatDataForCharts = (
 
   data.forEach(({ date, ...rest }: telemetryDataForCharts) => {
     labels.push(date)
-    if (rest.fee) {
-      values.push(Number(rest.fee))
+    if (rest.value) {
+      values.push(Number(rest.value))
     } else {
       values.push(Number(rest.volume))
     }

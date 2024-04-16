@@ -4,7 +4,7 @@ export enum ACTIVITIES_SORT {
 }
 
 export enum OWNERS_SORT {
-  all = 'null',
+  all = '%%',
 }
 export enum TYPE_TX_SORT {
   all = '%%',
