@@ -395,7 +395,7 @@ const loadData = async () => {
   lockLoading()
   try {
     await getDelegations()
-    await getValidators()    
+    await getValidators()
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
@@ -424,7 +424,7 @@ const claimAllRewards = async () => {
   await showDialogHandler(ClaimAllRewardsFormModal, {
     onSubmit: async d => {
       d.kill()
-      await loadData()      
+      await loadData()
     },
   })
 }

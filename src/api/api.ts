@@ -83,7 +83,7 @@ class Api {
     typeUrl: string,
     type: GeneratedType,
   ): (msg: T) => Promise<DeliverTxResponse | BroadcastTxError> {
-    this._stargateRegistry.register(typeUrl, type)    
+    this._stargateRegistry.register(typeUrl, type)
     return (msg: T): Promise<DeliverTxResponse> => {
       return this._signAndBroadcast([{ typeUrl, value: msg }])
     }
@@ -148,7 +148,7 @@ class Api {
         gas: '2000000',
       },
     )
-    if (!res || ('code' in res && res.code !== 0)) {      
+    if (!res || ('code' in res && res.code !== 0)) {
       throw new OdinApiBroadcastError(res)
     }
     return res

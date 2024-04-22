@@ -56,38 +56,52 @@ export const DetailedValidatorsQuery = gql`
 `
 
 export const ProposedBlocksQuery = gql`
-query ProposedBlocksQuery($validator: String!, $limit: Int = 10, $offset: Int = 0) {
-  block(where: {proposer_address: {_eq: $validator}}, limit: $limit, offset: $offset) {
-    hash
-    height
-    num_txs
-    proposer_address
-    size
-    timestamp
-    total_gas
-  }
-  total_blocks: block_aggregate(where: {proposer_address: {_eq: $validator}}) {
-    aggregate {
-      count
+  query ProposedBlocksQuery(
+    $validator: String!
+    $limit: Int = 10
+    $offset: Int = 0
+  ) {
+    block(
+      where: { proposer_address: { _eq: $validator } }
+      limit: $limit
+      offset: $offset
+    ) {
+      hash
+      height
+      num_txs
+      proposer_address
+      size
+      timestamp
+      total_gas
+    }
+    total_blocks: block_aggregate(
+      where: { proposer_address: { _eq: $validator } }
+    ) {
+      aggregate {
+        count
+      }
     }
   }
-}
 `
 
 export const OracleReportsQuery = gql`
-query ReportsQuery($validator: String!, $limit: Int = 10, $offset: Int = 0) {
-  report(where: {validator: {_eq: $validator}}, limit: $limit, offset: $offset) {
-    oracle_script_id
-    request_id
-    tx_hash
-    request {
-      timestamp
+  query ReportsQuery($validator: String!, $limit: Int = 10, $offset: Int = 0) {
+    report(
+      where: { validator: { _eq: $validator } }
+      limit: $limit
+      offset: $offset
+    ) {
+      oracle_script_id
+      request_id
+      tx_hash
+      request {
+        timestamp
+      }
+    }
+    totalRequests: report_aggregate(where: { validator: { _eq: $validator } }) {
+      aggregate {
+        count
+      }
     }
   }
-  totalRequests: report_aggregate(where: {validator: {_eq: $validator}}) {
-    aggregate {
-      count
-    }
-  }
-}
 `

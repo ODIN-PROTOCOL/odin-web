@@ -8,11 +8,7 @@
       </div>
       <div class="app-table__body">
         <template v-if="blocks.length">
-          <div
-            v-for="item in blocks"
-            :key="item.height"
-            class="app-table__row"
-          >
+          <div v-for="item in blocks" :key="item.height" class="app-table__row">
             <div class="app-table__cell">
               <span class="app-table__title">Block</span>
               <a
@@ -25,10 +21,7 @@
             <div class="app-table__cell">
               <span class="app-table__title">Date and time</span>
               <span>{{
-                $fDate(
-                  $parseISO(item.timestamp),
-                  'HH:mm dd.MM.yy',
-                )
+                $fDate($parseISO(item.timestamp), 'HH:mm dd.MM.yy')
               }}</span>
             </div>
             <div class="app-table__cell">
@@ -87,7 +80,7 @@ const getProposedBlocks = async () => {
       props.proposerAddress,
       currentPage.value * ITEMS_PER_PAGE,
       ITEMS_PER_PAGE,
-   )    
+    )
     blocks.value = response.data.block || []
     blocksCount.value = response.data.total_blocks.aggregate.count || 0
     totalPages.value = Math.ceil(blocksCount.value / ITEMS_PER_PAGE) - 1

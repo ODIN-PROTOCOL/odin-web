@@ -9,7 +9,6 @@ import { proposalStatusType } from '@/helpers/statusTypes'
 import { callers } from '@/api/callers'
 import { ProposalStatus } from '@provider/codec/cosmos/gov/v1beta1/gov'
 
-
 const defaultProposalsCountBlank: defaultChartDataBlank[] = [
   { name: 'Approved', color: '#00D097' },
   { name: 'Rejected', color: '#F65160' },

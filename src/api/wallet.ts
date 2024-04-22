@@ -1,4 +1,9 @@
-import { AccountData, OfflineSigner, OfflineDirectSigner, DirectSecp256k1HdWallet } from '@cosmjs/proto-signing'
+import {
+  AccountData,
+  OfflineSigner,
+  OfflineDirectSigner,
+  DirectSecp256k1HdWallet,
+} from '@cosmjs/proto-signing'
 import { API_CONFIG } from './api-config'
 import { Window as KeplrWindow } from '@keplr-wallet/types'
 

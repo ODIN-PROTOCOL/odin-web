@@ -8,7 +8,11 @@
       </div>
       <div class="app-table__body">
         <template v-if="reports.length">
-          <div v-for="item in reports" :key="item.request_id" class="app-table__row">
+          <div
+            v-for="item in reports"
+            :key="item.request_id"
+            class="app-table__row"
+          >
             <div class="app-table__cell">
               <span class="app-table__title">Oracle report</span>
               {{ item.request_id }}

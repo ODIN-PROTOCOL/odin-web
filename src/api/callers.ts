@@ -27,7 +27,6 @@ import {
 import { MsgWithdrawDelegatorReward } from 'cosmjs-types/cosmos/distribution/v1beta1/tx'
 import { axiosWrapper } from '@/helpers/functions'
 
-
 import {
   BlocksQuery,
   TxQuery,
@@ -442,7 +441,11 @@ const makeCallers = () => {
     getValidatorUptime: () => {
       return sendGet(`${API_CONFIG.telemetryUrl}/validators`)
     },
-    getOracleReports: (validator: string, offset: number, page_limit: number) => {
+    getOracleReports: (
+      validator: string,
+      offset: number,
+      page_limit: number,
+    ) => {
       return apolloClient.query({
         query: OracleReportsQuery,
         variables: { validator: validator, limit: page_limit, offset: offset },

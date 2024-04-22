@@ -82,7 +82,7 @@ async function createSessionWithCosmostationWallet(
       try {
         await window?.cosmostation?.providers?.keplr?.experimentalSuggestChain({
           ...CHAIN_CONFIG,
-          bip44: { coinType }
+          bip44: { coinType },
         })
       } catch {
         throw new ReferenceError(

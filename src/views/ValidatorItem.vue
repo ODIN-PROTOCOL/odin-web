@@ -134,7 +134,7 @@ const getValidator = async () => {
       validator.value = {
         ...result.value.validator[0],
         isActive: await isActiveValidator(String(route.params.address)),
-      }      
+      }
       operatorAddress.value = validator.value.info.operatorAddress
       validatorAddress.value = validator.value.info.validatorAddress
     }
