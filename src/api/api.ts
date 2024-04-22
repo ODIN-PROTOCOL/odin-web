@@ -22,7 +22,7 @@ import { CoinswapExt, setupCoinswapExt } from './query-ext/coinswapExtension'
 import { GovExt, setupGovExt } from './query-ext/govExtension'
 import { MintExt, setupMintExt } from './query-ext/mintExtension'
 import { OracleExt, setupOracleExt } from './query-ext/oracleExtension'
-import { BroadcastTxFailure, coins } from '@cosmjs/launchpad'
+import { BroadcastTxError, coins } from '@cosmjs/stargate'
 import { stub } from '@/helpers/stubs'
 
 export class OdinApiBroadcastError extends Error {
@@ -30,12 +30,12 @@ export class OdinApiBroadcastError extends Error {
   txHash: string
   txRawLog?: string
 
-  constructor(txFailure: BroadcastTxFailure) {
-    super(txFailure.rawLog || 'unknown error')
+  constructor(response: DeliverTxResponse) {
+    super('unknown error')
     this.name = 'Broadcast Tx Error'
-    this.txCode = txFailure.code
-    this.txRawLog = txFailure.rawLog
-    this.txHash = txFailure.transactionHash
+    this.txCode = response.code
+    this.txRawLog = response.rawLog
+    this.txHash = response.transactionHash
   }
 }
 
@@ -82,8 +82,8 @@ class Api {
   makeBroadcastCaller<T>(
     typeUrl: string,
     type: GeneratedType,
-  ): (msg: T) => Promise<DeliverTxResponse> {
-    this._stargateRegistry.register(typeUrl, type)
+  ): (msg: T) => Promise<DeliverTxResponse | BroadcastTxError> {
+    this._stargateRegistry.register(typeUrl, type)    
     return (msg: T): Promise<DeliverTxResponse> => {
       return this._signAndBroadcast([{ typeUrl, value: msg }])
     }
@@ -148,10 +148,9 @@ class Api {
         gas: '2000000',
       },
     )
-    if (!res || ('code' in res && res.code !== 0)) {
-      throw new OdinApiBroadcastError(res as BroadcastTxFailure)
+    if (!res || ('code' in res && res.code !== 0)) {      
+      throw new OdinApiBroadcastError(res)
     }
-
     return res
   }
 }

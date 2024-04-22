@@ -245,7 +245,7 @@ const myDelegationsValitors = computed(() =>
     return {
       ...allValidators.value.find(
         (validator: ValidatorsInfo) =>
-          validator.info.operatorAddress === validatorAddress,
+          validator.info?.operatorAddress === validatorAddress,
       ),
     }
   }),
@@ -351,7 +351,6 @@ const getValidators = async () => {
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
-
   releaseLoading()
 }
 
@@ -359,7 +358,6 @@ const filterValidators = (newPage = 1) => {
   let tempArr = validators.value
   if (searchValue.value.trim()) {
     tempArr = tempArr.filter((item: ValidatorsInfo) => {
-      console.log(item.descriptions)
       if (item.descriptions === undefined) {
         return false
       }
@@ -397,7 +395,7 @@ const loadData = async () => {
   lockLoading()
   try {
     await getDelegations()
-    await getValidators()
+    await getValidators()    
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
@@ -426,7 +424,7 @@ const claimAllRewards = async () => {
   await showDialogHandler(ClaimAllRewardsFormModal, {
     onSubmit: async d => {
       d.kill()
-      await loadData()
+      await loadData()      
     },
   })
 }
@@ -499,7 +497,7 @@ const delegate = async (validator: ValidatorInfoModify) => {
     },
     {
       validator,
-      delegation: delegations.value[validator.info.operatorAddress],
+      delegation: delegations.value[validator.info?.operatorAddress],
     },
   )
 }
@@ -515,13 +513,13 @@ const redelegate = async (validator: ValidatorInfoModify) => {
     },
     {
       validator,
-      delegation: delegations.value[validator.info.operatorAddress],
+      delegation: delegations.value[validator.info?.operatorAddress],
     },
   )
 }
 
 const undelegate = async (validator: ValidatorInfoModify) => {
-  if (!delegations.value[validator.info.operatorAddress]) return
+  if (!delegations.value[validator.info?.operatorAddress]) return
   await showDialogHandler(
     UndelegateFormModal,
     {
@@ -532,13 +530,14 @@ const undelegate = async (validator: ValidatorInfoModify) => {
     },
     {
       validator,
-      delegation: delegations.value[validator.info.operatorAddress],
+      delegation: delegations.value[validator.info?.operatorAddress],
     },
   )
 }
 
 const withdrawRewards = async (validator: ValidatorInfoModify) => {
-  if (!delegations.value[validator.info.operatorAddress]) return
+  if (!delegations.value[validator.info?.operatorAddress]) return
+
   await showDialogHandler(
     ClaimRewardsFormModal,
     {

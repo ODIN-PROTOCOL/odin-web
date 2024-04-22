@@ -8,15 +8,15 @@
       </div>
       <div class="app-table__body">
         <template v-if="reports.length">
-          <div v-for="item in reports" :key="item.id" class="app-table__row">
+          <div v-for="item in reports" :key="item.request_id" class="app-table__row">
             <div class="app-table__cell">
               <span class="app-table__title">Oracle report</span>
-              {{ item.id }}
+              {{ item.request_id }}
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Oracle script</span>
               <span class="app-table__cell-txt">
-                {{ item.oracle_script }}
+                {{ item.oracle_script_id }}
               </span>
             </div>
             <div class="app-table__cell">
@@ -83,10 +83,10 @@ const getReports = async () => {
       currentPage.value - 1,
       ITEMS_PER_PAGE,
     )
-    if (response.data.data) {
-      reportsCount.value = response.data.tx_count
+    if (response.data) {
+      reportsCount.value = response.data.totalRequests.aggregate.count
       totalPages.value = Math.ceil(reportsCount.value / ITEMS_PER_PAGE)
-      reports.value = response.data.data
+      reports.value = response.data.report
     }
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)

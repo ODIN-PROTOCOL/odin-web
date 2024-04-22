@@ -16,7 +16,7 @@ const _loadPowerConst = async () => {
     callers.getTreasuryPool(),
   ])
 
-  const lokiSupply = supply
+  const lokiSupply = supply.supply
     .filter(el => el.denom === COINS_LIST.LOKI)
     .reduce((acc, cur) => big.add(acc, cur.amount), big.zero)
   const treasuryPool = data.treasuryPool[0] || []

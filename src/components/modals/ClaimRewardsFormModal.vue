@@ -23,7 +23,7 @@
                   :title="validator.info.operatorAddress"
                   class="claim-rewards-form-modal__field-value"
                 >
-                  {{ validator.info.operatorAddress }}
+                  {{ validator.info?.operatorAddress }}
                 </p>
               </div>
               <div class="claim-rewards-form-modal__field-info">
@@ -104,14 +104,14 @@ const rewardsPoll = usePoll(getRewards, 5000)
 
 const submit = async () => {
   isLoading.value = true
-  try {
+  try {    
     await callers.withdrawDelegatorRewards({
       delegatorAddress: wallet.account.address,
       validatorAddress: props.validator.info.operatorAddress,
     })
     onSubmit()
     handleNotificationInfo('Successfully claimed', TYPE_NOTIFICATION.success)
-  } catch (error) {
+  } catch (error) {    
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
   isLoading.value = false

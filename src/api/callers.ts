@@ -24,9 +24,9 @@ import {
   MsgUndelegate,
   MsgBeginRedelegate,
 } from 'cosmjs-types/cosmos/staking/v1beta1/tx'
-import { Proposal } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { MsgWithdrawDelegatorReward } from 'cosmjs-types/cosmos/distribution/v1beta1/tx'
 import { axiosWrapper } from '@/helpers/functions'
+
 
 import {
   BlocksQuery,
@@ -39,6 +39,8 @@ import {
   BlockAvgTimePerDay,
   TxAtBlockQuery,
   TxFromAddressQuery,
+  ProposedBlocksQuery,
+  OracleReportsQuery,
 } from '@/graphql/queries'
 import {
   BlockMetaResponse,
@@ -156,12 +158,13 @@ const makeCallers = () => {
     },
     getProposedBlocks: (
       proposer: string,
-      page_number: number,
+      offset: number,
       page_limit: number,
     ) => {
-      return sendGet(
-        `${API_CONFIG.telemetryUrl}/validator/${proposer}/transactions?page[number]=${page_number}&page[limit]=${page_limit}&page[order]=desc`,
-      )
+      return apolloClient.query({
+        query: ProposedBlocksQuery,
+        variables: { validator: proposer, limit: page_limit, offset: offset },
+      })
     },
     getAvgSizePerDays: (startTime: Date, endTime: Date) => {
       return apolloClient.query({
@@ -439,10 +442,11 @@ const makeCallers = () => {
     getValidatorUptime: () => {
       return sendGet(`${API_CONFIG.telemetryUrl}/validators`)
     },
-    getOracleReports: (id: string, page_number: number, page_limit: number) => {
-      return axiosWrapper.get(
-        `${API_CONFIG.telemetryUrl}/validator/${id}/reports?page[number]=${page_number}&page[limit]=${page_limit}`,
-      )
+    getOracleReports: (validator: string, offset: number, page_limit: number) => {
+      return apolloClient.query({
+        query: OracleReportsQuery,
+        variables: { validator: validator, limit: page_limit, offset: offset },
+      })
     },
     getUnverifiedBalances: querier(qc => qc.bank.balance),
     getAllBalances: querier(qc => qc.bank.allBalances),

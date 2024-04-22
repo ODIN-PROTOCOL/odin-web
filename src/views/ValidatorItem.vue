@@ -38,7 +38,7 @@
           <ValidatorInfo :validator="validator" />
           <AppTabs>
             <AppTab title="Oracle Reports">
-              <OracleReportsTable :proposer-address="operatorAddress" />
+              <OracleReportsTable :proposer-address="validatorAddress" />
             </AppTab>
             <AppTab :title="delegatorsTitle">
               <DelegatorsTable
@@ -47,7 +47,7 @@
               />
             </AppTab>
             <AppTab title="Proposed Blocks">
-              <ProposedBlocksTable :proposer-address="operatorAddress" />
+              <ProposedBlocksTable :proposer-address="validatorAddress" />
             </AppTab>
           </AppTabs>
         </template>
@@ -107,6 +107,7 @@ const delegatorsTitle = computed(() =>
     : 'Delegators',
 )
 const operatorAddress = ref('')
+const validatorAddress = ref('')
 
 const { result, loading: isValidatorResponseLoading } =
   useQuery<ValidatorResponse>(ValidatorQuery, {
@@ -133,8 +134,9 @@ const getValidator = async () => {
       validator.value = {
         ...result.value.validator[0],
         isActive: await isActiveValidator(String(route.params.address)),
-      }
+      }      
       operatorAddress.value = validator.value.info.operatorAddress
+      validatorAddress.value = validator.value.info.validatorAddress
     }
   } catch (error) {
     isLoadingError.value = true
@@ -160,11 +162,11 @@ const getDelegators = async () => {
 }
 
 watch([isValidatorResponseLoading], async () => {
-  // await getValidator()
+  await getValidator()
 })
 
 onMounted(async () => {
-  // await getValidator()
+  await getValidator()
   await getDelegators()
 })
 </script>

@@ -155,7 +155,7 @@
 
 <script setup lang="ts">
 import { computed, ref, toRef, watch } from 'vue'
-import { coins } from '@cosmjs/launchpad'
+import { coins } from '@cosmjs/stargate'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
 import { COINS_LIST } from '@/api/api-config'

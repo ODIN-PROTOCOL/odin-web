@@ -12,7 +12,7 @@
         :text="validator.descriptions[0]?.moniker"
         :name="{
           name: $routes.validatorDetails,
-          params: { address: validator.info.operatorAddress },
+          params: { address: validator.info?.operatorAddress },
         }"
       />
       <p v-else class="app-table__cell-txt">-</p>
@@ -70,7 +70,7 @@
           class="app-table__activities-item validators-view-table-row__activities-item"
         >
           <button
-            v-if="delegations[validator.info.operatorAddress]"
+            v-if="delegations[validator.info?.operatorAddress]"
             class="app-btn app-btn--outlined app-btn--very-small w-min108"
             type="button"
             @click="selectedBtn('Regelate')"
@@ -86,7 +86,7 @@
           </button>
         </div>
         <div
-          v-if="delegations[validator.info.operatorAddress]"
+          v-if="delegations[validator.info?.operatorAddress]"
           class="app-table__activities-item validators-view-table-row__activities-item"
         >
           <button
