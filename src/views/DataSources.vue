@@ -194,14 +194,6 @@ const getDataSources = async () => {
 
     if (response.data) {
       dataSources.value = response.data.data_source
-      // dataSources.value = await Promise.all(
-      //   data?.map(async (item: { attributes: { id: number } }) => {
-      //     // const resp = await callers.getDataSourceRequestCount(
-      //     //   item.attributes.id,
-      //     // )
-      //     return { ...item.attributes, requestCount: resp.data.total_count }
-      //   }),
-      // )
     }
     dataSourcesCount.value = response.data.data_source_aggregate.aggregate.count
     totalPages.value = Math.ceil(dataSourcesCount.value / ITEMS_PER_PAGE)

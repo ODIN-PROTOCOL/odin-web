@@ -164,19 +164,15 @@ const getAccountInfo = async () => {
 
   try {
     transactions.value = []
-    const validatorAddress = Bech32.encode(
-      'odin',
-      Bech32.decode(route.params.hash as string).data,
-    )
     const txResponse = await callers.getAccountIndexedTx(
       currentPage.value - 1,
       20,
-      validatorAddress,
+      route.params.hash as string,
       'desc',
       sortingValue.value,
     )
 
-    const balances = await getAllBalances(validatorAddress)
+    const balances = await getAllBalances(route.params.hash as string)
 
     geoBalance.value = balances['minigeo'] || '0.0'
     odinBalance.value = balances['loki'] || '0.0'

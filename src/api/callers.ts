@@ -211,11 +211,6 @@ const makeCallers = () => {
         variables: { offset: offset, limit: page_limit },
       })
     },
-    getDataSourceRequestCount: (data_source_id: number) => {
-      return axiosWrapper.get(
-        `${API_CONFIG.telemetryUrl}/requests/data_sources/${data_source_id}`,
-      )
-    },
     getDataSource: querier(qc => qc.oracle.unverified.dataSource),
     createOracleScript: broadcaster<MsgCreateOracleScript>(
       '/oracle.v1.MsgCreateOracleScript',
@@ -255,20 +250,6 @@ const makeCallers = () => {
         query: OracleScriptsMostRequestedQuery,
         variables: { offset: offset, limit: page_limit, owner: owner },
       })
-    },
-    getAccountTx: (
-      page_number: number,
-      page_limit: number,
-      owner: string,
-      page_order: string,
-      tx_type: string,
-    ) => {
-      return sendGet(
-        `${API_CONFIG.telemetryUrl}/account_txs/${owner}?page[number]=${page_number}&page[limit]=${page_limit}&page[order]=${page_order}&type=${tx_type}`,
-      )
-    },
-    getBlockSize: (height: number) => {
-      return axiosWrapper.get(`${API_CONFIG.telemetryUrl}/block_size/${height}`)
     },
     getChannel: querier(qc => qc.ibc.channel.allChannels),
     getConnections: querier(qc => qc.ibc.connection.allConnections),
