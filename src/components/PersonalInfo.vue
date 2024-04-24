@@ -57,6 +57,28 @@
             </span>
           </div>
         </div>
+        <div class="personal-info__card-balance-row">
+          <span class="personal-info__card-balance-row-title">DOKI</span>
+          <div class="personal-info__card-balance-row-value-wrapper">
+            <span
+              class="personal-info__card-balance-row-value app-table__cell-txt"
+              :title="$convertLokiToOdin(udokiCoins.amount)"
+            >
+              {{ $convertLokiToOdin(udokiCoins.amount, { onlyNumber: true }) }}
+            </span>
+          </div>
+        </div>
+        <div class="personal-info__card-balance-row">
+          <span class="personal-info__card-balance-row-title">MYRK</span>
+          <div class="personal-info__card-balance-row-value-wrapper">
+            <span
+              class="personal-info__card-balance-row-value app-table__cell-txt"
+              :title="$convertLokiToOdin(umyrkCoins.amount)"
+            >
+              {{ $convertLokiToOdin(umyrkCoins.amount, { onlyNumber: true }) }}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -85,9 +107,9 @@ const accountLink = computed(() => {
 })
 
 const {
-  coins: [lokiCoins],
+  coins: [lokiCoins, udokiCoins, umyrkCoins],
   load: loadBalances,
-} = useBalances([COINS_LIST.LOKI])
+} = useBalances([COINS_LIST.LOKI, COINS_LIST.UDOKI, COINS_LIST.UMYRK])
 
 const lokiPoll = usePoll(loadBalances, 5000)
 

@@ -118,7 +118,7 @@ import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import { callers } from '@/api/callers'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { DecodedTxData } from '@/helpers/Types'
-import { prepareTransaction } from '@/helpers/helpers'
+import { prepareRPCTransaction, prepareTransaction } from '@/helpers/helpers'
 import BackButton from '@/components/BackButton.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import TitledLink from '@/components/TitledLink.vue'
@@ -131,17 +131,28 @@ import {
   UiLoader,
   UiNoDataMessage,
 } from '@/components/ui'
+import { ValidatorDetailedInfo } from '@/graphql/types/responses'
 
 const route: RouteLocationNormalizedLoaded = useRoute()
 const tx = ref<DecodedTxData>()
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const isLoadingError = ref(false)
 
+const validators = ref<ValidatorDetailedInfo[]>([])
+
+const getValidators = async (): Promise<void> => {
+  const response = await callers.getValidators()
+  validators.value = response.data.validators || []
+}
+
 const getTransactions = async () => {
   lockLoading()
   try {
     const res = await callers.getTxForTxDetailsPage(String(route.params.hash))
-    const preparedTx = await prepareTransaction([res.data.result])
+    const preparedTx = await prepareRPCTransaction(
+      [res.data.result],
+      validators.value,
+    )
     tx.value = preparedTx[0]
   } catch (error) {
     isLoadingError.value = true
@@ -151,6 +162,7 @@ const getTransactions = async () => {
 }
 
 onMounted(async () => {
+  await getValidators()
   await getTransactions()
 })
 </script>

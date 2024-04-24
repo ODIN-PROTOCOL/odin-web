@@ -5,19 +5,17 @@
       <TitledLink
         :name="{
           name: $routes.transactionDetails,
-          params: { hash: transition.hash },
+          params: { hash: tx.hash },
         }"
-        :title="transition.hash"
-        :text="
-          formatTxString(transition.hash ? transition.hash?.toString() : '')
-        "
+        :title="tx.hash"
+        :text="formatTxString(tx.hash ? tx.hash?.toString() : '')"
         class="app-table__cell-txt app-table__link"
       />
     </div>
     <div class="app-table__cell">
       <span class="app-table__title">Type</span>
-      <span class="app-table__cell-txt" :title="transition.type">
-        {{ transition.type }}
+      <span class="app-table__cell-txt" :title="tx.type">
+        {{ tx.type }}
       </span>
     </div>
     <div class="app-table__cell">
@@ -25,46 +23,40 @@
       <TitledLink
         :name="{
           name: $routes.blockDetails,
-          params: { id: transition.block },
+          params: { id: tx.block },
         }"
-        :text="transition.block"
+        :text="tx.block"
         class="app-table__cell-txt app-table__link"
       />
     </div>
     <div class="app-table__cell">
       <span class="app-table__title">Date</span>
       <span class="app-table__cell-date">
-        {{ $fDate(transition.time, 'dd/MM/yy') }}
+        {{ $fDate(tx.time, 'dd/MM/yy') }}
       </span>
       <span class="app-table__cell-time">
-        {{ $fDate(transition.time, 'HH:mm') }}
+        {{ $fDate(tx.time, 'HH:mm') }}
       </span>
     </div>
     <div class="app-table__cell">
       <span class="app-table__title">Sender</span>
       <TitledLink
-        v-if="transition.sender"
-        v-bind="getODINRedirectLink(transition.sender)"
+        v-if="tx.sender"
+        v-bind="getODINRedirectLink(tx.sender)"
         class="app-table__cell-txt app-table__link"
-        :title="transition.sender"
-        :text="formatTxString(transition.sender)"
+        :title="tx.sender"
+        :text="formatTxString(tx.sender)"
       />
       <span class="app-table__cell-txt" v-else> - </span>
     </div>
     <div class="app-table__cell">
       <span class="app-table__title">Receiver</span>
       <TitledLink
-        v-if="transition.receiver"
-        v-bind="getODINRedirectLink(transition.receiver)"
-        :title="
-          transition.receiver_name
-            ? transition.receiver_name
-            : transition.receiver
-        "
+        v-if="tx.receiver"
+        v-bind="getODINRedirectLink(tx.receiver)"
+        :title="tx.receiver_name ? tx.receiver_name : tx.receiver"
         :text="
-          transition.receiver_name
-            ? transition.receiver_name
-            : formatTxString(transition.receiver)
+          tx.receiver_name ? tx.receiver_name : formatTxString(tx.receiver)
         "
         class="app-table__cell-txt app-table__link"
       />
@@ -72,14 +64,14 @@
     </div>
     <div class="app-table__cell">
       <span class="app-table__title">GAS (ODIN)</span>
-      <span class="app-table__cell-txt" :title="transition.fee">
-        {{ transition.fee }}
+      <span class="app-table__cell-txt" :title="tx.fee">
+        {{ tx.fee }}
       </span>
     </div>
     <div class="app-table__cell">
       <span class="app-table__title">Amount</span>
-      <span :class="amountCellClass" :title="transition.amount">
-        {{ transition.amount }}
+      <span :class="amountCellClass" :title="tx.amount">
+        {{ tx.amount }}
       </span>
     </div>
   </div>
@@ -93,11 +85,11 @@ import { ROUTE_NAMES } from '@/enums'
 import { API_CONFIG } from '@/api/api-config'
 
 const props = defineProps<{
-  transition: DecodedTxData
+  tx: DecodedTxData
 }>()
 
 const amountCellClass = computed(() => {
-  if (props.transition.amount === '-') {
+  if (props.tx.amount === '-') {
     return 'app-table__cell-txt'
   }
 

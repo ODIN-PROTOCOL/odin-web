@@ -11,15 +11,18 @@ let _subsCount = 0
 let _updateInterval = -1
 
 const _loadPowerConst = async () => {
-  const [supply, { treasuryPool }] = await Promise.all([
+  const [supply, { data }] = await Promise.all([
     callers.getTotalSupply(),
     callers.getTreasuryPool(),
   ])
 
-  const lokiSupply = supply
+  const lokiSupply = supply.supply
     .filter(el => el.denom === COINS_LIST.LOKI)
     .reduce((acc, cur) => big.add(acc, cur.amount), big.zero)
-  const lokiPool = treasuryPool.find(el => el.denom === COINS_LIST.LOKI)?.amount
+  const treasuryPool = data.treasuryPool[0] || []
+  const lokiPool = treasuryPool.coins.find(
+    el => el.denom === COINS_LIST.LOKI,
+  )?.amount
 
   if (!lokiSupply || !lokiPool) {
     _powerConst.value = null

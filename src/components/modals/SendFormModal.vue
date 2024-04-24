@@ -126,7 +126,7 @@ import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { VuePicker, VuePickerOption } from '@invisiburu/vue-picker'
 import { ModalBase } from '@/components/modals'
 import { Coin } from '@cosmjs/amino'
-import { coin } from '@cosmjs/launchpad'
+import { coin } from '@cosmjs/stargate'
 
 const props = defineProps<{
   balance: Coin[]

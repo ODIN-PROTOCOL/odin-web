@@ -34,7 +34,6 @@ import { getAPIDate } from '@/helpers/requests'
 import { CoingeckoCoinsType, Link } from '@/helpers/Types'
 import CustomLineChart from '@/components/charts/CustomLineChart.vue'
 import InfoPanelData from './InfoPanelData.vue'
-
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 
 const CHART_DATA_PERIOD = 7
@@ -45,11 +44,9 @@ const totalData = ref<Link[]>([])
 
 const getTotalTxNumber = async () => {
   try {
-    const { total_count } = await callers
-      .getTxSearchFromTelemetry(0, 1, 'desc')
-      .then(resp => resp.json())
-
-    transactionCount.value = total_count
+    const response = await callers.getTxSearchFromTelemetry(0, 1, 'desc')
+    transactionCount.value =
+      response?.data.transaction_aggregate?.aggregate?.count || 0
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
@@ -61,8 +58,9 @@ const getLatestTelemetry = async (): Promise<void> => {
   startDate.setDate(startDate.getDate() - CHART_DATA_PERIOD)
 
   try {
-    const { data } = await callers.getTxVolumePerDays(startDate, endDate)
-    chartData.value = formatDataForCharts(data)
+    const response = await callers.getTxVolumePerDays(startDate, endDate)
+    const responseData = response?.data.chartData || []
+    chartData.value = formatDataForCharts(responseData)
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }

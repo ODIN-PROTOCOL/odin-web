@@ -44,10 +44,10 @@
       </div>
       <div class="app-table__body">
         <template v-if="transactions?.length">
-          <AccountTxLine
+          <TxLine
             v-for="(item, index) in transactions"
             :key="index"
-            :tx="item.attributes"
+            :tx="item"
           />
         </template>
         <template v-else>
@@ -84,11 +84,11 @@ import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { sortingTypeTx, TYPE_TX_SORT } from '@/helpers/sortingHelpers'
 import { InfoIcon } from '@/components/icons'
-import AccountTxLine from '@/components/AccountTxLine.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import PersonalInfo from '@/components/PersonalInfo.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
-
+import { prepareTransaction } from '@/helpers/helpers'
+import TxLine from '@/components/TxLine.vue'
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 
 const ITEMS_PER_PAGE = 20
@@ -116,19 +116,20 @@ const getTransactions = async () => {
   lockLoading()
 
   try {
-    const tx = await callers
-      .getAccountTx(
-        currentPage.value - 1,
-        ITEMS_PER_PAGE,
-        wallet.account.address,
-        'desc',
-        sortingValue.value,
-      )
-      .then(resp => resp.json())
+    const txResponse = await callers.getAccountIndexedTx(
+      currentPage.value - 1,
+      20,
+      wallet.account.address,
+      'desc',
+      sortingValue.value,
+    )
+    const txs = txResponse.data.message.map(
+      (message: any) => message.transaction,
+    )
+    transactions.value = prepareTransaction(txs, [])
 
-    transactions.value = tx.data
-    transactionsCount.value = tx.total_count
-    totalPages.value = Math.ceil(transactionsCount.value / ITEMS_PER_PAGE)
+    const totalTxCount = txResponse.data.transactions_aggregate.aggregate.count
+    totalPages.value = Math.ceil(totalTxCount.value / ITEMS_PER_PAGE)
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }

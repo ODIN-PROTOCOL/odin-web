@@ -19,7 +19,7 @@
       </button>
     </div>
 
-    <div class="info-card card-frame governance-view__info mg-b40">
+    <!-- <div class="info-card card-frame governance-view__info mg-b40">
       <h3 class="info-card__title governance-view__info-title mg-b40">
         Total number of proposals in ODIN
       </h3>
@@ -28,7 +28,7 @@
         :data="proposalsDataForChart"
         :is-loading="isLoading"
       />
-    </div>
+    </div> -->
 
     <div class="app-table">
       <div class="app-table__head governance-view__table-head">
@@ -40,22 +40,22 @@
       <div class="app-table__body">
         <template v-if="proposals?.length">
           <div
-            v-for="item in filteredProposals"
-            :key="item.proposal_id"
+            v-for="item in proposals"
+            :key="item.proposalId"
             class="app-table__row governance-view__table-row"
           >
             <div class="app-table__cell">
               <span class="app-table__title">ID</span>
-              <span class="app-table__cell-txt"> #{{ item.proposal_id }} </span>
+              <span class="app-table__cell-txt"> #{{ item.proposalId }} </span>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Proposal</span>
               <TitledLink
                 class="app-table__cell-txt app-table__link"
-                :text="item.content?.title || '-'"
+                :text="item.title || '-'"
                 :name="{
                   name: $routes.proposal,
-                  params: { id: item.proposal_id },
+                  params: { id: item.proposalId },
                 }"
               />
             </div>
@@ -150,26 +150,14 @@ const accountAddress = wallet.isEmpty ? '' : wallet.account.address
 const getProposals = async () => {
   lockLoading()
   try {
-    const response = await callers.getProposals(0, 100, true)
-    const transformedProposals = await Promise.all(
-      response.data?.proposals?.map(
-        async (item: { proposal_id: string; status: string }) => {
-          const response = await callers.getProposer(item.proposal_id)
-          const proposer = await response.json()
-          return {
-            ...item,
-            proposerAddress: proposer.result.proposer,
-            status: proposalStatusFromJSON(item.status),
-            humanizeStatus:
-              proposalStatusType[proposalStatusFromJSON(item.status)].name,
-          }
-        },
-      ),
+    const response = await callers.getProposals(
+      (currentPage.value - 1) * ITEMS_PER_PAGE,
+      ITEMS_PER_PAGE,
+      'desc',
     )
-    proposalsCount.value = response.data?.proposals.length
-    proposals.value = transformedProposals
+    proposals.value = response.data.proposal || []
+    proposalsCount.value = response.data.proposal_aggregate.aggregate.count || 0
     totalPages.value = Math.ceil(proposalsCount.value / ITEMS_PER_PAGE)
-    filterProposals(currentPage.value)
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
@@ -187,20 +175,6 @@ const getProposalStatistic = async () => {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
   releaseLoading()
-}
-
-const filterProposals = (newPage: number) => {
-  let tempArr = proposals.value
-
-  if (newPage === 1) {
-    filteredProposals.value = tempArr.slice(0, newPage * ITEMS_PER_PAGE)
-  } else {
-    filteredProposals.value = tempArr.slice(
-      (newPage - 1) * ITEMS_PER_PAGE,
-      (newPage - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE,
-    )
-  }
-  currentPage.value = newPage
 }
 
 const getChangesParams = async () => {
@@ -229,12 +203,12 @@ const createProposal = async () => {
 }
 
 const paginationHandler = (num: number) => {
-  filterProposals(num)
+  getProposals()
 }
 
 onMounted(async () => {
-  await getChangesParams()
-  await getProposalStatistic()
+  //await getChangesParams()
+  // await getProposalStatistic()
   await getProposals()
 })
 </script>

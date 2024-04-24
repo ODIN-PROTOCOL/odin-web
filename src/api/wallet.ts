@@ -1,7 +1,8 @@
-import { AccountData, OfflineSigner } from '@cosmjs/launchpad'
 import {
-  DirectSecp256k1HdWallet,
+  AccountData,
+  OfflineSigner,
   OfflineDirectSigner,
+  DirectSecp256k1HdWallet,
 } from '@cosmjs/proto-signing'
 import { API_CONFIG } from './api-config'
 import { Window as KeplrWindow } from '@keplr-wallet/types'

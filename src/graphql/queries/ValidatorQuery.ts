@@ -1,5 +1,20 @@
 import gql from 'graphql-tag'
 
+export const ValidatorsQuery = gql`
+  query ValidatorsQuery {
+    validators: validator_description {
+      moniker
+      avatarUrl: avatar_url
+      details
+      validator {
+        validator_info {
+          operator_address
+        }
+      }
+    }
+  }
+`
+
 export const ValidatorQuery = gql`
   query Validator($address: String!) {
     stakingPool: staking_pool(limit: 1, order_by: { height: desc }) {
@@ -19,7 +34,7 @@ export const ValidatorQuery = gql`
         maxChangeRate: max_change_rate
         validatorAddress: consensus_address
       }
-      blocksAggregate: blocks_aggregate {
+      blocksAggregate: validator_blocks_aggregate {
         aggregate {
           count
         }
@@ -27,7 +42,6 @@ export const ValidatorQuery = gql`
       statuses: validator_statuses(order_by: { height: desc }, limit: 1) {
         status
         jailed
-        tombstoned
       }
       signingInfos: validator_signing_infos(
         order_by: { height: desc }

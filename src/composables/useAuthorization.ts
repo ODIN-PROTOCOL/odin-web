@@ -37,7 +37,6 @@ async function createSessionWithKeplrWallet(
         await window.keplr.experimentalSuggestChain({
           ...CHAIN_CONFIG,
           bip44: { coinType },
-          coinType,
         })
       } catch {
         throw new ReferenceError(
@@ -84,7 +83,6 @@ async function createSessionWithCosmostationWallet(
         await window?.cosmostation?.providers?.keplr?.experimentalSuggestChain({
           ...CHAIN_CONFIG,
           bip44: { coinType },
-          coinType,
         })
       } catch {
         throw new ReferenceError(

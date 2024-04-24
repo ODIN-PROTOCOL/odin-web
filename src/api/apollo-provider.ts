@@ -1,4 +1,4 @@
-import { ApolloClient, InMemoryCache } from '@apollo/client/core'
+import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client/core'
 
 import { API_CONFIG } from './api-config'
 
@@ -6,7 +6,12 @@ const cache = new InMemoryCache()
 
 export const apolloClient = new ApolloClient({
   cache,
-  uri: API_CONFIG.graphqlUrl,
+  link: new HttpLink({
+    uri: API_CONFIG.graphqlUrl,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }),
 })
 
 import { createApolloProvider } from '@vue/apollo-option'

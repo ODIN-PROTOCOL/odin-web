@@ -86,6 +86,10 @@ export enum COINS_LIST {
   LOKI = 'loki',
   ODIN = 'odin',
   GEO = 'geo',
+  DOKI = 'doki',
+  UDOKI = 'udoki',
+  MYRK = 'myrk',
+  UMYRK = 'umyrk',
 }
 
 // Types of logins in the system

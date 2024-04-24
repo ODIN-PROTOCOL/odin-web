@@ -38,6 +38,7 @@ hljs.registerLanguage('python', python)
 hljs.registerLanguage('rust', rust)
 import { DefaultApolloClient } from '@vue/apollo-composable'
 import { apolloClient } from './api/apollo-provider'
+import { parseISO } from 'date-fns'
 
 async function _main() {
   try {
@@ -71,6 +72,7 @@ async function _main() {
   app.config.globalProperties.$preciseAsFormatedCoin = preciseAsFormatedCoin
   app.config.globalProperties.$fNum = big.format
   app.config.globalProperties.$fDate = formatDate
+  app.config.globalProperties.$parseISO = parseISO
   app.config.globalProperties.$tRequestStatus = translateRequestStatus
   app.config.globalProperties.$tProposalStatus = translateProposalStatus
   app.config.globalProperties.$tProposalStatusDated =

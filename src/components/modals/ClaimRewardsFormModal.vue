@@ -23,7 +23,7 @@
                   :title="validator.info.operatorAddress"
                   class="claim-rewards-form-modal__field-value"
                 >
-                  {{ validator.info.operatorAddress }}
+                  {{ validator.info?.operatorAddress }}
                 </p>
               </div>
               <div class="claim-rewards-form-modal__field-info">

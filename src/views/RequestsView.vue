@@ -171,11 +171,11 @@ const getRequests = async () => {
     requests.value = []
 
     const req = await callers.getRequests(
-      ITEMS_PER_PAGE,
       (currentPage.value - 1) * ITEMS_PER_PAGE,
+      ITEMS_PER_PAGE,
     )
 
-    requests.value = req.data.result.result.requests
+    requests.value = req.data.request
     await getRequestsCount()
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)

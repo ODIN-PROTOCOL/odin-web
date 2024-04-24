@@ -6,15 +6,15 @@
         <TitledLink
           :name="{
             name: $routes.blockDetails,
-            params: { id: block.header.height },
+            params: { id: block.height },
           }"
           class="app-table__cell-txt"
-          :text="block.header.height"
+          :text="block.height"
         />
       </div>
       <div class="latest-list-item__time">
         <div class="info-value">
-          {{ diffDays(toDay, getDay(block.header.time)) }}
+          {{ diffMoment(toDay, moment(block.timestamp)) }}
         </div>
       </div>
     </div>
@@ -24,9 +24,14 @@
         <TitledLink
           :name="{
             name: $routes.validatorDetails,
-            params: { address: block.validator },
+            params: {
+              address: block.validator.validator_info.operator_address,
+            },
           }"
-          :text="`${block.name}`"
+          :text="`${
+            block.validatorDetails?.moniker ||
+            block.validator.validator_info.operator_address
+          }`"
           class="app-table__cell-txt app-table__link"
         />
       </div>
@@ -35,15 +40,16 @@
 </template>
 
 <script lang="ts" setup>
-import { diffDays, getDay } from '@/helpers/formatters'
-import { TransformedBlocks } from '@/helpers/Types'
+import { diffMoment, getDay } from '@/helpers/formatters'
+import { TransformedBlockInfo } from '@/graphql/types/responses'
 import TitledLink from '@/components/TitledLink.vue'
+import moment from 'moment'
 
 defineProps<{
-  block: TransformedBlocks
+  block: TransformedBlockInfo
 }>()
 
-const toDay = new Date()
+const toDay = moment.utc()
 </script>
 
 <style scoped lang="scss">

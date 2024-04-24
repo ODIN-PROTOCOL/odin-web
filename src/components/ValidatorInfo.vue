@@ -16,10 +16,10 @@
         <span class="validator-info__top-line-item-title">Status</span>
         <div class="validator-info__card-balance-row-value-wrapper">
           <span
-            :title="$tBondStatus(validator.statuses[0].status)"
+            :title="$tBondStatus(validator.status.status)"
             class="validator-info__top-line-item-value"
           >
-            {{ $tBondStatus(validator.statuses[0].status) }}
+            {{ $tBondStatus(validator.status.status) }}
           </span>
         </div>
       </div>
@@ -27,10 +27,10 @@
         <span class="validator-info__top-line-item-title">Jailed</span>
         <div class="validator-info__card-balance-row-value-wrapper">
           <span
-            :title="validator.statuses[0].jailed ? 'Yes' : 'No'"
+            :title="validator.status.jailed ? 'Yes' : 'No'"
             class="validator-info__top-line-item-value"
           >
-            {{ validator.statuses[0].jailed ? 'Yes' : 'No' }}
+            {{ validator.status.jailed ? 'Yes' : 'No' }}
           </span>
         </div>
       </div>

@@ -1,26 +1,22 @@
-import { BlockMeta } from '@cosmjs/tendermint-rpc'
-import { toHex } from '@cosmjs/encoding'
-import { callers } from '@/api/callers'
-import { TransformedBlocks } from '@/helpers/Types'
+import {
+  BlockInfo,
+  ValidatorDetailedInfo,
+  TransformedBlockInfo,
+} from '@/graphql/types/responses'
 
-export const prepareBlocks = async (
-  blocks: readonly BlockMeta[],
-): Promise<TransformedBlocks[]> => {
-  const transformedBlocks = await Promise.all(
-    blocks.map(async (item: BlockMeta) => {
-      const addData = await callers.getBlock(item.header.height)
-      const validatorData = await callers.getValidatorByConsensusKey(
-        toHex(item.header.proposerAddress),
-      )
-      return {
-        ...item,
-        hash: toHex(item.blockId.hash),
-        validator: validatorData.data.result.result.operator_address,
-        name: validatorData.data.result.result.description.moniker,
-        txs: addData.block.txs.length,
-      }
-    }),
-  )
-
-  return transformedBlocks
+export const prepareBlockMetas = (
+  blocks: readonly BlockInfo[],
+  validators: readonly ValidatorDetailedInfo[],
+): TransformedBlockInfo[] => {
+  return blocks.map((item: BlockInfo) => {
+    return {
+      ...item,
+      validatorDetails:
+        validators.find(
+          v =>
+            v.validator.validator_info.operator_address ===
+            item.validator.validator_info.operator_address,
+        ) || null,
+    }
+  })
 }

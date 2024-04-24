@@ -227,6 +227,7 @@ import {
   numberFormatter,
 } from '@/helpers/formatters'
 import { convertLokiToOdin } from '@/helpers/converters'
+import { Coin } from '@bandprotocol/bandchain.js'
 
 const createDataRef = (defaultValue = 0) => ref(defaultValue)
 
@@ -262,7 +263,7 @@ const fetchData = async () => {
       callers.getBlockOnHeight(),
       callers.getValidatorInfo(),
       callers.getOdinPrice(),
-      callers.getTxSearchFromTelemetry(0, 1, 'desc').then(res => res.json()),
+      callers.getTxSearchFromTelemetry(0, 1, 'desc'),
       callers.getCounts(),
       callers.getBoundedPool(),
       callers.getSupply(),
@@ -276,9 +277,14 @@ const fetchData = async () => {
     inflation.value = inflationData.data.inflation
     latestBlock.value = blockData.data.result.block.header.height
     validators.value = validatorData.data.result.total
-    transaction.value = transactionData.total_count
+
+    transaction.value =
+      transactionData.data?.transaction_aggregate?.aggregate?.count || 0
+
     requests.value = Number(requestCountData.requestCount)
-    communityPool.value = +convertLokiToOdin(comPool.data.pool[1].amount, {
+    const com = comPool.data.pool.find(el => el['denom'] === 'loki')
+
+    communityPool.value = +convertLokiToOdin(com.amount, {
       onlyNumber: true,
       toFixed: 2,
     })

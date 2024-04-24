@@ -16,7 +16,7 @@
         <span v-else>No info</span>
       </div>
       <div class="latest-list-item__time app-table__cell-txt">
-        {{ diffDays(toDay, getDay(tx.time)) }}
+        {{ diffMoment(toDay, moment(tx.time)) }}
       </div>
     </div>
     <div class="latest-list-item__center">
@@ -59,14 +59,15 @@
 
 <script lang="ts" setup>
 import { DecodedTxData } from '@/helpers/Types'
-import { diffDays, getDay, formatTxString } from '@/helpers/formatters'
+import { diffMoment, getDay, formatTxString } from '@/helpers/formatters'
 import TitledLink from '@/components/TitledLink.vue'
+import moment from 'moment'
 
 defineProps<{
   tx: DecodedTxData
 }>()
 
-const toDay = new Date()
+const toDay = moment.utc()
 </script>
 
 <style lang="scss" scoped>

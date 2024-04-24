@@ -1,7 +1,7 @@
 import { callers } from '@/api/callers'
 import { Coin } from '@provider/codec/cosmos/base/v1beta1/coin'
 import { computed, ComputedRef, Ref, ref } from 'vue'
-import { coin } from '@cosmjs/launchpad'
+import { coin } from '@cosmjs/stargate'
 
 const _balances: Ref<Coin[]> = ref([])
 

@@ -93,7 +93,7 @@ const getChartData = async () => {
 
   try {
     const { data } = await callers[getDataMethodName.value](startDate, endDate)
-    chartData.value = formatDataForCharts(data)
+    chartData.value = formatDataForCharts(data.chartData)
     isLoadingError.value = false
   } catch (error) {
     isLoadingError.value = true

@@ -12,7 +12,7 @@
         :text="validator.descriptions[0]?.moniker"
         :name="{
           name: $routes.validatorDetails,
-          params: { address: validator.info.operatorAddress },
+          params: { address: validator.info?.operatorAddress },
         }"
       />
       <p v-else class="app-table__cell-txt">-</p>
@@ -21,13 +21,13 @@
       <span class="app-table__title">Delegated</span>
       <span
         :title="
-          $convertLokiToOdin($trimZeros(validator.info.delegatedAmount), {
+          $convertLokiToOdin($trimZeros(validator.info?.delegatedAmount || 0), {
             onlyNumber: true,
           })
         "
       >
         {{
-          $convertLokiToOdin($trimZeros(validator.info.delegatedAmount), {
+          $convertLokiToOdin($trimZeros(validator.info?.delegatedAmount || 0), {
             withDenom: true,
           })
         }}
@@ -46,7 +46,10 @@
         :width="24"
         :height="24"
         :status="
-          getValidatorStatus(validator.statuses[0].status, validator.isActive)
+          getValidatorStatus(
+            validator.statuses.length > 0 ? validator.statuses[0].status : 3,
+            validator.isActive || false,
+          )
         "
         class="validators-item__validator-status"
       />
@@ -67,7 +70,7 @@
           class="app-table__activities-item validators-view-table-row__activities-item"
         >
           <button
-            v-if="delegations[validator.info.operatorAddress]"
+            v-if="delegations[validator.info?.operatorAddress]"
             class="app-btn app-btn--outlined app-btn--very-small w-min108"
             type="button"
             @click="selectedBtn('Regelate')"
@@ -83,7 +86,7 @@
           </button>
         </div>
         <div
-          v-if="delegations[validator.info.operatorAddress]"
+          v-if="delegations[validator.info?.operatorAddress]"
           class="app-table__activities-item validators-view-table-row__activities-item"
         >
           <button

@@ -10,7 +10,7 @@
         <template v-if="requests.length">
           <div
             v-for="(item, index) in requests"
-            :key="item.attributes.block_height"
+            :key="item.height"
             class="app-table__row requests-oracle-script__row"
           >
             <div class="app-table__cell">
@@ -30,20 +30,16 @@
                 class="app-table__cell-txt app-table__link"
                 :href="`/transactions/${getRequestItemTxHash(index)}`"
               >
-                {{ item.attributes.tx_hash }}
+                {{ item.tx_hash }}
               </a>
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Timestamp</span>
               <span class="app-table__cell-date">
-                {{
-                  $fDate(new Date(item.attributes.timestamp * 1000), 'dd/MM/yy')
-                }}
+                {{ $fDate($parseISO(item.timestamp), 'dd/MM/yy') }}
               </span>
               <span class="app-table__cell-time">
-                {{
-                  $fDate(new Date(item.attributes.timestamp * 1000), 'HH:mm')
-                }}
+                {{ $fDate($parseISO(item.timestamp), 'HH:mm') }}
               </span>
             </div>
           </div>
@@ -101,16 +97,14 @@ const getOracleScriptRequests = async () => {
   lockLoading()
   try {
     requests.value = []
-    const response = await callers
-      .getOracleScriptRequests(
-        props.oracleScriptId,
-        currentPage.value - 1,
-        ITEMS_PER_PAGE,
-      )
-      .then(response => response.json())
-      .then(data => data)
-    requests.value = response.data
-    requestsCount.value = response.total_count || 0
+    const response = await callers.getOracleScriptRequests(
+      props.oracleScriptId,
+      (currentPage.value - 1) * ITEMS_PER_PAGE,
+      ITEMS_PER_PAGE,
+    )
+    requests.value = response.data.request
+    console.log(response.data)
+    requestsCount.value = response.data.request_aggregate.aggregate.count || 0
     totalPages.value = Math.ceil(requestsCount.value / ITEMS_PER_PAGE)
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
