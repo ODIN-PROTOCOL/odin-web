@@ -17,12 +17,7 @@
           <Tag
             class="validator-item__status"
             text="Oracle"
-            :type="
-              getValidatorStatus(
-                validator.statuses[0].status,
-                validator.isActive,
-              )
-            "
+            :type="oracleStatus"
           />
         </div>
       </div>
@@ -76,6 +71,7 @@ import {
   isActiveValidator,
   getValidatorStatus,
   ValidatorInfoModify,
+  VALIDATOR_STATUS,
 } from '@/helpers/validatorHelpers'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { useQuery } from '@vue/apollo-composable'
@@ -108,6 +104,7 @@ const delegatorsTitle = computed(() =>
 )
 const operatorAddress = ref('')
 const validatorAddress = ref('')
+const oracleStatus = ref('')
 
 const { result, loading: isValidatorResponseLoading } =
   useQuery<ValidatorResponse>(ValidatorQuery, {
@@ -129,14 +126,22 @@ const isFinishLoading = computed(
 
 const getValidator = async () => {
   lockLoading()
+  const defaultStatus = {
+    status: VALIDATOR_STATUS.bounding,
+    height: 0,
+    jailed: true
+  }
   try {
     if (result.value?.validator) {
       validator.value = {
         ...result.value.validator[0],
         isActive: await isActiveValidator(String(route.params.address)),
+        status: result.value.validator[0].statuses.length ? result.value.validator[0] : defaultStatus
       }
+  
       operatorAddress.value = validator.value.info.operatorAddress
-      validatorAddress.value = validator.value.info.validatorAddress
+      validatorAddress.value = validator.value.info.validatorAddress      
+      oracleStatus.value = getValidatorStatus(validator.value.status, validator.value.isActive || false)    
     }
   } catch (error) {
     isLoadingError.value = true

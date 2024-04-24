@@ -164,6 +164,7 @@ const getAccountInfo = async () => {
 
   try {
     transactions.value = []
+    console.log(route.params.hash as string)
     const txResponse = await callers.getAccountIndexedTx(
       currentPage.value - 1,
       20,

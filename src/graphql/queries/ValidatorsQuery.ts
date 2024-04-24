@@ -8,7 +8,7 @@ export const DetailedValidatorsQuery = gql`
     slashingParams: slashing_params(order_by: { height: desc }, limit: 1) {
       params
     }
-    validator(order_by: { validator_info: { delegated_amount: desc } }) {
+    validator(order_by: { validator_info: { delegated_amount: desc } }, where: {validator_info: {operator_address: {_is_null: false}}}) {
       statuses: validator_statuses(order_by: { height: desc }, limit: 1) {
         status
         jailed
