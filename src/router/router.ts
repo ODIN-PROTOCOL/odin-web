@@ -10,7 +10,7 @@ import {
 
 const rootRedirector = makeRootRedirector(
   { name: ROUTE_NAMES.wallet },
-  { name: ROUTE_NAMES.home },
+  { name: ROUTE_NAMES.home }
 )
 const authorizedOnlyGuard = makeAuthorizedOnlyGuard({ name: ROUTE_NAMES.auth })
 const unauthorizedOnlyGuard = makeUnauthorizedOnlyGuard({

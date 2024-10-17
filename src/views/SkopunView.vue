@@ -1,6 +1,6 @@
 <template>
   <div class="app__main-view">
-    <h2 class="app__main-view-detail-title">SKÖPUN - THE ART OF CREATION</h2>
+    <h2 class="app__main-view-detail-title">{{ title }}</h2>
     <div class="app-form__main">
       <form @submit="handleSubmit">
         <div class="app-form__field prompt-field">
@@ -16,10 +16,15 @@
         <div class="user-widget fx-row fx-sae control-buttons">
           <button
             type="submit"
-            class="app-btn app-btn--large"
+            class="app-btn app-btn--large generate-image"
             :disabled="isLoading || isGenerating"
           >
-            Generate Image
+            <img
+              :src="AiGenerate"
+              class="ai-generate-icon"
+              v-if="isGenerating"
+            />
+            <span>Generate Image</span>
           </button>
           <button
             v-if="requestId !== null && !isGenerating"
@@ -43,10 +48,12 @@ import TextareaField from '@/components/fields/TextareaField.vue'
 
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { API_CONFIG, START_VALUE } from '@/api/api-config'
+import AiGenerate from '@/assets/icons/ai-generate.svg'
 
 import { wallet } from '../api/wallet'
 import axios from 'axios'
 import { ROUTE_NAMES } from '@/enums'
+import { useHead } from '@vueuse/head'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const [isGenerating, lockGenerating, releaseGenerating] = useBooleanSemaphore()
@@ -56,13 +63,27 @@ const requestId = ref<number | null>()
 
 const prompt = ref<string>('')
 
+const title = 'SKÖPUN - THE ART OF CREATION'
+
+useHead({
+  title,
+  meta: [
+    { property: 'og:title', content: title },
+    {
+      property: 'og:description',
+      content: 'Create a prompt to generate a unique NFT image',
+    },
+    { property: 'og:image', content: 'https://example.com/dynamic-image.jpg' },
+  ],
+})
+
 const handleSubmit = async (e: Event) => {
   e.preventDefault()
 
   if (wallet.isEmpty || !wallet.account || !wallet.wasmSigner) {
     handleNotificationInfo(
       'Please connect your wallet first.',
-      TYPE_NOTIFICATION.info,
+      TYPE_NOTIFICATION.info
     )
     return
   }
@@ -84,12 +105,12 @@ const handleSubmit = async (e: Event) => {
       msg, // Execute message
       'auto', // Fee (auto-estimated)
       '', // Memo (optional)
-      [{ denom: 'loki', amount: '100' }], // Funds (if required by contract)
+      [{ denom: 'loki', amount: '100' }] // Funds (if required by contract)
     )
     console.log('Transaction result:', result)
 
     const wasmEvent = result.events.find(
-      event => event.type === 'wasm-wasm_request',
+      event => event.type === 'wasm-wasm_request'
     )
 
     if (wasmEvent) {
@@ -111,7 +132,7 @@ const handleSubmit = async (e: Event) => {
           try {
             response = await wallet.wasmSigner.queryContractSmart(
               API_CONFIG.skopunContractAddress,
-              query,
+              query
             )
 
             if (response && response.length > 0) {
@@ -123,7 +144,7 @@ const handleSubmit = async (e: Event) => {
               console.log('NFT Data:', nftData)
               const imageUrl = nftData.data.preview.replace(
                 'https://ipfs.io/ipfs',
-                API_CONFIG.ipfsNodeUrl,
+                API_CONFIG.ipfsNodeUrl
               )
 
               // Create an image element and set its source to the imageUrl
@@ -150,25 +171,25 @@ const handleSubmit = async (e: Event) => {
 
         if (attempts === 100) {
           console.error(
-            'Failed to get a successful response after 20 attempts.',
+            'Failed to get a successful response after 20 attempts.'
           )
           handleNotificationInfo(
             'Failed to get a successful response after 20 attempts.',
-            TYPE_NOTIFICATION.failed,
+            TYPE_NOTIFICATION.failed
           )
         }
       } else {
         console.error('ID attribute not found in wasm-wasm_request event.')
         handleNotificationInfo(
           'NFT generation requested, but ID attribute not found.',
-          TYPE_NOTIFICATION.failed,
+          TYPE_NOTIFICATION.failed
         )
       }
     } else {
       console.error('wasm-wasm_request event not found.')
       handleNotificationInfo(
         'NFT generation requested, but wasm-wasm_request event not found.',
-        TYPE_NOTIFICATION.failed,
+        TYPE_NOTIFICATION.failed
       )
     }
   } catch (error) {
@@ -186,7 +207,7 @@ const handleNFTCreate = async (e: Event) => {
   if (!wallet.account || wallet.wasmSigner === null) {
     handleNotificationInfo(
       'Please connect your wallet first.',
-      TYPE_NOTIFICATION.info,
+      TYPE_NOTIFICATION.info
     )
     return
   }
@@ -196,7 +217,7 @@ const handleNFTCreate = async (e: Event) => {
   if (requestId.value === null) {
     handleNotificationInfo(
       'Please generate image first',
-      TYPE_NOTIFICATION.info,
+      TYPE_NOTIFICATION.info
     )
     return
   }
@@ -210,7 +231,7 @@ const handleNFTCreate = async (e: Event) => {
       msg, // Execute message
       'auto', // Fee (auto-estimated)
       '', // Memo (optional)
-      [{ denom: 'loki', amount: '100' }], // Funds (if required by contract)
+      [{ denom: 'loki', amount: '100' }] // Funds (if required by contract)
     )
 
     console.log('Transaction result:', result)
@@ -218,7 +239,7 @@ const handleNFTCreate = async (e: Event) => {
     requestId.value = null
     handleNotificationInfo(
       'NFT created successfully.',
-      TYPE_NOTIFICATION.success,
+      TYPE_NOTIFICATION.success
     )
   } catch (error) {
     releaseNFTGenerating()
@@ -235,7 +256,29 @@ const handleNFTCreate = async (e: Event) => {
 }
 .control-buttons .app-btn {
   margin-right: 1rem;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  .ai-generate-icon {
+    width: 20px;
+    animation: pulse 1.5s infinite;
+  }
 }
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05); /* Slightly larger scale */
+    opacity: 0.7; /* Reduce opacity at the peak of the pulse */
+  }
+}
+
 .prompt-field {
   margin-top: 1rem;
   margin-bottom: 1rem;

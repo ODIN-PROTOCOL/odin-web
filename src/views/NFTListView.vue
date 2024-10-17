@@ -11,13 +11,23 @@
               :src="
                 nft.details.preview.replace(
                   'https://ipfs.io/ipfs',
-                  API_CONFIG.ipfsNodeUrl,
+                  API_CONFIG.ipfsNodeUrl
                 )
               "
               :alt="nft.details.prompt"
               class="nft-image"
             />
           </router-link>
+          <div class="nft-social">
+            <button>
+              <FontAwesomeIcon :icon="faThumbsUp" />
+              <span>Like</span>
+            </button>
+            <button>
+              <FontAwesomeIcon :icon="faShareNodes" />
+              <span>Share</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -34,6 +44,8 @@ import { START_VALUE } from '@/api/api-config'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { ROUTE_NAMES } from '@/enums'
 import { API_CONFIG } from '@/api/api-config'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faThumbsUp, faShareNodes } from '@fortawesome/free-solid-svg-icons'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const ITEMS_PER_PAGE = 50
@@ -72,9 +84,51 @@ onMounted(async (): Promise<void> => {
   min-height: calc(100vh - var(--spacing) * 2);
 }
 
+.nft-item {
+  position: relative;
+
+  &:hover {
+    img {
+      opacity: 0.9;
+    }
+
+    .nft-social {
+      display: flex;
+    }
+  }
+}
+
 img {
   max-width: 100%;
   display: block;
+}
+
+.nft-social {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  color: white;
+  padding: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.nft-item .nft-social > button {
+  padding: 4px 8px;
+  font-size: 13px;
+  background-color: var(--clr__action);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 4px;
+
+  span {
+    display: block;
+    margin-top: 3px;
+  }
 }
 
 @include respond-to(tablet) {

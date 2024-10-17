@@ -9,7 +9,7 @@
               :src="
                 nft.details.preview.replace(
                   'https://ipfs.io/ipfs',
-                  API_CONFIG.ipfsNodeUrl,
+                  API_CONFIG.ipfsNodeUrl
                 )
               "
               :alt="nft.details.prompt"
@@ -44,6 +44,15 @@
             <div class="app-table__row">
               <div class="app-table__cell-txt app-table__link">
                 <div class="user-widget fx-row fx-sae control-buttons">
+                  <a
+                    :href="shareThreads"
+                    class="share-btn app-btn app-btn--small"
+                    network="threads"
+                    target="_blank"
+                  >
+                    <FontAwesomeIcon :icon="faThumbsUp" />
+                    <span>5</span>
+                  </a>
                   <span class="share_on app-table__title"> Share on: </span>
                   <a
                     :href="shareThreads"
@@ -81,6 +90,8 @@ import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import { ROUTE_NAMES } from '@/enums'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faXTwitter, faThreads } from '@fortawesome/free-brands-svg-icons'
+import { faThumbsUp } from '@fortawesome/free-solid-svg-icons'
+import { useHead } from '@vueuse/head'
 
 const route: RouteLocationNormalizedLoaded = useRoute()
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
@@ -99,6 +110,23 @@ const fetchNFT = async (): Promise<void> => {
   lockLoading()
   try {
     nft.value = await callers.getNFT(route.params.id)
+    console.log(nft.value)
+    if (nft.value) {
+      useHead({
+        title: nft.value.details.prompt,
+        meta: [
+          { property: 'og:title', content: nft.value.details.prompt },
+          {
+            property: 'og:description',
+            content: 'Create a prompt to generate a unique NFT image',
+          },
+          {
+            property: 'og:image',
+            content: nft.value.details.image,
+          },
+        ],
+      })
+    }
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
@@ -108,7 +136,7 @@ const fetchNFT = async (): Promise<void> => {
 onMounted(async (): Promise<void> => {
   await fetchNFT()
   const shareableText = encodeURIComponent(
-    `${shareText} ${hashtagsText} ${window.location}`,
+    `${shareText} ${hashtagsText} ${window.location}`
   )
   shareThreads.value = `https://threads.net/intent/post?text=${shareableText}`
   shareX.value = `https://twitter.com/intent/post?text=${shareText}&url=${window.location}&hashtags=nft,blockchain,ai,images,generativeai`
@@ -134,5 +162,10 @@ img {
 }
 .control-buttons .app-btn {
   margin-right: 1rem;
+  span {
+    margin-left: 4px;
+    font-size: 13px;
+    line-height: 13px;
+  }
 }
 </style>

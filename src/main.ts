@@ -39,6 +39,7 @@ hljs.registerLanguage('rust', rust)
 import { DefaultApolloClient } from '@vue/apollo-composable'
 import { apolloClient } from './api/apollo-provider'
 import { parseISO } from 'date-fns'
+import { createHead } from '@vueuse/head'
 
 async function _main() {
   try {
@@ -62,6 +63,10 @@ async function _main() {
   const appModule = await import(
     /* webpackChunkName: "app-entry" */ './App.vue'
   )
+
+  // Head tag info
+  const head = createHead()
+
   const app = createApp(appModule.default)
   app.config.performance = true
   app.config.globalProperties.$routes = ROUTE_NAMES
@@ -90,6 +95,7 @@ async function _main() {
   app.use(router)
   app.use(Notifications)
   app.use(hljsVuePlugin)
+  app.use(head)
   app.component('VuePicker', VuePicker)
   app.component('VuePickerOption', VuePickerOption)
   app.component('skeleton-loader', Skeletor)
