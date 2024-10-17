@@ -6,6 +6,8 @@ import {
 } from '@cosmjs/proto-signing'
 import { API_CONFIG } from './api-config'
 import { Window as KeplrWindow } from '@keplr-wallet/types'
+import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
+import { GasPrice } from '@cosmjs/stargate'
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -18,6 +20,8 @@ export enum WalletTypes {
   COSMOSTATION_WALLET,
 }
 
+const gasPrice = GasPrice.fromString(API_CONFIG.gasPrice)
+
 export class OdinWallet {
   _wallet:
     | DirectSecp256k1HdWallet
@@ -26,12 +30,20 @@ export class OdinWallet {
     | null = null
   _walletAccounts: readonly AccountData[] | null = null
   _walletType: WalletTypes | null = null
+  _contractWallet: SigningCosmWasmClient | null = null
 
   get signer(): DirectSecp256k1HdWallet | OfflineSigner | OfflineDirectSigner {
     if (!this._wallet) {
       throw new ReferenceError('OdinWallet not initialized!')
     }
     return this._wallet
+  }
+
+  get wasmSigner(): SigningCosmWasmClient {
+    if (!this._contractWallet) {
+      throw new ReferenceError('OdinWallet WASM not initialized!')
+    }
+    return this._contractWallet
   }
 
   get account(): AccountData {
@@ -83,6 +95,7 @@ export class OdinWallet {
               walletData.key,
             )
           : null
+
       if (offlineSigner === null)
         throw new ReferenceError(
           'Something went wrong. Error with offline signer.',
@@ -92,10 +105,16 @@ export class OdinWallet {
     if (this._wallet) {
       this._walletAccounts = await this._wallet.getAccounts()
       this._walletType = walletData.type
+      this._contractWallet = await SigningCosmWasmClient.connectWithSigner(
+        API_CONFIG.rpc,
+        this._wallet,
+        { gasPrice: gasPrice },
+      )
     }
   }
 
   clear(): void {
+    this._contractWallet = null
     this._wallet = null
     this._walletAccounts = null
     this._walletType = null

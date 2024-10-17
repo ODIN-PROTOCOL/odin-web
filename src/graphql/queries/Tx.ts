@@ -53,7 +53,7 @@ export const TxFromAddressQuery = gql`
       offset: $offset
       order_by: [{ height: $order }, { transaction_hash: $order }]
       distinct_on: [transaction_hash, height]
-      where: {involved_accounts_addresses: { _contains: $address }}
+      where: { involved_accounts_addresses: { _contains: $address } }
     ) {
       transaction {
         fee

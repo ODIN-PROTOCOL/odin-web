@@ -160,7 +160,8 @@ export function humanizeMessageType(type: string): string {
 
     case '/cosmos.authz.v1beta1.MsgGrant':
       return 'Authz MsgGrant'
-
+    case '/cosmwasm.wasm.v1.MsgExecuteContract':
+      return 'Execute Contract'
     default:
       throw new ReferenceError(`Unknown type ${type}`)
   }

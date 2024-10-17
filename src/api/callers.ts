@@ -40,9 +40,14 @@ import {
   TxFromAddressQuery,
   ProposedBlocksQuery,
   OracleReportsQuery,
+  AllNFTsQuery,
+  ProfileNFTQuery,
+  NFTDetailsQuery,
 } from '@/graphql/queries'
 import {
   BlockMetaResponse,
+  NFTInfo,
+  NFTListResponse,
   TreasuryPoolResponse,
   ValidatorsResponse,
 } from '@/graphql/types/responses'
@@ -112,6 +117,67 @@ const makeCallers = () => {
           offset: page_number * page_limit,
         },
       })
+    },
+    getNFT: (id: number) => {
+      return apolloClient
+        .query<NFTListResponse>({
+          query: NFTDetailsQuery,
+          variables: {
+            id: id,
+          },
+        })
+        .then(response => {
+          const nft = response.data.nft.at(0)
+          if (nft !== undefined) {
+            const res: NFTInfo = {
+              ...nft,
+              details: JSON.parse(nft.metadata),
+            }
+            return res
+          }
+          return null
+        })
+    },
+    getNFTs: (page_number: number, page_limit: number) => {
+      return apolloClient
+        .query<NFTListResponse>({
+          query: AllNFTsQuery,
+          variables: {
+            limit: page_limit,
+            offset: (page_number - 1) * page_limit,
+          },
+        })
+        .then(response => {
+          const mapped = response.data.nft.map((nft: NFTInfo) => {
+            const res: NFTInfo = {
+              ...nft,
+              details: JSON.parse(nft.metadata),
+            }
+            return res
+          })
+          return mapped
+        })
+    },
+    getMyNFTs: (page_number: number, page_limit: number) => {
+      return apolloClient
+        .query({
+          query: ProfileNFTQuery,
+          variables: {
+            address: wallet.account.address,
+            limit: page_limit,
+            offset: (page_number - 1) * page_limit,
+          },
+        })
+        .then(response => {
+          const mapped = response.data.nft.map((nft: NFTInfo) => {
+            const res: NFTInfo = {
+              ...nft,
+              details: JSON.parse(nft.metadata),
+            }
+            return res
+          })
+          return mapped
+        })
     },
     getAccountIndexedTx: (
       page_number: number,

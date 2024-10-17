@@ -16,6 +16,10 @@ export const API_CONFIG = {
   graphqlUrl: process.env.VUE_APP_NEXT_PUBLIC_GRAPHQL_URL as string,
   graphqlActions: process.env.VUE_APP_GRAPHQL_ACTIONS_URL as string,
   mintScanUrl: process.env.VUE_APP_MINSTSCAN_URL as string,
+  gasPrice: process.env.VUE_APP_GAS_PRICE as string,
+  skopunContractAddress: process.env.VUE_APP_SKOPUN_CONTRACT_ADDRESS as string,
+  ipfsNodeUrl: process.env.VUE_APP_IPFS_NODE_URL as string,
+  ipfsIOUrl: 'https://ipfs.io/ipfs',
 }
 
 export const START_VALUE = {

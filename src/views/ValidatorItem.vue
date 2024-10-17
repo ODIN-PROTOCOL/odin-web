@@ -129,19 +129,24 @@ const getValidator = async () => {
   const defaultStatus = {
     status: VALIDATOR_STATUS.bounding,
     height: 0,
-    jailed: true
+    jailed: true,
   }
   try {
     if (result.value?.validator) {
       validator.value = {
         ...result.value.validator[0],
         isActive: await isActiveValidator(String(route.params.address)),
-        status: result.value.validator[0].statuses.length ? result.value.validator[0] : defaultStatus
+        status: result.value.validator[0].statuses.length
+          ? result.value.validator[0]
+          : defaultStatus,
       }
-  
+
       operatorAddress.value = validator.value.info.operatorAddress
-      validatorAddress.value = validator.value.info.validatorAddress      
-      oracleStatus.value = getValidatorStatus(validator.value.status, validator.value.isActive || false)    
+      validatorAddress.value = validator.value.info.validatorAddress
+      oracleStatus.value = getValidatorStatus(
+        validator.value.status,
+        validator.value.isActive || false,
+      )
     }
   } catch (error) {
     isLoadingError.value = true

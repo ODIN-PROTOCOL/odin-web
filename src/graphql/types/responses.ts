@@ -204,3 +204,32 @@ export interface SupplyResponse {
 export interface TreasuryPoolResponse {
   treasuryPool: [{ coins: Coin[] }]
 }
+
+export interface NFTDetails {
+  image: string
+  owner: string
+  preview: string
+  prompt: string
+  request_height: number
+  request_id: number
+}
+
+export interface NFTInfo {
+  height: number
+  owner: string
+  uri: string
+  id: string
+  data: string
+  class_id: string
+  metadata: string
+  details: NFTDetails | null
+}
+
+export interface NFTListResponse {
+  nft_aggregate: {
+    aggregate: {
+      totalCount: number
+    }
+  }
+  nft: NFTInfo[]
+}

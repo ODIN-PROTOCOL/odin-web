@@ -32,4 +32,8 @@ export enum ROUTE_NAMES {
   voting = 'app.governance.proposal.voting',
   wallet = 'app.wallet',
   ibc = 'app.ibc',
+  skopun = 'app.skopun',
+  nft_list = 'app.nft_list',
+  nft_detail = 'app.nft_detail',
+  nft_profile = 'app.nft_profile',
 }

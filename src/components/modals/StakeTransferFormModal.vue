@@ -286,8 +286,8 @@ const flattenForm = form.flatten()
 delegatedValidators.value = delegatedAdress.map((validatorAddress: string) => {
   return {
     ...allValidators.value.find(
-      (validator: ValidatorInfoModify) => 
-        validator?.info && validator?.info.operatorAddress === validatorAddress      
+      (validator: ValidatorInfoModify) =>
+        validator?.info && validator?.info.operatorAddress === validatorAddress,
     ),
     delegation: props.delegation[validatorAddress],
   }
