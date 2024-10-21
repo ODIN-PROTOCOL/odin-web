@@ -235,3 +235,17 @@ export interface NFTListResponse {
   }
   nft: NFTInfo[]
 }
+
+export interface NFTLikesResponse { 
+  nft_likes_aggregate: {
+    aggregate: {
+      count: number
+    }
+  }
+}
+
+export interface NFTAlreadyLikedResponse { 
+  nft_likes: [
+    {nft_id: string}
+  ]
+}

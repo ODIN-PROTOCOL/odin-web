@@ -43,6 +43,8 @@ import {
   AllNFTsQuery,
   ProfileNFTQuery,
   NFTDetailsQuery,
+  NFTLikesQuery,
+  NFTAlreadyLikedQuery,
 } from '@/graphql/queries'
 import {
   BlockMetaResponse,
@@ -50,6 +52,8 @@ import {
   NFTListResponse,
   TreasuryPoolResponse,
   ValidatorsResponse,
+  NFTLikesResponse,
+  NFTAlreadyLikedResponse,
 } from '@/graphql/types/responses'
 import {
   QueryHeightVariables,
@@ -189,6 +193,35 @@ const makeCallers = () => {
           return null
         })
     },
+    getNFTLikes: (id: number) => {
+      return apolloClient
+        .query<NFTLikesResponse>({
+          query: NFTLikesQuery,
+          variables: {
+            id: id,
+          },
+        })
+        .then(response => {
+          return response.data.nft_likes_aggregate.aggregate.count || 0
+        })
+    },
+    getAlreadyLiked: () => {
+      try {
+        return apolloClient
+          .query<NFTAlreadyLikedResponse>({
+            query: NFTAlreadyLikedQuery,
+            variables: {
+              address: wallet.account.address,
+            },
+          }).then(resp => { 
+            console.log(resp)
+            return resp.data.nft_likes.map(nft_like => nft_like.nft_id) || []
+          })        
+      } catch (error) {
+        console.log(error)
+        return []
+      }
+    },   
     getNFTs: (page_number: number, page_limit: number) => {
       return apolloClient
         .query<NFTListResponse>({

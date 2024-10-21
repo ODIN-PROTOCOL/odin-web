@@ -19,7 +19,7 @@
             />
           </router-link>
           <div class="nft-social">
-            <button @click="Like(nft.id)">
+            <button @click="Like(nft.id)" :disabled="alreadyLiked.includes(nft.id)">
               <FontAwesomeIcon :icon="faThumbsUp" />
               <span>Like</span>
             </button>
@@ -59,6 +59,7 @@ const hashtagsText = '#generativeai #nft #blockchain'
 
 const nfts = ref()
 const currentPage = ref<number>(1)
+const alreadyLiked = ref()
 const pageSize = ref(50)
 const totalPages = ref<number>()
 
@@ -80,7 +81,7 @@ const fetchAllNFTs = async (): Promise<void> => {
       )
       return nft
     })
-
+    alreadyLiked.value = await callers.getAlreadyLiked()
     nfts.value = nftResults
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
@@ -162,7 +163,9 @@ img {
     margin-top: 3px;
   }
 }
-
+.nft-item .nft-social > button:disabled {
+  background-color: var(--clr__btn-disabled);
+}
 .nft-item .nft-social > a {
   padding: 4px 8px;
   font-size: 13px;

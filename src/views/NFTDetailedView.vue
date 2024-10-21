@@ -44,15 +44,15 @@
             <div class="app-table__row">
               <div class="app-table__cell-txt app-table__link">
                 <div class="user-widget fx-row fx-sae control-buttons">
-                  <a
+                  <button
                     @click="Like(nft.id)"
                     class="share-btn app-btn app-btn--small"
                     network="threads"
                     target="_blank"
-                  >
+                    :disabled="alreadyLiked.includes(nft.id)">
                     <FontAwesomeIcon :icon="faThumbsUp" />
-                    <span>5</span>
-                  </a>
+                    <span>{{ likesCount }}</span>
+                  </button>
                   <span class="share_on app-table__title"> Share on: </span>
                   <a
                     :href="shareThreads"
@@ -102,6 +102,9 @@ const shareThreads = ref<string>()
 const shareX = ref<string>()
 
 const nft = ref()
+const likesCount = ref(0)
+const alreadyLiked = ref<string[]>([])
+
 const ipfsLink = computed(() => {
   return `${API_CONFIG.ipfsIOUrl}/${nft.value.uri}`
 })
@@ -125,6 +128,10 @@ const fetchNFT = async (): Promise<void> => {
           },
         ],
       })
+
+      const likeCount = await callers.getNFTLikes(route.params.id.toString())
+      alreadyLiked.value = await callers.getAlreadyLiked()
+      likesCount.value = likeCount
     }
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
@@ -137,7 +144,10 @@ const Like = async (id: string) => {
     let result: boolean = await callers.likeNFT(id)
     if (result) {
       handleNotificationInfo('NFT Like processed', TYPE_NOTIFICATION.success)
-      // likeCount = callfetchLikeCount()
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      const likeCount = await callers.getNFTLikes(id)
+      console.log('likeCount', likeCount)
+      likesCount.value = likeCount
     }
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
