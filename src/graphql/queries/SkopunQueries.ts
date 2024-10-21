@@ -63,19 +63,19 @@ export const NFTDetailsQuery = gql`
 `
 
 export const NFTLikesQuery = gql`
-query LikeCount($id: String!) {
-  nft_likes_aggregate(where: {nft_id: { _eq: $id}}) {
-    aggregate {
-      count
+  query LikeCount($id: String!) {
+    nft_likes_aggregate(where: { nft_id: { _eq: $id } }) {
+      aggregate {
+        count
+      }
     }
   }
-}
 `
 
 export const NFTAlreadyLikedQuery = gql`
-query NFTAlreadyLikedQuery($address: String!) {
-  nft_likes(where: {address: {_eq: $address}}) {
-		nft_id
+  query NFTAlreadyLikedQuery($address: String!) {
+    nft_likes(where: { address: { _eq: $address } }) {
+      nft_id
+    }
   }
-}
 `

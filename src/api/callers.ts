@@ -213,15 +213,16 @@ const makeCallers = () => {
             variables: {
               address: wallet.account.address,
             },
-          }).then(resp => { 
+          })
+          .then(resp => {
             console.log(resp)
             return resp.data.nft_likes.map(nft_like => nft_like.nft_id) || []
-          })        
+          })
       } catch (error) {
         console.log(error)
         return []
       }
-    },   
+    },
     getNFTs: (page_number: number, page_limit: number) => {
       return apolloClient
         .query<NFTListResponse>({

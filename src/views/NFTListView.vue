@@ -19,7 +19,10 @@
             />
           </router-link>
           <div class="nft-social">
-            <button @click="Like(nft.id)" :disabled="alreadyLiked.includes(nft.id)">
+            <button
+              @click="Like(nft.id)"
+              :disabled="alreadyLiked.includes(nft.id)"
+            >
               <FontAwesomeIcon :icon="faThumbsUp" />
               <span>Like</span>
             </button>

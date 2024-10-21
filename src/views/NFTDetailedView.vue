@@ -49,7 +49,8 @@
                     class="share-btn app-btn app-btn--small"
                     network="threads"
                     target="_blank"
-                    :disabled="alreadyLiked.includes(nft.id)">
+                    :disabled="alreadyLiked.includes(nft.id)"
+                  >
                     <FontAwesomeIcon :icon="faThumbsUp" />
                     <span>{{ likesCount }}</span>
                   </button>
