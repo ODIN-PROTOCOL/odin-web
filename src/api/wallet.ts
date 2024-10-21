@@ -34,21 +34,21 @@ export class OdinWallet {
 
   get signer(): DirectSecp256k1HdWallet | OfflineSigner | OfflineDirectSigner {
     if (!this._wallet) {
-      throw new ReferenceError('OdinWallet not initialized!')
+      throw new ReferenceError('Connect wallet extension first!')
     }
     return this._wallet
   }
 
   get wasmSigner(): SigningCosmWasmClient {
     if (!this._contractWallet) {
-      throw new ReferenceError('OdinWallet WASM not initialized!')
+      throw new ReferenceError('Connect wallet extension first!')
     }
     return this._contractWallet
   }
 
   get account(): AccountData {
     if (!this._walletAccounts?.[0]) {
-      throw new ReferenceError('OdinWallet not initialized!')
+      throw new ReferenceError('Connect wallet extension first!')
     }
     return this._walletAccounts[0]
   }
@@ -59,7 +59,7 @@ export class OdinWallet {
 
   get type(): WalletTypes | null {
     if (!this._wallet) {
-      throw new ReferenceError('OdinWallet not initialized!')
+      throw new ReferenceError('Connect wallet extension first!')
     }
     return this._walletType
   }

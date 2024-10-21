@@ -223,6 +223,8 @@ export interface NFTInfo {
   class_id: string
   metadata: string
   details: NFTDetails | null
+  shareableXUrl: string | null
+  shareableThreadsUrl: string | null
 }
 
 export interface NFTListResponse {

@@ -45,7 +45,7 @@
               <div class="app-table__cell-txt app-table__link">
                 <div class="user-widget fx-row fx-sae control-buttons">
                   <a
-                    :href="shareThreads"
+                    @click="Like(nft.id)"
                     class="share-btn app-btn app-btn--small"
                     network="threads"
                     target="_blank"
@@ -110,7 +110,6 @@ const fetchNFT = async (): Promise<void> => {
   lockLoading()
   try {
     nft.value = await callers.getNFT(route.params.id)
-    console.log(nft.value)
     if (nft.value) {
       useHead({
         title: nft.value.details.prompt,
@@ -131,6 +130,19 @@ const fetchNFT = async (): Promise<void> => {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
   releaseLoading()
+}
+
+const Like = async (id: string) => {
+  try {
+    let result: boolean = await callers.likeNFT(id)
+    if (result) {
+      handleNotificationInfo('NFT Like processed', TYPE_NOTIFICATION.success)
+      // likeCount = callfetchLikeCount()
+    }
+  }
+  catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }  
 }
 
 onMounted(async (): Promise<void> => {

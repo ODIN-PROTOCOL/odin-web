@@ -74,6 +74,32 @@ import {
   OracleScriptsMostRequestedQuery,
   OracleScriptsQuery,
 } from '@/graphql/queries/DataSource'
+import { StdSignature } from '@keplr-wallet/types'
+
+
+
+export const signMessage = async (
+  chainId: string,
+  nftId: string,
+): Promise<StdSignature | undefined> => {
+  const anyWindow: any = window;
+  if (!wallet) {
+    throw new Error('Connect Keplr wallet first');    
+  }
+  if (!anyWindow.getOfflineSigner) {
+    throw new Error('Keplr extension is not available');
+  }
+
+  return window.keplr?.signArbitrary(
+    chainId,
+    wallet.account.address,
+    JSON.stringify({
+      action: "like",
+      address: wallet.account.address,
+      nftId: nftId,
+    }) 
+  );          
+}
 
 const makeCallers = () => {
   const broadcaster = api.makeBroadcastCaller.bind(api)
@@ -84,6 +110,31 @@ const makeCallers = () => {
   return {
     getValidators: () => {
       return apolloClient.query<ValidatorsResponse>({ query: ValidatorsQuery })
+    },
+    likeNFT: (nftId: string) => {      
+      return signMessage(API_CONFIG.chainId, nftId).then((signedMessage) => {
+        return axios.post(`${API_CONFIG.fnServer}/fn_/nft/like`, {
+          address: wallet.account.address,
+          signed: signedMessage,
+          nftId: nftId,
+        })        
+        .then((response) => { 
+          if (response.status === 200) {
+            // Handle success, e.g., update the UI to show the like was successful
+            console.log('Like was successful:', response.data);
+            return true
+          } else {
+            // Handle failure, e.g., user has already liked this NFT or signature verification failed
+            console.error('Error liking NFT:', response.data.message);
+            return false
+          }          
+        }).catch(function (error) {
+          // Handle failure, e.g., network error
+          console.error(`Error liking NFT: ${error.response}`);
+          throw new Error(error.response.data.message);
+          return false
+        });
+      });
     },
     getTxVolumePerDays: (startTime: Date, endTime: Date) => {
       return apolloClient.query({ query: TxVolumePerDaysQuery, variables: {} })

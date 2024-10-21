@@ -20,6 +20,9 @@ export const API_CONFIG = {
   skopunContractAddress: process.env.VUE_APP_SKOPUN_CONTRACT_ADDRESS as string,
   ipfsNodeUrl: process.env.VUE_APP_IPFS_NODE_URL as string,
   ipfsIOUrl: 'https://ipfs.io/ipfs',
+  fnServer: process.env.VUE_APP_FN_SERVER as string,
+  threadsShareUrl: 'https://threads.net/intent/post' as string,
+  xShareUrl: 'https://twitter.com/intent/post' as string
 }
 
 export const START_VALUE = {
