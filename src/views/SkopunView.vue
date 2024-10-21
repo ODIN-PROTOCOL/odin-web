@@ -83,7 +83,7 @@ const handleSubmit = async (e: Event) => {
   if (wallet.isEmpty || !wallet.account || !wallet.wasmSigner) {
     handleNotificationInfo(
       'Please connect your wallet first.',
-      TYPE_NOTIFICATION.info
+      TYPE_NOTIFICATION.info,
     )
     return
   }
@@ -105,12 +105,12 @@ const handleSubmit = async (e: Event) => {
       msg, // Execute message
       'auto', // Fee (auto-estimated)
       '', // Memo (optional)
-      [{ denom: 'loki', amount: '100' }] // Funds (if required by contract)
+      [{ denom: 'loki', amount: '100' }], // Funds (if required by contract)
     )
     console.log('Transaction result:', result)
 
     const wasmEvent = result.events.find(
-      event => event.type === 'wasm-wasm_request'
+      event => event.type === 'wasm-wasm_request',
     )
 
     if (wasmEvent) {
@@ -132,7 +132,7 @@ const handleSubmit = async (e: Event) => {
           try {
             response = await wallet.wasmSigner.queryContractSmart(
               API_CONFIG.skopunContractAddress,
-              query
+              query,
             )
 
             if (response && response.length > 0) {
@@ -144,7 +144,7 @@ const handleSubmit = async (e: Event) => {
               console.log('NFT Data:', nftData)
               const imageUrl = nftData.data.preview.replace(
                 'https://ipfs.io/ipfs',
-                API_CONFIG.ipfsNodeUrl
+                API_CONFIG.ipfsNodeUrl,
               )
 
               // Create an image element and set its source to the imageUrl
@@ -171,25 +171,25 @@ const handleSubmit = async (e: Event) => {
 
         if (attempts === 100) {
           console.error(
-            'Failed to get a successful response after 20 attempts.'
+            'Failed to get a successful response after 20 attempts.',
           )
           handleNotificationInfo(
             'Failed to get a successful response after 20 attempts.',
-            TYPE_NOTIFICATION.failed
+            TYPE_NOTIFICATION.failed,
           )
         }
       } else {
         console.error('ID attribute not found in wasm-wasm_request event.')
         handleNotificationInfo(
           'NFT generation requested, but ID attribute not found.',
-          TYPE_NOTIFICATION.failed
+          TYPE_NOTIFICATION.failed,
         )
       }
     } else {
       console.error('wasm-wasm_request event not found.')
       handleNotificationInfo(
         'NFT generation requested, but wasm-wasm_request event not found.',
-        TYPE_NOTIFICATION.failed
+        TYPE_NOTIFICATION.failed,
       )
     }
   } catch (error) {
@@ -207,7 +207,7 @@ const handleNFTCreate = async (e: Event) => {
   if (!wallet.account || wallet.wasmSigner === null) {
     handleNotificationInfo(
       'Please connect your wallet first.',
-      TYPE_NOTIFICATION.info
+      TYPE_NOTIFICATION.info,
     )
     return
   }
@@ -217,7 +217,7 @@ const handleNFTCreate = async (e: Event) => {
   if (requestId.value === null) {
     handleNotificationInfo(
       'Please generate image first',
-      TYPE_NOTIFICATION.info
+      TYPE_NOTIFICATION.info,
     )
     return
   }
@@ -231,7 +231,7 @@ const handleNFTCreate = async (e: Event) => {
       msg, // Execute message
       'auto', // Fee (auto-estimated)
       '', // Memo (optional)
-      [{ denom: 'loki', amount: '100' }] // Funds (if required by contract)
+      [{ denom: 'loki', amount: '100' }], // Funds (if required by contract)
     )
 
     console.log('Transaction result:', result)
@@ -239,7 +239,7 @@ const handleNFTCreate = async (e: Event) => {
     requestId.value = null
     handleNotificationInfo(
       'NFT created successfully.',
-      TYPE_NOTIFICATION.success
+      TYPE_NOTIFICATION.success,
     )
   } catch (error) {
     releaseNFTGenerating()

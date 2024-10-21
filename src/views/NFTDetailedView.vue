@@ -9,7 +9,7 @@
               :src="
                 nft.details.preview.replace(
                   'https://ipfs.io/ipfs',
-                  API_CONFIG.ipfsNodeUrl
+                  API_CONFIG.ipfsNodeUrl,
                 )
               "
               :alt="nft.details.prompt"
@@ -139,16 +139,15 @@ const Like = async (id: string) => {
       handleNotificationInfo('NFT Like processed', TYPE_NOTIFICATION.success)
       // likeCount = callfetchLikeCount()
     }
-  }
-  catch (error) {
+  } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-  }  
+  }
 }
 
 onMounted(async (): Promise<void> => {
   await fetchNFT()
   const shareableText = encodeURIComponent(
-    `${shareText} ${hashtagsText} ${window.location}`
+    `${shareText} ${hashtagsText} ${window.location}`,
   )
   shareThreads.value = `https://threads.net/intent/post?text=${shareableText}`
   shareX.value = `https://twitter.com/intent/post?text=${shareText}&url=${window.location}&hashtags=nft,blockchain,ai,images,generativeai`

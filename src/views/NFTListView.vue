@@ -11,7 +11,7 @@
               :src="
                 nft.details.preview.replace(
                   'https://ipfs.io/ipfs',
-                  API_CONFIG.ipfsNodeUrl
+                  API_CONFIG.ipfsNodeUrl,
                 )
               "
               :alt="nft.details.prompt"
@@ -24,11 +24,11 @@
               <span>Like</span>
             </button>
             <a :href="nft.shareableXUrl" target="_blank">
-              <span>Share</span>            
-              <FontAwesomeIcon :icon="faXTwitter" />               
+              <span>Share</span>
+              <FontAwesomeIcon :icon="faXTwitter" />
             </a>
             <a :href="nft.shareableThreadsUrl" target="_blank">
-              <span>Share</span>            
+              <span>Share</span>
               <FontAwesomeIcon :icon="faThreads" />
             </a>
           </div>
@@ -69,17 +69,17 @@ const fetchAllNFTs = async (): Promise<void> => {
 
     let nftResults = await callers.getNFTs(currentPage.value, pageSize.value)
     nftResults.every((nft: any) => {
-      let threadsShareableText =  encodeURIComponent(
-        `${shareText} ${hashtagsText} ${path}/nfts/${nft.id}`
+      let threadsShareableText = encodeURIComponent(
+        `${shareText} ${hashtagsText} ${path}/nfts/${nft.id}`,
       )
       nft.shareableThreadsUrl = `${API_CONFIG.threadsShareUrl}?text=${threadsShareableText}`
       nft.shareableXUrl = `${API_CONFIG.xShareUrl}?text=${shareText}&url=${path}/nfts/${nft.id}&hashtags=nft,blockchain,ai,images,generativeais`
       nft.details.preview = nft.details.preview.replace(
         'https://ipfs.io/ipfs',
-        API_CONFIG.ipfsNodeUrl
+        API_CONFIG.ipfsNodeUrl,
       )
       return nft
-    })      
+    })
 
     nfts.value = nftResults
   } catch (error) {
@@ -98,10 +98,9 @@ const Like = async (id: string) => {
     if (result) {
       handleNotificationInfo('NFT Like processed', TYPE_NOTIFICATION.success)
     }
-  }
-  catch (error) {
+  } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-  }  
+  }
 }
 
 onMounted(async (): Promise<void> => {
