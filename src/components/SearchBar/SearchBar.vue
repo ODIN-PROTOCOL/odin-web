@@ -50,7 +50,7 @@
                 <BlockResultItem
                   v-for="block in result.blocks"
                   :result="block"
-                  :key="block.header.height"
+                  :key="block.height"
                 />
               </template>
               <template v-if="result.transactions?.length !== 0">
@@ -67,11 +67,19 @@
                   :key="accounts"
                 />
               </template>
+              <template v-if="result.nfts?.length !== 0">
+                <NFTItem
+                  v-for="nft in result.nfts"
+                  :result="nft"
+                  :key="nft.id"
+                />
+              </template>
               <template
                 v-if="
                   !result.transactions?.length &&
                   !result.blocks?.length &&
-                  !result.accounts?.length
+                  !result.accounts?.length &&
+                  !result.nfts?.length
                 "
               >
                 <div class="search-bar__dropdown-empty-msg">
@@ -113,7 +121,8 @@ import {
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { prepareBlockMetas } from '@/helpers/blocksHelper'
 import { ROUTE_NAMES } from '@/enums'
-import { TransformedBlockInfo, ValidatorDetailedInfo } from '@/graphql/types'
+import { NFTInfo, TransformedBlockInfo, ValidatorDetailedInfo } from '@/graphql/types'
+import NFTItem from './NFTItem.vue'
 
 enum FILTER_BY {
   ACCOUNT = 'Account',
@@ -154,19 +163,16 @@ watch(searchResult, value => {
     if (value) {
       const [firstResult] = value
 
-      if (firstResult.blocks?.length) {
-        const blockHeader = firstResult.blocks[0].header
-        const blockHeight = blockHeader?.height
-
+      if (firstResult.blocks?.length === 1) {
+        const blockHeight = firstResult.blocks[0].height 
         router.push({
           name: ROUTE_NAMES.blockDetails,
           params: { id: blockHeight },
         })
-
         return
       }
 
-      if (firstResult.transactions?.length) {
+      if (firstResult.transactions?.length === 1) {
         const transactionHash = firstResult.transactions[0].hash
 
         router.push({
@@ -177,12 +183,21 @@ watch(searchResult, value => {
         return
       }
 
-      if (firstResult.accounts?.length) {
+      if (firstResult.accounts?.length === 1) {
         const accountAddress = firstResult.accounts[0].address
 
         router.push({
           name: ROUTE_NAMES.accountDetails,
           params: { hash: accountAddress },
+        })
+
+        return
+      }
+
+      if (firstResult.nfts?.length === 1) {        
+        router.push({
+          name: ROUTE_NAMES.nft_detail,
+          params: { id: firstResult.nfts[0].id },
         })
 
         return
@@ -246,7 +261,22 @@ const getBlock = async (): Promise<TransformedBlockInfo[]> => {
       searchedText.value,
       Number(searchedText.value) || 0,
     )
-    return await prepareBlockMetas(data.blockMetas, validators.value)
+    const res = await prepareBlockMetas(data.blockMetas, validators.value)
+    return res 
+  } catch {
+    return []
+  }
+}
+
+
+const getNFTs = async (): Promise<NFTInfo[]> => {
+  if (!searchedText.value) {
+    return []
+  }
+
+  try {
+    const nfts = await callers.searchNFT(searchedText.value || '')
+    return nfts
   } catch {
     return []
   }
@@ -282,6 +312,7 @@ const searchBy = async (): Promise<Array<SearchResultType> | null> => {
         blocks: await getBlock(),
         transactions: await getTransactions(),
         accounts: await getAccount(),
+        nfts: await getNFTs(),
       },
     ]
   } catch (error) {

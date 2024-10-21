@@ -7,7 +7,7 @@
     <div class="app-table__cell">
       <span class="app-table__title">Validator</span>
       <TitledLink
-        v-if="validator.descriptions.length"
+        v-if="validator.descriptions?.length"
         class="app-table__cell-txt app-table__link"
         :text="validator.descriptions[0]?.moniker"
         :name="{
@@ -35,7 +35,7 @@
     </div>
     <div class="app-table__cell validators-view-table-row__cell--margin-left">
       <span class="app-table__title">Commission</span>
-      <span v-if="validator.commissions.length">
+      <span v-if="validator.commissions?.length">
         {{ $trimZeros(validator?.commissions[0]?.commission * 100, 2) }}%
       </span>
       <span v-else>0%</span>
@@ -47,7 +47,7 @@
         :height="24"
         :status="
           getValidatorStatus(
-            validator.statuses.length > 0 ? validator.statuses[0].status : 3,
+            validator.statuses?.length > 0 ? validator.statuses[0].status : 3,
             validator.isActive || false,
           )
         "

@@ -236,6 +236,10 @@ export interface NFTListResponse {
   nft: NFTInfo[]
 }
 
+export interface SearchNFTListResponse {
+  search_nfts: NFTInfo[]
+}
+
 export interface NFTLikesResponse {
   nft_likes_aggregate: {
     aggregate: {

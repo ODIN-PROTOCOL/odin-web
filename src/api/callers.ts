@@ -45,6 +45,7 @@ import {
   NFTDetailsQuery,
   NFTLikesQuery,
   NFTAlreadyLikedQuery,
+  NFTSearchQuery,
 } from '@/graphql/queries'
 import {
   BlockMetaResponse,
@@ -54,6 +55,7 @@ import {
   ValidatorsResponse,
   NFTLikesResponse,
   NFTAlreadyLikedResponse,
+  SearchNFTListResponse
 } from '@/graphql/types/responses'
 import {
   QueryHeightVariables,
@@ -255,6 +257,25 @@ const makeCallers = () => {
         })
         .then(response => {
           const mapped = response.data.nft.map((nft: NFTInfo) => {
+            const res: NFTInfo = {
+              ...nft,
+              details: JSON.parse(nft.metadata),
+            }
+            return res
+          })
+          return mapped
+        })
+    },
+    searchNFT: (query: string) => {
+      return apolloClient
+        .query<SearchNFTListResponse>({
+          query: NFTSearchQuery,
+          variables: {
+            query: query,            
+          },          
+        })
+        .then(response => {
+          const mapped = response.data.search_nfts.map((nft: NFTInfo) => {
             const res: NFTInfo = {
               ...nft,
               details: JSON.parse(nft.metadata),

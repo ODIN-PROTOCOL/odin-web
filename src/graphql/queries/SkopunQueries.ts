@@ -11,7 +11,7 @@ export const AllNFTsQuery = gql`
       where: { class_id: { _eq: "onft-0" } }
       limit: $limit
       offset: $offset
-      order_by: { height: asc }
+      order_by: { height: desc }
     ) {
       height
       owner
@@ -35,7 +35,7 @@ export const ProfileNFTQuery = gql`
       where: { class_id: { _eq: "onft-0" }, owner: { _eq: $address } }
       limit: $limit
       offset: $offset
-      order_by: { height: asc }
+      order_by: { height: desc }
     ) {
       height
       owner
@@ -78,4 +78,18 @@ export const NFTAlreadyLikedQuery = gql`
       nft_id
     }
   }
+`
+
+export const NFTSearchQuery = gql`
+query NFTSearchQuery($query: String!) {
+  search_nfts(args: {search: $query}, order_by: { height: desc }) {
+    id
+    metadata
+    owner
+    uri
+    uri_hash
+    class_id
+    height
+  }
+}
 `
