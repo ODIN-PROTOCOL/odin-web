@@ -126,7 +126,6 @@ const makeCallers = () => {
           .then(response => {
             if (response.status === 200) {
               // Handle success, e.g., update the UI to show the like was successful
-              console.log('Like was successful:', response.data)
               return true
             } else {
               // Handle failure, e.g., user has already liked this NFT or signature verification failed
@@ -182,6 +181,7 @@ const makeCallers = () => {
           variables: {
             id: id,
           },
+          fetchPolicy: 'network-only',
         })
         .then(response => {
           const nft = response.data.nft.at(0)
@@ -195,13 +195,14 @@ const makeCallers = () => {
           return null
         })
     },
-    getNFTLikes: (id: number) => {
+    getNFTLikes: (id: string) => {
       return apolloClient
-        .query<NFTLikesResponse>({
+        .query<NFTLikesResponse>({          
           query: NFTLikesQuery,
           variables: {
-            id: id,
+            id: id, 
           },
+          fetchPolicy: 'network-only',
         })
         .then(response => {
           return response.data.nft_likes_aggregate.aggregate.count || 0
@@ -215,9 +216,9 @@ const makeCallers = () => {
             variables: {
               address: wallet.account.address,
             },
+            fetchPolicy: 'network-only',
           })
           .then(resp => {
-            console.log(resp)
             return resp.data.nft_likes.map(nft_like => nft_like.nft_id) || []
           })
       } catch (error) {
@@ -233,6 +234,7 @@ const makeCallers = () => {
             limit: page_limit,
             offset: (page_number - 1) * page_limit,
           },
+          fetchPolicy: 'network-only',
         })
         .then(response => {
           const mapped = response.data.nft.map((nft: NFTInfo) => {

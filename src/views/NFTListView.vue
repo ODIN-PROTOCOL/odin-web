@@ -103,7 +103,6 @@ const Like = async (id: string) => {
   try {
     let result: boolean = await callers.likeNFT(id)
     if (result) {
-      await new Promise(resolve => setTimeout(resolve, 3000))
       await reloadNFTs()
       handleNotificationInfo('NFT Like processed', TYPE_NOTIFICATION.success)
     }

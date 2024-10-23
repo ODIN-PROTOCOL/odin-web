@@ -49,7 +49,7 @@
                     class="share-btn app-btn app-btn--small"
                     network="threads"
                     target="_blank"
-                    :disabled="alreadyLiked.includes(nft.id)"
+                    :disabled="alreadyLiked.includes(nft.id) || isLikeProcessing"
                   >
                     <FontAwesomeIcon :icon="faThumbsUp" />
                     <span>{{ likesCount }}</span>
@@ -80,35 +80,37 @@
 </template>
 
 <script setup lang="ts">
-import { blockChainDataBlocks, chartPagesProps } from '@/const'
-import { ref, onMounted, computed } from 'vue'
+
+import { ref, onMounted, computed, reactive } from 'vue'
 import { callers } from '@/api/callers'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { API_CONFIG, START_VALUE } from '@/api/api-config'
-import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import { ROUTE_NAMES } from '@/enums'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faXTwitter, faThreads } from '@fortawesome/free-brands-svg-icons'
 import { faThumbsUp } from '@fortawesome/free-solid-svg-icons'
 import { useHead } from '@vueuse/head'
+import { NFTInfo } from '@/graphql/types'
 
 const route: RouteLocationNormalizedLoaded = useRoute()
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+const [isLikeProcessing, lockLike, releaseLike] = useBooleanSemaphore()
 const shareText = 'NFT generated with SKÖPUN - Odin network'
 const hashtagsText = '#generativeai #nft #blockchain'
 
 const shareThreads = ref<string>()
 const shareX = ref<string>()
 
-const nft = ref()
-const likesCount = ref(0)
+const nft = ref<NFTInfo | null>(null)
+const likesCount = ref<number>(0)
 const alreadyLiked = ref<string[]>([])
 
 const ipfsLink = computed(() => {
-  return `${API_CONFIG.ipfsIOUrl}/${nft.value.uri}`
+  return `${API_CONFIG.ipfsIOUrl}/${nft.value?.uri}`
 })
+
 
 const fetchNFT = async (): Promise<void> => {
   lockLoading()
@@ -116,23 +118,22 @@ const fetchNFT = async (): Promise<void> => {
     nft.value = await callers.getNFT(route.params.id)
     if (nft.value) {
       useHead({
-        title: nft.value.details.prompt,
+        title: nft.value.details?.prompt || '',
         meta: [
-          { property: 'og:title', content: nft.value.details.prompt },
+          { property: 'og:title', content: nft.value.details?.prompt },
           {
             property: 'og:description',
             content: 'Create a prompt to generate a unique NFT image',
           },
           {
             property: 'og:image',
-            content: nft.value.details.preview.replace(
+            content: nft.value.details?.preview?.replace(
               'https://ipfs.io/ipfs',
               API_CONFIG.ipfsNodeUrl,
             ),
           },
         ],
       })
-
       const likeCount = await callers.getNFTLikes(route.params.id.toString())
       alreadyLiked.value = await callers.getAlreadyLiked()
       likesCount.value = likeCount
@@ -143,19 +144,20 @@ const fetchNFT = async (): Promise<void> => {
   releaseLoading()
 }
 
+
 const Like = async (id: string) => {
+  lockLike()
   try {
     let result: boolean = await callers.likeNFT(id)
-    if (result) {
+    if (result) {            
+      alreadyLiked.value = await callers.getAlreadyLiked()      
+      likesCount.value = await callers.getNFTLikes(id)
       handleNotificationInfo('NFT Like processed', TYPE_NOTIFICATION.success)
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      const likeCount = await callers.getNFTLikes(id)
-      console.log('likeCount', likeCount)
-      likesCount.value = likeCount
     }
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
+  releaseLike()
 }
 
 onMounted(async (): Promise<void> => {
