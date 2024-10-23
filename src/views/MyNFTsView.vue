@@ -18,6 +18,23 @@
               class="nft-image"
             />
           </router-link>
+          <div class="nft-social">
+            <button
+              @click="Like(nft.id)"
+              :disabled="alreadyLiked.includes(nft.id)"
+            >
+              <FontAwesomeIcon :icon="faThumbsUp" />
+              <span>{{ nft.likes.aggregate.count }}</span>
+            </button>
+            <a :href="nft.shareableXUrl" target="_blank">
+              <span>Share</span>
+              <FontAwesomeIcon :icon="faXTwitter" />
+            </a>
+            <a :href="nft.shareableThreadsUrl" target="_blank">
+              <span>Share</span>
+              <FontAwesomeIcon :icon="faThreads" />
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -30,24 +47,48 @@ import { ref, onMounted, computed } from 'vue'
 import { callers } from '@/api/callers'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
-import { API_CONFIG, START_VALUE } from '@/api/api-config'
+import { START_VALUE } from '@/api/api-config'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import { ROUTE_NAMES } from '@/enums'
-
+import { API_CONFIG } from '@/api/api-config'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faThumbsUp, faShareNodes } from '@fortawesome/free-solid-svg-icons'
+import { faXTwitter, faThreads } from '@fortawesome/free-brands-svg-icons'
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const ITEMS_PER_PAGE = 50
 
+const shareText = 'NFT generated with SKÖPUN - Odin network'
+const hashtagsText = '#generativeai #nft #blockchain'
+
 const nfts = ref()
 const currentPage = ref<number>(1)
+const alreadyLiked = ref()
 const pageSize = ref(50)
 const totalPages = ref<number>()
+
+const reloadNFTs = async () => {
+  const path = location.protocol + '//' + location.host
+  let nftResults = await callers.getMyNFTs(currentPage.value, pageSize.value)
+    nftResults.every((nft: any) => {
+      let threadsShareableText = encodeURIComponent(
+        `${shareText} ${hashtagsText} ${path}/nfts/${nft.id}`,
+      )
+      nft.shareableThreadsUrl = `${API_CONFIG.threadsShareUrl}?text=${threadsShareableText}`
+      nft.shareableXUrl = `${API_CONFIG.xShareUrl}?text=${shareText}&url=${path}/nfts/${nft.id}&hashtags=nft,blockchain,ai,images,generativeais`
+      nft.details.preview = nft.details.preview.replace(
+        'https://ipfs.io/ipfs',
+        API_CONFIG.ipfsNodeUrl,
+      )
+      return nft
+    })
+    alreadyLiked.value = await callers.getAlreadyLiked()
+    nfts.value = nftResults
+}
 
 const fetchAllNFTs = async (): Promise<void> => {
   lockLoading()
   try {
-    console.log(currentPage.value, pageSize.value)
-    let nftResults = await callers.getMyNFTs(currentPage.value, pageSize.value)
-    nfts.value = nftResults
+    await reloadNFTs()
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
@@ -56,6 +97,18 @@ const fetchAllNFTs = async (): Promise<void> => {
 
 const updateHandler = async (num: number) => {
   await fetchAllNFTs()
+}
+
+const Like = async (id: string) => {
+  try {
+    let result: boolean = await callers.likeNFT(id)
+    if (result) {
+      await reloadNFTs()
+      handleNotificationInfo('NFT Like processed', TYPE_NOTIFICATION.success)
+    }
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
 }
 
 onMounted(async (): Promise<void> => {
@@ -72,9 +125,73 @@ onMounted(async (): Promise<void> => {
 }
 
 .nft-item {
+  position: relative;
+
+  .nft-social {
+    display: flex;
+  }
+
+  &:hover {
+    img {
+      opacity: 0.9;
+    }
+  }
+}
+
+img {
   max-width: 100%;
   display: block;
-  margin: 10px;
+}
+
+.nft-social {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  color: white;
+  padding: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.nft-item .nft-social > button {
+  padding: 4px 8px;
+  font-size: 13px;
+  background-color: var(--clr__action);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 4px;
+
+  span {
+    display: block;
+    margin-top: 3px;
+  }
+}
+.nft-item .nft-social > button:disabled {
+  background-color: var(--clr__btn-disabled);
+}
+.nft-item .nft-social > a {
+  padding: 4px 8px;
+  font-size: 13px;
+  background-color: var(--clr__action);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 4px;
+  color: white;
+  text-decoration: none;
+
+  &:visited {
+    color: white;
+    text-decoration: none;
+  }
+  span {
+    display: block;
+    margin-top: 3px;
+  }
 }
 
 @include respond-to(tablet) {

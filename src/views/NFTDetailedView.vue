@@ -125,7 +125,10 @@ const fetchNFT = async (): Promise<void> => {
           },
           {
             property: 'og:image',
-            content: nft.value.details.image,
+            content: nft.value.details.preview.replace(
+              'https://ipfs.io/ipfs',
+              API_CONFIG.ipfsNodeUrl,
+            ),
           },
         ],
       })

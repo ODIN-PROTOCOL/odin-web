@@ -24,7 +24,7 @@
               :disabled="alreadyLiked.includes(nft.id)"
             >
               <FontAwesomeIcon :icon="faThumbsUp" />
-              <span>Like</span>
+              <span>{{ nft.likes.aggregate.count }}</span>
             </button>
             <a :href="nft.shareableXUrl" target="_blank">
               <span>Share</span>
@@ -66,12 +66,9 @@ const alreadyLiked = ref()
 const pageSize = ref(50)
 const totalPages = ref<number>()
 
-const fetchAllNFTs = async (): Promise<void> => {
-  lockLoading()
-  try {
-    const path = location.protocol + '//' + location.host
-
-    let nftResults = await callers.getNFTs(currentPage.value, pageSize.value)
+const reloadNFTs = async () => {
+  const path = location.protocol + '//' + location.host
+  let nftResults = await callers.getNFTs(currentPage.value, pageSize.value)
     nftResults.every((nft: any) => {
       let threadsShareableText = encodeURIComponent(
         `${shareText} ${hashtagsText} ${path}/nfts/${nft.id}`,
@@ -86,6 +83,12 @@ const fetchAllNFTs = async (): Promise<void> => {
     })
     alreadyLiked.value = await callers.getAlreadyLiked()
     nfts.value = nftResults
+}
+
+const fetchAllNFTs = async (): Promise<void> => {
+  lockLoading()
+  try {
+    await reloadNFTs()
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
@@ -100,6 +103,8 @@ const Like = async (id: string) => {
   try {
     let result: boolean = await callers.likeNFT(id)
     if (result) {
+      await new Promise(resolve => setTimeout(resolve, 3000))
+      await reloadNFTs()
       handleNotificationInfo('NFT Like processed', TYPE_NOTIFICATION.success)
     }
   } catch (error) {
@@ -123,13 +128,13 @@ onMounted(async (): Promise<void> => {
 .nft-item {
   position: relative;
 
+  .nft-social {
+    display: flex;
+  }
+
   &:hover {
     img {
       opacity: 0.9;
-    }
-
-    .nft-social {
-      display: flex;
     }
   }
 }

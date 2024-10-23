@@ -20,6 +20,11 @@ export const AllNFTsQuery = gql`
       data
       class_id
       metadata
+      likes: nft_likes_aggregate {
+        aggregate {
+          count
+        }
+      }
     }
   }
 `
@@ -44,6 +49,11 @@ export const ProfileNFTQuery = gql`
       data
       class_id
       metadata
+      likes: nft_likes_aggregate {
+        aggregate {
+          count
+        }
+      }
     }
   }
 `

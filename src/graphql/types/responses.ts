@@ -225,6 +225,11 @@ export interface NFTInfo {
   details: NFTDetails | null
   shareableXUrl: string | null
   shareableThreadsUrl: string | null
+  likes: {
+    aggregate: {
+      count: number
+    }
+  }
 }
 
 export interface NFTListResponse {

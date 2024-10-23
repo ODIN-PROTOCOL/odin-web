@@ -16,7 +16,7 @@
         <div class="user-widget fx-row fx-sae control-buttons">
           <button
             type="submit"
-            class="app-btn app-btn--large generate-image"
+            class="app-btn app-btn--large"
             :disabled="isLoading || isGenerating"
           >
             <img
@@ -24,7 +24,7 @@
               class="ai-generate-icon"
               v-if="isGenerating"
             />
-            <span>Generate Image</span>
+            Generate Image
           </button>
           <button
             v-if="requestId !== null && !isGenerating"
@@ -71,9 +71,9 @@ useHead({
     { property: 'og:title', content: title },
     {
       property: 'og:description',
-      content: 'Create a prompt to generate a unique NFT image',
+      content: 'Create a prompt to generate a unique NFT image using Sköpun on Odin chain.',
     },
-    { property: 'og:image', content: 'https://example.com/dynamic-image.jpg' },
+    { property: 'og:image', content: 'https://testnet-tyr-1.odinprotocol.io/ipfs/QmU4EPSPuPUnyfWfpNimPL9SKuT7mryUWodLV2rfMRJ6GJ' },
   ],
 })
 
@@ -151,7 +151,7 @@ const handleSubmit = async (e: Event) => {
               const img = document.createElement('img')
               img.src = imageUrl
               img.alt = 'Generated Image'
-              img.className = 'w-full h-auto mt-4'
+              img.className = 'h-auto mt-4'
 
               // Showing result
               const resultContainer = document.querySelector('#result')
