@@ -151,7 +151,7 @@ const handleSubmit = async (e: Event) => {
               const img = document.createElement('img')
               img.src = imageUrl
               img.alt = 'Generated Image'
-              img.className = 'h-auto mt-4'
+              img.className = 'nft-image mt-4'
 
               // Showing result
               const resultContainer = document.querySelector('#result')
@@ -277,6 +277,10 @@ const handleNFTCreate = async (e: Event) => {
     transform: scale(1.05); /* Slightly larger scale */
     opacity: 0.7; /* Reduce opacity at the peak of the pulse */
   }
+}
+
+.nft-image {
+  max-height: 800px;
 }
 
 .prompt-field {

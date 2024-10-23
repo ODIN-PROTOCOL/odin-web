@@ -183,8 +183,8 @@ onMounted(async (): Promise<void> => {
 .share-btn {
   padding: 12px;
 }
-img {
-  max-width: 100%;
+img {  
+  max-height: 800px;
   display: block;
 }
 .control-buttons .app-btn {
