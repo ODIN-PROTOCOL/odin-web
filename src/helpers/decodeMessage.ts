@@ -15,6 +15,7 @@ import {
 import { parseISO } from 'date-fns'
 import { MsgExec, MsgGrant } from 'cosmjs-types/cosmos/authz/v1beta1/tx'
 import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx'
+import { MsgSend as MsgSendNFT } from 'cosmjs-types/cosmos/nft/v1beta1/tx'
 import { MsgStoreCode } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
 import { MsgCreateVestingAccount } from 'cosmjs-types/cosmos/vesting/v1beta1/tx.js'
 import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
@@ -55,6 +56,7 @@ import {
   Transaction as TxMessage,
   ValidatorDetailedInfo,
 } from '@/graphql/types/responses'
+import { Msg } from '@keplr-wallet/types'
 
 export const getDecodeTx = (tx: TxResponse['tx']): Tx => Tx.decode(tx)
 
@@ -83,6 +85,9 @@ export function humanizeMessageType(type: string): string {
 
     case '/cosmos.bank.v1beta1.MsgSend':
       return 'Send'
+
+    case '/cosmos.nft.v1beta1.MsgSend':
+      return 'Transfer NFT'
 
     case '/cosmos.staking.v1beta1.MsgUndelegate':
       return 'Undelegate'
@@ -176,6 +181,7 @@ export type SupportedMsg =
   | MsgUndelegate
   | MsgBeginRedelegate
   | MsgSend
+  | MsgSendNFT
   | MsgVote
   | MsgDeposit
   | MsgSubmitProposal
@@ -212,6 +218,7 @@ export function decodeMessage(
   | MsgUndelegate
   | MsgBeginRedelegate
   | MsgSend
+  | MsgSendNFT
   | MsgVote
   | MsgDeposit
   | MsgSubmitProposal
@@ -268,6 +275,9 @@ export function decodeMessage(
 
     case '/cosmos.bank.v1beta1.MsgSend':
       return object as MsgSend
+    
+    case '/cosmos.nft.v1beta1.MsgSend':
+        return object as MsgSendNFT
 
     case '/cosmos.staking.v1beta1.MsgEditValidator':
       return object as MsgEditValidator
@@ -359,6 +369,7 @@ export function decodeRPCMessage(obj: {
   | MsgUndelegate
   | MsgBeginRedelegate
   | MsgSend
+  | MsgSendNFT
   | MsgVote
   | MsgDeposit
   | MsgSubmitProposal
@@ -483,8 +494,12 @@ export function decodeRPCMessage(obj: {
 
     case '/cosmos.authz.v1beta1.MsgGrant':
       return MsgGrant.decode(obj.value)
+
     case '/cosmwasm.wasm.v1.MsgExecuteContract':
       return MsgExecuteContract.decode(obj.value)
+
+    case '/cosmos.nft.v1beta1.MsgSend':
+      return MsgSendNFT.decode(obj.value)
 
     default:
       throw new ReferenceError(`Unknown type ${obj.typeUrl}`)

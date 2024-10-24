@@ -282,10 +282,6 @@ const handleNFTCreate = async (e: Event) => {
   }
 }
 
-.nft-image {
-  max-height: 800px;
-}
-
 .prompt-field {
   margin-top: 1rem;
   margin-bottom: 1rem;
