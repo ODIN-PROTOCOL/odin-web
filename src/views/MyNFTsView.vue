@@ -20,8 +20,8 @@
           </router-link>
           <div class="nft-social">
             <button
-              @click="Like(nft.id)"
-              :disabled="alreadyLiked.includes(nft.id)"
+              @click="Like(nft.id, nft.class_id)"
+              :disabled="alreadyLiked.includes(`${nft.class_id}#${nft.id}`)"
             >
               <FontAwesomeIcon :icon="faThumbsUp" />
               <span>{{ nft.likes.aggregate.count }}</span>
@@ -99,9 +99,9 @@ const updateHandler = async (num: number) => {
   await fetchAllNFTs()
 }
 
-const Like = async (id: string) => {
+const Like = async (id: string, classId: string) => {
   try {
-    let result: boolean = await callers.likeNFT(id)
+    let result: boolean = await callers.likeNFT(id, classId)
     if (result) {
       await reloadNFTs()
       handleNotificationInfo('NFT Like processed', TYPE_NOTIFICATION.success)

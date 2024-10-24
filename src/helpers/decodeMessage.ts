@@ -17,6 +17,7 @@ import { MsgExec, MsgGrant } from 'cosmjs-types/cosmos/authz/v1beta1/tx'
 import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx'
 import { MsgStoreCode } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
 import { MsgCreateVestingAccount } from 'cosmjs-types/cosmos/vesting/v1beta1/tx.js'
+import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
 import {
   MsgActivate,
   MsgAddReporter,
@@ -199,6 +200,7 @@ export type SupportedMsg =
   | MsgStoreCode
   | MsgExec
   | MsgGrant
+  | MsgExecuteContract
 
 export function decodeMessage(
   obj: any,
@@ -233,7 +235,8 @@ export function decodeMessage(
   | MsgRemoveReporter
   | MsgStoreCode
   | MsgExec
-  | MsgGrant {
+  | MsgGrant
+  | MsgExecuteContract {
   const object = {
     ...obj,
     type: obj['@type'],
@@ -337,6 +340,8 @@ export function decodeMessage(
 
     case '/cosmos.authz.v1beta1.MsgGrant':
       return object as MsgGrant
+    case '/cosmwasm.wasm.v1.MsgExecuteContract':
+      return object as MsgExecuteContract
 
     default:
       throw new ReferenceError(`Unknown type ${object.type}`)
@@ -377,7 +382,8 @@ export function decodeRPCMessage(obj: {
   | MsgRemoveReporter
   | MsgStoreCode
   | MsgExec
-  | MsgGrant {
+  | MsgGrant
+  | MsgExecuteContract {
   switch (obj.typeUrl) {
     case '/mint.MsgWithdrawCoinsToAccFromTreasury':
       return MsgWithdrawCoinsToAccFromTreasury.decode(obj.value)
@@ -477,6 +483,8 @@ export function decodeRPCMessage(obj: {
 
     case '/cosmos.authz.v1beta1.MsgGrant':
       return MsgGrant.decode(obj.value)
+    case '/cosmwasm.wasm.v1.MsgExecuteContract':
+      return MsgExecuteContract.decode(obj.value)
 
     default:
       throw new ReferenceError(`Unknown type ${obj.typeUrl}`)

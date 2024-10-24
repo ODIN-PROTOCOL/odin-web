@@ -85,6 +85,7 @@ import { StdSignature } from '@keplr-wallet/types'
 export const signMessage = async (
   chainId: string,
   nftId: string,
+  classId: string,
 ): Promise<StdSignature | undefined> => {
   const anyWindow: any = window
   if (!wallet) {
@@ -101,6 +102,7 @@ export const signMessage = async (
       action: 'like',
       address: wallet.account.address,
       nftId: nftId,
+      classId: classId,
     }),
   )
 }
@@ -115,13 +117,14 @@ const makeCallers = () => {
     getValidators: () => {
       return apolloClient.query<ValidatorsResponse>({ query: ValidatorsQuery })
     },
-    likeNFT: (nftId: string) => {
-      return signMessage(API_CONFIG.chainId, nftId).then(signedMessage => {
+    likeNFT: (nftId: string, classId: string) => {
+      return signMessage(API_CONFIG.chainId, nftId, classId).then(signedMessage => {
         return axios
           .post(`${API_CONFIG.fnServer}/fn_/nft/like`, {
             address: wallet.account.address,
             signed: signedMessage,
             nftId: nftId,
+            classId: classId,
           })
           .then(response => {
             if (response.status === 200) {
@@ -195,12 +198,13 @@ const makeCallers = () => {
           return null
         })
     },
-    getNFTLikes: (id: string) => {
+    getNFTLikes: (id: string, class_id: string) => {
       return apolloClient
         .query<NFTLikesResponse>({          
           query: NFTLikesQuery,
           variables: {
             id: id, 
+            class_id: class_id,
           },
           fetchPolicy: 'network-only',
         })
@@ -219,7 +223,7 @@ const makeCallers = () => {
             fetchPolicy: 'network-only',
           })
           .then(resp => {
-            return resp.data.nft_likes.map(nft_like => nft_like.nft_id) || []
+            return resp.data.nft_likes.map(nft_like => `${nft_like.class_id}#${nft_like.nft_id}`) || []
           })
       } catch (error) {
         console.log(error)

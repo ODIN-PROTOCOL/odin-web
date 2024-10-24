@@ -220,6 +220,7 @@ export interface NFTInfo {
   uri: string
   id: string
   data: string
+  mint_tx_hash: string
   class_id: string
   metadata: string
   details: NFTDetails | null
@@ -254,5 +255,5 @@ export interface NFTLikesResponse {
 }
 
 export interface NFTAlreadyLikedResponse {
-  nft_likes: [{ nft_id: string }]
+  nft_likes: [{ nft_id: string, class_id: string }]
 }

@@ -15,6 +15,7 @@ export const AllNFTsQuery = gql`
     ) {
       height
       owner
+      mint_tx_hash
       uri
       id
       data
@@ -46,6 +47,7 @@ export const ProfileNFTQuery = gql`
       owner
       uri
       id
+      mint_tx_hash
       data
       class_id
       metadata
@@ -62,6 +64,7 @@ export const NFTDetailsQuery = gql`
   query NFTDetailsQuery($id: String!) {
     nft(where: { id: { _eq: $id } }) {
       height
+      mint_tx_hash
       owner
       uri
       id
@@ -73,8 +76,8 @@ export const NFTDetailsQuery = gql`
 `
 
 export const NFTLikesQuery = gql`
-  query LikeCount($id: String!) {
-    nft_likes_aggregate(where: { nft_id: { _eq: $id }, class_id: { _eq: "onft-0" } }) {
+  query LikeCount($id: String!, $class_id: String!) {
+    nft_likes_aggregate(where: { nft_id: { _eq: $id }, class_id: { _eq: $class_id } }) {
       aggregate {
         count
       }
@@ -98,6 +101,7 @@ query NFTSearchQuery($query: String!) {
     metadata
     owner
     uri
+    mint_tx_hash
     uri_hash
     class_id
     height

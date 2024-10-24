@@ -33,7 +33,17 @@
                     }"
                     >{{ nft.details.owner }}</router-link
                   >
-                  at {{ nft.details.request_height }} (<a
+                  at <router-link
+                    :to="{
+                      name: ROUTE_NAMES.blockDetails,
+                      params: { hash: nft.details.request_height },
+                    }"
+                    >{{ nft.details.request_height }}</router-link> -> <router-link
+                    :to="{
+                      name: ROUTE_NAMES.transactionDetails,
+                      params: { hash: nft.mint_tx_hash },
+                    }"
+                    >{{ nft.mint_tx_hash }}</router-link> (<a
                     target="_blank"
                     :href="ipfsLink"
                     >IPFS link</a
@@ -45,11 +55,11 @@
               <div class="app-table__cell-txt app-table__link">
                 <div class="user-widget fx-row fx-sae control-buttons">
                   <button
-                    @click="Like(nft.id)"
+                    @click="Like(nft.id, nft.class_id)"
                     class="share-btn app-btn app-btn--small"
                     network="threads"
                     target="_blank"
-                    :disabled="alreadyLiked.includes(nft.id) || isLikeProcessing"
+                    :disabled="alreadyLiked.includes(`${nft.class_id}#${nft.id}`) || isLikeProcessing"
                   >
                     <FontAwesomeIcon :icon="faThumbsUp" />
                     <span>{{ likesCount }}</span>
@@ -108,7 +118,7 @@ const likesCount = ref<number>(0)
 const alreadyLiked = ref<string[]>([])
 
 const ipfsLink = computed(() => {
-  return `${API_CONFIG.ipfsIOUrl}/${nft.value?.uri}`
+  return `${API_CONFIG.ipfsNodeUrl}/${nft.value?.uri}`
 })
 
 
@@ -134,7 +144,7 @@ const fetchNFT = async (): Promise<void> => {
           },
         ],
       })
-      const likeCount = await callers.getNFTLikes(route.params.id.toString())
+      const likeCount = await callers.getNFTLikes(nft.value.id, nft.value.class_id)
       alreadyLiked.value = await callers.getAlreadyLiked()
       likesCount.value = likeCount
     }
@@ -145,13 +155,13 @@ const fetchNFT = async (): Promise<void> => {
 }
 
 
-const Like = async (id: string) => {
+const Like = async (id: string, classId: string) => {
   lockLike()
   try {
-    let result: boolean = await callers.likeNFT(id)
+    let result: boolean = await callers.likeNFT(id, classId)
     if (result) {            
       alreadyLiked.value = await callers.getAlreadyLiked()      
-      likesCount.value = await callers.getNFTLikes(id)
+      likesCount.value = await callers.getNFTLikes(id, nft.value.class_id)
       handleNotificationInfo('NFT Like processed', TYPE_NOTIFICATION.success)
     }
   } catch (error) {
