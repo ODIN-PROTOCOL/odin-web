@@ -33,21 +33,23 @@
                     }"
                     >{{ nft.details.owner }}</router-link
                   >
-                  at <router-link
+                  at
+                  <router-link
                     :to="{
                       name: ROUTE_NAMES.blockDetails,
                       params: { hash: nft.details.request_height },
                     }"
-                    >{{ nft.details.request_height }}</router-link> -> <router-link
+                    >{{ nft.details.request_height }}</router-link
+                  >
+                  ->
+                  <router-link
                     :to="{
                       name: ROUTE_NAMES.transactionDetails,
                       params: { hash: nft.mint_tx_hash },
                     }"
-                    >{{ nft.mint_tx_hash }}</router-link> (<a
-                    target="_blank"
-                    :href="ipfsLink"
-                    >IPFS link</a
-                  >)</label
+                    >{{ nft.mint_tx_hash }}</router-link
+                  >
+                  (<a target="_blank" :href="ipfsLink">IPFS link</a>)</label
                 >
               </div>
             </div>
@@ -59,7 +61,10 @@
                     class="share-btn app-btn app-btn--small"
                     network="threads"
                     target="_blank"
-                    :disabled="alreadyLiked.includes(`${nft.class_id}#${nft.id}`) || isLikeProcessing"
+                    :disabled="
+                      alreadyLiked.includes(`${nft.class_id}#${nft.id}`) ||
+                      isLikeProcessing
+                    "
                   >
                     <FontAwesomeIcon :icon="faThumbsUp" />
                     <span>{{ likesCount }}</span>
@@ -82,7 +87,10 @@
                 </div>
               </div>
             </div>
-            <div v-if="!wallet.isEmpty && (nft.owner == wallet.account.address)" class="app-table__row">
+            <div
+              v-if="!wallet.isEmpty && nft.owner == wallet.account.address"
+              class="app-table__row"
+            >
               <div class="app-table__cell">
                 <div class="user-widget fx-row fx-sae control-buttons">
                   <button
@@ -112,7 +120,6 @@
 </template>
 
 <script setup lang="ts">
-
 import { ref, onMounted, computed, reactive } from 'vue'
 import { callers } from '@/api/callers'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
@@ -122,7 +129,10 @@ import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import { ROUTE_NAMES } from '@/enums'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faXTwitter, faThreads } from '@fortawesome/free-brands-svg-icons'
-import { faThumbsUp, faMoneyBillTransfer } from '@fortawesome/free-solid-svg-icons'
+import {
+  faThumbsUp,
+  faMoneyBillTransfer,
+} from '@fortawesome/free-solid-svg-icons'
 import { useHead } from '@vueuse/head'
 import { NFTInfo } from '@/graphql/types'
 import { wallet } from '@/api/wallet'
@@ -147,7 +157,6 @@ const ipfsLink = computed(() => {
   return `${API_CONFIG.ipfsNodeUrl}/${nft.value?.uri}`
 })
 
-
 const fetchNFT = async (): Promise<void> => {
   lockLoading()
   try {
@@ -171,7 +180,10 @@ const fetchNFT = async (): Promise<void> => {
           },
         ],
       })
-      const likeCount = await callers.getNFTLikes(nft.value.id, nft.value.class_id)
+      const likeCount = await callers.getNFTLikes(
+        nft.value.id,
+        nft.value.class_id,
+      )
       alreadyLiked.value = await callers.getAlreadyLiked()
       likesCount.value = likeCount
     }
@@ -181,13 +193,12 @@ const fetchNFT = async (): Promise<void> => {
   releaseLoading()
 }
 
-
 const Like = async (id: string, classId: string) => {
   lockLike()
   try {
     let result: boolean = await callers.likeNFT(id, classId)
-    if (result) {            
-      alreadyLiked.value = await callers.getAlreadyLiked()      
+    if (result) {
+      alreadyLiked.value = await callers.getAlreadyLiked()
       likesCount.value = await callers.getNFTLikes(id, nft.value.class_id)
       handleNotificationInfo('NFT Like processed', TYPE_NOTIFICATION.success)
     }
@@ -202,14 +213,14 @@ const Send = async (address: string) => {
   try {
     const msgSend = MsgSend.fromJSON({
       sender: wallet.account.address,
-      receiver : recipient.value,
+      receiver: recipient.value,
       id: nft.value?.id,
       classId: nft.value?.class_id,
     })
-    
+
     await callers.transferNFT(msgSend)
     await fetchNFT()
-    handleNotificationInfo("NFT transferred", TYPE_NOTIFICATION.success)
+    handleNotificationInfo('NFT transferred', TYPE_NOTIFICATION.success)
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
@@ -249,7 +260,7 @@ onMounted(async (): Promise<void> => {
 .send_nft_receiver {
   padding: 12px;
 }
-img {  
+img {
   display: block;
 }
 .control-buttons .app-btn {

@@ -2,7 +2,11 @@ import { BigNumber } from 'bignumber.js'
 import { BlockMeta } from '@cosmjs/tendermint-rpc'
 import { Modify } from '@/shared-types'
 import { ProposalDecoded } from '@/helpers/proposalDecoders'
-import { NFTInfo, TransformedBlockInfo, ValidatorDetailedInfo } from '@/graphql/types/responses'
+import {
+  NFTInfo,
+  TransformedBlockInfo,
+  ValidatorDetailedInfo,
+} from '@/graphql/types/responses'
 
 export interface Coin {
   denom: string

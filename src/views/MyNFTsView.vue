@@ -69,20 +69,20 @@ const totalPages = ref<number>()
 const reloadNFTs = async () => {
   const path = location.protocol + '//' + location.host
   let nftResults = await callers.getMyNFTs(currentPage.value, pageSize.value)
-    nftResults.every((nft: any) => {
-      let threadsShareableText = encodeURIComponent(
-        `${shareText} ${hashtagsText} ${path}/nfts/${nft.id}`,
-      )
-      nft.shareableThreadsUrl = `${API_CONFIG.threadsShareUrl}?text=${threadsShareableText}`
-      nft.shareableXUrl = `${API_CONFIG.xShareUrl}?text=${shareText}&url=${path}/nfts/${nft.id}&hashtags=nft,blockchain,ai,images,generativeais`
-      nft.details.preview = nft.details.preview.replace(
-        'https://ipfs.io/ipfs',
-        API_CONFIG.ipfsNodeUrl,
-      )
-      return nft
-    })
-    alreadyLiked.value = await callers.getAlreadyLiked()
-    nfts.value = nftResults
+  nftResults.every((nft: any) => {
+    let threadsShareableText = encodeURIComponent(
+      `${shareText} ${hashtagsText} ${path}/nfts/${nft.id}`,
+    )
+    nft.shareableThreadsUrl = `${API_CONFIG.threadsShareUrl}?text=${threadsShareableText}`
+    nft.shareableXUrl = `${API_CONFIG.xShareUrl}?text=${shareText}&url=${path}/nfts/${nft.id}&hashtags=nft,blockchain,ai,images,generativeais`
+    nft.details.preview = nft.details.preview.replace(
+      'https://ipfs.io/ipfs',
+      API_CONFIG.ipfsNodeUrl,
+    )
+    return nft
+  })
+  alreadyLiked.value = await callers.getAlreadyLiked()
+  nfts.value = nftResults
 }
 
 const fetchAllNFTs = async (): Promise<void> => {

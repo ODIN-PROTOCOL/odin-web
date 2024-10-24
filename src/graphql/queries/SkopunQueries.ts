@@ -77,7 +77,9 @@ export const NFTDetailsQuery = gql`
 
 export const NFTLikesQuery = gql`
   query LikeCount($id: String!, $class_id: String!) {
-    nft_likes_aggregate(where: { nft_id: { _eq: $id }, class_id: { _eq: $class_id } }) {
+    nft_likes_aggregate(
+      where: { nft_id: { _eq: $id }, class_id: { _eq: $class_id } }
+    ) {
       aggregate {
         count
       }
@@ -95,16 +97,16 @@ export const NFTAlreadyLikedQuery = gql`
 `
 
 export const NFTSearchQuery = gql`
-query NFTSearchQuery($query: String!) {
-  search_nfts(args: {search: $query}, order_by: { height: desc }) {
-    id
-    metadata
-    owner
-    uri
-    mint_tx_hash
-    uri_hash
-    class_id
-    height
+  query NFTSearchQuery($query: String!) {
+    search_nfts(args: { search: $query }, order_by: { height: desc }) {
+      id
+      metadata
+      owner
+      uri
+      mint_tx_hash
+      uri_hash
+      class_id
+      height
+    }
   }
-}
 `

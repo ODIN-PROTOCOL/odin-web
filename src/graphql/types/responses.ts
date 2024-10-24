@@ -255,5 +255,5 @@ export interface NFTLikesResponse {
 }
 
 export interface NFTAlreadyLikedResponse {
-  nft_likes: [{ nft_id: string, class_id: string }]
+  nft_likes: [{ nft_id: string; class_id: string }]
 }

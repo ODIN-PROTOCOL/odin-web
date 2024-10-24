@@ -71,9 +71,14 @@ useHead({
     { property: 'og:title', content: title },
     {
       property: 'og:description',
-      content: 'Create a prompt to generate a unique NFT image using Sköpun on Odin chain.',
+      content:
+        'Create a prompt to generate a unique NFT image using Sköpun on Odin chain.',
     },
-    { property: 'og:image', content: 'https://testnet-tyr-1.odinprotocol.io/ipfs/QmU4EPSPuPUnyfWfpNimPL9SKuT7mryUWodLV2rfMRJ6GJ' },
+    {
+      property: 'og:image',
+      content:
+        'https://testnet-tyr-1.odinprotocol.io/ipfs/QmU4EPSPuPUnyfWfpNimPL9SKuT7mryUWodLV2rfMRJ6GJ',
+    },
   ],
 })
 
@@ -140,7 +145,6 @@ const handleSubmit = async (e: Event) => {
               const nftDataUrl = `${API_CONFIG.ipfsNodeUrl}/${hash}`
               const nftData = await axios.get(nftDataUrl)
 
-              console.log('NFT Data:', nftData)
               const imageUrl = nftData.data.preview.replace(
                 'https://ipfs.io/ipfs',
                 API_CONFIG.ipfsNodeUrl,

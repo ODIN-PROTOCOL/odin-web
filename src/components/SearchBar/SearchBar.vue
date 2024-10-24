@@ -121,7 +121,11 @@ import {
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { prepareBlockMetas } from '@/helpers/blocksHelper'
 import { ROUTE_NAMES } from '@/enums'
-import { NFTInfo, TransformedBlockInfo, ValidatorDetailedInfo } from '@/graphql/types'
+import {
+  NFTInfo,
+  TransformedBlockInfo,
+  ValidatorDetailedInfo,
+} from '@/graphql/types'
 import NFTItem from './NFTItem.vue'
 
 enum FILTER_BY {
@@ -164,7 +168,7 @@ watch(searchResult, value => {
       const [firstResult] = value
 
       if (firstResult.blocks?.length === 1) {
-        const blockHeight = firstResult.blocks[0].height 
+        const blockHeight = firstResult.blocks[0].height
         router.push({
           name: ROUTE_NAMES.blockDetails,
           params: { id: blockHeight },
@@ -194,7 +198,7 @@ watch(searchResult, value => {
         return
       }
 
-      if (firstResult.nfts?.length === 1) {        
+      if (firstResult.nfts?.length === 1) {
         router.push({
           name: ROUTE_NAMES.nft_detail,
           params: { id: firstResult.nfts[0].id },
@@ -262,12 +266,11 @@ const getBlock = async (): Promise<TransformedBlockInfo[]> => {
       Number(searchedText.value) || 0,
     )
     const res = await prepareBlockMetas(data.blockMetas, validators.value)
-    return res 
+    return res
   } catch {
     return []
   }
 }
-
 
 const getNFTs = async (): Promise<NFTInfo[]> => {
   if (!searchedText.value) {

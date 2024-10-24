@@ -29,7 +29,9 @@
           <TitledLink
             :name="{
               name: $routes.validatorDetails,
-              params: { address: result.validator.validator_info.operator_address },
+              params: {
+                address: result.validator.validator_info.operator_address,
+              },
             }"
             class="app-table__cell-txt app-table__link"
             :text="cropText(result.validator.validator_info.operator_address)"

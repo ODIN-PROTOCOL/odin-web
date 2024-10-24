@@ -57,7 +57,7 @@ import {
   ValidatorsResponse,
   NFTLikesResponse,
   NFTAlreadyLikedResponse,
-  SearchNFTListResponse
+  SearchNFTListResponse,
 } from '@/graphql/types/responses'
 import {
   QueryHeightVariables,
@@ -120,31 +120,33 @@ const makeCallers = () => {
       return apolloClient.query<ValidatorsResponse>({ query: ValidatorsQuery })
     },
     likeNFT: (nftId: string, classId: string) => {
-      return signMessage(API_CONFIG.chainId, nftId, classId).then(signedMessage => {
-        return axios
-          .post(`${API_CONFIG.fnServer}/fn_/nft/like`, {
-            address: wallet.account.address,
-            signed: signedMessage,
-            nftId: nftId,
-            classId: classId,
-          })
-          .then(response => {
-            if (response.status === 200) {
-              // Handle success, e.g., update the UI to show the like was successful
-              return true
-            } else {
-              // Handle failure, e.g., user has already liked this NFT or signature verification failed
-              console.error('Error liking NFT:', response.data.message)
+      return signMessage(API_CONFIG.chainId, nftId, classId).then(
+        signedMessage => {
+          return axios
+            .post(`${API_CONFIG.fnServer}/fn_/nft/like`, {
+              address: wallet.account.address,
+              signed: signedMessage,
+              nftId: nftId,
+              classId: classId,
+            })
+            .then(response => {
+              if (response.status === 200) {
+                // Handle success, e.g., update the UI to show the like was successful
+                return true
+              } else {
+                // Handle failure, e.g., user has already liked this NFT or signature verification failed
+                console.error('Error liking NFT:', response.data.message)
+                return false
+              }
+            })
+            .catch(function (error) {
+              // Handle failure, e.g., network error
+              console.error(`Error liking NFT: ${error.response}`)
+              throw new Error(error.response.data.message)
               return false
-            }
-          })
-          .catch(function (error) {
-            // Handle failure, e.g., network error
-            console.error(`Error liking NFT: ${error.response}`)
-            throw new Error(error.response.data.message)
-            return false
-          })
-      })
+            })
+        },
+      )
     },
     getTxVolumePerDays: (startTime: Date, endTime: Date) => {
       return apolloClient.query({ query: TxVolumePerDaysQuery, variables: {} })
@@ -202,10 +204,10 @@ const makeCallers = () => {
     },
     getNFTLikes: (id: string, class_id: string) => {
       return apolloClient
-        .query<NFTLikesResponse>({          
+        .query<NFTLikesResponse>({
           query: NFTLikesQuery,
           variables: {
-            id: id, 
+            id: id,
             class_id: class_id,
           },
           fetchPolicy: 'network-only',
@@ -225,7 +227,11 @@ const makeCallers = () => {
             fetchPolicy: 'network-only',
           })
           .then(resp => {
-            return resp.data.nft_likes.map(nft_like => `${nft_like.class_id}#${nft_like.nft_id}`) || []
+            return (
+              resp.data.nft_likes.map(
+                nft_like => `${nft_like.class_id}#${nft_like.nft_id}`,
+              ) || []
+            )
           })
       } catch (error) {
         console.log(error)
@@ -279,8 +285,8 @@ const makeCallers = () => {
         .query<SearchNFTListResponse>({
           query: NFTSearchQuery,
           variables: {
-            query: query,            
-          },          
+            query: query,
+          },
         })
         .then(response => {
           const mapped = response.data.search_nfts.map((nft: NFTInfo) => {
@@ -308,7 +314,7 @@ const makeCallers = () => {
     //       msgSend, // Execute message
     //       'auto', // Fee (auto-estimated)
     //       `Transfer NFT from ${wallet.account.address} -> ${recipient}`
-    //   )   
+    //   )
     // },
     transferNFT: broadcaster<MsgSendNFT>(
       '/cosmos.nft.v1beta1.MsgSend',
