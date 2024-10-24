@@ -88,7 +88,7 @@
                   <button
                     @click="Send('')"
                     class="send-btn app-btn app-btn--small"
-                    :disabled="isLoading || recipient === ''"
+                    :disabled="isLoading || recipient === '' || isTransfering"
                   >
                     <FontAwesomeIcon :icon="faMoneyBillTransfer" />
                     <span>Transfer NFT to</span>
@@ -99,7 +99,7 @@
                     type="text"
                     placeholder="odin1cgfdwtrqfdrzh4z8rkcyx8g4jv22v8wgav3rjx"
                     v-model="recipient"
-                    :disabled="isLoading"
+                    :disabled="isLoading || isTransfering"
                   />
                 </div>
               </div>
@@ -126,10 +126,12 @@ import { faThumbsUp, faMoneyBillTransfer } from '@fortawesome/free-solid-svg-ico
 import { useHead } from '@vueuse/head'
 import { NFTInfo } from '@/graphql/types'
 import { wallet } from '@/api/wallet'
+import { MsgSend } from 'cosmjs-types/cosmos/nft/v1beta1/tx'
 
 const route: RouteLocationNormalizedLoaded = useRoute()
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const [isLikeProcessing, lockLike, releaseLike] = useBooleanSemaphore()
+const [isTransfering, lockTransfer, releaseTransfer] = useBooleanSemaphore()
 const shareText = 'NFT generated with SKÖPUN - Odin network'
 const hashtagsText = '#generativeai #nft #blockchain'
 
@@ -151,6 +153,7 @@ const fetchNFT = async (): Promise<void> => {
   try {
     nft.value = await callers.getNFT(route.params.id)
     if (nft.value) {
+      console.log(nft.value)
       useHead({
         title: nft.value.details?.prompt || '',
         meta: [
@@ -195,13 +198,22 @@ const Like = async (id: string, classId: string) => {
 }
 
 const Send = async (address: string) => {
-  lockLike()
+  lockTransfer()
   try {
-    console.log('Transfer NFT')
+    const msgSend = MsgSend.fromJSON({
+      sender: wallet.account.address,
+      receiver : recipient.value,
+      id: nft.value?.id,
+      classId: nft.value?.class_id,
+    })
+    
+    await callers.transferNFT(msgSend)
+    await fetchNFT()
+    handleNotificationInfo("NFT transferred", TYPE_NOTIFICATION.success)
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
   }
-  releaseLike()
+  releaseTransfer()
 }
 
 onMounted(async (): Promise<void> => {

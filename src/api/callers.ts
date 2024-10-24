@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { MsgWithdrawCoinsToAccFromTreasury } from '@provider/codec/mint/tx'
+import { MsgSend as MsgSendNFT } from 'cosmjs-types/cosmos/nft/v1beta1/tx'
 import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx'
 import {
   MsgCreateDataSource,
@@ -9,7 +10,6 @@ import {
   MsgEditDataSource,
 } from '@provider/codec/oracle/v1/tx'
 
-import { MsgSend } from '@provider/codec/cosmos/nft/v1beta1/tx'
 import { MsgSubmitProposal } from '@provider/codec/cosmos/gov/v1beta1/tx'
 import { MsgExchange } from '@provider/codec/coinswap/tx'
 import { MsgDeposit, MsgVote } from '@provider/codec/cosmos/gov/v1beta1/tx'
@@ -303,16 +303,16 @@ const makeCallers = () => {
     //       class_id: classId,
     //     }
     //   };
-    //   return wallet.signer.signAndBroadcast(
+    //   return wallet._stargate._signAndBroadcast(
     //       wallet.account.address,
     //       msgSend, // Execute message
     //       'auto', // Fee (auto-estimated)
     //       `Transfer NFT from ${wallet.account.address} -> ${recipient}`
     //   )   
     // },
-    transferNFT: broadcaster<>(
-      '/oracle.v1.MsgCreateDataSource',
-      MsgCreateDataSource,
+    transferNFT: broadcaster<MsgSendNFT>(
+      '/cosmos.nft.v1beta1.MsgSend',
+      MsgSendNFT,
     ),
     getAccountIndexedTx: (
       page_number: number,
