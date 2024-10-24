@@ -117,7 +117,6 @@ const handleSubmit = async (e: Event) => {
       const idAttribute = wasmEvent.attributes.find(attr => attr.key === 'id')
       if (idAttribute) {
         const request = idAttribute.value
-        console.log('Request ID:', request)
 
         lockGenerating
         requestId.value = parseInt(request)

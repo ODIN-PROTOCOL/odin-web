@@ -8,6 +8,8 @@ import {
   MsgEditOracleScript,
   MsgEditDataSource,
 } from '@provider/codec/oracle/v1/tx'
+
+import { MsgSend } from '@provider/codec/cosmos/nft/v1beta1/tx'
 import { MsgSubmitProposal } from '@provider/codec/cosmos/gov/v1beta1/tx'
 import { MsgExchange } from '@provider/codec/coinswap/tx'
 import { MsgDeposit, MsgVote } from '@provider/codec/cosmos/gov/v1beta1/tx'
@@ -291,6 +293,27 @@ const makeCallers = () => {
           return mapped
         })
     },
+    // transferNFT: (nftId: string, classId: string, recipient: string) => {
+    //   const msgSend = {
+    //     typeUrl: "/cosmos.nft.v1beta1.MsgSend",
+    //     value: {
+    //       sender: wallet.account.address,
+    //       receiver : recipient,
+    //       id: nftId,
+    //       class_id: classId,
+    //     }
+    //   };
+    //   return wallet.signer.signAndBroadcast(
+    //       wallet.account.address,
+    //       msgSend, // Execute message
+    //       'auto', // Fee (auto-estimated)
+    //       `Transfer NFT from ${wallet.account.address} -> ${recipient}`
+    //   )   
+    // },
+    transferNFT: broadcaster<>(
+      '/oracle.v1.MsgCreateDataSource',
+      MsgCreateDataSource,
+    ),
     getAccountIndexedTx: (
       page_number: number,
       page_limit: number,

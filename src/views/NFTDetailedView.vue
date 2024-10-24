@@ -17,13 +17,13 @@
             />
           </div>
           <div class="app-table__row">
-            <div class="app-table__cell-txt">
+            <div class="app-table__cell">
               {{ nft.details.prompt }}
             </div>
           </div>
           <div class="app-table__body">
             <div class="app-table__row">
-              <div class="app-app-table__cell-txt app-table__link">
+              <div class="app-app-table__cell">
                 <label class="app-form__field-lbl"
                   >By
                   <router-link
@@ -82,6 +82,28 @@
                 </div>
               </div>
             </div>
+            <div v-if="!wallet.isEmpty && (nft.owner == wallet.account.address)" class="app-table__row">
+              <div class="app-table__cell">
+                <div class="user-widget fx-row fx-sae control-buttons">
+                  <button
+                    @click="Send('')"
+                    class="send-btn app-btn app-btn--small"
+                    :disabled="isLoading || recipient === ''"
+                  >
+                    <FontAwesomeIcon :icon="faMoneyBillTransfer" />
+                    <span>Transfer NFT to</span>
+                  </button>
+                  <input
+                    class="app-form__field-input send_nft_receiver"
+                    name="send-nft-receiver"
+                    type="text"
+                    placeholder="odin1cgfdwtrqfdrzh4z8rkcyx8g4jv22v8wgav3rjx"
+                    v-model="recipient"
+                    :disabled="isLoading"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -100,9 +122,10 @@ import { RouteLocationNormalizedLoaded, useRoute } from 'vue-router'
 import { ROUTE_NAMES } from '@/enums'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faXTwitter, faThreads } from '@fortawesome/free-brands-svg-icons'
-import { faThumbsUp } from '@fortawesome/free-solid-svg-icons'
+import { faThumbsUp, faMoneyBillTransfer } from '@fortawesome/free-solid-svg-icons'
 import { useHead } from '@vueuse/head'
 import { NFTInfo } from '@/graphql/types'
+import { wallet } from '@/api/wallet'
 
 const route: RouteLocationNormalizedLoaded = useRoute()
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
@@ -113,6 +136,7 @@ const hashtagsText = '#generativeai #nft #blockchain'
 const shareThreads = ref<string>()
 const shareX = ref<string>()
 
+const recipient = ref<string>('')
 const nft = ref<NFTInfo | null>(null)
 const likesCount = ref<number>(0)
 const alreadyLiked = ref<string[]>([])
@@ -170,6 +194,16 @@ const Like = async (id: string, classId: string) => {
   releaseLike()
 }
 
+const Send = async (address: string) => {
+  lockLike()
+  try {
+    console.log('Transfer NFT')
+  } catch (error) {
+    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
+  }
+  releaseLike()
+}
+
 onMounted(async (): Promise<void> => {
   await fetchNFT()
   const shareableText = encodeURIComponent(
@@ -181,6 +215,9 @@ onMounted(async (): Promise<void> => {
 </script>
 
 <style lang="scss">
+.nft-detail {
+  max-width: 100rem;
+}
 .share_on {
   margin-right: 1rem;
 }
@@ -193,8 +230,14 @@ onMounted(async (): Promise<void> => {
 .share-btn {
   padding: 12px;
 }
+.send-btn {
+  margin-right: 1rem;
+  padding: 12px;
+}
+.send_nft_receiver {
+  padding: 12px;
+}
 img {  
-  max-height: 800px;
   display: block;
 }
 .control-buttons .app-btn {
