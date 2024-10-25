@@ -137,14 +137,14 @@ useHead({
       content:
         'https://testnet-tyr-1.odinprotocol.io/ipfs/QmU4EPSPuPUnyfWfpNimPL9SKuT7mryUWodLV2rfMRJ6GJ',
     },
-    { property: 'twitter:title', content: title },
+    { name: 'twitter:title', content: title },
     {
-      property: 'twitter:description',
+      name: 'twitter:description',
       content:
         'Create a prompt to generate a unique NFT image using Sköpun on Odin chain.',
     },
     {
-      property: 'twitter:image',
+      name: 'twitter:image',
       content:
         'https://testnet-tyr-1.odinprotocol.io/ipfs/QmU4EPSPuPUnyfWfpNimPL9SKuT7mryUWodLV2rfMRJ6GJ',
     },
