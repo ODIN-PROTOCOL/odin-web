@@ -130,12 +130,6 @@ onMounted(async (): Promise<void> => {
   .nft-social {
     display: flex;
   }
-
-  &:hover {
-    img {
-      opacity: 0.9;
-    }
-  }
 }
 
 img {
