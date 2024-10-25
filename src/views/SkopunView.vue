@@ -9,6 +9,7 @@
             name="image-generation-prompt"
             :rows="5"
             placeholder="Image generation prompt"
+            style="font-family: sans-serif"
           />
         </div>
 
@@ -36,6 +37,62 @@
           </button>
         </div>
       </form>
+
+      <template v-if="isLoading">
+        <div class="skopun-loading">
+          <img :src="OdinYellowAsset" />
+          <p>Loading...</p>
+        </div>
+      </template>
+    </div>
+
+    <div class="how-to-use-skopun">
+      <h3>How to use sköpun</h3>
+      <ul>
+        <li>
+          <b>Access</b>
+          <p>
+            Go to
+            <a href="https://testnet.odinprotocol.io/skopun"
+              >https://testnet.odinprotocol.io/skopun</a
+            >
+          </p>
+        </li>
+        <li>
+          <b>Connect Wallet</b>
+          <p>Connect your crypto wallet.</p>
+        </li>
+        <li>
+          <b>Enter Prompt</b>
+          <p>
+            Input your creative prompt and confirm the transac tion. For well
+            known people use capital letters for the name & last name.
+          </p>
+        </li>
+        <li>
+          <b>AI Magic</b>
+          <p>The AI will generate your unique artwork.</p>
+        </li>
+        <li>
+          <b>Receive Art</b>
+          <p>
+            After a few seconds, you’ll get the art tied to your wallet as the
+            creator.
+          </p>
+        </li>
+        <li>
+          <b>Generate NFT</b>
+          <p>If satisfied, click “Generate NFT.”</p>
+        </li>
+        <li>
+          <b>Confirm Transaction</b>
+          <p>Confirm the transaction to mint the NFT.</p>
+        </li>
+        <li>
+          <b>Receive NFT</b>
+          <p>The NFT will be sent to your wallet.</p>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -49,6 +106,7 @@ import TextareaField from '@/components/fields/TextareaField.vue'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { API_CONFIG, START_VALUE } from '@/api/api-config'
 import AiGenerate from '@/assets/icons/ai-generate.svg'
+import OdinYellowAsset from '@/assets/brand/odin-yellow.png'
 
 import { wallet } from '../api/wallet'
 import axios from 'axios'
@@ -76,6 +134,17 @@ useHead({
     },
     {
       property: 'og:image',
+      content:
+        'https://testnet-tyr-1.odinprotocol.io/ipfs/QmU4EPSPuPUnyfWfpNimPL9SKuT7mryUWodLV2rfMRJ6GJ',
+    },
+    { property: 'twitter:title', content: title },
+    {
+      property: 'twitter:description',
+      content:
+        'Create a prompt to generate a unique NFT image using Sköpun on Odin chain.',
+    },
+    {
+      property: 'twitter:image',
       content:
         'https://testnet-tyr-1.odinprotocol.io/ipfs/QmU4EPSPuPUnyfWfpNimPL9SKuT7mryUWodLV2rfMRJ6GJ',
     },
@@ -253,6 +322,39 @@ const handleNFTCreate = async (e: Event) => {
 </script>
 
 <style lang="scss">
+.app-form__main {
+  position: relative;
+  margin-bottom: 40px;
+}
+
+.how-to-use-skopun {
+  h3 {
+    font-size: 20px;
+  }
+  ul {
+    margin-left: -40px;
+    list-style: none;
+    li {
+      padding: 8px 16px;
+      border: 1px solid var(--clr__card-border);
+      margin-bottom: 16px;
+      a {
+        color: var(--clr__action);
+      }
+
+      b {
+        color: var(--clr__text-muted);
+        font-weight: 400;
+      }
+
+      p {
+        margin-top: 4px;
+        font-weight: 900;
+      }
+    }
+  }
+}
+
 .result {
   margin-top: 2rem;
   margin-bottom: 2rem;
@@ -266,6 +368,30 @@ const handleNFTCreate = async (e: Event) => {
 
   .ai-generate-icon {
     width: 20px;
+    animation: pulse 1.5s infinite;
+  }
+}
+
+.skopun-loading {
+  position: absolute;
+  border: 1px solid var(--clr__card-border);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--clr__main-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  img {
+    width: 70px;
+  }
+
+  p {
+    font-size: 18px;
+    display: block;
     animation: pulse 1.5s infinite;
   }
 }

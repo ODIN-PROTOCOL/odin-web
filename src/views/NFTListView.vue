@@ -139,7 +139,7 @@ onMounted(async (): Promise<void> => {
 }
 
 img {
-  max-width: 100%;
+  width: 100%;
   display: block;
 }
 

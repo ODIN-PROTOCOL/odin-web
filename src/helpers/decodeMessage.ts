@@ -275,9 +275,9 @@ export function decodeMessage(
 
     case '/cosmos.bank.v1beta1.MsgSend':
       return object as MsgSend
-    
+
     case '/cosmos.nft.v1beta1.MsgSend':
-        return object as MsgSendNFT
+      return object as MsgSendNFT
 
     case '/cosmos.staking.v1beta1.MsgEditValidator':
       return object as MsgEditValidator
