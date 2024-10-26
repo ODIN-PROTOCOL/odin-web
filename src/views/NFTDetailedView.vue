@@ -25,7 +25,8 @@
             <div class="app-table__row">
               <div class="app-app-table__cell">
                 <label class="app-form__field-lbl"
-                  >By
+                  >
+                  <span class="lbl_by">By - </span>
                   <router-link
                     :to="{
                       name: ROUTE_NAMES.accountDetails,
@@ -33,7 +34,9 @@
                     }"
                     >{{ nft.details.owner }}</router-link
                   >
-                  at
+                  <br />
+                  <br />
+                  <span class="lbl_by">at - </span>
                   <router-link
                     :to="{
                       name: ROUTE_NAMES.blockDetails,
@@ -49,6 +52,8 @@
                     }"
                     >{{ nft.mint_tx_hash }}</router-link
                   >
+                  <br />
+                  <br />
                   (<a target="_blank" :href="ipfsLink">IPFS link</a>)</label
                 >
               </div>
@@ -239,7 +244,8 @@ onMounted(async (): Promise<void> => {
 
 <style lang="scss">
 .nft-detail {
-  max-width: 100rem;
+  max-width: 65rem;
+  margin: 0 auto;
 }
 .share_on {
   margin-right: 1rem;
@@ -249,6 +255,8 @@ onMounted(async (): Promise<void> => {
 }
 .app-table__row {
   padding-bottom: 1rem;
+  padding: 16px;
+  border: 1px solid var(--clr__card-border);
 }
 .share-btn {
   padding: 12px;
@@ -261,6 +269,7 @@ onMounted(async (): Promise<void> => {
   padding: 12px;
 }
 img {
+  width: 100%;
   display: block;
 }
 .control-buttons .app-btn {
@@ -269,6 +278,18 @@ img {
     margin-left: 4px;
     font-size: 13px;
     line-height: 13px;
+  }
+}
+
+.app-form__field-lbl {
+  .lbl_by {
+    display: inline-block;
+    margin-right: 8px;
+  }
+
+  a {
+    color: var(--clr__action);
+    word-break: break-all;
   }
 }
 </style>
