@@ -65,7 +65,7 @@
         <li>
           <b>Enter Prompt</b>
           <p>
-            Input your creative prompt and confirm the transac tion. For well
+            Input your creative prompt and confirm the transaction. For well
             known people use capital letters for the name & last name.
           </p>
         </li>
