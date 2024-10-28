@@ -94,7 +94,7 @@
         </li>
         <li>
           <b>CHECK NFTs</b>
-          <p>Go to “MY NFTS” Section to review your NFTs.</p>
+          <p>Go to <router-link :to="{ name: ROUTE_NAMES.nft_profile }">“MY NFTS”</router-link> Section to review your NFTs.</p>
         </li>
       </ul>
     </div>
