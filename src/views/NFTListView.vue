@@ -57,8 +57,8 @@ import { faXTwitter, faThreads } from '@fortawesome/free-brands-svg-icons'
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const ITEMS_PER_PAGE = 50
 
-const shareText = 'NFT generated with SKÖPUN - Odin network'
-const hashtagsText = '#generativeai #nft #blockchain'
+const shareText = '#NFT generated with #SKÖPUN on @Odinprotocol\nCheck it here :point_right:'
+const hashtagsText = '#NFT #AI $ODIN #ArtWork #GenerativeAI'
 
 const nfts = ref()
 const currentPage = ref<number>(1)

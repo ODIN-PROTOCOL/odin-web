@@ -57,8 +57,8 @@ import { faXTwitter, faThreads } from '@fortawesome/free-brands-svg-icons'
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const ITEMS_PER_PAGE = 50
 
-const shareText = 'NFT generated with SKÖPUN - Odin network'
-const hashtagsText = '#generativeai #nft #blockchain'
+const shareText = '#NFT generated with #SKÖPUN on @Odinprotocol\nCheck it here :point_right:'
+const hashtagsText = '#NFT #AI $ODIN #ArtWork #GenerativeAI'
 
 const nfts = ref()
 const currentPage = ref<number>(1)
@@ -74,7 +74,7 @@ const reloadNFTs = async () => {
       `${shareText} ${hashtagsText} ${path}/nfts/${nft.id}`,
     )
     nft.shareableThreadsUrl = `${API_CONFIG.threadsShareUrl}?text=${threadsShareableText}`
-    nft.shareableXUrl = `${API_CONFIG.xShareUrl}?text=${shareText}&url=${path}/nfts/${nft.id}&hashtags=nft,blockchain,ai,images,generativeais`
+    nft.shareableXUrl = `${API_CONFIG.xShareUrl}?text=${shareText}&url=${path}/nfts/${nft.id}&hashtags=nft,blockchain,odin,ai,images,generativeais`
     nft.details.preview = nft.details.preview.replace(
       'https://ipfs.io/ipfs',
       API_CONFIG.ipfsNodeUrl,

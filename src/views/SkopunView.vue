@@ -92,6 +92,10 @@
           <b>Receive NFT</b>
           <p>The NFT will be sent to your wallet.</p>
         </li>
+        <li>
+          <b>CHECK NFTs</b>
+          <p>Go to “MY NFTS” Section to review your NFTs.</p>
+        </li>
       </ul>
     </div>
   </div>

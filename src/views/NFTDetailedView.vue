@@ -147,8 +147,8 @@ const route: RouteLocationNormalizedLoaded = useRoute()
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const [isLikeProcessing, lockLike, releaseLike] = useBooleanSemaphore()
 const [isTransfering, lockTransfer, releaseTransfer] = useBooleanSemaphore()
-const shareText = 'NFT generated with SKÖPUN - Odin network'
-const hashtagsText = '#generativeai #nft #blockchain'
+const shareText = '#NFT generated with #SKÖPUN on @Odinprotocol\nCheck it here :point_right:'
+const hashtagsText = '#NFT #AI $ODIN #ArtWork #GenerativeAI'
 
 const shareThreads = ref<string>()
 const shareX = ref<string>()
@@ -238,7 +238,7 @@ onMounted(async (): Promise<void> => {
     `${shareText} ${hashtagsText} ${window.location}`,
   )
   shareThreads.value = `https://threads.net/intent/post?text=${shareableText}`
-  shareX.value = `https://twitter.com/intent/post?text=${shareText}&url=${window.location}&hashtags=nft,blockchain,ai,images,generativeai`
+  shareX.value = `https://twitter.com/intent/post?text=${shareText}&url=${window.location}&hashtags=odin,nft,blockchain,ai,images,generativeai`
 })
 </script>
 
