@@ -67,3 +67,24 @@ export const sortingTypeTx = [
     value: TYPE_TX_SORT.withdraw,
   },
 ]
+
+export enum TYPE_NFT_SORT {
+  recency = '{ "height": "desc" }',
+  oldest = '{ "height": "asc" }',
+  most_liked = '{ "nft_likes_aggregate": { "count": "desc" } } ',  
+}
+
+export const nftSortTypes = [
+  {
+    text: 'Most Recent',
+    value: TYPE_NFT_SORT.recency,
+  },
+  {
+    text: 'Most Old',
+    value: TYPE_NFT_SORT.oldest,
+  },
+  {
+    text: 'Most Liked',
+    value: TYPE_NFT_SORT.most_liked,
+  }
+]

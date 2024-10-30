@@ -83,6 +83,7 @@ import {
   OracleScriptsQuery,
 } from '@/graphql/queries/DataSource'
 import { StdSignature } from '@keplr-wallet/types'
+import { TYPE_NFT_SORT } from '@/helpers/sortingHelpers'
 
 export const signMessage = async (
   chainId: string,
@@ -238,13 +239,14 @@ const makeCallers = () => {
         return []
       }
     },
-    getNFTs: (page_number: number, page_limit: number) => {
+    getNFTs: (page_number: number, page_limit: number, sortBy = TYPE_NFT_SORT.recency) => {
       return apolloClient
         .query<NFTListResponse>({
           query: AllNFTsQuery,
           variables: {
             limit: page_limit,
             offset: (page_number - 1) * page_limit,
+            order: JSON.parse(sortBy),
           },
           fetchPolicy: 'network-only',
         })
@@ -259,7 +261,7 @@ const makeCallers = () => {
           return mapped
         })
     },
-    getMyNFTs: (page_number: number, page_limit: number) => {
+    getMyNFTs: (page_number: number, page_limit: number, sortBy = TYPE_NFT_SORT.recency) => {
       return apolloClient
         .query({
           query: ProfileNFTQuery,
@@ -267,6 +269,7 @@ const makeCallers = () => {
             address: wallet.account.address,
             limit: page_limit,
             offset: (page_number - 1) * page_limit,
+            order: JSON.parse(sortBy),
           },
         })
         .then(response => {
@@ -299,23 +302,6 @@ const makeCallers = () => {
           return mapped
         })
     },
-    // transferNFT: (nftId: string, classId: string, recipient: string) => {
-    //   const msgSend = {
-    //     typeUrl: "/cosmos.nft.v1beta1.MsgSend",
-    //     value: {
-    //       sender: wallet.account.address,
-    //       receiver : recipient,
-    //       id: nftId,
-    //       class_id: classId,
-    //     }
-    //   };
-    //   return wallet._stargate._signAndBroadcast(
-    //       wallet.account.address,
-    //       msgSend, // Execute message
-    //       'auto', // Fee (auto-estimated)
-    //       `Transfer NFT from ${wallet.account.address} -> ${recipient}`
-    //   )
-    // },
     transferNFT: broadcaster<MsgSendNFT>(
       '/cosmos.nft.v1beta1.MsgSend',
       MsgSendNFT,

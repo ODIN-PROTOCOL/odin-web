@@ -97,7 +97,7 @@ const navs = [
     to: '/blocks',
   },
   {
-    title: 'SKÖPUN',
+    title: "SKÖPUN",
     icon: DocumentIcon,
     divider: false,
     to: '/skopun',

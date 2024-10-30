@@ -244,7 +244,7 @@ onMounted(async (): Promise<void> => {
 
 <style lang="scss">
 .nft-detail {
-  max-width: 65rem;
+  max-width: 85rem;
   margin: 0 auto;
 }
 .share_on {

@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 export const AllNFTsQuery = gql`
-  query AllNFTQuery($limit: Int = 10, $offset: Int = 0) {
+  query AllNFTQuery($limit: Int = 10, $offset: Int = 0, $order: [nft_order_by!]) {
     nft_aggregate {
       aggregate {
         totalCount: count
@@ -11,7 +11,7 @@ export const AllNFTsQuery = gql`
       where: { class_id: { _eq: "onft-0" } }
       limit: $limit
       offset: $offset
-      order_by: { height: desc }
+      order_by: $order
     ) {
       height
       owner
@@ -31,7 +31,7 @@ export const AllNFTsQuery = gql`
 `
 
 export const ProfileNFTQuery = gql`
-  query ProfileNFTQuery($address: String!, $limit: Int = 10, $offset: Int = 0) {
+  query ProfileNFTQuery($address: String!, $limit: Int = 10, $offset: Int = 0, $order: [nft_order_by!]) {
     nft_aggregate {
       aggregate {
         totalCount: count
@@ -41,7 +41,7 @@ export const ProfileNFTQuery = gql`
       where: { class_id: { _eq: "onft-0" }, owner: { _eq: $address } }
       limit: $limit
       offset: $offset
-      order_by: { height: desc }
+      order_by: $order
     ) {
       height
       owner

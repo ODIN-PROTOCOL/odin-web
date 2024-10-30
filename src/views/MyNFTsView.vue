@@ -1,5 +1,33 @@
 <template>
   <div class="app__main-view">
+    <div class="nfts-view__subtitle-wrapper">
+        <div class="nfts-view__subtitle app__view-main__subtitle mg-b32">
+          <h2 class="app__view-main__subtitle">My NFTs</h2>
+        </div>
+        <div class="nfts-view__selection">
+          <div class="nfts-view__selection-item">            
+            <VuePicker
+              class="nfts-view__vue-picker _vue-picker"
+              name="filter"
+              v-model="sortingValue"
+              :isDisabled="isLoading"
+            >
+              <template #dropdownInner>
+                <div class="_vue-picker__dropdown-custom">
+                  <VuePickerOption
+                    v-for="{ text, value } in nftSortTypes"
+                    :key="text"
+                    :value="value"
+                    :text="text"
+                  >
+                    {{ text }}
+                  </VuePickerOption>
+                </div>
+              </template>
+            </VuePicker>
+          </div>
+        </div>
+    </div>
     <div>
       <div v-if="isLoading">Loading...</div>
       <div class="nft-grid" v-else>
@@ -43,7 +71,7 @@
 
 <script setup lang="ts">
 import { blockChainDataBlocks, chartPagesProps } from '@/const'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { callers } from '@/api/callers'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
@@ -54,12 +82,15 @@ import { API_CONFIG } from '@/api/api-config'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faThumbsUp, faShareNodes } from '@fortawesome/free-solid-svg-icons'
 import { faXTwitter, faThreads } from '@fortawesome/free-brands-svg-icons'
+import { nftSortTypes, TYPE_NFT_SORT } from '@/helpers/sortingHelpers'
+
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const ITEMS_PER_PAGE = 50
 
 const shareText = '#NFT generated with #SKÖPUN on @Odinprotocol\nCheck it here :point_right:'
 const hashtagsText = '#NFT #AI $ODIN #ArtWork #GenerativeAI'
 
+const sortingValue = ref(TYPE_NFT_SORT.recency)
 const nfts = ref()
 const currentPage = ref<number>(1)
 const alreadyLiked = ref()
@@ -68,7 +99,7 @@ const totalPages = ref<number>()
 
 const reloadNFTs = async () => {
   const path = location.protocol + '//' + location.host
-  let nftResults = await callers.getMyNFTs(currentPage.value, pageSize.value)
+  let nftResults = await callers.getMyNFTs(currentPage.value, pageSize.value, sortingValue.value)
   nftResults.every((nft: any) => {
     let threadsShareableText = encodeURIComponent(
       `${shareText} ${hashtagsText} ${path}/nfts/${nft.id}`,
@@ -112,6 +143,10 @@ const Like = async (id: string, classId: string) => {
 }
 
 onMounted(async (): Promise<void> => {
+  await fetchAllNFTs()
+})
+
+watch([sortingValue], async () => {
   await fetchAllNFTs()
 })
 </script>
@@ -232,6 +267,61 @@ img {
 @include respond-to(small) {
   .charts-view__section {
     grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+}
+
+.nfts-view__subtitle-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.nfts-view__subtitle {
+  display: flex;
+  align-items: center;
+}
+
+.nfts-view__vue-picker {
+  margin-left: 1rem;
+}
+
+.nfts-view__selection-item-title {
+  margin-right: 0.4rem;
+  font-size: 1.4rem;
+  font-weight: 300;
+}
+
+.nfts-view__tx-info {
+  margin-right: 0.9rem;
+  height: 2.3rem;
+  display: flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+}
+
+@include respond-to(tablet) {
+  .nfts-view__selection {
+    margin-bottom: 1.6rem;
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .nfts-view__subtitle-wrapper {
+    flex-direction: column;
+  }
+
+  .nfts-view__selection-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .nfts-view__selection-item-title {
+    margin: 0 0 0.4rem;
+  }
+
+  .nfts-view__vue-picker {
+    margin-left: 0;
+    width: 100%;
   }
 }
 </style>
