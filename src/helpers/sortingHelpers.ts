@@ -80,7 +80,7 @@ export const nftSortTypes = [
     value: TYPE_NFT_SORT.recency,
   },
   {
-    text: 'Most Old',
+    text: 'OLDEST NFTs',
     value: TYPE_NFT_SORT.oldest,
   },
   {

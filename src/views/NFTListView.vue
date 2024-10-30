@@ -83,12 +83,10 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faThumbsUp, faShareNodes } from '@fortawesome/free-solid-svg-icons'
 import { faXTwitter, faThreads } from '@fortawesome/free-brands-svg-icons'
 import { nftSortTypes, TYPE_NFT_SORT } from '@/helpers/sortingHelpers'
+import { shareText, hashtagsText } from '@/const'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const ITEMS_PER_PAGE = 50
-
-const shareText = '#NFT generated with #SKÖPUN on @Odinprotocol\nCheck it here :point_right:'
-const hashtagsText = '#NFT #AI $ODIN #ArtWork #GenerativeAI'
 
 const sortingValue = ref(TYPE_NFT_SORT.recency)
 const nfts = ref()
@@ -101,11 +99,11 @@ const reloadNFTs = async () => {
   const path = location.protocol + '//' + location.host
   let nftResults = await callers.getNFTs(currentPage.value, pageSize.value, sortingValue.value)
   nftResults.every((nft: any) => {
-    let threadsShareableText = encodeURIComponent(
-      `${shareText} ${hashtagsText} ${path}/nfts/${nft.id}`,
+    let processedShareText = encodeURIComponent(
+      `${shareText} ${path}/nfts/${nft.id} ${hashtagsText}`,
     )
-    nft.shareableThreadsUrl = `${API_CONFIG.threadsShareUrl}?text=${threadsShareableText}`
-    nft.shareableXUrl = `${API_CONFIG.xShareUrl}?text=${shareText}&url=${path}/nfts/${nft.id}&hashtags=nft,blockchain,ai,images,generativeais`
+    nft.shareableThreadsUrl = `${API_CONFIG.threadsShareUrl}?text=${processedShareText}`
+    nft.shareableXUrl = `${API_CONFIG.xShareUrl}?text=${processedShareText}`
     nft.details.preview = nft.details.preview.replace(
       'https://ipfs.io/ipfs',
       API_CONFIG.ipfsNodeUrl,

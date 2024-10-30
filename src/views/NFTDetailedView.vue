@@ -142,13 +142,12 @@ import { useHead } from '@vueuse/head'
 import { NFTInfo } from '@/graphql/types'
 import { wallet } from '@/api/wallet'
 import { MsgSend } from 'cosmjs-types/cosmos/nft/v1beta1/tx'
+import { shareText, hashtagsText } from '@/const'
 
 const route: RouteLocationNormalizedLoaded = useRoute()
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 const [isLikeProcessing, lockLike, releaseLike] = useBooleanSemaphore()
 const [isTransfering, lockTransfer, releaseTransfer] = useBooleanSemaphore()
-const shareText = '#NFT generated with #SKÖPUN on @Odinprotocol\nCheck it here :point_right:'
-const hashtagsText = '#NFT #AI $ODIN #ArtWork #GenerativeAI'
 
 const shareThreads = ref<string>()
 const shareX = ref<string>()
@@ -234,11 +233,12 @@ const Send = async (address: string) => {
 
 onMounted(async (): Promise<void> => {
   await fetchNFT()
-  const shareableText = encodeURIComponent(
-    `${shareText} ${hashtagsText} ${window.location}`,
+  let path = window.location
+  let processedShareText = encodeURIComponent(
+      `${shareText} ${path} ${hashtagsText}`,
   )
-  shareThreads.value = `https://threads.net/intent/post?text=${shareableText}`
-  shareX.value = `https://twitter.com/intent/post?text=${shareText}&url=${window.location}&hashtags=odin,nft,blockchain,ai,images,generativeai`
+  shareThreads.value = `https://threads.net/intent/post?text=${processedShareText}`
+  shareX.value = `https://twitter.com/intent/post?text=${processedShareText}`
 })
 </script>
 
