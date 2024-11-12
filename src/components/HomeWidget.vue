@@ -298,9 +298,9 @@ const fetchData = async () => {
         (boundedPool.data.pool.bonded_tokens / Number(supplyAmount))) *
       100
     ).toFixed(2)
-    if (odinPriceData.data.price) {
-      odinPrice.value = odinPriceData.data.price
-      odinPric24HRChange.value = odinPriceData.data['24h_change']
+    if (odinPriceData.data) {
+      odinPrice.value = odinPriceData.data.usd
+      odinPric24HRChange.value = odinPriceData.data['usd_24h_change']
     }
 
     // Important::Temporary Value

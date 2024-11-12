@@ -231,7 +231,7 @@ const handleSubmit = async (e: Event) => {
               const img = document.createElement('img')
               img.src = imageUrl
               img.alt = 'Generated Image'
-              img.className = 'nft-image mt-4'
+              img.className = 'nft-image-result'
 
               // Showing result
               const resultContainer = document.querySelector('#result')
@@ -334,7 +334,10 @@ const handleNFTCreate = async (e: Event) => {
   position: relative;
   margin-bottom: 40px;
 }
-
+.nft-image-result {
+  max-width: 85rem;
+  margin-block-end: 1.2rem;
+}
 .how-to-use-skopun {
   h3 {
     font-size: 20px;

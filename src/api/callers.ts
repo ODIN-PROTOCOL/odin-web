@@ -193,6 +193,8 @@ const makeCallers = () => {
         })
         .then(response => {
           const nft = response.data.nft.at(0)
+          console.log(response.data)
+          
           if (nft !== undefined) {
             const res: NFTInfo = {
               ...nft,

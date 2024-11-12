@@ -1,5 +1,7 @@
 import gql from 'graphql-tag'
 
+import { API_CONFIG } from '@/api/api-config'
+
 export const AllNFTsQuery = gql`
   query AllNFTQuery($limit: Int = 10, $offset: Int = 0, $order: [nft_order_by!]) {
     nft_aggregate {
@@ -8,7 +10,7 @@ export const AllNFTsQuery = gql`
       }
     }
     nft(
-      where: { class_id: { _eq: "onft-0" } }
+      where: { class_id: { _eq: "${API_CONFIG.nftCollection}" } }
       limit: $limit
       offset: $offset
       order_by: $order
@@ -38,7 +40,7 @@ export const ProfileNFTQuery = gql`
       }
     }
     nft(
-      where: { class_id: { _eq: "onft-0" }, owner: { _eq: $address } }
+      where: { class_id: { _eq: "${API_CONFIG.nftCollection}" }, owner: { _eq: $address } }
       limit: $limit
       offset: $offset
       order_by: $order
@@ -62,7 +64,7 @@ export const ProfileNFTQuery = gql`
 
 export const NFTDetailsQuery = gql`
   query NFTDetailsQuery($id: String!) {
-    nft(where: { id: { _eq: $id } }) {
+    nft(where: { id: { _eq: $id }, class_id: { _eq: "${API_CONFIG.nftCollection}" } }) {
       height
       mint_tx_hash
       owner

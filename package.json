@@ -6,9 +6,10 @@
     "pre-commit": "npm run lint:scripts"
   },
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "vue-cli-service serve --mode testnet",
     "serve:prod": "vue-cli-service serve --mode production",
     "build": "vue-cli-service build",
+    "build:testnet": "vue-cli-service build --mode testnet",
     "lint": "vue-cli-service lint",
     "lint:scripts": "eslint \"{src,config}/**/*.{js,vue,ts}\" --cache --fix --max-warnings=0",
     "postinstall": "patch-package"

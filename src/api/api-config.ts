@@ -23,6 +23,7 @@ export const API_CONFIG = {
   fnServer: process.env.VUE_APP_FN_SERVER as string,
   threadsShareUrl: 'https://threads.net/intent/post' as string,
   xShareUrl: 'https://twitter.com/intent/post' as string,
+  nftCollection: process.env.VUE_APP_NFT_COLLECTION as string,
 }
 
 export const START_VALUE = {
