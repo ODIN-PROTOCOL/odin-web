@@ -24,6 +24,7 @@ export const API_CONFIG = {
   threadsShareUrl: 'https://threads.net/intent/post' as string,
   xShareUrl: 'https://twitter.com/intent/post' as string,
   nftCollection: process.env.VUE_APP_NFT_COLLECTION as string,
+  skopunRequestPrice: process.env.VUE_APP_SKOPUN_REQUEST_PRICE as string,
 }
 
 export const START_VALUE = {

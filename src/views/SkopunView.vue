@@ -47,14 +47,14 @@
     </div>
 
     <div class="how-to-use-skopun">
-      <h3>How to use sköpun</h3>
+      <h3>How to use sköpun.1</h3>
       <ul>
         <li>
           <b>Access</b>
           <p>
             Go to
-            <a href="https://testnet.odinprotocol.io/skopun"
-              >https://testnet.odinprotocol.io/skopun</a
+            <a href="https://runa.odinprotocol.io/skopun"
+              >https://runa.odinprotocol.io/skopun</a
             >
           </p>
         </li>
@@ -129,7 +129,7 @@ const requestId = ref<number | null>()
 
 const prompt = ref<string>('')
 
-const title = 'SKÖPUN - THE ART OF CREATION'
+const title = 'SKÖPUN.1 - THE ART OF CREATION'
 
 useHead({
   title,
@@ -187,9 +187,8 @@ const handleSubmit = async (e: Event) => {
       msg, // Execute message
       'auto', // Fee (auto-estimated)
       '', // Memo (optional)
-      [{ denom: 'loki', amount: '100' }], // Funds (if required by contract)
+      [{ denom: 'loki', amount: API_CONFIG.skopunRequestPrice }], // Funds (if required by contract)
     )
-    console.log('Transaction result:', result)
 
     const wasmEvent = result.events.find(
       event => event.type === 'wasm-wasm_request',
