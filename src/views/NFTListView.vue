@@ -39,7 +39,7 @@
               :src="
                 nft.details.preview.replace(
                   'https://ipfs.io/ipfs',
-                  API_CONFIG.ipfsNodeUrl,
+                  API_CONFIG.ipfsNodeUrl
                 )
               "
               :alt="nft.details.prompt"
@@ -153,10 +153,27 @@ watch([sortingValue], async () => {
 .nft-grid {
   display: grid;
   grid-gap: var(--spacing);
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(4, minmax(320px, 1fr));
   min-height: calc(100vh - var(--spacing) * 2);
 }
 
+@media (max-width: 1200px) {
+  .nft-grid {
+    grid-template-columns: repeat(3, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 992px) {
+  .nft-grid {
+    grid-template-columns: repeat(2, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .nft-grid {
+    grid-template-columns: repeat(1, minmax(250px, 1fr));
+  }
+}
 .nft-item {
   position: relative;
 
