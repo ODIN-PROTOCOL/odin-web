@@ -1,32 +1,32 @@
 <template>
   <div class="app__main-view">
     <div class="nfts-view__subtitle-wrapper">
-        <div class="nfts-view__subtitle app__view-main__subtitle mg-b32">
-          <h2 class="app__view-main__subtitle">My NFTs</h2>
+      <div class="nfts-view__subtitle app__view-main__subtitle mg-b32">
+        <h2 class="app__view-main__subtitle">My NFTs</h2>
+      </div>
+      <div class="nfts-view__selection">
+        <div class="nfts-view__selection-item">
+          <VuePicker
+            class="nfts-view__vue-picker _vue-picker"
+            name="filter"
+            v-model="sortingValue"
+            :isDisabled="isLoading"
+          >
+            <template #dropdownInner>
+              <div class="_vue-picker__dropdown-custom">
+                <VuePickerOption
+                  v-for="{ text, value } in nftSortTypes"
+                  :key="text"
+                  :value="value"
+                  :text="text"
+                >
+                  {{ text }}
+                </VuePickerOption>
+              </div>
+            </template>
+          </VuePicker>
         </div>
-        <div class="nfts-view__selection">
-          <div class="nfts-view__selection-item">            
-            <VuePicker
-              class="nfts-view__vue-picker _vue-picker"
-              name="filter"
-              v-model="sortingValue"
-              :isDisabled="isLoading"
-            >
-              <template #dropdownInner>
-                <div class="_vue-picker__dropdown-custom">
-                  <VuePickerOption
-                    v-for="{ text, value } in nftSortTypes"
-                    :key="text"
-                    :value="value"
-                    :text="text"
-                  >
-                    {{ text }}
-                  </VuePickerOption>
-                </div>
-              </template>
-            </VuePicker>
-          </div>
-        </div>
+      </div>
     </div>
     <div>
       <div v-if="isLoading">Loading...</div>
@@ -97,7 +97,11 @@ const totalPages = ref<number>()
 
 const reloadNFTs = async () => {
   const path = location.protocol + '//' + location.host
-  let nftResults = await callers.getMyNFTs(currentPage.value, pageSize.value, sortingValue.value)
+  let nftResults = await callers.getMyNFTs(
+    currentPage.value,
+    pageSize.value,
+    sortingValue.value,
+  )
   nftResults.every((nft: any) => {
     let processedShareText = encodeURIComponent(
       `${shareText} ${path}/nfts/${nft.id} ${hashtagsText}`,

@@ -10,7 +10,7 @@ export const AllNFTsQuery = gql`
       }
     }
     nft(
-      where: { class_id: { _eq: "${API_CONFIG.nftCollection}" } }
+      where: { class_id: { _eq: "${API_CONFIG.nftCollection}", _nregex: "(?i)\b(luis|gelado|anant|vlad|vladimir|scammer|gelado|crespo|singh)\b" } }
       limit: $limit
       offset: $offset
       order_by: $order
@@ -64,7 +64,7 @@ export const ProfileNFTQuery = gql`
 
 export const NFTDetailsQuery = gql`
   query NFTDetailsQuery($id: String!) {
-    nft(where: { id: { _eq: $id }, class_id: { _eq: "${API_CONFIG.nftCollection}" } }) {
+    nft(where: { id: { _eq: $id }, class_id: { _eq: "${API_CONFIG.nftCollection}", _nregex: "(?i)\b(luis|gelado|anant|vlad|vladimir|scammer|gelado|crespo|singh)\b" } }) {
       height
       mint_tx_hash
       owner

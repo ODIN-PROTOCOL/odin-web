@@ -24,8 +24,7 @@
           <div class="app-table__body">
             <div class="app-table__row">
               <div class="app-app-table__cell">
-                <label class="app-form__field-lbl"
-                  >
+                <label class="app-form__field-lbl">
                   <span class="lbl_by">By - </span>
                   <router-link
                     :to="{
@@ -235,7 +234,7 @@ onMounted(async (): Promise<void> => {
   await fetchNFT()
   let path = window.location
   let processedShareText = encodeURIComponent(
-      `${shareText} ${path} ${hashtagsText}`,
+    `${shareText} ${path} ${hashtagsText}`,
   )
   shareThreads.value = `https://threads.net/intent/post?text=${processedShareText}`
   shareX.value = `https://twitter.com/intent/post?text=${processedShareText}`

@@ -194,7 +194,7 @@ const makeCallers = () => {
         .then(response => {
           const nft = response.data.nft.at(0)
           console.log(response.data)
-          
+
           if (nft !== undefined) {
             const res: NFTInfo = {
               ...nft,
@@ -241,7 +241,11 @@ const makeCallers = () => {
         return []
       }
     },
-    getNFTs: (page_number: number, page_limit: number, sortBy = TYPE_NFT_SORT.recency) => {
+    getNFTs: (
+      page_number: number,
+      page_limit: number,
+      sortBy = TYPE_NFT_SORT.recency,
+    ) => {
       return apolloClient
         .query<NFTListResponse>({
           query: AllNFTsQuery,
@@ -263,7 +267,11 @@ const makeCallers = () => {
           return mapped
         })
     },
-    getMyNFTs: (page_number: number, page_limit: number, sortBy = TYPE_NFT_SORT.recency) => {
+    getMyNFTs: (
+      page_number: number,
+      page_limit: number,
+      sortBy = TYPE_NFT_SORT.recency,
+    ) => {
       return apolloClient
         .query({
           query: ProfileNFTQuery,

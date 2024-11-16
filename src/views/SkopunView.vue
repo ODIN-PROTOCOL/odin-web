@@ -94,11 +94,24 @@
         </li>
         <li>
           <b>CHECK NFTs</b>
-          <p>Go to <router-link :to="{ name: ROUTE_NAMES.nft_profile }">“MY NFTS”</router-link> Section to review your NFTs.</p>
+          <p>
+            Go to
+            <router-link :to="{ name: ROUTE_NAMES.nft_profile }"
+              >“MY NFTS”</router-link
+            >
+            Section to review your NFTs.
+          </p>
         </li>
         <li>
           <b>ENJOY THE ART</b>
-          <p>Go to <router-link :to="{ name: ROUTE_NAMES.nft_list }">"ALL NFTS”</router-link> Section, enjoy the art, like the community work, and share it with the world.</p>
+          <p>
+            Go to
+            <router-link :to="{ name: ROUTE_NAMES.nft_list }"
+              >"ALL NFTS”</router-link
+            >
+            Section, enjoy the art, like the community work, and share it with
+            the world.
+          </p>
         </li>
       </ul>
     </div>
