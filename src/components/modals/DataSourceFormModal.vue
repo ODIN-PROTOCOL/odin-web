@@ -124,7 +124,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { coins } from '@cosmjs/launchpad'
+import { coins } from '@cosmjs/stargate'
 import { wallet } from '@/api/wallet'
 import { callers } from '@/api/callers'
 import { dialogs } from '@/helpers/dialogs'

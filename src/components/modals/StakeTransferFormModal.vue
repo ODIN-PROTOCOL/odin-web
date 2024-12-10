@@ -287,22 +287,23 @@ delegatedValidators.value = delegatedAdress.map((validatorAddress: string) => {
   return {
     ...allValidators.value.find(
       (validator: ValidatorInfoModify) =>
-        validator?.info.operatorAddress === validatorAddress,
+        validator?.info && validator?.info.operatorAddress === validatorAddress,
     ),
     delegation: props.delegation[validatorAddress],
   }
 })
-form.sender.val(delegatedValidators.value[0].info.operatorAddress)
+
+form.sender.val(delegatedValidators.value[0].info?.operatorAddress)
 const filtredValidators = computed(() =>
   props.activeValidators.map((validator: ValidatorInfoModify) => {
     return {
       ...validator,
-      delegation: props.delegation[validator?.info.operatorAddress] || {},
+      delegation: props.delegation[validator?.info?.operatorAddress] || {},
     }
   }),
 )
 
-if (props.activeValidators[0]?.info.operatorAddress === form.sender.val()) {
+if (props.activeValidators[0]?.info?.operatorAddress === form.sender.val()) {
   form.receiver.val(filtredValidators.value[1]?.info.operatorAddress)
 } else {
   form.receiver.val(filtredValidators.value[0]?.info.operatorAddress)
@@ -316,7 +317,7 @@ const findReceiverValidator = () => {
     } else {
       const findValidator = filtredValidators.value.find(
         (item: ValidatorInfoModify) =>
-          item?.info.operatorAddress === form.receiver.val(),
+          item?.info?.operatorAddress === form.receiver.val(),
       )
       if (!findValidator) {
         form.receiver.err('Validator not found')

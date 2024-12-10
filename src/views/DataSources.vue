@@ -29,13 +29,13 @@
       </button>
     </div>
 
-    <SortLine
+    <!-- <SortLine
       :is-loading="isLoading"
       title="Data Source"
       v-model:oracleScriptsName="dataSourceName"
       v-model:sortingActivitiesValue="sortingActivitiesValue"
       v-model:sortingOwnersValue="sortingOwnersValue"
-    />
+    /> -->
 
     <div class="app-table">
       <div class="app-table__head data-sources__table-head">
@@ -54,14 +54,15 @@
           >
             <div class="app-table__cell">
               <span class="app-table__title">Data Source</span>
-              <TitledLink
+              <span>#{{ item.id }} {{ item.name }}</span>
+              <!-- <TitledLink
                 class="app-table__cell-txt app-table__link"
                 :text="`#${item.id} ${item.name}`"
                 :name="{
                   name: $routes.dataSourceDetails,
                   params: { id: item.id },
                 }"
-              />
+              /> -->
             </div>
             <div class="app-table__cell">
               <span class="app-table__title">Description</span>
@@ -72,7 +73,7 @@
             <div class="app-table__cell">
               <span class="app-table__title">Price</span>
               <span>
-                {{ convertLokiToOdin(Number(item.fee_amount)) }}
+                {{ convertLokiToOdin(Number(item.fee[0].amount)) }}
               </span>
             </div>
             <div class="app-table__cell">
@@ -85,10 +86,10 @@
               <span class="app-table__title">Timestamp</span>
               <template v-if="item.timestamp">
                 <span class="app-table__cell-date">
-                  {{ $fDate(new Date(item.timestamp * 1000), 'dd/MM/yy') }}
+                  {{ $fDate($parseISO(item.timestamp), 'dd/MM/yy') }}
                 </span>
                 <span class="app-table__cell-time">
-                  {{ $fDate(new Date(item.timestamp * 1000), 'HH:mm') }}
+                  {{ $fDate($parseISO(item.timestamp), 'HH:mm') }}
                 </span>
               </template>
               <span v-else class="app-table__cell-txt">-</span>
@@ -183,27 +184,18 @@ const getDataSources = async () => {
   lockLoading()
   try {
     dataSources.value = []
-    const { data, total_count } = await callers
-      .getSortedDataSources(
-        currentPage.value - 1,
-        ITEMS_PER_PAGE,
-        sortingActivitiesValue.value,
-        sortingOwnersValue.value,
-        dataSourceName.value,
-      )
-      .then(response => response.json())
+    const response = await callers.getSortedDataSources(
+      currentPage.value - 1,
+      ITEMS_PER_PAGE,
+      sortingActivitiesValue.value,
+      sortingOwnersValue.value,
+      dataSourceName.value,
+    )
 
-    if (data) {
-      dataSources.value = await Promise.all(
-        data?.map(async (item: { attributes: { id: number } }) => {
-          const resp = await callers.getDataSourceRequestCount(
-            item.attributes.id,
-          )
-          return { ...item.attributes, requestCount: resp.data.total_count }
-        }),
-      )
+    if (response.data) {
+      dataSources.value = response.data.data_source
     }
-    dataSourcesCount.value = total_count
+    dataSourcesCount.value = response.data.data_source_aggregate.aggregate.count
     totalPages.value = Math.ceil(dataSourcesCount.value / ITEMS_PER_PAGE)
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)

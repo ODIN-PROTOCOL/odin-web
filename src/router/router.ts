@@ -88,6 +88,32 @@ const routes: Array<RouteRecordRaw> = [
           import(/* webpackChunkName: "blocks" */ '@/views/BlocksListView.vue'),
       },
       {
+        path: '/skopun',
+        name: ROUTE_NAMES.skopun,
+        component: () =>
+          import(/* webpackChunkName: "skopun" */ '@/views/SkopunView.vue'),
+      },
+      {
+        path: '/nfts',
+        name: ROUTE_NAMES.nft_list,
+        component: () =>
+          import(/* webpackChunkName: "skopun" */ '@/views/NFTListView.vue'),
+      },
+      {
+        path: '/nfts/:id',
+        name: ROUTE_NAMES.nft_detail,
+        component: () =>
+          import(
+            /* webpackChunkName: "skopun" */ '@/views/NFTDetailedView.vue'
+          ),
+      },
+      {
+        path: '/my-nfts',
+        name: ROUTE_NAMES.nft_profile,
+        component: () =>
+          import(/* webpackChunkName: "skopun" */ '@/views/MyNFTsView.vue'),
+      },
+      {
         path: '/blocks/:id',
         name: ROUTE_NAMES.blockDetails,
         component: () =>

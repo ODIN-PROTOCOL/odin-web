@@ -236,23 +236,12 @@ export const formatDataForCharts = (
   const values: number[] = []
   const labels: string[] = []
 
-  data.sort((a, b) => {
-    return new Date(a.date).getTime() - new Date(b.date).getTime()
-  })
-
   data.forEach(({ date, ...rest }: telemetryDataForCharts) => {
     labels.push(date)
-    if (rest.fee) {
-      if (rest.fee[0]?.denom === 'loki') {
-        const amount =
-          Number(bigMath.multiply(rest.fee[0]?.amount, 0.000001)) || 0
-        values.push(amount)
-      } else {
-        const amount = Number(rest.fee[0]?.amount) || 0
-        values.push(amount)
-      }
+    if (rest.value) {
+      values.push(Number(rest.value))
     } else {
-      values.push(Number(Object.values(rest)[0]))
+      values.push(Number(rest.volume))
     }
   })
 

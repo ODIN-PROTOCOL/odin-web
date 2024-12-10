@@ -1,5 +1,6 @@
 import { BigNumber } from 'bignumber.js'
 import { big } from './bigMath'
+import { de } from 'date-fns/locale'
 
 type ConverterOptions = {
   withDenom?: boolean
@@ -17,7 +18,13 @@ const ODIN_DENOM = 'ODIN'
 const LOKI_DENOM = 'LOKI'
 const GEO_DENOM = 'GEO'
 const MINIGEO_DENOM = 'MINIGEO'
+const UDOKI_DENOM = 'UDOKI'
+const UMYRK_DENOM = 'UMYRK'
+const MYRK_DENOM = 'MYRK'
+const DOKI_DENOM = 'DOKI'
 const LOKI_MULTIPLIER = 1000000
+const UDOKI_MULTIPLIER = 1000000
+const UMYRK_MULTIPLIER = 1000000
 
 export function convertLokiToOdin(
   amount: string | BigNumber | undefined,
@@ -25,13 +32,17 @@ export function convertLokiToOdin(
   denom = ODIN_DENOM,
 ): string | BigNumber {
   if (!amount) return '-'
-  if (Number.isNaN(Number(amount))) return '0'
+  if (Number.isNaN(Number(amount))) return '0.00'
+
   if (denom.toUpperCase() === LOKI_DENOM || denom === ODIN_DENOM) {
     denom = ODIN_DENOM
+  } else if (denom.toUpperCase() === UDOKI_DENOM || denom === DOKI_DENOM) {
+    denom = DOKI_DENOM
+  } else if (denom.toUpperCase() === UMYRK_DENOM || denom === MYRK_DENOM) {
+    denom = MYRK_DENOM
   } else {
     denom = GEO_DENOM
   }
-
   let res: BigNumber
   if (options && options.withPrecise) {
     res = big.fromPrecise(big.multiply(amount, ODIN_MULTIPLIER))

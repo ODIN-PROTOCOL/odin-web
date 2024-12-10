@@ -6,6 +6,7 @@
 import { useVoteProgress } from '@/composables/useVoteProgress'
 import { translateTally, translateTallyShort } from '@/helpers/translators'
 import { TallyResult } from '@provider/codec/cosmos/gov/v1beta1/gov'
+import { ta } from 'date-fns/locale'
 import { computed, toRef } from 'vue'
 
 const props = withDefaults(

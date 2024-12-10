@@ -50,7 +50,7 @@
                 <BlockResultItem
                   v-for="block in result.blocks"
                   :result="block"
-                  :key="block.header.height"
+                  :key="block.height"
                 />
               </template>
               <template v-if="result.transactions?.length !== 0">
@@ -67,11 +67,19 @@
                   :key="accounts"
                 />
               </template>
+              <template v-if="result.nfts?.length !== 0">
+                <NFTItem
+                  v-for="nft in result.nfts"
+                  :result="nft"
+                  :key="nft.id"
+                />
+              </template>
               <template
                 v-if="
                   !result.transactions?.length &&
                   !result.blocks?.length &&
-                  !result.accounts?.length
+                  !result.accounts?.length &&
+                  !result.nfts?.length
                 "
               >
                 <div class="search-bar__dropdown-empty-msg">
@@ -99,7 +107,11 @@ import {
   TransactionItem,
 } from '@/components/SearchBar'
 import { CloseIcon, SearchIcon } from '@/components/icons'
-import { isMobile, prepareTransaction } from '@/helpers/helpers'
+import {
+  isMobile,
+  prepareRPCTransaction,
+  prepareTransaction,
+} from '@/helpers/helpers'
 import {
   DecodedTxData,
   SearchResultType,
@@ -107,8 +119,14 @@ import {
   TransformedBlocks,
 } from '@/helpers/Types'
 import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
-import { prepareBlocks } from '@/helpers/blocksHelper'
+import { prepareBlockMetas } from '@/helpers/blocksHelper'
 import { ROUTE_NAMES } from '@/enums'
+import {
+  NFTInfo,
+  TransformedBlockInfo,
+  ValidatorDetailedInfo,
+} from '@/graphql/types'
+import NFTItem from './NFTItem.vue'
 
 enum FILTER_BY {
   ACCOUNT = 'Account',
@@ -132,6 +150,12 @@ const activeFilter = ref<string>(filters.value[0])
 const searchedText = ref<string | null>('')
 const searchResult = ref<Array<SearchResultType> | null>(null)
 const searchLoading = ref<boolean>(false)
+const validators = ref<ValidatorDetailedInfo[]>([])
+
+const getValidators = async (): Promise<void> => {
+  const response = await callers.getValidators()
+  validators.value = response.data.validators || []
+}
 
 watch(activeFilter, () => {
   searchResult.value = null
@@ -143,19 +167,16 @@ watch(searchResult, value => {
     if (value) {
       const [firstResult] = value
 
-      if (firstResult.blocks?.length) {
-        const blockHeader = firstResult.blocks[0].header
-        const blockHeight = blockHeader?.height
-
+      if (firstResult.blocks?.length === 1) {
+        const blockHeight = firstResult.blocks[0].height
         router.push({
           name: ROUTE_NAMES.blockDetails,
           params: { id: blockHeight },
         })
-
         return
       }
 
-      if (firstResult.transactions?.length) {
+      if (firstResult.transactions?.length === 1) {
         const transactionHash = firstResult.transactions[0].hash
 
         router.push({
@@ -166,12 +187,21 @@ watch(searchResult, value => {
         return
       }
 
-      if (firstResult.accounts?.length) {
+      if (firstResult.accounts?.length === 1) {
         const accountAddress = firstResult.accounts[0].address
 
         router.push({
           name: ROUTE_NAMES.accountDetails,
           params: { hash: accountAddress },
+        })
+
+        return
+      }
+
+      if (firstResult.nfts?.length === 1) {
+        router.push({
+          name: ROUTE_NAMES.nft_detail,
+          params: { id: firstResult.nfts[0].id },
         })
 
         return
@@ -182,6 +212,7 @@ watch(searchResult, value => {
 
 const getTransactions = async (): Promise<Array<DecodedTxData>> => {
   const TRANSACTION_HASH_LENGTH = 64
+  await getValidators()
   const transactionToSearch = String(searchedText.value)
   if (
     !transactionToSearch ||
@@ -191,7 +222,7 @@ const getTransactions = async (): Promise<Array<DecodedTxData>> => {
   }
   try {
     const res = await callers.getTxForTxDetailsPage(String(transactionToSearch))
-    return await prepareTransaction([res.data.result])
+    return await prepareRPCTransaction([res.data.result], validators.value)
   } catch {
     return []
   }
@@ -228,13 +259,27 @@ const getAccount = async (): Promise<Array<TempSearchAccountInfoType>> => {
   }
 }
 
-const getBlock = async (): Promise<Array<TransformedBlocks>> => {
+const getBlock = async (): Promise<TransformedBlockInfo[]> => {
   try {
-    const { blockMetas } = await callers.getBlockchain(
-      Number(searchedText.value),
-      Number(searchedText.value),
+    const { data } = await callers.getBlock(
+      searchedText.value,
+      Number(searchedText.value) || 0,
     )
-    return await prepareBlocks(blockMetas)
+    const res = await prepareBlockMetas(data.blockMetas, validators.value)
+    return res
+  } catch {
+    return []
+  }
+}
+
+const getNFTs = async (): Promise<NFTInfo[]> => {
+  if (!searchedText.value) {
+    return []
+  }
+
+  try {
+    const nfts = await callers.searchNFT(searchedText.value || '')
+    return nfts
   } catch {
     return []
   }
@@ -270,6 +315,7 @@ const searchBy = async (): Promise<Array<SearchResultType> | null> => {
         blocks: await getBlock(),
         transactions: await getTransactions(),
         accounts: await getAccount(),
+        nfts: await getNFTs(),
       },
     ]
   } catch (error) {

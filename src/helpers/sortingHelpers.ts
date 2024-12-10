@@ -4,13 +4,13 @@ export enum ACTIVITIES_SORT {
 }
 
 export enum OWNERS_SORT {
-  all = 'null',
+  all = '%%',
 }
 export enum TYPE_TX_SORT {
-  all = 'null',
-  delegate = 'delegate',
-  send = 'send',
-  withdraw = 'withdraw',
+  all = '%%',
+  delegate = 'cosmos.staking.v1beta1.MsgDelegate',
+  send = 'cosmos.bank.v1beta1.MsgSend',
+  withdraw = 'cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward',
 }
 
 export const sortingActivities = [
@@ -65,5 +65,26 @@ export const sortingTypeTx = [
   {
     text: 'Withdraw',
     value: TYPE_TX_SORT.withdraw,
+  },
+]
+
+export enum TYPE_NFT_SORT {
+  recency = '{ "height": "desc" }',
+  oldest = '{ "height": "asc" }',
+  most_liked = '{ "nft_likes_aggregate": { "count": "desc" } } ',
+}
+
+export const nftSortTypes = [
+  {
+    text: 'Most Recent',
+    value: TYPE_NFT_SORT.recency,
+  },
+  {
+    text: 'OLDEST NFTs',
+    value: TYPE_NFT_SORT.oldest,
+  },
+  {
+    text: 'Most Liked',
+    value: TYPE_NFT_SORT.most_liked,
   },
 ]

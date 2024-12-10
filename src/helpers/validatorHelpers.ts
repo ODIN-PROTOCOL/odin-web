@@ -7,7 +7,7 @@ import { ValidatorsInfo } from '@/graphql/types'
 export type ValidatorDecoded = Modify<Validator, { consensusPubkey?: string }>
 export type ValidatorInfoModify = Modify<
   ValidatorsInfo,
-  { isActive?: boolean; rank?: number; uptime?: number }
+  { isActive?: boolean; rank?: number; uptime?: number; status?: any }
 >
 export type TransferValidator = Modify<
   ValidatorDecoded,
@@ -39,6 +39,8 @@ export const getValidatorStatus = (status: number, isActive: boolean) => {
 export const isActiveValidator = async (
   validatorAddress: string,
 ): Promise<boolean> => {
+  if (!validatorAddress) return false
+
   const response = await callers
     .getValidatorStatus(validatorAddress)
     .then(req => req.status?.isActive)

@@ -25,12 +25,7 @@
         :key="item.title"
       >
         <h4 class="charts-view__chart-title">{{ item.title }}</h4>
-        <router-link
-          class="charts-view__chart-item"
-          :to="{ name: item.chartPageName }"
-        >
-          <ChartPreview v-bind="chartPagesProps[item.id]" />
-        </router-link>
+        <ChartPreview v-bind="chartPagesProps[item.id]" />
       </div>
     </div>
     <div class="app-table">
@@ -44,7 +39,7 @@
           <TxLine
             v-for="(item, index) in transactions"
             :key="index"
-            :transition="item"
+            :tx="item"
           />
         </template>
         <template v-else>
@@ -82,6 +77,7 @@ import TxLine from '@/components/TxLine.vue'
 import AppPagination from '@/components/AppPagination/AppPagination.vue'
 import SkeletonTable from '@/components/SkeletonTable.vue'
 import ChartPreview from '@/components/ChartPreview.vue'
+import { ValidatorDetailedInfo } from '@/graphql/types/responses'
 
 const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
 
@@ -100,15 +96,27 @@ const headerTitles = [
   { title: 'GAS (ODIN)' },
   { title: 'Amount' },
 ]
+
+const validators = ref<ValidatorDetailedInfo[]>([])
+
+const getValidators = async (): Promise<void> => {
+  const response = await callers.getValidators()
+  validators.value = response.data.validators || []
+}
+
 const getTransactions = async () => {
   lockLoading()
   try {
     transactions.value = []
-    const { data, total_count } = await callers
-      .getTxSearchFromTelemetry(page.value - 1, ITEMS_PER_PAGE, 'desc')
-      .then(resp => resp.json())
-
-    const transaction = await prepareTransaction(data)
+    const response = await callers.getTxSearchFromTelemetry(
+      page.value - 1,
+      ITEMS_PER_PAGE,
+      'desc',
+    )
+    const transaction = await prepareTransaction(
+      response?.data.transaction || [],
+      validators.value,
+    )
 
     // IMPORTANT:: This is the Temporary Fixed. once API update it will auto-fix
     // Use a Set to keep track of unique Block IDs
@@ -127,7 +135,8 @@ const getTransactions = async () => {
     })
     // IMPORTANT:: This is the Temporary Fixed. once API update it will auto-fix
 
-    totalTransactions.value = total_count
+    totalTransactions.value =
+      response?.data?.transaction_aggregate.aggregate.count || 0
     totalPages.value = Math.ceil(totalTransactions.value / ITEMS_PER_PAGE)
   } catch (error) {
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
@@ -136,10 +145,12 @@ const getTransactions = async () => {
 }
 
 const updateHandler = async () => {
+  await getValidators()
   await getTransactions()
 }
 
 onMounted(async () => {
+  await getValidators()
   await getTransactions()
 })
 </script>

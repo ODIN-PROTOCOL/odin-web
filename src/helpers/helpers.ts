@@ -1,8 +1,16 @@
-import { getDateFromMessage } from '@/helpers/decodeMessage'
+import {
+  getDateFromMessage,
+  getDateFromRPCMessage,
+} from '@/helpers/decodeMessage'
 import { toHex } from '@cosmjs/encoding'
-import { DecodedTxData, IAttributesItem, IEventsItem } from '@/helpers/Types'
+import {
+  DecodedTxData,
+  IAttributesItem,
+  IEventsItem,
+  TxTelemetry,
+} from '@/helpers/Types'
 import { convertLokiToOdin } from './converters'
-import { TxTelemetry } from '@/helpers/Types'
+import { Transaction, ValidatorDetailedInfo } from '@/graphql/types/responses'
 import { detect } from 'detect-browser'
 
 export const isIos = (): boolean | null => {
@@ -24,8 +32,9 @@ export const copyValue = (text: string): void => {
   window.navigator.clipboard.writeText(text)
 }
 
-export const prepareTransaction = async (
+export const prepareRPCTransaction = async (
   txs: readonly TxTelemetry[],
+  validators: ValidatorDetailedInfo[],
 ): Promise<Array<DecodedTxData>> => {
   let tempArr: Array<DecodedTxData> = []
   for (const tx of txs) {
@@ -42,7 +51,49 @@ export const prepareTransaction = async (
       gasUsed,
       gasWanted,
       receiver_name,
-    } = await getDateFromMessage(tx)
+    } = await getDateFromRPCMessage(tx, validators)
+    tempArr = [
+      ...tempArr,
+      {
+        type: type ? type : '-',
+        hash: tx.hash ? tx.hash.toLowerCase() : '-',
+        block: tx.height ? tx.height : '-',
+        time: time,
+        sender: sender ? sender : '',
+        receiver: receiver ? receiver : '',
+        receiver_name: receiver_name ? receiver_name : '',
+        amount: convertLokiToOdin(String(amount), { withDenom: true }, denom),
+        fee: convertLokiToOdin(String(fee), { onlyNumber: true, toFixed: 2 }),
+        memo: memo ? memo : '-',
+        status: Number(status) > -1 ? 'Success' : 'Failed',
+        gasUsed: gasUsed ? gasUsed : '-',
+        gasWanted: gasWanted ? gasWanted : '-',
+      },
+    ]
+  }
+  return tempArr
+}
+
+export const prepareTransaction = (
+  txs: readonly Transaction[],
+  validators: ValidatorDetailedInfo[],
+): Array<DecodedTxData> => {
+  let tempArr: Array<DecodedTxData> = []
+  for (const tx of txs) {
+    const {
+      receiver,
+      sender,
+      type,
+      amount,
+      denom,
+      time,
+      fee,
+      memo,
+      status,
+      gasUsed,
+      gasWanted,
+      receiver_name,
+    } = getDateFromMessage(tx, validators)
     tempArr = [
       ...tempArr,
       {
@@ -85,10 +136,10 @@ export const parseLogsToGetRewardsAmount = (
 }
 
 export enum TYPE_TX_SORT {
-  all = 'null',
-  delegate = 'delegate',
-  send = 'send',
-  withdraw = 'withdraw',
+  all = '%%',
+  delegate = 'cosmos.staking.v1beta1.MsgDelegate',
+  send = 'cosmos.bank.v1beta1.MsgSend',
+  withdraw = 'cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward',
 }
 
 export const sortingTypeTx = [

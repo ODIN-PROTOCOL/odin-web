@@ -4,15 +4,18 @@
       <div class="latest-stats__wrapper">
         <LatestList :header="latestTransactionsHeader">
           <transition-group name="fade" mode="out-in">
-            <template v-if="latestTransactions.length">
+            <template v-if="latestTransactions !== undefined">
               <LatestListItemTx
-                v-for="item in latestTransactions"
+                v-for="item in prepareTransaction(
+                  latestTransactions.transaction || [],
+                  validators?.validators || [],
+                )"
                 :key="item.hash"
                 :tx="item"
               />
             </template>
             <template v-else>
-              <template v-if="isLoading">
+              <template v-if="transactionsLoading && validatorsLoadling">
                 <SkeletonLatestListItemTx v-for="item of 5" :key="item" />
               </template>
               <div v-else class="latest-stats__list-item">
@@ -21,17 +24,21 @@
             </template>
           </transition-group>
         </LatestList>
+
         <LatestList :header="latestBlocksHeader">
           <transition-group name="fade" mode="out-in">
-            <template v-if="latestBlocks.length">
+            <template v-if="latestBlocks !== undefined">
               <LatestListItemBlock
-                v-for="item in latestBlocks"
-                :key="item.blockId.hash"
+                v-for="item in prepareBlockMetas(
+                  latestBlocks.blockMetas || [],
+                  validators?.validators || [],
+                )"
+                :key="item.hash"
                 :block="item"
               />
             </template>
             <template v-else>
-              <template v-if="isLoading">
+              <template v-if="latestBlocksLoading && validatorsLoadling">
                 <SkeletonLatestListItemBlock v-for="item of 5" :key="item" />
               </template>
               <div v-else class="latest-stats__list-item">
@@ -46,54 +53,48 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
-import { callers } from '@/api/callers'
-import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { latestBlocksHeader, latestTransactionsHeader } from '@/const'
-import { prepareBlocks } from '@/helpers/blocksHelper'
-import { handleNotificationInfo, TYPE_NOTIFICATION } from '@/helpers/errors'
+import { prepareBlockMetas } from '@/helpers/blocksHelper'
 import { prepareTransaction } from '@/helpers/helpers'
-import { DecodedTxData, TransformedBlocks } from '@/helpers/Types'
 import LatestList from './LatestList.vue'
 import LatestListItemBlock from './LatestListItemBlock.vue'
 import LatestListItemTx from './LatestListItemTx.vue'
 import SkeletonLatestListItemTx from './SkeletonLatestListItemTx.vue'
 import SkeletonLatestListItemBlock from './SkeletonLatestListItemBlock.vue'
+import {
+  BlockMetaResponse,
+  TxResponseData,
+  ValidatorsResponse,
+} from '@/graphql/types/responses'
+import { useQuery } from '@vue/apollo-composable'
+import { ValidatorsQuery } from '@/graphql/queries/ValidatorQuery'
 
-const [isLoading, lockLoading, releaseLoading] = useBooleanSemaphore()
+import { BlocksQuery, TxQuery } from '@/graphql/queries/Tx'
+import { BlocksQueryVariables } from '@/graphql/types'
 
-onMounted(async (): Promise<void> => {
-  lockLoading()
-
-  try {
-    await getLatestBlocks()
-    await getLatestTransactions()
-  } catch (error) {
-    handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
-  }
-
-  releaseLoading()
+const {
+  result: validators,
+  error: valError,
+  loading: validatorsLoadling,
+} = useQuery<ValidatorsResponse>(ValidatorsQuery)
+const {
+  result: latestTransactions,
+  error: transactionError,
+  loading: transactionsLoading,
+} = useQuery<TxResponseData>(TxQuery, {
+  block: null,
+  limit: 5,
+  offset: 0,
 })
-
-const lastHeight = ref(0)
-const latestBlocks = ref<TransformedBlocks[]>([])
-const latestTransactions = ref<DecodedTxData[]>([])
-
-const getLatestBlocks = async (): Promise<void> => {
-  const { blockMetas, lastHeight: reqLastHeight } =
-    await callers.getBlockchain()
-
-  latestBlocks.value = await prepareBlocks(blockMetas.slice(0, 5))
-  lastHeight.value = reqLastHeight
-}
-
-const getLatestTransactions = async (): Promise<void> => {
-  const { data } = await callers
-    .getTxSearchFromTelemetry(0, 5, 'desc')
-    .then(resp => resp.json())
-
-  latestTransactions.value = await prepareTransaction(data)
-}
+const {
+  result: latestBlocks,
+  error: latestBlocksError,
+  loading: latestBlocksLoading,
+} = useQuery<BlockMetaResponse, BlocksQueryVariables>(BlocksQuery, {
+  limit: 5,
+  order: 'desc',
+  offset: 0,
+})
 </script>
 
 <style lang="scss" scoped>

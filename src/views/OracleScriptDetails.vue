@@ -138,8 +138,8 @@ const isOracleScriptOwner = computed(() => {
 
 const getOracleScript = async () => {
   if (Number(route.params.id) > 0) {
-    const response = await callers.getOracleScript(String(route.params.id))
-    oracleScriptData.value = response.oracleScript
+    const response = await callers.getOracleScript(Number(route.params.id))
+    oracleScriptData.value = response.data.oracle_script[0]
   } else {
     throw 'Invalid Oracle Script Id'
   }

@@ -39,13 +39,13 @@
       </span>
       <span
         :title="
-          $convertLokiToOdin($trimZeros(validator.info.delegatedAmount), {
+          $convertLokiToOdin($trimZeros(validator.info?.delegatedAmount), {
             onlyNumber: true,
           })
         "
       >
         {{
-          $convertLokiToOdin($trimZeros(validator.info.delegatedAmount), {
+          $convertLokiToOdin($trimZeros(validator.info?.delegatedAmount), {
             withDenom: true,
           })
         }}

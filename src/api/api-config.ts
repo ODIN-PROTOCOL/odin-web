@@ -16,6 +16,15 @@ export const API_CONFIG = {
   graphqlUrl: process.env.VUE_APP_NEXT_PUBLIC_GRAPHQL_URL as string,
   graphqlActions: process.env.VUE_APP_GRAPHQL_ACTIONS_URL as string,
   mintScanUrl: process.env.VUE_APP_MINSTSCAN_URL as string,
+  gasPrice: process.env.VUE_APP_GAS_PRICE as string,
+  skopunContractAddress: process.env.VUE_APP_SKOPUN_CONTRACT_ADDRESS as string,
+  ipfsNodeUrl: process.env.VUE_APP_IPFS_NODE_URL as string,
+  ipfsIOUrl: 'https://ipfs.io/ipfs',
+  fnServer: process.env.VUE_APP_FN_SERVER as string,
+  threadsShareUrl: 'https://threads.net/intent/post' as string,
+  xShareUrl: 'https://twitter.com/intent/post' as string,
+  nftCollection: process.env.VUE_APP_NFT_COLLECTION as string,
+  skopunRequestPrice: process.env.VUE_APP_SKOPUN_REQUEST_PRICE as string,
 }
 
 export const START_VALUE = {
@@ -86,6 +95,10 @@ export enum COINS_LIST {
   LOKI = 'loki',
   ODIN = 'odin',
   GEO = 'geo',
+  DOKI = 'doki',
+  UDOKI = 'udoki',
+  MYRK = 'myrk',
+  UMYRK = 'umyrk',
 }
 
 // Types of logins in the system

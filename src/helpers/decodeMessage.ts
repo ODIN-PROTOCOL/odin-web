@@ -11,10 +11,14 @@ import {
   MsgEditValidator,
   MsgUndelegate,
 } from 'cosmjs-types/cosmos/staking/v1beta1/tx'
+
+import { parseISO } from 'date-fns'
 import { MsgExec, MsgGrant } from 'cosmjs-types/cosmos/authz/v1beta1/tx'
 import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx'
+import { MsgSend as MsgSendNFT } from 'cosmjs-types/cosmos/nft/v1beta1/tx'
 import { MsgStoreCode } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
 import { MsgCreateVestingAccount } from 'cosmjs-types/cosmos/vesting/v1beta1/tx.js'
+import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx'
 import {
   MsgActivate,
   MsgAddReporter,
@@ -48,15 +52,13 @@ import { fromBase64 } from '@cosmjs/encoding'
 
 import { TxTelemetry } from '@/helpers/Types'
 import { getLokiFromString } from '@/helpers/converters'
+import {
+  Transaction as TxMessage,
+  ValidatorDetailedInfo,
+} from '@/graphql/types/responses'
+import { Msg } from '@keplr-wallet/types'
 
 export const getDecodeTx = (tx: TxResponse['tx']): Tx => Tx.decode(tx)
-
-const getTime = async (
-  height: number,
-): Promise<ReadonlyDateWithNanoseconds> => {
-  const res = await callers.getBlockchain(height, height)
-  return res.blockMetas[0].header.time
-}
 
 export function humanizeMessageType(type: string): string {
   switch (type) {
@@ -83,6 +85,9 @@ export function humanizeMessageType(type: string): string {
 
     case '/cosmos.bank.v1beta1.MsgSend':
       return 'Send'
+
+    case '/cosmos.nft.v1beta1.MsgSend':
+      return 'Transfer NFT'
 
     case '/cosmos.staking.v1beta1.MsgUndelegate':
       return 'Undelegate'
@@ -161,16 +166,14 @@ export function humanizeMessageType(type: string): string {
 
     case '/cosmos.authz.v1beta1.MsgGrant':
       return 'Authz MsgGrant'
-
+    case '/cosmwasm.wasm.v1.MsgExecuteContract':
+      return 'Execute Contract'
     default:
       throw new ReferenceError(`Unknown type ${type}`)
   }
 }
 
-export function decodeMessage(obj: {
-  typeUrl: string
-  value: Uint8Array
-}):
+export type SupportedMsg =
   | MsgWithdrawCoinsToAccFromTreasury
   | MsgCreateValidator
   | MsgEditValidator
@@ -178,6 +181,7 @@ export function decodeMessage(obj: {
   | MsgUndelegate
   | MsgBeginRedelegate
   | MsgSend
+  | MsgSendNFT
   | MsgVote
   | MsgDeposit
   | MsgSubmitProposal
@@ -201,7 +205,196 @@ export function decodeMessage(obj: {
   | MsgRemoveReporter
   | MsgStoreCode
   | MsgExec
-  | MsgGrant {
+  | MsgGrant
+  | MsgExecuteContract
+
+export function decodeMessage(
+  obj: any,
+):
+  | MsgWithdrawCoinsToAccFromTreasury
+  | MsgCreateValidator
+  | MsgEditValidator
+  | MsgDelegate
+  | MsgUndelegate
+  | MsgBeginRedelegate
+  | MsgSend
+  | MsgSendNFT
+  | MsgVote
+  | MsgDeposit
+  | MsgSubmitProposal
+  | MsgAddReporter
+  | MsgActivate
+  | MsgCreateOracleScript
+  | MsgCreateDataSource
+  | MsgRequestData
+  | MsgReportData
+  | MsgCreateClient
+  | MsgConnectionOpenInit
+  | MsgUpdateClient
+  | MsgChannelOpenInit
+  | MsgTransfer
+  | MsgWithdrawValidatorCommission
+  | MsgUnjail
+  | MsgCreateVestingAccount
+  | MsgEditDataSource
+  | MsgEditOracleScript
+  | MsgFundCommunityPool
+  | MsgRemoveReporter
+  | MsgStoreCode
+  | MsgExec
+  | MsgGrant
+  | MsgExecuteContract {
+  const object = {
+    ...obj,
+    type: obj['@type'],
+  }
+  switch (object['type']) {
+    case '/mint.MsgWithdrawCoinsToAccFromTreasury':
+      return object as MsgWithdrawCoinsToAccFromTreasury
+
+    case '/mint.MsgMintCoins':
+      return object as MsgWithdrawCoinsToAccFromTreasury
+
+    case '/cosmos.staking.v1beta1.MsgCreateValidator':
+      return object as MsgCreateValidator
+
+    case '/cosmos.staking.v1beta1.MsgDelegate':
+      return object as MsgDelegate
+
+    case '/cosmos.staking.v1beta1.MsgUndelegate':
+      return object as MsgUndelegate
+
+    case '/cosmos.gov.v1beta1.MsgVote':
+      return object as MsgVote
+
+    case '/cosmos.gov.v1beta1.MsgDeposit':
+      return object as MsgDeposit
+
+    case '/cosmos.gov.v1beta1.MsgSubmitProposal':
+      return object as MsgSubmitProposal
+
+    case '/cosmos.bank.v1beta1.MsgSend':
+      return object as MsgSend
+
+    case '/cosmos.nft.v1beta1.MsgSend':
+      return object as MsgSendNFT
+
+    case '/cosmos.staking.v1beta1.MsgEditValidator':
+      return object as MsgEditValidator
+
+    case '/cosmos.staking.v1beta1.MsgBeginRedelegate':
+      return object as MsgBeginRedelegate
+
+    case '/oracle.v1.MsgActivate':
+      return object as MsgActivate
+
+    case '/oracle.v1.MsgCreateDataSource':
+      return object as MsgCreateDataSource
+
+    case '/oracle.v1.MsgEditDataSource':
+      return object as MsgEditDataSource
+
+    case '/oracle.v1.MsgRemoveReporter':
+      return object as MsgRemoveReporter
+
+    case '/oracle.v1.MsgCreateOracleScript':
+      return object as MsgCreateOracleScript
+
+    case '/oracle.v1.MsgEditOracleScript':
+      return object as MsgEditOracleScript
+
+    case '/oracle.v1.MsgAddReporter':
+      return object as MsgAddReporter
+
+    case '/oracle.v1.MsgRequestData':
+      return object as MsgRequestData
+
+    case '/oracle.v1.MsgReportData':
+      return object as MsgReportData
+
+    case '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward':
+      return object as MsgWithdrawDelegatorReward
+
+    case '/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission':
+      return object as MsgWithdrawValidatorCommission
+
+    case '/cosmos.slashing.v1beta1.MsgUnjail':
+      return object as MsgUnjail
+
+    case '/ibc.core.client.v1.MsgCreateClient':
+      return object as MsgCreateClient
+
+    case '/ibc.core.connection.v1.MsgConnectionOpenInit':
+      return object as MsgConnectionOpenInit
+
+    case '/ibc.core.client.v1.MsgUpdateClient':
+      return object as MsgUpdateClient
+
+    case '/ibc.core.channel.v1.MsgChannelOpenInit':
+      return object as MsgChannelOpenInit
+
+    case '/ibc.applications.transfer.v1.MsgTransfer':
+      return object as MsgTransfer
+
+    case '/cosmos.vesting.v1beta1.MsgCreateVestingAccount':
+      return object as MsgCreateVestingAccount
+
+    case '/cosmwasm.wasm.v1.MsgStoreCode':
+      return object as MsgStoreCode
+
+    case '/cosmos.distribution.v1beta1.MsgFundCommunityPool':
+      return object as MsgFundCommunityPool
+
+    case '/cosmos.authz.v1beta1.MsgExec':
+      return object as MsgExec
+
+    case '/cosmos.authz.v1beta1.MsgGrant':
+      return object as MsgGrant
+    case '/cosmwasm.wasm.v1.MsgExecuteContract':
+      return object as MsgExecuteContract
+
+    default:
+      throw new ReferenceError(`Unknown type ${object.type}`)
+  }
+}
+
+export function decodeRPCMessage(obj: {
+  typeUrl: string
+  value: Uint8Array
+}):
+  | MsgWithdrawCoinsToAccFromTreasury
+  | MsgCreateValidator
+  | MsgEditValidator
+  | MsgDelegate
+  | MsgUndelegate
+  | MsgBeginRedelegate
+  | MsgSend
+  | MsgSendNFT
+  | MsgVote
+  | MsgDeposit
+  | MsgSubmitProposal
+  | MsgAddReporter
+  | MsgActivate
+  | MsgCreateOracleScript
+  | MsgCreateDataSource
+  | MsgRequestData
+  | MsgReportData
+  | MsgCreateClient
+  | MsgConnectionOpenInit
+  | MsgUpdateClient
+  | MsgChannelOpenInit
+  | MsgTransfer
+  | MsgWithdrawValidatorCommission
+  | MsgUnjail
+  | MsgCreateVestingAccount
+  | MsgEditDataSource
+  | MsgEditOracleScript
+  | MsgFundCommunityPool
+  | MsgRemoveReporter
+  | MsgStoreCode
+  | MsgExec
+  | MsgGrant
+  | MsgExecuteContract {
   switch (obj.typeUrl) {
     case '/mint.MsgWithdrawCoinsToAccFromTreasury':
       return MsgWithdrawCoinsToAccFromTreasury.decode(obj.value)
@@ -302,13 +495,304 @@ export function decodeMessage(obj: {
     case '/cosmos.authz.v1beta1.MsgGrant':
       return MsgGrant.decode(obj.value)
 
+    case '/cosmwasm.wasm.v1.MsgExecuteContract':
+      return MsgExecuteContract.decode(obj.value)
+
+    case '/cosmos.nft.v1beta1.MsgSend':
+      return MsgSendNFT.decode(obj.value)
+
     default:
       throw new ReferenceError(`Unknown type ${obj.typeUrl}`)
   }
 }
 
-export async function getDateFromMessage(
+function getValidator(
+  validatorAddress: string,
+  validators: ValidatorDetailedInfo[],
+) {
+  return validators.find(
+    v => v.validator.validator_info.operator_address === validatorAddress,
+  )
+}
+
+export function getDateFromMessage(
+  tx: TxMessage,
+  validators: ValidatorDetailedInfo[],
+): DecodedTxData {
+  const decodedTxData: DecodedTxData = {
+    type: '',
+    time: new Date(tx.block.timestamp),
+    fee: '0',
+    amount: '0',
+    block: tx.height,
+    memo: tx.memo ? tx.memo : '<No Memo>',
+    status: Number(tx.success),
+    gasWanted: tx.gas_wanted,
+    gasUsed: tx.gas_used,
+    sender: tx.sender,
+  }
+
+  if (tx.messages && (tx.messages[0] as any)['msgs']) {
+    const message = (tx.messages[0] as any)['msgs'][0]
+
+    decodedTxData.type = humanizeMessageType(message['@type'])
+    decodedTxData.fee = tx.fee[0]?.amount
+    decodedTxData.feeDenom = tx?.fee[0]?.denom
+
+    if ('amount' in message) {
+      if (typeof message.amount === 'object') {
+        if ('denom' in message.amount && 'amount' in message.amount) {
+          decodedTxData.amount = message.amount?.amount
+          decodedTxData.denom = message.amount?.denom
+        } else {
+          decodedTxData.amount = message.amount[0]?.amount
+          decodedTxData.denom = message.amount[0]?.denom
+        }
+      }
+    }
+
+    if (decodedTxData.type === 'Vote') {
+      if ('voter' in message) {
+        decodedTxData.sender = message?.voter
+      }
+    }
+    if (decodedTxData.type === 'Delegate') {
+      if ('delegator_address' in message) {
+        decodedTxData.sender = message?.delegator_address
+      }
+      if ('validator_address' in message) {
+        const validator = getValidator(message?.validator_address, validators)
+
+        if (validator && validator.moniker) {
+          decodedTxData.receiver_name = validator.moniker
+        }
+        decodedTxData.receiver = message?.validator_address
+      }
+    }
+    if (decodedTxData.type === 'Undelegate') {
+      if ('delegator_address' in message) {
+        decodedTxData.sender = message?.delegator_address
+      }
+      if ('validator_address' in message) {
+        decodedTxData.receiver = ''
+      }
+    }
+    if (decodedTxData.type === 'Send') {
+      if ('fromAddress' in message) {
+        decodedTxData.sender = message?.from_address
+      }
+      if ('toAddress' in message) {
+        decodedTxData.receiver = message?.to_address
+      }
+    }
+    if (decodedTxData.type === 'Withdraw') {
+      if ('sender' in message) {
+        decodedTxData.sender = message?.sender
+      }
+      if ('receiver' in message) {
+        decodedTxData.receiver = message?.receiver
+      }
+    }
+    if (decodedTxData.type === 'Withdraw delegator reward') {
+      if ('delegator_address' in message) {
+        decodedTxData.sender = message?.delegator_address
+      }
+      if ('validator_address' in message) {
+        const validator = getValidator(message?.validator_address, validators)
+        if (validator && validator.moniker) {
+          decodedTxData.receiver_name = validator.moniker
+        }
+        decodedTxData.receiver = message?.validator_address
+      }
+    }
+    if (decodedTxData.type === 'Withdraw validator commission') {
+      if ('delegator_address' in message) {
+        decodedTxData.sender = message?.delegator_address
+      }
+      if ('validator_address' in message) {
+        const validator = getValidator(message?.validator_address, validators)
+        if (validator && validator.moniker) {
+          decodedTxData.receiver_name = validator.moniker
+        }
+        decodedTxData.receiver = message?.validator_address
+      }
+    }
+    if (decodedTxData.type === 'Edit OracleScript') {
+      if ('sender' in message) {
+        decodedTxData.sender = message.sender
+      }
+    }
+    if (decodedTxData.type === 'Edit Data Source') {
+      if ('sender' in message) {
+        decodedTxData.sender = message.sender
+      }
+    }
+    if (decodedTxData.type === 'Edit Validator') {
+      if ('delegator_address' in message) {
+        decodedTxData.sender = message.delegator_address
+      }
+      if ('validator_address' in message) {
+        const validator = getValidator(message?.validator_address, validators)
+        if (validator && validator.moniker) {
+          decodedTxData.receiver_name = validator.moniker
+        }
+        decodedTxData.receiver = message.validator_address
+      }
+    }
+    if (decodedTxData.type === 'Begin Redelegate') {
+      if ('delegator_address' in message) {
+        decodedTxData.sender = message.delegator_address
+      }
+      if ('validatorDstAddress' in message) {
+        decodedTxData.receiver = message.validatorDstAddress
+      }
+    }
+    if (decodedTxData.type === 'IBC Transfer') {
+      if ('sender' in message) {
+        decodedTxData.sender = message.sender
+      }
+      if ('receiver' in message) {
+        decodedTxData.receiver = message.receiver
+      }
+    }
+    if (decodedTxData.type === 'Create Validator') {
+      if ('delegator_address' in message) {
+        decodedTxData.sender = message.delegator_address
+      }
+      if ('validator_address' in message) {
+        const validator = getValidator(message?.validator_address, validators)
+        if (validator && validator.moniker) {
+          decodedTxData.receiver_name = validator.moniker
+        }
+        decodedTxData.receiver = message.validator_address
+      }
+    }
+    if (decodedTxData.type === 'Submit Proposal') {
+      if ('proposer' in message) {
+        decodedTxData.sender = message.proposer
+      }
+      if ('initialDeposit' in message) {
+        decodedTxData.amount = message.initialDeposit[0]?.amount
+        decodedTxData.denom = message.initialDeposit[0]?.denom
+      }
+    }
+    if (decodedTxData.type === 'Report Data') {
+      if ('reporter' in message) {
+        decodedTxData.sender = message.reporter
+      }
+      if ('validator' in message) {
+        decodedTxData.receiver = message.validator
+      }
+    }
+    if (decodedTxData.type === 'Request Data') {
+      if ('sender' in message) {
+        decodedTxData.sender = message.sender
+      }
+      if ('validator' in message) {
+        decodedTxData.receiver = message.validator
+      }
+    }
+    if (decodedTxData.type === 'Update IBC Client') {
+      if ('signer' in message) {
+        decodedTxData.sender = message.signer
+      }
+      if ('validator_address' in message) {
+        const validator = getValidator(message?.validator_address, validators)
+        if (validator && validator.moniker) {
+          decodedTxData.receiver_name = validator.moniker
+        }
+        decodedTxData.receiver = message.validator_address
+      }
+    }
+    if (decodedTxData.type === 'Create Oracle Script') {
+      if ('sender' in message) {
+        decodedTxData.sender = message.sender
+      }
+    }
+    if (decodedTxData.type === 'Create Data Source') {
+      if ('sender' in message) {
+        decodedTxData.sender = message.sender
+      }
+    }
+    if (decodedTxData.type === 'Create IBC Client') {
+      if ('signer' in message) {
+        decodedTxData.sender = message.signer
+      }
+    }
+    if (decodedTxData.type === 'Connection Open Init') {
+      if ('signer' in message) {
+        decodedTxData.sender = message.signer
+      }
+    }
+    if (decodedTxData.type === 'Create Vesting Account') {
+      if ('fromAddress' in message) {
+        decodedTxData.sender = message.fromAddress
+      }
+      if ('toAddress' in message) {
+        decodedTxData.receiver = message.toAddress
+      }
+    }
+    if (decodedTxData.type === 'Unjail') {
+      if ('validatorAddr' in message) {
+        decodedTxData.receiver = message.validatorAddr
+      }
+    }
+    if (decodedTxData.type === 'Chanel Open Init') {
+      if ('signer' in message) {
+        decodedTxData.sender = message.signer
+      }
+    }
+    if (decodedTxData.type === 'Activate') {
+      if ('validator' in message) {
+        decodedTxData.receiver = message.validator
+      }
+    }
+    if (decodedTxData.type === 'Deposit') {
+      if ('depositor' in message) {
+        decodedTxData.receiver = message.depositor
+      }
+    }
+    if (decodedTxData.type === 'Mint Coins') {
+      if ('sender' in message) {
+        decodedTxData.sender = message?.sender
+      }
+      if ('receiver' in message) {
+        decodedTxData.receiver = message?.receiver
+      }
+    }
+
+    if (decodedTxData.type === 'Fund Community Pool') {
+      if ('depositor' in message) {
+        decodedTxData.sender = message?.depositor
+      }
+    }
+
+    if (decodedTxData.type === 'Remove Reporter') {
+      if ('validator' in message) {
+        decodedTxData.receiver = message.validator
+      }
+      if ('reporter' in message) {
+        decodedTxData.sender = message.reporter
+      }
+    }
+
+    if (decodedTxData.type === 'Store Code') {
+      if ('sender' in message) {
+        decodedTxData.sender = message.sender
+      }
+    }
+  }
+  return decodedTxData
+}
+
+const getTime = async (height: number): Promise<Date> => {
+  const res = await callers.getBlock('', height)
+  return parseISO(res.data.blockMetas[0].timestamp)
+}
+
+export async function getDateFromRPCMessage(
   tx: TxTelemetry,
+  validators: ValidatorDetailedInfo[],
 ): Promise<DecodedTxData> {
   const DecodedTxData: DecodedTxData = {
     type: '',
@@ -327,7 +811,7 @@ export async function getDateFromMessage(
       typeUrl: string
       value: Uint8Array
     }
-    const message = decodeMessage(obj)
+    const message = decodeRPCMessage(obj)
     DecodedTxData.type = humanizeMessageType(obj.typeUrl)
     DecodedTxData.fee = decodedTx?.authInfo?.fee?.amount[0]?.amount
     DecodedTxData.feeDenom = decodedTx?.authInfo?.fee?.amount[0]?.denom
@@ -372,9 +856,9 @@ export async function getDateFromMessage(
         DecodedTxData.sender = message?.delegatorAddress
       }
       if ('validatorAddress' in message) {
-        const data = await callers.getValidator(message?.validatorAddress)
-        if (data.validator && data.validator.description) {
-          DecodedTxData.receiver_name = data.validator?.description.moniker
+        const validator = getValidator(message?.validatorAddress, validators)
+        if (validator && validator.moniker) {
+          DecodedTxData.receiver_name = validator.moniker
         }
 
         DecodedTxData.receiver = message?.validatorAddress
@@ -409,9 +893,9 @@ export async function getDateFromMessage(
         DecodedTxData.sender = message?.delegatorAddress
       }
       if ('validatorAddress' in message) {
-        const data = await callers.getValidator(message?.validatorAddress)
-        if (data.validator && data.validator.description) {
-          DecodedTxData.receiver_name = data.validator?.description.moniker
+        const validator = getValidator(message?.validatorAddress, validators)
+        if (validator && validator.moniker) {
+          DecodedTxData.receiver_name = validator.moniker
         }
         DecodedTxData.receiver = message?.validatorAddress
       }
@@ -421,9 +905,9 @@ export async function getDateFromMessage(
         DecodedTxData.sender = message?.delegatorAddress
       }
       if ('validatorAddress' in message) {
-        const data = await callers.getValidator(message?.validatorAddress)
-        if (data.validator && data.validator.description) {
-          DecodedTxData.receiver_name = data.validator?.description.moniker
+        const validator = getValidator(message?.validatorAddress, validators)
+        if (validator && validator?.moniker) {
+          DecodedTxData.receiver_name = validator.moniker
         }
         DecodedTxData.receiver = message?.validatorAddress
       }
@@ -443,9 +927,9 @@ export async function getDateFromMessage(
         DecodedTxData.sender = message.delegatorAddress
       }
       if ('validatorAddress' in message) {
-        const data = await callers.getValidator(message?.validatorAddress)
-        if (data.validator && data.validator.description) {
-          DecodedTxData.receiver_name = data.validator?.description.moniker
+        const validator = getValidator(message?.validatorAddress, validators)
+        if (validator && validator.moniker) {
+          DecodedTxData.receiver_name = validator.moniker
         }
         DecodedTxData.receiver = message.validatorAddress
       }
@@ -471,9 +955,9 @@ export async function getDateFromMessage(
         DecodedTxData.sender = message.delegatorAddress
       }
       if ('validatorAddress' in message) {
-        const data = await callers.getValidator(message?.validatorAddress)
-        if (data.validator && data.validator.description) {
-          DecodedTxData.receiver_name = data.validator?.description.moniker
+        const validator = getValidator(message?.validatorAddress, validators)
+        if (validator && validator.moniker) {
+          DecodedTxData.receiver_name = validator?.moniker
         }
         DecodedTxData.receiver = message.validatorAddress
       }
@@ -508,9 +992,9 @@ export async function getDateFromMessage(
         DecodedTxData.sender = message.signer
       }
       if ('validatorAddress' in message) {
-        const data = await callers.getValidator(message?.validatorAddress)
-        if (data.validator && data.validator.description) {
-          DecodedTxData.receiver_name = data.validator?.description.moniker
+        const validator = getValidator(message?.validatorAddress, validators)
+        if (validator && validator.moniker) {
+          DecodedTxData.receiver_name = validator.moniker
         }
         DecodedTxData.receiver = message.validatorAddress
       }

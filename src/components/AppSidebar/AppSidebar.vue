@@ -28,6 +28,7 @@
 
     <template v-for="nav in navs" :key="nav.to">
       <div
+        v-if="isLoggedIn || nav.onlyLoggedIn === undefined || !nav.onlyLoggedIn"
         class="app-sidebar__nav-link"
         :class="isActive(nav.to) ? 'active' : ''"
       >
@@ -92,8 +93,27 @@ const navs = [
   {
     title: 'Blocks',
     icon: CubeIcon,
-    divider: false,
+    divider: true,
     to: '/blocks',
+  },
+  {
+    title: 'SKÖPUN',
+    icon: DocumentIcon,
+    divider: false,
+    to: '/skopun',
+  },
+  {
+    title: 'All NFTS',
+    icon: DocumentIcon,
+    divider: false,
+    to: '/nfts',
+  },
+  {
+    title: 'My NFTs',
+    icon: DocumentIcon,
+    divider: true,
+    to: '/my-nfts',
+    onlyLoggedIn: true,
   },
   {
     title: 'Proposals',
