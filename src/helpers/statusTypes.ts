@@ -19,6 +19,7 @@ export const proposalStatusType: StatusTypes = {
 }
 
 export const voteStatusType: StatusTypes = {
+  0: { name: 'Unspecified', status: 'no_op' },
   1: { name: 'Support', status: 'yes' },
   2: { name: 'Abstain', status: 'abstain' },
   3: { name: 'Reject', status: 'no' },

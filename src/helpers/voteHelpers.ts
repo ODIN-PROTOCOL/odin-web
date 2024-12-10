@@ -1,6 +1,6 @@
 import { voteStatusType } from '@/helpers/statusTypes'
 import { defaultChartDataBlank, ChartDataItem } from '@/helpers/Types'
-import { Vote } from '@provider/codec/cosmos/gov/v1beta1/gov'
+import { Vote } from 'cosmjs-types/cosmos/gov/v1beta1/gov'
 
 const defaultVotesCountBlank: defaultChartDataBlank[] = [
   { name: 'Support', color: '#00D097' },
@@ -14,11 +14,14 @@ export const getVotesCountByStatus = (votes: Vote[]): ChartDataItem[] => {
     ...defaultVotesCountBlank.map(item => ({ ...item, count: 0 })),
   ]
 
-  votes.forEach(p => {
-    const countsItem = counts.find((c: ChartDataItem) =>
-      voteStatusType[p.option].name === c.name ? true : false,
-    )
-    if (countsItem) countsItem.count++
+  votes.forEach(vote => {
+    vote.options.forEach((option) => {
+      const countsItem = counts.find((c: ChartDataItem) =>
+        voteStatusType[option.option].name === c.name ? true : false,
+      )
+      if (countsItem) countsItem.count+= Number(option.weight)
+    })
+
   })
 
   return counts

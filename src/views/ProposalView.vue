@@ -260,14 +260,14 @@ function fixMarkdown(apiMarkdown: string) {
 const getProposal = async () => {
   lockLoading()
   try {
-    const response = await callers.getProposal(Number(route.params.id))
-    proposal.value = response.data.proposal[0] || null
+    proposal.value = await callers.getProposal(Number(route.params.id))
+    // proposal.value = response.data.proposal[0] || null
 
     if (proposal.value?.status === 'PROPOSAL_STATUS_VOTING_PERIOD') {
       voteBtnText.value = 'Vote'
     }
 
-    tally.value = response.data.proposal[0].finalTallyResult
+    tally.value = proposal.value.finalTallyResult
   } catch (error) {
     isLoadingError.value = true
     handleNotificationInfo(error as Error, TYPE_NOTIFICATION.failed)
