@@ -345,7 +345,6 @@ const makeCallers = () => {
         query: ProposalByIdQuery,
         variables: { id: id },
       }).then(response => {
-        console.log(response)
         return response.data.proposal[0] || null
       })
     },
