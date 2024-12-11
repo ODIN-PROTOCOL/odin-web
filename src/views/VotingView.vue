@@ -83,7 +83,7 @@ import { showDialogHandler } from '@/components/modals/handlers/dialogHandler'
 import { ConfirmationModal } from '@/components/modals'
 import { useBooleanSemaphore } from '@/composables/useBooleanSemaphore'
 import { Vote } from 'cosmjs-types/cosmos/gov/v1beta1/gov'
-import { proposalStatusFromJSON } from "@provider/codec/cosmos/gov/v1beta1/gov"
+import { proposalStatusFromJSON } from '@provider/codec/cosmos/gov/v1beta1/gov'
 import { VOTE_OPTIONS } from '@/const'
 import { PROPOSAL_STATUS } from '@/enums'
 import { UiLoadingErrorMessage, UiLoader } from '@/components/ui'
@@ -123,11 +123,10 @@ const voteBtnText = computed(() => (selfVote.value?.voter ? 'Revote' : 'Vote'))
 const getProposal = async () => {
   lockLoading()
   try {
-
     const res = await callers.getProposal(Number(route.params.id))
     currentProposalStatus.value = proposalStatusFromJSON(res.status)
 
-    console.log("Status", res.status, currentProposalStatus.value)
+    console.log('Status', res.status, currentProposalStatus.value)
     proposalName.value = res.content?.title as string
   } catch (error) {
     isLoadingError.value = true

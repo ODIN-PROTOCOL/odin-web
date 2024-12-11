@@ -4,8 +4,27 @@
       <span class="app-table__title">Rank</span>
       <span>{{ validator.rank }}</span>
     </div>
-    <div class="app-table__cell">
+    <div
+      class="app-table__cell"
+      :style="{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '12px',
+      }"
+    >
       <span class="app-table__title">Validator</span>
+      <img
+        v-if="
+          validator.descriptions.length > 0 &&
+          validator.descriptions[0]?.avatarUrl
+        "
+        :src="validator.descriptions[0]?.avatarUrl || ''"
+        :style="{
+          width: '32px',
+          borderRadius: '50%',
+        }"
+      />
+      <div v-else class="dummy-avatar">!</div>
       <TitledLink
         v-if="validator.descriptions?.length"
         class="app-table__cell-txt app-table__link"
@@ -187,5 +206,14 @@ const selectedBtn = (typeBtn: string) => {
     padding: 3.4rem 0 1.6rem;
     grid: none;
   }
+}
+
+.dummy-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--clr__text-muted);
+  text-align: center;
+  line-height: 32px;
 }
 </style>

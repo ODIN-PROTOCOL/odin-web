@@ -228,6 +228,43 @@ const delegatedAdress = ref<string[]>([])
 const accountAddress = ref(wallet.isEmpty ? '' : wallet.account.address)
 const inputPlaceholder = ref('Search')
 
+/**
+ * Temporary Code::Start
+ */
+const noNameValidators = [
+  'odinvaloper1sq3lwvtxynk5q4nktjdlp4ynlmgv0eplt76g0c',
+  'odinvaloper1ntugl9874zqs06afu08l3lusuv0ch808vphcy7',
+  'odinvaloper1ku5zuzs4eeh8a4uufww2f0ecdn6ef0uhsxs30f',
+  'odinvaloper1hgdq6yekx3hpz5mhph660el664pc02a47ujn5y',
+]
+
+const getNameOfValidators = (address: string) => {
+  if (address === 'odinvaloper1sq3lwvtxynk5q4nktjdlp4ynlmgv0eplt76g0c')
+    return {
+      moniker: 'Astrid',
+      avatarUrl: '/astrid.webp',
+    }
+
+  if (address === 'odinvaloper1ntugl9874zqs06afu08l3lusuv0ch808vphcy7')
+    return {
+      moniker: 'Baldur',
+      avatarUrl: '/baldur.webp',
+    }
+  if (address === 'odinvaloper1ku5zuzs4eeh8a4uufww2f0ecdn6ef0uhsxs30f')
+    return {
+      moniker: 'Odin Sigyl',
+      avatarUrl: '/odin.png',
+    }
+  if (address === 'odinvaloper1hgdq6yekx3hpz5mhph660el664pc02a47ujn5y')
+    return {
+      moniker: 'ODIN Protocol',
+      avatarUrl: '/odin-pink.jpg',
+    }
+}
+/**
+ * Temporary Code::End  z`
+ */
+
 const activeValidatorsTitle = computed(() =>
   activeValidators.value?.length
     ? `Active (${activeValidators.value?.length})`
@@ -305,6 +342,27 @@ const getValidators = async () => {
 
     activeValidators.value = (await Promise.all(
       copyActiveValidator.map(async (item: ValidatorsInfo, index: number) => {
+        /**
+         * Temporary Code::Start
+         */
+        if (noNameValidators.includes(item.info.operatorAddress)) {
+          return {
+            ...item,
+            rank: index + 1,
+            uptime:
+              ((signedBlocks.value -
+                item.signingInfos[0]?.missedBlocksCounter) /
+                signedBlocks.value) *
+              100,
+            isActive: await isActiveValidator(item.info?.operatorAddress).then(
+              req => req,
+            ),
+            descriptions: [getNameOfValidators(item.info.operatorAddress)],
+          }
+        }
+        /**
+         * Temporary Code::End
+         */
         return {
           ...item,
           rank: index + 1,
@@ -318,6 +376,8 @@ const getValidators = async () => {
         }
       }),
     )) as unknown as ValidatorsInfo[]
+
+    console.log('Active Validatoers', activeValidators.value)
 
     inactiveValidators.value = (await Promise.all(
       copyInactiveValidator.map(async (item: ValidatorsInfo, index: number) => {

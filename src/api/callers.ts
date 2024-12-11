@@ -341,12 +341,14 @@ const makeCallers = () => {
       })
     },
     getProposal: (id: number) => {
-      return apolloClient.query({
-        query: ProposalByIdQuery,
-        variables: { id: id },
-      }).then(response => {
-        return response.data.proposal[0] || null
-      })
+      return apolloClient
+        .query({
+          query: ProposalByIdQuery,
+          variables: { id: id },
+        })
+        .then(response => {
+          return response.data.proposal[0] || null
+        })
     },
     getBlockchain: (page_limit = 10, order = 'desc', offset = 0) => {
       return apolloClient.query<BlockMetaResponse, BlocksQueryVariables>({
