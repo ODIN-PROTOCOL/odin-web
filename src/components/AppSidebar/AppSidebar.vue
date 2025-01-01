@@ -32,7 +32,11 @@
         class="app-sidebar__nav-link"
         :class="isActive(nav.to) ? 'active' : ''"
       >
-        <router-link :to="nav.to" @click="closeSidebar">
+        <a v-if="nav.to.startsWith('http')" :href="nav.to" target="_blank">
+          <component :is="nav.icon" class="nav-icon" />
+          <span>{{ nav.title }}</span>
+        </a>
+        <router-link v-else :to="nav.to" @click="closeSidebar">
           <component :is="nav.icon" class="nav-icon" />
           <span>{{ nav.title }}</span>
         </router-link>
@@ -95,6 +99,12 @@ const navs = [
     icon: CubeIcon,
     divider: true,
     to: '/blocks',
+  },
+  {
+    title: 'OdinGPT',
+    icon: DocumentIcon,
+    divider: false,
+    to: 'https://odingpt.io',
   },
   {
     title: 'SKÖPUN',
